@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 61 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 62 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -85,7 +85,8 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 
 - Views: `#species`, `#finder`, `#toxic`, `#guide`, `#recipes`, `#emergency`
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` scrolls to a toxic card, `#cmp-<id>` to a comparison,
-  `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist)
+  `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist;
+  `#guide-calendar`, the season calendar built from `data/seasonality.py`)
 - Slugs come from the Latin name (`Boletus edulis` becomes `boletus-edulis`). Hash names stay plain ASCII.
 - In-page jumps use `<button data-jump="id">`, not anchors.
 - Scroll offsets come from `html { scroll-padding-top }` (header height is measured into `--header-h`).
@@ -99,7 +100,6 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 
 ## Ideas not yet built
 
-- A 12-month season calendar showing all species at once.
 - A personal finds log kept in localStorage (per device only; wrap storage in try/catch).
 - Photos: only owner-taken or properly licensed images, with attribution.
 

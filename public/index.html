@@ -39,6 +39,7 @@
   --color-ring: #15803D;
   --color-primary-surface: #DCFCE7;
   --color-chart: #15803D;
+  --color-seq-1: #22C55E; --color-seq-2: #15803D; --color-seq-3: #14532D;
 
   --font-heading: "Outfit", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-body: "Work Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -54,7 +55,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-primary: #4ADE80; --color-chart: #16A34A; --color-on-primary: #052E16; --color-secondary: #34D399;
+    --color-primary: #4ADE80; --color-chart: #16A34A; --color-seq-1: #166534; --color-seq-2: #16A34A; --color-seq-3: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
     --color-accent: #F59E0B; --color-on-accent: #000000;
     --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
     --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
@@ -65,7 +66,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --color-primary: #4ADE80; --color-chart: #16A34A; --color-on-primary: #052E16; --color-secondary: #34D399;
+  --color-primary: #4ADE80; --color-chart: #16A34A; --color-seq-1: #166534; --color-seq-2: #16A34A; --color-seq-3: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
   --color-accent: #F59E0B; --color-on-accent: #000000;
   --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
   --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
@@ -354,6 +355,32 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .obs-chart__months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); margin-top: var(--space-1); font-size: 12px; color: var(--color-muted-foreground); text-align: center; font-variant-numeric: tabular-nums; }
 .obs-chart__note { margin: var(--space-3) 0 0; font-size: 13px; color: var(--color-muted-foreground); }
 
+/* season calendar (guide view) */
+.cal__lead { margin: 0 0 var(--space-3); color: var(--color-muted-foreground); font-size: 15px; max-width: 72ch; }
+.cal__key { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin: 0 0 var(--space-3); padding: 0; list-style: none; font-size: 13px; color: var(--color-muted-foreground); }
+.cal__key li { display: flex; align-items: center; gap: 6px; }
+.cal__swatch { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--color-border); }
+.cal { --cal-readout-h: 60px; max-width: 960px; }
+.cal__readout { position: sticky; top: var(--header-h); z-index: var(--z-sticky); display: flex; align-items: center; height: var(--cal-readout-h); margin: 0; background: var(--color-background); font-size: 15px; font-weight: 600; line-height: 1.35; font-variant-numeric: tabular-nums; }
+.cal__table { width: 100%; border-collapse: separate; border-spacing: 2px; table-layout: fixed; font-size: 13px; }
+.cal__table thead th { position: sticky; top: calc(var(--header-h) + var(--cal-readout-h)); z-index: var(--z-sticky); background: var(--color-background); outline: 2px solid var(--color-background); font-weight: 500; color: var(--color-muted-foreground); text-align: center; padding: var(--space-1) 0; border-radius: var(--radius-sm); font-variant-numeric: tabular-nums; }
+.cal__table thead th.is-now { background: var(--color-primary-surface); outline-color: var(--color-background); color: var(--color-foreground); font-weight: 700; }
+.cal__table col.cal__namecol { width: 7.5em; }
+.cal__name { text-align: left; font-weight: 500; }
+.cal__name a { display: flex; align-items: center; min-height: var(--target); color: var(--color-foreground); text-decoration: none; line-height: 1.3; padding-right: var(--space-1); }
+.cal__name a:hover { color: var(--color-primary); text-decoration: underline; }
+.cal__cell { border-radius: 4px; background: var(--color-muted); }
+.cal__cell--1 { background: var(--color-seq-1); }
+.cal__cell--2 { background: var(--color-seq-2); }
+.cal__cell--3 { background: var(--color-seq-3); }
+.cal__swatch--0 { background: var(--color-muted); }
+.cal__swatch--1 { background: var(--color-seq-1); }
+.cal__swatch--2 { background: var(--color-seq-2); }
+.cal__swatch--3 { background: var(--color-seq-3); }
+.cal__cell.is-active { outline: 2px solid var(--color-foreground); outline-offset: 1px; }
+.cal__rest { margin: var(--space-4) 0 0; font-size: 14px; color: var(--color-muted-foreground); max-width: 72ch; }
+@media (min-width: 768px) { .cal { --cal-readout-h: 44px; } .cal__table col.cal__namecol { width: 13em; } .cal__table { font-size: 14px; } }
+
 /* before-you-eat checklist */
 .eat-check { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: 0; }
 .eat-check li { margin: 0; border-top: 1px solid var(--color-border); max-width: none; }
@@ -523,7 +550,8 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
         <header class="view__head">
           <span class="view__eyebrow">Field guide</span>
           <h1 class="view__title" id="h-species">食用菌速查</h1>
-          <p class="view__lead">原书 52 种欧洲常见食用菌，另补充松茸等 7 种北美种类。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
+          <p class="view__lead">原书 52 种欧洲常见食用菌，另补充松茸等 12 种北美种类。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
+          <div class="link-row"><a class="btn" href="#guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>西北太平洋产季日历</a></div>
         </header>
         <div class="search-bar">
           <label class="search-bar__label" for="q">搜索菌名</label>
@@ -611,6 +639,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
         </header>
         <div class="jump-row">
           <button class="chip" type="button" data-jump="guide-field">采集</button>
+          <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
           <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
           <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
           <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
@@ -676,6 +705,8 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
             <div class="kv"><div class="kv-k">菌托</div><div class="kv-v">柄基部的袋状或环状结构，是幼菌外包膜的残留。鹅膏属的重要标志</div></div><div class="kv"><div class="kv-k">菌环</div><div class="kv-v">柄上的环状膜，是保护菌褶的内菌幕破裂后留下的</div></div><div class="kv"><div class="kv-k">菌幕</div><div class="kv-v">幼菌时包住全体（外菌幕）或连接盖缘与柄（内菌幕）的膜；丝膜菌的菌幕像蛛网</div></div><div class="kv"><div class="kv-k">离生／弯生／直生／延生</div><div class="kv-v">菌褶与柄的四种连接方式：不接触柄／近柄处凹缺／平直连到柄／沿柄向下延伸</div></div><div class="kv"><div class="kv-k">菌孔</div><div class="kv-v">牛肝菌等菌盖下管状结构的开口，看起来像海绵</div></div><div class="kv"><div class="kv-k">菌根</div><div class="kv-v">真菌与特定树种根系的共生关系，菌根菌只在相应树木附近出现</div></div><div class="kv"><div class="kv-k">腐生／寄生</div><div class="kv-v">靠分解死去的有机物生活／靠活的宿主生活</div></div><div class="kv"><div class="kv-k">水浸状</div><div class="kv-v">菌盖随含水量变化而变色的现象</div></div><div class="kv"><div class="kv-k">自溶</div><div class="kv-v">菌褶成熟后自己液化成黑色墨汁，如毛头鬼伞</div></div><div class="kv"><div class="kv-k">孢子印</div><div class="kv-v">菌盖放在纸上落下的孢子堆积，用来判断孢子颜色</div></div><div class="kv"><div class="kv-k">菌丝体</div><div class="kv-v">地下或基质中由细丝交织成的真菌主体；我们采的只是它的“果实”</div></div>
           </details>
         </div>
+        <div class="subhead" id="guide-calendar"><h2>西北太平洋产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
+        <div class="cal" id="cal"></div>
         <div class="subhead" id="guide-check"><h2>吃之前：逐条检查</h2><p>每次下锅前都过一遍。全部打勾也不等于安全。</p></div>
         <section class="panel panel--wide" aria-labelledby="eat-check-title">
           <h2 class="sr-only" id="eat-check-title">吃之前检查清单</h2>
@@ -1246,7 +1277,41 @@ function setOffline(text, ready) { const el = $("#offline-status"); if (el) { el
     .catch(() => setOffline("这个浏览器暂时无法离线使用", false));
 })();
 
-sync(); renderFinder(); renderToxic(); renderRecipes(); route();
+/* ---------- season calendar ---------- */
+const CAL_LEVELS = ["几乎没有", "偶见", "较多", "高峰"];
+function calLevel(n, max) { const r = n / max; return r < 0.05 ? 0 : r < 0.25 ? 1 : r < 0.6 ? 2 : 3; }
+function renderCalendar() {
+  const rows = [], rest = [];
+  DATA.species.forEach(s => {
+    if (!s.obs) return;
+    const total = s.obs.counts.reduce((a, b) => a + b, 0);
+    if (total < 30) { rest.push(s); return; }
+    const max = Math.max(...s.obs.counts);
+    rows.push({ s, max, peak: s.obs.counts.indexOf(max) });
+  });
+  rows.sort((a, b) => a.peak - b.peak || b.max - a.max);
+  const now = new Date().getMonth();
+  const head = `<tr><th scope="col"><span class="sr-only">菌名</span></th>${Array.from({ length: 12 }, (_, m) => `<th scope="col"${m === now ? ' class="is-now" aria-current="date"' : ""}>${m + 1}<span class="sr-only"> 月</span></th>`).join("")}</tr>`;
+  const body = rows.map(({ s, max }) => `<tr><th scope="row" class="cal__name"><a href="#sp-${s.slug}">${esc(s.zh)}</a></th>${s.obs.counts.map((n, m) => {
+    const lv = calLevel(n, max);
+    return `<td class="cal__cell${lv ? " cal__cell--" + lv : ""}" data-n="${n}" data-m="${m}" data-name="${esc(s.zh)}"${n === max ? ' data-peak=""' : ""}><span class="sr-only">${CAL_LEVELS[lv]}</span></td>`;
+  }).join("")}</tr>`).join("");
+  $("#cal").innerHTML = `
+    <p class="cal__lead">颜色越深，这个月的记录越多（与这种菌自己全年最多的月份相比）。数据来自 iNaturalist 研究级观察，取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量，具体时间因地区、海拔和当年天气而异。</p>
+    <ul class="cal__key" aria-hidden="true">${CAL_LEVELS.map((t, i) => `<li><span class="cal__swatch cal__swatch--${i}"></span>${t}</li>`).join("")}</ul>
+    <p class="cal__readout" id="cal-readout" aria-hidden="true">${now + 1} 月是本月。把手指或鼠标放在格子上看记录数。</p>
+    <table class="cal__table"><caption class="sr-only">西北太平洋每月记录多少，按高峰月份排列</caption><colgroup><col class="cal__namecol">${"<col>".repeat(12)}</colgroup><thead>${head}</thead><tbody>${body}</tbody></table>
+    <p class="cal__rest">西北太平洋记录太少（少于 30 条）、没有列入日历的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。另有 ${DATA.species.length - rows.length - rest.length} 种在 iNaturalist 上找不到对应的记录。</p>`;
+}
+let calActive = null;
+document.addEventListener("pointerover", e => {
+  const c = e.target.closest(".cal__cell[data-n]"); if (!c) return;
+  if (calActive) calActive.classList.remove("is-active");
+  calActive = c; c.classList.add("is-active");
+  $("#cal-readout").textContent = `${c.dataset.name} · ${+c.dataset.m + 1} 月：${(+c.dataset.n).toLocaleString("en")} 条${c.hasAttribute("data-peak") ? "（高峰）" : ""}`;
+});
+
+sync(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); route();
 </script>
 </body>
 </html>

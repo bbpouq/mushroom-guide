@@ -95,6 +95,12 @@ def run():
         # ---------- deep links, finder, share, offline (phone) ----------
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         pg = ctx.new_page()
+        pg.goto(url + "#species"); pg.wait_for_timeout(400)
+        pg.click('#v-species a[href="#guide-calendar"]'); pg.wait_for_timeout(1100)
+        rows = pg.locator("#cal tbody tr").count()
+        check(f"season calendar opens from species view with rows ({rows})",
+              pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and rows > 30
+              and pg.locator("#cal tbody tr >> nth=0").locator("td").count() == 12)
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         check("deep link opens species sheet", pg.evaluate("document.getElementById('sheet').open") and "松茸" in pg.inner_text("#sheet-title"))
         check("sheet shows a 12-month Pacific Northwest seasonality chart",
