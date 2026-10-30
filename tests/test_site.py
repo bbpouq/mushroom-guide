@@ -59,6 +59,17 @@ OVER_SEARCH = r"""() => { const sb = document.querySelector('.search-bar').getBo
   return {top: Math.round(sb.top), header: Math.round(document.querySelector('.hdr').getBoundingClientRect().bottom), leaked: [...bad]}; }"""
 
 
+def settle(pg, limit=5000):
+    """Wait until smooth scrolling has stopped (scrollY unchanged across two reads)."""
+    last, waited = None, 0
+    while waited < limit:
+        pg.wait_for_timeout(150); waited += 150
+        y = pg.evaluate("scrollY")
+        if y == last:
+            return
+        last = y
+
+
 def run():
     httpd, url = serve()
     html = (PUBLIC / "index.html").read_text(encoding="utf-8")
@@ -110,7 +121,7 @@ def run():
               pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return !!i && i.complete && i.naturalWidth > 0; })()")
               and "CC" in pg.inner_text("#sheet .photo__cap") and "不能只凭照片鉴定" in pg.inner_text("#sheet .photo__cap"))
         check("sheet shows the spore print text, not the finder tag", "白色" in pg.inner_text("#sheet") and "white" not in pg.inner_text("#sheet"))
-        pg.click('#sheet a[href="#guide-check"]'); pg.wait_for_timeout(1100)
+        pg.click('#sheet a[href="#guide-check"]'); settle(pg)
         check("sheet links to the before-you-eat checklist",
               pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and not pg.evaluate("document.getElementById('sheet').open")
               and 0 <= pg.evaluate("document.getElementById('guide-check').getBoundingClientRect().top") < 200)

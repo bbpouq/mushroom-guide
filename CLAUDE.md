@@ -31,7 +31,8 @@ src/
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
   data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR, keyed by slug.
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
-  data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link.
+  data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
+                         and HEROES: the header photo behind each view's large title (none on the emergency view).
                          Pin a better photo in fetch_photos.PINNED rather than editing this file
   data/guide.py          Field/kitchen panels, glossary, the 6 featured recipes
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels

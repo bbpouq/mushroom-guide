@@ -92,3 +92,11 @@ PHOTOS = {
  'pleurocybella-porrigens': {'file': 'pleurocybella-porrigens.webp', 'w': 480, 'h': 360, 'taxon': 'Pleurocybella porrigens', 'author': 'Kai Joaquin', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/8114154'},
  'turbinellus-floccosus': {'file': 'turbinellus-floccosus.webp', 'w': 480, 'h': 480, 'taxon': 'Turbinellus floccosus', 'author': 'Ken-ichi Ueda', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/6822'},
 }
+HEROES = {
+ 'species': {'id': 168845865, 'file': 'hero-species.webp', 'author': 'Alan Rockefeller', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/168845865'},
+ 'finder': {'id': 22093962, 'file': 'hero-finder.webp', 'author': 'Christian Schwarz', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/22093962'},
+ 'toxic': {'id': 448681419, 'file': 'hero-toxic.webp', 'author': 'Borja Fierro-Leva', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/448681419'},
+ 'guide': {'id': 11502906, 'file': 'hero-guide.webp', 'author': 'Christian Schwarz', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/11502906'},
+ 'log': {'id': 250397284, 'file': 'hero-log.webp', 'author': 'Filip Fuljer', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/250397284'},
+ 'recipes': {'id': 29239600, 'file': 'hero-recipes.webp', 'author': 'Davide Puddu', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/29239600'},
+}
