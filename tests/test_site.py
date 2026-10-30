@@ -98,6 +98,13 @@ def run():
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         check("deep link opens species sheet", pg.evaluate("document.getElementById('sheet').open") and "松茸" in pg.inner_text("#sheet-title"))
         check("sheet shows the spore print text, not the finder tag", "白色" in pg.inner_text("#sheet") and "white" not in pg.inner_text("#sheet"))
+        pg.click('#sheet a[href="#guide-check"]'); pg.wait_for_timeout(1100)
+        check("sheet links to the before-you-eat checklist",
+              pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and not pg.evaluate("document.getElementById('sheet').open")
+              and 0 <= pg.evaluate("document.getElementById('guide-check').getBoundingClientRect().top") < 200)
+        pg.click("#eat-check li >> nth=0"); pg.click("#eat-check li >> nth=1")
+        check("checklist counts ticks", pg.inner_text("#eat-check-count") == "已核对 2 / 9")
+        pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         pg.click("[data-close]"); pg.wait_for_timeout(150)
         check("closing a directly opened sheet goes to #species", pg.evaluate("location.hash") == "#species")
         pg.click(".sp-card >> nth=3"); pg.wait_for_timeout(250)

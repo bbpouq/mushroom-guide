@@ -208,6 +208,16 @@ NA_SPECIES += [
       group="extra", flags=["非原书"],
       sources=[("MykoWeb · California Fungi：Gomphus clavatus", "https://www.mykoweb.com/CAF/species/Gomphus_clavatus.html"),
                ("Kuo, M. MushroomExpert：Gomphus clavatus", "https://www.mushroomexpert.com/gomphus_clavatus.html")]),
+ dict(zh="西部大马勃", en="Western giant puffball", latin="Calvatia booniana", region="北美西部山地 · 内陆",
+      page=None, season="夏–秋", months=[6, 7, 8, 9, 10],
+      feat="一大团不规则的球，常 15–30 cm 宽、高可达 30 cm，最大可超过 60 cm；白色或浅棕，<b>表面很快裂成一块块大的多边形疣斑</b>（东部和欧洲的大秃马勃表面光滑）；没有柄，底部常只有一根细菌索连着地面。内部起初<b>白色、结实</b>，之后变黄绿、发黏，最后变成橄榄褐色的孢子粉；气味不明显",
+      hab="草地或山艾灌丛下，单生、成群或长成很大的蘑菇圈：低海拔的田野和近乎荒漠的草地、高海拔的亚高山草甸都有。遍布西部山区，落基山脉最常见；在西北太平洋多见于喀斯喀特山脉以东的干旱内陆",
+      spore="橄榄褐", kitchen="<b>只吃内部完全纯白的</b>，有一点发黄或发绿就不能吃。口感像豆腐，可切块煮汤、裹粉炸；不宜水洗，切掉沾土的部分即可。有人吃后会轻微腹泻",
+      warn="<b>鹅膏的“蛋”</b>：毒鹅膏等的幼菇可能被当成马勃吃下（BC 省就有一起）。<b>务必纵切</b>：真马勃内部是均匀的白色；鹅膏的“蛋”里能看到菌盖和菌褶的轮廓",
+      group="extra", flags=["非原书"],
+      sources=[("Kuo, M. MushroomExpert：Calvatia booniana", "https://www.mushroomexpert.com/calvatia_booniana.html"),
+               ("Wikipedia：Calvatia booniana（可食性引自 Arora 1986）", "https://en.wikipedia.org/wiki/Calvatia_booniana"),
+               ("UBC Beaty Museum · Mushrooms Up!：Amanita phalloides（马勃与鹅膏“蛋”的区分）", UBC + "A_phalloides.html")]),
 ]
 
 NA_TOXIC += [

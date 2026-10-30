@@ -63,4 +63,5 @@ TAGS = {
  "花旗松乳牛肝菌（胖杰克）": T("pores", "brown", "ground", ring=True),
  "糖果乳菇": T("gills", ["white", "yellow"], ["ground", "wood"]),
  "紫陀螺菌（猪耳）": T("ridges", ["yellow", "brown"], "ground"),
+ "西部大马勃": T("other", "olive", ["grass", "ground"]),
 }

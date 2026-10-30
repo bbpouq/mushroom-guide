@@ -43,6 +43,16 @@ cd public && python3 -m http.server 8000
 
 ## 内容来源与声明
 
-- 欧洲物种部分改写自 *The Edible Mushroom Book: A Guide to Foraging and Cooking*（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008）。网站不含原书图片。
-- 北美补充部分整理自 UBC Beaty Museum “Mushrooms Up!”、MushroomExpert、MykoWeb、各州自然资源部门、北美真菌学会等资料，来源列在每个条目的详情里。
-- 本站只是速查摘要，不能代替实物鉴定。**有任何疑问，就不要吃。**
+内容分两部分，每个条目都标明来自哪里：
+
+- **原书部分**（标有“原书 pXX”）：欧洲物种、十种常见毒菌和食谱索引，改写自 *The Edible Mushroom Book: A Guide to Foraging and Cooking*（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008）。文字是我们自己的中文改写；网站不含原书图片。
+- **原书以外的内容**（标有“原书未收录”“非原书”或“【编者注】”）：北美和西北太平洋的食用菌与毒菌、书中物种在当地的对应种和注意事项（例如西部绣球菌、实柄蜜环菌、北美的几类羊肚菌）、易混对比、“吃之前检查清单”和急救信息。这些都整理自公开资料，每条都在详情里列出来源链接，主要是：
+  - UBC Beaty Museum “Mushrooms Up!”（BC 省和西北太平洋的食用与有毒菌）
+  - MushroomExpert（Michael Kuo）、MykoWeb / California Fungi
+  - 北美真菌学会（NAMA）中毒报告、州和省级政府机构
+  - 同行评审论文（如 *Mycologia*、*Toxins*、*Mycological Progress*）
+  - iNaturalist 上经鉴定的观察记录（只用来确认某个种在西北太平洋有没有分布）
+
+没有找到可靠来源的说法不会写进网站。
+
+本站只是速查摘要，不能代替实物鉴定。**有任何疑问，就不要吃。**
