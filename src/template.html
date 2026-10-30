@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#15803D">
+<meta name="description" content="野生食用菌中文速查：识别特征、易混毒菌对比、按特征反查、中毒急救、采集与烹饪。">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="野菌速查">
+<title>野菌速查手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* Design system (ui-ux-pro-max): Minimalism & Swiss Style · nature palette (green + amber)
+   Type: Outfit headings / Work Sans body, Noto Sans SC for CJK · 8px spacing rhythm
+   Layout: phone = sticky header + sticky search + bottom nav; tablet = top nav; desktop = sidebar */
+:root {
+  --color-primary: #15803D;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #059669;
+  --color-accent: #D97706;
+  --color-on-accent: #000000;
+  --color-background: #F0FDF4;
+  --color-foreground: #0F172A;
+  --color-card: #FFFFFF;
+  --color-muted: #E6F2EA;
+  --color-muted-foreground: #475569;
+  --color-border: #CFE3D6;
+  --color-destructive: #DC2626;
+  --color-danger-text: #B91C1C;
+  --color-danger-surface: #FEF2F2;
+  --color-warning-text: #92400E;
+  --color-warning-surface: #FEF3C7;
+  --color-ring: #15803D;
+  --color-primary-surface: #DCFCE7;
+
+  --font-heading: "Outfit", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-body: "Work Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-7: 48px;
+  --radius-sm: 6px; --radius: 10px; --radius-lg: 16px;
+  --z-sticky: 10; --z-header: 20; --z-nav: 30; --z-toast: 40;
+  --dur-fast: 150ms; --dur: 220ms; --ease: cubic-bezier(.2, .7, .2, 1);
+  --target: 44px;
+  --header-h: 0px;
+  --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
+    --color-accent: #F59E0B; --color-on-accent: #000000;
+    --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
+    --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
+    --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: #2B1414;
+    --color-warning-text: #FCD34D; --color-warning-surface: #2D2410;
+    --color-ring: #4ADE80; --color-primary-surface: #14301F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-primary: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
+  --color-accent: #F59E0B; --color-on-accent: #000000;
+  --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
+  --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
+  --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: #2B1414;
+  --color-warning-text: #FCD34D; --color-warning-surface: #2D2410;
+  --color-ring: #4ADE80; --color-primary-surface: #14301F;
+  color-scheme: dark;
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--header-h) + 16px); -webkit-text-size-adjust: 100%; }
+/* species view has a sticky search bar too: keep focused cards clear of it */
+html:has(#v-species.is-active) { scroll-padding-top: calc(var(--header-h) + 112px); }
+body { margin: 0; background: var(--color-background); color: var(--color-foreground); font-family: var(--font-body); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-heading); margin: 0; line-height: 1.3; text-wrap: balance; letter-spacing: -.005em; }
+p { margin: 0 0 var(--space-3); }
+b, strong { font-weight: 700; }
+a { color: var(--color-primary); text-underline-offset: 3px; }
+button { font: inherit; color: inherit; }
+button, a, label, summary, .chip, input[type="checkbox"] { touch-action: manipulation; }
+:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+.latin { font-family: "Work Sans", Georgia, serif; font-style: italic; }
+.icon { width: var(--icon-md); height: var(--icon-md); flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icon--sm { width: var(--icon-sm); height: var(--icon-sm); }
+.icon--lg { width: var(--icon-lg); height: var(--icon-lg); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: var(--space-4); top: -60px; z-index: 100; background: var(--color-primary); color: var(--color-on-primary); padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); }
+.skip-link:focus { top: var(--space-2); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; } }
+
+/* ---------- shell ---------- */
+.app { min-height: 100%; display: grid; grid-template-columns: 1fr; }
+.sidenav { display: none; }
+.hdr { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-background); border-bottom: 1px solid var(--color-border); padding-top: env(safe-area-inset-top); }
+.hdr__row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); max-width: 1200px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: var(--space-3); color: var(--color-foreground); text-decoration: none; min-height: var(--target); }
+.brand__mark { width: 36px; height: 36px; border-radius: var(--radius); background: var(--color-primary); color: var(--color-on-primary); display: grid; place-items: center; }
+.brand__name { font-family: var(--font-heading); font-weight: 700; font-size: 18px; line-height: 1.2; display: block; }
+.brand__sub { font-size: 12px; color: var(--color-muted-foreground); display: block; line-height: 1.3; }
+.safety-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--color-danger-text); background: var(--color-danger-surface); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.topnav { display: none; }
+.botnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-nav); display: grid; grid-template-columns: repeat(5, 1fr); background: var(--color-card); border-top: 1px solid var(--color-border); padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.botnav__link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; font-size: 12px; color: var(--color-muted-foreground); text-decoration: none; border-radius: var(--radius); transition: color var(--dur-fast), background-color var(--dur-fast); }
+.botnav__link:active { background: var(--color-muted); }
+.botnav__link[aria-current="page"] { color: var(--color-primary); font-weight: 700; }
+.botnav__link[aria-current="page"] .icon { stroke-width: 2.4; }
+main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) var(--space-4) calc(88px + env(safe-area-inset-bottom)); }
+
+@media (min-width: 768px) {
+  .botnav { display: none; }
+  .hdr__row { padding: var(--space-3) var(--space-6); }
+  .topnav { display: flex; gap: var(--space-1); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6) var(--space-2); overflow-x: auto; }
+  .topnav__link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-4); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: 500; white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .topnav__link:hover { background: var(--color-muted); color: var(--color-foreground); }
+  .topnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); }
+  main { padding: var(--space-6) var(--space-6) var(--space-7); }
+}
+@media (min-width: 1024px) {
+  .app { grid-template-columns: 264px minmax(0, 1fr); }
+  .hdr { display: none; }
+  .sidenav { display: flex; flex-direction: column; gap: var(--space-5); position: sticky; top: 0; height: 100vh; padding: var(--space-5) var(--space-4); background: var(--color-card); border-right: 1px solid var(--color-border); }
+  .sidenav__list { display: flex; flex-direction: column; gap: var(--space-1); }
+  .sidenav__link { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target); padding: 0 var(--space-3); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: 500; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .sidenav__link:hover { background: var(--color-muted); color: var(--color-foreground); }
+  .sidenav__link[aria-current="page"] { background: var(--color-primary-surface); color: var(--color-primary); font-weight: 700; }
+  .sidenav__note { margin-top: auto; background: var(--color-danger-surface); color: var(--color-danger-text); border-radius: var(--radius); padding: var(--space-4); font-size: 13px; line-height: 1.6; }
+  .sidenav__note strong { display: block; font-family: var(--font-heading); font-size: 16px; margin-bottom: var(--space-1); }
+  main { padding: var(--space-6) var(--space-7) var(--space-7); }
+}
+
+/* ---------- views ---------- */
+.view { display: none; }
+.view.is-active { display: block; }
+.view__head { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-foreground); }
+.view__eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; color: var(--color-primary); text-transform: uppercase; font-family: var(--font-heading); }
+.view__title { font-size: clamp(28px, 5vw, 44px); font-weight: 700; }
+.view__lead { color: var(--color-muted-foreground); max-width: 62ch; margin: 0; }
+
+/* ---------- search & filters ---------- */
+.search-bar { position: sticky; top: var(--header-h); z-index: var(--z-sticky); background: var(--color-background); padding: var(--space-2) 0 var(--space-3); margin-bottom: var(--space-2); }
+.search-bar__label { display: block; font-size: 14px; font-weight: 600; margin-bottom: var(--space-1); }
+.search-field { position: relative; }
+.search-field .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--color-muted-foreground); pointer-events: none; }
+.search-field input { width: 100%; min-height: 48px; font: inherit; font-size: 16px; color: var(--color-foreground); background: var(--color-card); border: 1.5px solid var(--color-border); border-radius: var(--radius); padding: 0 52px 0 44px; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.search-field input::placeholder { color: var(--color-muted-foreground); }
+.search-field input:focus { outline: none; border-color: var(--color-ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 25%, transparent); }
+.search-field input::-webkit-search-cancel-button { display: none; }
+.search-field__clear { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); width: var(--target); height: var(--target); border: 0; background: transparent; border-radius: var(--radius); display: none; place-items: center; cursor: pointer; color: var(--color-muted-foreground); }
+.search-field__clear.is-visible { display: grid; }
+.search-field__clear:hover { color: var(--color-foreground); }
+.filters { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+.filter-group { display: grid; gap: var(--space-2); }
+@media (min-width: 768px) { .filter-group { grid-template-columns: 56px 1fr; align-items: start; } .filter-group__label { padding-top: 9px; } }
+.filter-group__label { font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); }
+.chip-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 1.5px solid var(--color-border); border-radius: 999px; background: var(--color-card); color: var(--color-foreground); font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast); }
+@media (pointer: coarse) { .chip { min-height: var(--target); } }
+.chip:hover { border-color: var(--color-muted-foreground); }
+.chip:active { background: var(--color-muted); }
+.chip[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.chip__count { font-variant-numeric: tabular-nums; opacity: .75; font-size: 13px; }
+.chip--now[aria-pressed="false"] { border-color: var(--color-accent); }
+.chip--now .icon { color: var(--color-accent); }
+.chip--now[aria-pressed="true"] .icon { color: currentColor; }
+.result-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); font-size: 14px; color: var(--color-muted-foreground); }
+.result-bar__count { font-variant-numeric: tabular-nums; }
+.btn-text { border: 0; background: none; color: var(--color-primary); font-weight: 600; cursor: pointer; min-height: var(--target); padding: 0 var(--space-2); border-radius: var(--radius-sm); }
+.group-note { font-size: 14px; color: var(--color-foreground); background: var(--color-card); border: 1px solid var(--color-border); border-left: 4px solid var(--color-primary); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+.group-note--risk { border-left-color: var(--color-destructive); }
+
+/* ---------- species cards ---------- */
+.sp-grid { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
+@media (min-width: 640px) { .sp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .sp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sp-card { display: flex; flex-direction: column; gap: var(--space-2); text-align: left; width: 100%; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-4); cursor: pointer; transition: border-color var(--dur), box-shadow var(--dur), background-color var(--dur-fast); }
+.sp-card:hover { border-color: var(--color-primary); box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--color-foreground) 40%, transparent); }
+.sp-card:active { background: var(--color-muted); }
+.sp-card__meta { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); font-size: 12px; color: var(--color-muted-foreground); letter-spacing: .02em; }
+.sp-card__season { flex: none; font-size: 12px; font-weight: 600; color: var(--color-foreground); background: var(--color-muted); border-radius: var(--radius-sm); padding: 2px 8px; }
+.sp-card__name { font-size: 21px; font-weight: 700; }
+.sp-card__latin { font-size: 15px; color: var(--color-muted-foreground); margin-top: -4px; }
+.sp-card__feat { font-size: 14.5px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sp-card__warn { display: flex; gap: var(--space-2); align-items: flex-start; margin-top: auto; padding-top: var(--space-2); border-top: 1px dashed var(--color-border); font-size: 13px; color: var(--color-danger-text); }
+.sp-card__warn .icon { margin-top: 2px; }
+.sp-card__warn span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.month-strip { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
+.month-strip__cell { height: 6px; border-radius: 2px; background: var(--color-muted); }
+.month-strip__cell.is-in { background: var(--color-primary); }
+.month-strip__cell.is-now { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+.month-labels { display: grid; grid-template-columns: repeat(12, 1fr); font-size: 11px; color: var(--color-muted-foreground); text-align: center; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-sm); line-height: 1.5; }
+.badge--choice { background: var(--color-primary-surface); color: var(--color-primary); }
+.badge--cook { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.badge--risk, .badge--small { background: var(--color-danger-surface); color: var(--color-danger-text); }
+.badge--new { background: var(--color-muted); color: var(--color-foreground); border: 1px solid var(--color-border); }
+.empty-state { grid-column: 1 / -1; text-align: center; padding: var(--space-7) var(--space-4); color: var(--color-muted-foreground); }
+
+/* ---------- detail sheet ---------- */
+.sheet { border: 0; padding: 0; width: min(680px, 100%); max-height: 90vh; border-radius: var(--radius-lg); background: var(--color-card); color: var(--color-foreground); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .5); }
+.sheet::backdrop { background: rgba(5, 12, 8, .62); }
+@media (max-width: 767px) {
+  .sheet { margin: auto 0 0; max-width: 100%; width: 100%; max-height: 92vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .sheet[open] { animation: sheet-up var(--dur) var(--ease); }
+}
+@keyframes sheet-up { from { transform: translateY(32px); opacity: .5; } }
+.sheet__body { max-height: inherit; overflow-y: auto; padding: var(--space-4) var(--space-5) calc(var(--space-5) + env(safe-area-inset-bottom)); overscroll-behavior: contain; }
+@media (min-width: 768px) { .sheet__body { padding: var(--space-6); } }
+.sheet__bar { position: sticky; top: calc(-1 * var(--space-4)); display: flex; justify-content: space-between; align-items: center; background: var(--color-card); margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-5)) var(--space-3); padding: var(--space-2) var(--space-3) var(--space-2) var(--space-5); border-bottom: 1px solid var(--color-border); z-index: 1; }
+@media (min-width: 768px) { .sheet__bar { top: calc(-1 * var(--space-6)); margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-4); padding-left: var(--space-6); } }
+.sheet__group { font-size: 13px; font-weight: 600; color: var(--color-primary); }
+.icon-btn { width: var(--target); height: var(--target); border: 0; border-radius: var(--radius); background: transparent; display: grid; place-items: center; cursor: pointer; color: var(--color-foreground); transition: background-color var(--dur-fast); }
+.icon-btn:hover, .icon-btn:active { background: var(--color-muted); }
+.sheet__title { font-size: 30px; font-weight: 700; }
+.sheet__latin { font-size: 19px; color: var(--color-muted-foreground); }
+.sheet__en { font-size: 14px; color: var(--color-muted-foreground); }
+.sheet__months { margin: var(--space-4) 0 var(--space-3); }
+.facts { margin: var(--space-4) 0; }
+.fact { display: grid; grid-template-columns: 72px 1fr; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+.fact dt { font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); padding-top: 2px; }
+.fact dd { margin: 0; }
+.callout { display: flex; gap: var(--space-3); border-radius: var(--radius); padding: var(--space-3) var(--space-4); font-size: 15px; }
+.callout .icon { margin-top: 3px; }
+.callout--danger { background: var(--color-danger-surface); color: var(--color-danger-text); }
+.callout--info { background: var(--color-muted); color: var(--color-foreground); }
+.note-list { margin: var(--space-4) 0 0; padding-left: 1.2em; }
+.note-list li { margin-bottom: var(--space-2); }
+.note-list li::marker { color: var(--color-accent); }
+.muted-note { font-size: 13px; color: var(--color-muted-foreground); margin-top: var(--space-3); }
+.link-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.btn { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-4); border-radius: var(--radius); border: 1.5px solid var(--color-border); background: var(--color-card); color: var(--color-foreground); text-decoration: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast); }
+.btn:hover { border-color: var(--color-foreground); }
+.btn:active { background: var(--color-muted); }
+.btn--primary { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.btn--primary:hover { border-color: var(--color-primary); filter: brightness(1.08); }
+.sources { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }
+.sources h3 { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
+.sources ol { margin: 0; padding-left: 1.3em; font-size: 14px; }
+.sources li { margin-bottom: var(--space-1); }
+.sources a { color: var(--color-muted-foreground); }
+.sources a:hover { color: var(--color-primary); }
+
+/* ---------- toxic ---------- */
+.danger-banner { display: flex; gap: var(--space-3); background: var(--color-danger-surface); color: var(--color-danger-text); border-radius: var(--radius); padding: var(--space-4) var(--space-5); margin-bottom: var(--space-5); }
+.danger-banner strong { display: block; font-family: var(--font-heading); font-size: 19px; }
+.tox-grid { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
+@media (min-width: 768px) { .tox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tox-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-1) var(--space-4); background: var(--color-card); border: 1px solid var(--color-border); border-top: 4px solid var(--color-destructive); border-radius: var(--radius); padding: var(--space-4) var(--space-5) var(--space-5); }
+.tox-card--poison { border-top-color: var(--color-accent); }
+.tox-card__num { grid-row: span 2; font-family: var(--font-heading); font-weight: 700; font-size: 40px; line-height: 1; color: var(--color-destructive); font-variant-numeric: tabular-nums; }
+.tox-card--poison .tox-card__num { color: var(--color-accent); }
+.tox-card__name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.tox-card__sub { font-size: 14px; color: var(--color-muted-foreground); }
+.tox-card__body { grid-column: 1 / -1; display: grid; gap: var(--space-3); margin-top: var(--space-3); }
+.level { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-body); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-sm); }
+.level--deadly { background: var(--color-destructive); color: #fff; }
+.level--poison { background: var(--color-accent); color: var(--color-on-accent); }
+:root[data-theme="dark"] .level--deadly { color: #1b0505; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .level--deadly { color: #1b0505; } }
+.subhead { margin: var(--space-7) 0 var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border); }
+.subhead h2 { font-size: 24px; font-weight: 700; }
+.subhead p { margin: var(--space-1) 0 0; color: var(--color-muted-foreground); }
+
+/* ---------- prose panels ---------- */
+.panel-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } .panel--wide { grid-column: 1 / -1; } }
+.panel { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-5); }
+.panel__title { display: flex; align-items: baseline; gap: var(--space-3); font-size: 20px; font-weight: 700; margin-bottom: var(--space-3); }
+.panel__num { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.panel__tag { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--color-muted-foreground); }
+.panel p, .panel li { max-width: 72ch; }
+.panel ul, .panel ol { margin: 0; padding-left: 1.3em; }
+.panel li { margin-bottom: var(--space-2); }
+.panel li::marker { color: var(--color-primary); }
+.panel--danger { background: var(--color-danger-surface); border-color: transparent; }
+.panel--danger .panel__title { color: var(--color-danger-text); }
+.rules { list-style: none; padding: 0 !important; display: grid; gap: var(--space-4); counter-reset: rule; }
+.rules li { counter-increment: rule; display: grid; grid-template-columns: 36px 1fr; gap: var(--space-3); margin: 0; }
+.rules li::before { content: counter(rule); width: 36px; height: 36px; border-radius: 50%; background: var(--color-primary); color: var(--color-on-primary); display: grid; place-items: center; font-family: var(--font-heading); font-weight: 700; }
+.rules li:first-child::before { background: var(--color-destructive); color: #fff; }
+.steps { list-style: none; padding: 0 !important; counter-reset: step; }
+.steps li { counter-increment: step; position: relative; padding-left: 38px; margin-bottom: var(--space-3); }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 1px; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--color-primary); color: var(--color-primary); display: grid; place-items: center; font-size: 13px; font-weight: 700; font-family: var(--font-heading); }
+.kv { display: grid; grid-template-columns: 1fr; gap: 2px; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+.kv:first-of-type { border-top: 0; padding-top: 0; }
+@media (min-width: 560px) { .kv { grid-template-columns: 140px 1fr; gap: var(--space-4); } }
+.kv-k { font-weight: 700; }
+.kv-k small { display: block; font-weight: 500; color: var(--color-muted-foreground); font-size: 13px; }
+details.panel > summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; min-height: var(--target); font-family: var(--font-heading); font-size: 20px; font-weight: 700; }
+details.panel > summary::-webkit-details-marker { display: none; }
+details.panel > summary .icon { transition: transform var(--dur); }
+details.panel[open] > summary .icon { transform: rotate(180deg); }
+details.panel[open] > summary { margin-bottom: var(--space-3); }
+
+/* ---------- recipes ---------- */
+.rc-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .rc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+.rc-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; }
+.rc-card__head { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-3); padding: var(--space-5); border-bottom: 1px solid var(--color-border); background: var(--color-muted); }
+.rc-card__num { grid-row: span 2; font-family: var(--font-heading); font-weight: 700; font-size: 44px; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums; align-self: start; }
+.rc-card__name { font-size: 23px; font-weight: 700; }
+.rc-card__en { font-size: 15px; color: var(--color-muted-foreground); }
+.rc-card__meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-2); }
+.rc-card__meta span { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 2px 8px; font-variant-numeric: tabular-nums; }
+.rc-card__body { padding: var(--space-5); display: grid; gap: var(--space-4); }
+.rc-card__best { font-size: 14px; color: var(--color-muted-foreground); }
+.rc-card__best strong { color: var(--color-foreground); }
+.rc-card h4 { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); letter-spacing: .06em; margin-bottom: var(--space-2); }
+.ing-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+@media (min-width: 560px) { .ing-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-4); } }
+.ing-list label { display: flex; align-items: flex-start; gap: var(--space-3); min-height: 40px; padding: var(--space-2) 0; cursor: pointer; font-size: 15px; line-height: 1.5; }
+@media (pointer: coarse) { .ing-list label { min-height: var(--target); } }
+.ing-list input { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 2px solid var(--color-muted-foreground); border-radius: 6px; display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast); }
+.ing-list input:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.ing-list input:checked::after { content: ""; width: 10px; height: 6px; border: 2.5px solid var(--color-on-primary); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.ing-list input:checked + span { text-decoration: line-through; color: var(--color-muted-foreground); }
+.rc-card__tip { display: flex; gap: var(--space-2); font-size: 14px; background: var(--color-muted); border-radius: var(--radius-sm); padding: var(--space-3); }
+.rc-card__tip .icon { color: var(--color-accent); margin-top: 2px; }
+.rindex { list-style: none; padding: 0; margin: 0; columns: 1; column-gap: var(--space-6); }
+@media (min-width: 640px) { .rindex { columns: 2; } }
+@media (min-width: 1280px) { .rindex { columns: 3; } }
+.rindex li { break-inside: avoid; display: grid; grid-template-columns: 48px 1fr; padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: 15px; }
+.rindex__page { color: var(--color-accent); font-variant-numeric: tabular-nums; font-size: 14px; padding-top: 1px; font-weight: 600; }
+.rindex__en { display: block; font-size: 13px; color: var(--color-muted-foreground); }
+.rindex__tag { font-size: 11px; font-weight: 700; background: var(--color-primary); color: var(--color-on-primary); padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: 2px; }
+
+/* ---------- emergency entry ---------- */
+.sos-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: var(--target); padding: 0 14px; border-radius: 999px; background: var(--color-destructive); color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.sos-pill:active { filter: brightness(.92); }
+:root[data-theme="dark"] .sos-pill { color: #1b0505; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sos-pill { color: #1b0505; } }
+.sidenav__sos { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); min-height: 40px; padding: 0 12px; border-radius: var(--radius-sm); background: var(--color-destructive); color: #fff; font-weight: 700; text-decoration: none; }
+
+/* ---------- in-page jump buttons ---------- */
+.jump-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
+
+/* ---------- finder ---------- */
+.finder { display: grid; gap: var(--space-5); }
+@media (min-width: 1024px) { .finder { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; } .finder__results { position: sticky; top: var(--space-5); } }
+.step { border: 1px solid var(--color-border); background: var(--color-card); border-radius: var(--radius); padding: var(--space-4); margin: 0 0 var(--space-3); }
+.step legend { padding: 0 var(--space-1); font-family: var(--font-heading); font-weight: 700; font-size: 17px; }
+.step__hint { font-size: 13px; color: var(--color-muted-foreground); margin: 0 0 var(--space-3); }
+.step__num { color: var(--color-accent); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent); flex: none; }
+.finder__note { display: flex; gap: var(--space-2); font-size: 14px; background: var(--color-warning-surface); color: var(--color-warning-text); border-radius: var(--radius); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+.finder__note .icon { margin-top: 2px; }
+.res-block { margin-bottom: var(--space-5); }
+.res-block__title { display: flex; align-items: center; gap: var(--space-2); font-size: 17px; font-weight: 700; margin-bottom: var(--space-2); }
+.res-block--toxic .res-block__title { color: var(--color-danger-text); }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.res-item { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 56px; padding: var(--space-2) var(--space-4); text-align: left; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); color: var(--color-foreground); text-decoration: none; cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+.res-item:hover { border-color: var(--color-primary); }
+.res-item:active { background: var(--color-muted); }
+.res-item--toxic { border-left: 4px solid var(--color-destructive); }
+.res-item--toxic:hover { border-color: var(--color-destructive); }
+.res-item__main { flex: 1; min-width: 0; }
+.res-item__name { font-weight: 700; display: block; }
+.res-item__sub { display: block; font-size: 13px; color: var(--color-muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.res-item__why { display: block; font-size: 12px; color: var(--color-danger-text); }
+.finder__jump { position: sticky; top: calc(var(--header-h) + var(--space-2)); z-index: var(--z-sticky); width: 100%; justify-content: center; margin-bottom: var(--space-4); box-shadow: 0 6px 16px -8px rgba(0,0,0,.35); }
+.finder__jump[hidden] { display: none; }
+@media (min-width: 1024px) { .finder__jump { display: none !important; } }
+.finder__results { scroll-margin-top: calc(var(--header-h) + 16px); }
+.res-empty { color: var(--color-muted-foreground); background: var(--color-card); border: 1px dashed var(--color-border); border-radius: var(--radius); padding: var(--space-5); text-align: center; }
+
+/* ---------- compare ---------- */
+.cmp-list { display: grid; gap: var(--space-4); }
+.cmp { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; }
+.cmp__head { padding: var(--space-4) var(--space-5) var(--space-3); display: flex; justify-content: space-between; gap: var(--space-3); align-items: flex-start; }
+.cmp__title { font-size: 19px; font-weight: 700; }
+.cmp__lead { font-size: 14px; color: var(--color-muted-foreground); margin: var(--space-1) 0 0; }
+.cmp__table { display: grid; }
+.cmp__cols, .cmp__cells { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 1px; background: var(--color-border); }
+.cmp__col { background: var(--color-card); padding: var(--space-2) var(--space-3); font-weight: 700; font-size: 14px; display: flex; flex-direction: column; gap: 2px; border-top: 4px solid var(--color-border); }
+.cmp__col--edible { border-top-color: var(--color-primary); }
+.cmp__col--caution { border-top-color: var(--color-accent); }
+.cmp__col--toxic { border-top-color: var(--color-destructive); }
+.cmp__col a { color: inherit; text-decoration-color: var(--color-border); }
+.cmp__kind { font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+.cmp__col--edible .cmp__kind { color: var(--color-primary); }
+.cmp__col--caution .cmp__kind { color: var(--color-warning-text); }
+.cmp__col--toxic .cmp__kind { color: var(--color-danger-text); }
+.cmp__row-label { background: var(--color-muted); padding: 6px var(--space-3); font-size: 12px; font-weight: 700; color: var(--color-muted-foreground); letter-spacing: .04em; }
+.cmp__cell { background: var(--color-card); padding: var(--space-2) var(--space-3) var(--space-3); font-size: 14px; line-height: 1.55; }
+.cmp__src { padding: var(--space-2) var(--space-5) var(--space-4); font-size: 12px; color: var(--color-muted-foreground); }
+.cmp__src a { color: inherit; }
+.is-target { animation: target-flash 1.6s var(--ease); }
+@keyframes target-flash { 0%, 40% { box-shadow: 0 0 0 4px var(--color-accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+/* ---------- emergency ---------- */
+.sos-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .sos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+.call-card { background: var(--color-danger-surface); border-radius: var(--radius-lg); padding: var(--space-5); display: grid; gap: var(--space-3); }
+.call-card h2 { color: var(--color-danger-text); font-size: 22px; }
+.call-btn { display: flex; align-items: center; gap: var(--space-3); min-height: 64px; padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-destructive); color: #fff; text-decoration: none; }
+.call-btn--secondary { background: var(--color-card); color: var(--color-foreground); border: 1.5px solid var(--color-border); }
+.call-btn__label { display: block; font-size: 13px; opacity: .9; }
+.call-btn__num { display: block; font-family: var(--font-heading); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+:root[data-theme="dark"] .call-btn:not(.call-btn--secondary) { color: #1b0505; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .call-btn:not(.call-btn--secondary) { color: #1b0505; } }
+.delay-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.delay-table th, .delay-table td { text-align: left; padding: var(--space-2) var(--space-2) var(--space-2) 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.delay-table th { font-size: 12px; color: var(--color-muted-foreground); font-weight: 600; }
+.delay-table td:first-child { font-weight: 700; width: 34%; }
+@media (max-width: 599px) {
+  .delay-table thead { display: none; }
+  .delay-table tr { display: grid; gap: 2px; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+  .delay-table td { display: block; border: 0; padding: 0; width: auto !important; }
+  .delay-table td:nth-child(2)::before { content: "首发："; color: var(--color-muted-foreground); }
+  .delay-table td:nth-child(3)::before { content: "之后："; color: var(--color-muted-foreground); }
+}
+
+/* ---------- share + toast ---------- */
+.sheet__actions { display: flex; gap: var(--space-1); align-items: center; }
+.toast { position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom)); transform: translate(-50%, 12px); z-index: var(--z-toast); background: var(--color-foreground); color: var(--color-background); padding: var(--space-3) var(--space-4); border-radius: var(--radius); font-size: 14px; max-width: min(92vw, 520px); opacity: 0; pointer-events: none; transition: opacity var(--dur), transform var(--dur) var(--ease); word-break: break-all; }
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+@media (min-width: 768px) { .toast { bottom: var(--space-6); } }
+.offline-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--color-muted); }
+.offline-status.is-ready { background: var(--color-primary-surface); color: var(--color-primary); }
+
+.site-footer { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 2px solid var(--color-foreground); font-size: 13px; color: var(--color-muted-foreground); display: grid; gap: var(--space-2); max-width: 90ch; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-mushroom" viewBox="0 0 24 24"><path d="M3 12a9 7 0 0 1 18 0H3Z"/><path d="M9 12v6a3 3 0 0 0 6 0v-6"/></symbol>
+  <symbol id="i-skull" viewBox="0 0 24 24"><path d="M12 3a8 8 0 0 0-5 14.25V20h10v-2.75A8 8 0 0 0 12 3Z"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><path d="M10 20v-2M14 20v-2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="m9 4-6 2.5v13L9 17l6 2.5 6-2.5V4l-6 2.5L9 4Z"/><path d="M9 4v13M15 6.5v13"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 24 24"><path d="M3 12h13a6.5 6.5 0 0 1-13 0Z"/><path d="M16 12h5M7 8c0-1.5 1-1.5 1-3M11 8c0-1.5 1-1.5 1-3"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2.5Z"/><path d="M6 21h14v-4M9 7h7"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></symbol>
+  <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="sidenav" aria-label="侧边导航">
+    <a class="brand" href="#species">
+      <span class="brand__mark"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg></span>
+      <span><span class="brand__name">野菌速查</span><span class="brand__sub">识别 · 避毒 · 下厨</span></span>
+    </a>
+    <nav class="sidenav__list" aria-label="主导航">
+      <a class="sidenav__link" href="#species"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌</a>
+      <a class="sidenav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
+      <a class="sidenav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
+      <a class="sidenav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
+      <a class="sidenav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+    </nav>
+    <div class="sidenav__note"><strong>有任何疑问，就不要吃。</strong>本手册只是速查摘要，不能代替实物鉴定，也不能代替有经验的人或当地真菌协会。<br><a class="sidenav__sos" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a></div>
+  </aside>
+
+  <div>
+    <header class="hdr" id="hdr">
+      <div class="hdr__row">
+        <a class="brand" href="#species">
+          <span class="brand__mark"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg></span>
+          <span><span class="brand__name">野菌速查</span><span class="brand__sub">识别 · 避毒 · 下厨</span></span>
+        </a>
+        <a class="sos-pill" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
+      </div>
+      <nav class="topnav" aria-label="主导航">
+        <a class="topnav__link" href="#species"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌</a>
+        <a class="topnav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
+        <a class="topnav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
+        <a class="topnav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
+        <a class="topnav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+      </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- ================= SPECIES ================= -->
+      <section class="view" id="v-species" aria-labelledby="h-species">
+        <header class="view__head">
+          <span class="view__eyebrow">Field guide</span>
+          <h1 class="view__title" id="h-species">食用菌速查</h1>
+          <p class="view__lead">原书 52 种欧洲常见食用菌，另补充松茸等 7 种北美种类。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
+        </header>
+        <div class="search-bar">
+          <label class="search-bar__label" for="q">搜索菌名</label>
+          <div class="search-field">
+            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="中文名、英文名或学名，如 鸡油菌 / porcini">
+            <button class="search-field__clear" id="q-clear" type="button" aria-label="清除搜索"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="filter-group" role="group" aria-labelledby="lbl-season">
+            <span class="filter-group__label" id="lbl-season">季节</span>
+            <div class="chip-list" id="season-chips"></div>
+          </div>
+          <div class="filter-group" role="group" aria-labelledby="lbl-group">
+            <span class="filter-group__label" id="lbl-group">形态</span>
+            <div class="chip-list" id="group-chips"></div>
+          </div>
+        </div>
+        <div class="result-bar">
+          <span class="result-bar__count" id="count" role="status" aria-live="polite"></span>
+          <button class="btn-text" id="reset-all" type="button" hidden>清除筛选</button>
+        </div>
+        <div id="group-note"></div>
+        <div class="sp-grid" id="grid"></div>
+      </section>
+
+      <!-- ================= FINDER ================= -->
+      <section class="view" id="v-finder" aria-labelledby="h-finder">
+        <header class="view__head">
+          <span class="view__eyebrow">Identify by features</span>
+          <h1 class="view__title" id="h-finder">按特征查找</h1>
+          <p class="view__lead">手上有一朵不认识的菌？按看到的特征回答，列出可能的种类。<b>可能的毒菌会排在最前面。</b></p>
+        </header>
+        <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 59 种食用菌和 15 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
+        <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
+        <div class="finder">
+          <div class="finder__steps" id="finder-steps"></div>
+          <div class="finder__results" id="finder-results" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- ================= TOXIC ================= -->
+      <section class="view" id="v-toxic" aria-labelledby="h-toxic">
+        <header class="view__head">
+          <span class="view__eyebrow">Toxic look-alikes</span>
+          <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
+          <p class="view__lead">原书十大毒菌（p38–39）、北美采菌时最需要警惕的种类，以及 6 组最常混淆的食用菌和毒菌对比。</p>
+        </header>
+        <div class="danger-banner" role="note">
+          <svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><strong>少数毒菌可以致命，更多会造成严重肠胃不适。</strong>采到的东西只要有一点疑问，就扔掉。</div>
+        </div>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="tox-grid">十大毒菌</button>
+          <button class="chip" type="button" data-jump="tox-extra-head">北美补充</button>
+          <button class="chip" type="button" data-jump="cmp-head"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-columns"/></svg>易混对比</button>
+          <a class="chip" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
+        </div>
+        <div class="tox-grid" id="tox-grid"></div>
+        <div class="subhead" id="tox-extra-head"><h2>补充：北美的危险种类</h2><p>原书没有收录，但在北美采菌时最需要警惕。</p></div>
+        <div class="tox-grid" id="tox-grid-extra"></div>
+        <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 6 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
+        <div class="cmp-list" id="cmp-list"></div>
+        <div class="panel" style="margin-top: var(--space-6)">
+          <h2 class="panel__title">几条可以带走的规律</h2>
+          <ul>
+            <li>可食的蘑菇属也是白色带环的菌：<b>白色孢子印 + 基部有菌托</b>就要高度警惕鹅膏。采白色有褶菌时一定挖出完整柄基。</li>
+            <li>羊肚菌是<b>凹坑</b>，鹿花菌是<b>脑回状褶</b>。</li>
+            <li>鸡油菌是钝圆的<b>棱脊</b>，不是刀片状的真菌褶；长在木头上、密集成簇的橙色菌要想到发光类脐菇。</li>
+            <li>墨水味，或柄基切开立即变铬黄：黄斑蘑菇。</li>
+            <li>大环柄菇类做孢子印：<b>绿色</b>就是有毒的大青褶伞。</li>
+            <li>长在木头上的小褐菇，孢子印锈褐色：可能是致命的纹缘盔孢伞。</li>
+            <li>【编者注】丝膜菌、史密斯鹅膏中毒症状可能数天后才出现。吃过野菌后身体不适，请尽早就医，并带上剩余菌样。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= GUIDE ================= -->
+      <section class="view" id="v-guide" aria-labelledby="h-guide">
+        <header class="view__head">
+          <span class="view__eyebrow">Field &amp; kitchen</span>
+          <h1 class="view__title" id="h-guide">采集与厨房</h1>
+          <p class="view__lead">出门前读一遍：守则、装备、时间、地点、怎么鉴定；采回家后怎么清理、烹饪和保存。</p>
+        </header>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="guide-field">采集</button>
+          <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
+          <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
+        </div>
+        <div class="panel-grid" id="guide-field">
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
+            <ol class="rules">
+              <li><div><b>拿不准，绝对不吃。</b>你必须确定它无毒。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请真菌专家或可靠图鉴确认。</div></li>
+              <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
+              <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
+              <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
+            </ol>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">02</span>带什么</h2>
+            <ul>
+              <li><b>宽底轻篮子</b>最好。塑料袋会挤坏菌子、让它们“出汗”。</li>
+              <li><b>采菌刀</b>：折叠刀，一侧带锯齿可刮泥，尾端带小刷子。普通小刀也行。</li>
+              <li><b>长手杖</b>：拨开落叶、标记位置、上下坡。</li>
+              <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路时朝车声方向走。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
+            <ul>
+              <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>。</li>
+              <li>春夏：连续几天透雨后转暖的温和天气最好；秋冬：温和潮湿的日子。久旱和暴雨都不利。</li>
+              <li>霜雪会让多数菌停止出菇，但管形鸡油菌、野生金针菇等耐寒。</li>
+              <li><b>早起</b>：菌子没被动物和行人破坏，你也是第一个到场的人。</li>
+            </ul>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">04</span>去哪里找</h2>
+            <p>我们采的只是真菌的“果实”。有的菌靠腐烂有机物生活，有的寄生在活树上，还有的与特定树种的根共生（菌根菌），所以可能长在离树一段距离的地方。附近出现其他（哪怕不能吃的）菌，往往是好兆头。</p>
+            <!--HABITATS-->
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">05</span>采摘</h2>
+            <ul>
+              <li><b>先鉴定。</b>检查整朵菌，记下生境、颜色、气味、大小、形状。同一种菌在不同生长阶段外观会变。</li>
+              <li><b>完整取下。</b>轻轻拔、或用刀尖撬出，保留柄基便于鉴定。不要硬扯，以免伤到菌丝。</li>
+              <li><b>只要状态最好的。</b>过熟、软烂、虫蛀多的留在原地散播孢子。</li>
+              <li><b>边采边清理。</b>刷掉杂物、切掉脏柄基，不同种类分开放。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">06</span>做孢子印</h2>
+            <ol class="steps">
+              <li>用<b>新鲜</b>菌子。切下菌盖，菌褶朝下放在纸上；拿不准颜色深浅就一半白纸、一半黑纸。</li>
+              <li>在菌盖顶滴一滴水，用玻璃碗扣住。</li>
+              <li>放几小时或过夜，轻轻拿开碗和菌盖即可看到。</li>
+              <li>在自然光下看：白至奶油、粉至红、赭至黏土色、锈褐、紫褐、黑；大青褶伞是<b>绿色</b>。</li>
+            </ol>
+            <p class="muted-note">同属内孢子颜色差别很小：鹅膏属白色，蘑菇属巧克力色，丝盖伞属、丝膜菌属和盔孢伞属褐色，粉褶菌属粉色。</p>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">07</span>看哪些特征</h2>
+            <!--FEATURES-->
+          </section>
+          <details class="panel panel--wide">
+            <summary>术语小词典<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+            <!--GLOSS-->
+          </details>
+        </div>
+        <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。</p></div>
+        <div class="panel-grid">
+          <section class="panel panel--danger panel--wide">
+            <h2 class="panel__title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>先看这里</h2>
+            <p><b>必须彻底煮熟：</b>羊肚菌、鹅膏类（赭盖鹅膏、橙黄鹅膏），生吃有毒；紫丁香蘑、粉紫香蘑、疣柄牛肝菌、蜜环菌也须煮熟。</p>
+            <p><b>可以生吃的少数：</b>田野蘑菇、牛肝菌（薄切拌沙拉）；松露（刨片）。</p>
+            <p style="margin:0">几种菌混着做时，注意各自所需时间不同，确保全部熟透。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">01</span>回家第一件事</h2>
+            <ul>
+              <li>尽快把收获摊在桌布上，挑掉杂物，<b>按种类分开</b>。有疑问的扔掉，或再核对一次。</li>
+              <li>湿透的先晾干，否则会发霉。</li>
+              <li>最好的幼嫩个体留给沙拉、主菜、腌制或冷冻；次一些的做汤、炖菜或晒干。</li>
+              <li>暂不处理就放阴凉处，铺湿布、盖湿布，可放 1–2 天。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">02</span>清洁</h2>
+            <ul>
+              <li><b>不要水洗</b>，吸水后会稀释风味。例外是<b>绣球菌</b>，可以洗。</li>
+              <li>大多数野菌不用去皮，例外是黏盖的<b>褐环乳牛肝菌</b>。</li>
+              <li><b>结实的</b>（牛肝菌、香蘑）：小湿刀刮去柄基杂物，顺柄刮净。</li>
+              <li><b>娇嫩的</b>（羊肚菌、鸡油菌）：软毛刷刷，嵌进去的泥用小刀挑出。</li>
+              <li><b>卷缘齿菌</b>：老的菌刺发苦，轻搓即可脱落。</li>
+              <li>清理好后冷藏：有盖盒子，上下垫湿厨房纸。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">03</span>切分</h2>
+            <p>一定要切开或掰开检查：虫从菌盖中心开始往外蛀，外表好看的里面可能全是虫孔。</p>
+            <ul>
+              <li><b>牛肝菌、硫磺菌、大马勃</b>：用刀切。大的盖柄分开，盖纵切片，柄切薄片。</li>
+              <li><b>羊肚菌</b>：拧下柄，大的纵切，检查空腔里有无虫。</li>
+              <li><b>卷缘齿菌等脆的</b>：用手掰成均匀小块。</li>
+              <li><b>鸡油菌等纤维质的</b>：从盖往下撕开；硬柄留着熬高汤。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">04</span>万能基础做法<span class="panel__tag">原书 p177</span></h2>
+            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，任何杂菌都适用。4 人份，约 35 分钟。</p>
+            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 杂菌 500 g 切厚片 · 盐、黑胡椒</p>
+            <ol class="steps">
+              <li>小火加热油、蒜和一半欧芹。</li>
+              <li>转大火下菌，勤翻炒 5 分钟，再转小火。</li>
+              <li>调味，小火煮约 20 分钟至软；留一点汁、但不能太干。</li>
+              <li>撒上余下的欧芹。</li>
+            </ol>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">05</span>烹饪方法</h2>
+            <!--COOK-->
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">06</span>保存</h2>
+            <p>干制最方便，可放很久；冷冻、腌制的宜在几个月内吃完。部分种类保存前要先<b>焯水</b>，可去除生菌中可能有的毒素，并保持颜色和形状。</p>
+            <!--KEEP-->
+          </section>
+        </div>
+        <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册。</p></div>
+        <div class="panel-grid">
+          <section class="panel">
+            <h2 class="panel__title">本机状态</h2>
+            <p><span class="offline-status" id="offline-status">检查中…</span></p>
+            <p class="muted-note">用网址打开过一次、状态显示“已可离线使用”后，就可以在没信号的地方打开了。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title">装到手机桌面</h2>
+            <ul>
+              <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
+              <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
+              <li>装好后从桌面图标打开，会像独立的 App 一样全屏显示。</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <!-- ================= RECIPES ================= -->
+      <section class="view" id="v-recipes" aria-labelledby="h-recipes">
+        <header class="view__head">
+          <span class="view__eyebrow">Recipes</span>
+          <h1 class="view__title" id="h-recipes">精选食谱</h1>
+          <p class="view__lead">6 道步骤简单、用料常见的菜。用量为公制，1 汤匙 ≈ 15 ml。勾选材料可以当购物清单用。</p>
+        </header>
+        <div class="rc-grid" id="rc-grid"></div>
+        <details class="panel" style="margin-top: var(--space-5)">
+          <summary>原书全部 53 道食谱<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+          <ul class="rindex" id="rindex"></ul>
+        </details>
+      </section>
+
+      <!-- ================= EMERGENCY ================= -->
+      <section class="view" id="v-emergency" aria-labelledby="h-emergency">
+        <header class="view__head">
+          <span class="view__eyebrow">Emergency</span>
+          <h1 class="view__title" id="h-emergency">中毒急救</h1>
+          <p class="view__lead">怀疑吃了有毒的野菌：<b>不要等症状</b>，立刻打电话。症状出现得越晚，往往越危险。</p>
+        </header>
+        <div class="sos-grid">
+          <section class="call-card" aria-labelledby="h-call">
+            <h2 id="h-call">1. 马上打电话</h2>
+            <a class="call-btn" href="tel:18002221222"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">美国毒物控制中心（免费，24 小时，全国通用）</span><span class="call-btn__num">1-800-222-1222</span></span></a>
+            <a class="call-btn" href="tel:911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">昏迷、抽搐、呼吸困难：直接打急救</span><span class="call-btn__num">911</span></span></a>
+            <a class="call-btn call-btn--secondary" href="tel:18005678911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">加拿大不列颠哥伦比亚省毒物中心（大温哥华地区：604-682-5050）</span><span class="call-btn__num">1-800-567-8911</span></span></a>
+            <p class="muted-note" style="margin:0">如果按钮拨不出去，请手动拨打上面的号码。其他国家请拨当地急救电话。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title">2. 保留证据</h2>
+            <ul>
+              <li><b>留下剩余的菌子和剩菜</b>，包括切下的柄基和边角料；能拍照就多角度拍照。这能帮医生和鉴定人员确认是哪一种。</li>
+              <li>记下<b>什么时候吃的、吃了多少、怎么做的</b>，以及第一次出现不适的时间。</li>
+              <li><b>一起吃过的人都要联系医生</b>，即使暂时没有症状。</li>
+            </ul>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title">3. 症状出现晚，不代表没事</h2>
+            <p>有几类最危险的毒菌，吃下后要过好几个小时甚至几天才出现症状，那时器官可能已经受损。</p>
+            <table class="delay-table">
+              <thead><tr><th>毒菌</th><th>首发症状</th><th>之后</th></tr></thead>
+              <tbody>
+                <tr><td>毒鹅膏、毁灭天使、纹缘盔孢伞（鹅膏毒素）</td><td>约 6–10 小时后恶心、呕吐、腹泻</td><td>约 36 小时肝功能指标升高，约 72 小时可发生肝衰竭。毒素<b>煮不坏</b></td></tr>
+                <tr><td>史密斯鹅膏</td><td>20 分钟到 1 天内腹痛、腹泻、呕吐</td><td>2–6 天后可发生肾衰竭，部分患者需要透析</td></tr>
+                <tr><td>细鳞丝膜菌等丝膜菌</td><td>可能数天后才出现</td><td>伤肾</td></tr>
+                <tr><td>大青褶伞、发光类脐菇</td><td>1–3 小时内剧烈呕吐腹泻</td><td>通常数天内恢复，但仍应就医</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <div class="sources panel--wide" style="grid-column: 1 / -1">
+            <h3>资料来源</h3>
+            <ol>
+              <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Galerina marginata（中毒时间线与毒物中心电话）</a></li>
+              <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Amanita smithiana</a></li>
+              <li><a href="https://en.wikipedia.org/wiki/Chlorophyllum_molybdites" target="_blank" rel="noopener">Wikipedia：Chlorophyllum molybdites</a></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>内容改写自 <i>The Edible Mushroom Book: A Guide to Foraging and Cooking</i>（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008）。“原书 p__”为英文原书页码。北美补充部分的资料来源见各条目详情。</p>
+        <p>原书以英国和欧洲物种为主。在北美、亚洲等地，同一种菌可能有不同的近似毒菌，请配合当地图鉴。标有【编者注】的是改写时补充的安全提示。</p>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<nav class="botnav" aria-label="主导航">
+  <a class="botnav__link" href="#species"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌</a>
+  <a class="botnav__link" href="#finder"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
+  <a class="botnav__link" href="#toxic"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-skull"/></svg>毒菌</a>
+  <a class="botnav__link" href="#guide"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-map"/></svg>指南</a>
+  <a class="botnav__link" href="#recipes"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+</nav>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheet-title"><div class="sheet__body" id="sheet-body"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const MONTH = new Date().getMonth() + 1;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const strip = s => String(s).replace(/<[^>]+>/g, "");
+const icon = (id, cls = "") => `<svg class="icon ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const groupBy = Object.fromEntries(DATA.groups.map(g => [g.key, g]));
+const state = { q: "", group: "all", season: "all" };
+
+/* keep the sticky search bar directly under the (variable-height) header */
+const hdr = $("#hdr");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", (hdr.offsetParent ? hdr.offsetHeight : 0) + "px");
+if (window.ResizeObserver) new ResizeObserver(setHeaderH).observe(hdr);
+window.addEventListener("resize", setHeaderH); setHeaderH();
+
+const SEASONS = [
+  { key: "all", label: "全部" },
+  { key: "now", label: `本月可采 · ${MONTH}月`, months: [MONTH] },
+  { key: "spring", label: "春", months: [3, 4, 5] },
+  { key: "summer", label: "夏", months: [6, 7, 8] },
+  { key: "autumn", label: "秋", months: [9, 10, 11] },
+  { key: "winter", label: "冬", months: [12, 1, 2] },
+];
+const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "少量食用": "small", "非原书": "new" };
+const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
+function monthStrip(ms, labels) {
+  const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}"></span>`).join("");
+  const lab = labels ? `<span class="month-labels" aria-hidden="true">${Array.from({ length: 12 }, (_, i) => `<span>${i + 1}</span>`).join("")}</span>` : "";
+  return `<span class="month-strip" role="img" aria-label="出菇月份：${ms.join("、")} 月">${cells}</span>${lab}`;
+}
+
+function matches(s) {
+  if (state.group !== "all" && s.group !== state.group) return false;
+  if (state.season !== "all") {
+    const ms = SEASONS.find(x => x.key === state.season).months;
+    if (!s.months.some(m => ms.includes(m))) return false;
+  }
+  if (state.q) {
+    const hay = [s.zh, s.en, s.latin, s.latin2 || "", s.region || "", strip(s.feat), strip(s.hab), groupBy[s.group].name].join(" ").toLowerCase();
+    if (!state.q.toLowerCase().split(/\s+/).every(t => hay.includes(t))) return false;
+  }
+  return true;
+}
+
+function renderChips() {
+  $("#season-chips").innerHTML = SEASONS.map(x => {
+    const n = x.key === "all" ? DATA.species.length : DATA.species.filter(s => s.months.some(m => x.months.includes(m))).length;
+    return `<button type="button" class="chip${x.key === "now" ? " chip--now" : ""}" data-season="${x.key}" aria-pressed="${state.season === x.key}">${x.key === "now" ? icon("calendar", "icon--sm") : ""}${esc(x.label)}<span class="chip__count">${n}</span></button>`;
+  }).join("");
+  $("#group-chips").innerHTML = `<button type="button" class="chip" data-group="all" aria-pressed="${state.group === "all"}">全部</button>` +
+    DATA.groups.map(g => `<button type="button" class="chip" data-group="${g.key}" aria-pressed="${state.group === g.key}">${esc(g.short)}</button>`).join("");
+}
+
+function renderGrid() {
+  const list = DATA.species.map((s, i) => [s, i]).filter(([s]) => matches(s));
+  $("#count").textContent = `显示 ${list.length} / ${DATA.species.length} 种`;
+  $("#reset-all").hidden = !(state.q || state.group !== "all" || state.season !== "all");
+  const g = state.group !== "all" ? groupBy[state.group] : null;
+  $("#group-note").innerHTML = g ? `<div class="group-note${g.key === "amanita" ? " group-note--risk" : ""}"><b>${esc(g.name)}</b>　${g.note}</div>` : "";
+  $("#grid").innerHTML = list.length ? list.map(([s, i]) => `
+    <button class="sp-card" type="button" data-i="${i}" aria-haspopup="dialog">
+      <span class="sp-card__meta"><span>${esc(groupBy[s.group].short)}${s.region ? " · " + esc(s.region) : ""}</span><span class="sp-card__season">${esc(s.season)}</span></span>
+      <span class="sp-card__name">${esc(s.zh)}</span>
+      <span class="sp-card__latin latin">${esc(s.latin)}</span>
+      ${monthStrip(s.months)}
+      <span class="sp-card__feat">${s.feat}</span>
+      ${badges(s.flags)}
+      ${s.warn ? `<span class="sp-card__warn">${icon("alert", "icon--sm")}<span><span class="sr-only">易混毒菌：</span>${s.warn}</span></span>` : ""}
+    </button>`).join("")
+    : `<div class="empty-state"><p>没有符合条件的菌。</p><button class="btn" type="button" data-reset>清除全部筛选</button></div>`;
+}
+function resetAll() { state.q = ""; state.group = "all"; state.season = "all"; $("#q").value = ""; sync(); }
+function sync() { renderChips(); renderGrid(); $("#q-clear").classList.toggle("is-visible", !!state.q); }
+
+function photoLinks(latin) {
+  latin = latin.split(" / ")[0].replace(" spp.", "");
+  const q = encodeURIComponent(latin);
+  return `<a class="btn btn--primary" href="https://www.inaturalist.org/taxa/search?q=${q}" target="_blank" rel="noopener">在 iNaturalist 看照片${icon("out", "icon--sm")}</a>
+          <a class="btn" href="https://en.wikipedia.org/wiki/${latin.replace(/ /g, "_")}" target="_blank" rel="noopener">维基百科${icon("out", "icon--sm")}</a>`;
+}
+function sourcesHtml(src) {
+  if (!src) return "";
+  return `<div class="sources"><h3>资料来源</h3><ol>${src.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ol></div>`;
+}
+
+const bySlug = Object.fromEntries(DATA.species.map((s, i) => [s.slug, i]));
+const toxicAll = DATA.poison.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, "0") }))
+  .concat(DATA.poisonExtra.map((p, j) => ({ ...p, num: "+" + (j + 1) })));
+
+/* ---------- share ---------- */
+let toastTimer;
+function toast(msg) {
+  const el = $("#toast"); el.textContent = msg; el.classList.add("is-on");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("is-on"), 2600);
+}
+function pageUrl(hash) { let base = ""; try { base = location.href.split("#")[0]; } catch (_) {} return base + "#" + hash; }
+async function share(title, hash) {
+  const url = pageUrl(hash);
+  try { if (navigator.share) { await navigator.share({ title, url }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+  try { await navigator.clipboard.writeText(url); toast("链接已复制"); } catch (_) { toast("复制这个链接：" + url); }
+}
+
+/* ---------- species sheet ---------- */
+let sheetPushed = false, closingFromRoute = false;
+function openSpecies(i) {
+  const s = DATA.species[i], g = groupBy[s.group];
+  $("#sheet-body").innerHTML = `
+    <div class="sheet__bar"><span class="sheet__group">${esc(g.name)}${s.region ? " · " + esc(s.region) : ""}</span>
+      <span class="sheet__actions">
+        <button class="icon-btn" type="button" data-share aria-label="分享这一种的链接">${icon("share")}</button>
+        <button class="icon-btn" type="button" data-close aria-label="关闭详情">${icon("x")}</button>
+      </span></div>
+    <h2 class="sheet__title" id="sheet-title">${esc(s.zh)}</h2>
+    <div class="sheet__latin latin">${esc(s.latin)}</div>
+    ${s.latin2 ? `<div class="sheet__en">${esc(s.latin2)}</div>` : ""}
+    <div class="sheet__en">${esc(s.en)} · ${s.page ? "原书 p" + s.page : "原书未收录"}</div>
+    <div class="sheet__months">${monthStrip(s.months, true)}</div>
+    ${badges(s.flags)}
+    <dl class="facts">
+      <div class="fact"><dt>识别</dt><dd>${s.feat}</dd></div>
+      <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
+      <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.page ? "以英国 / 欧洲为准" : "因地区而异"}）</dd></div>
+      <div class="fact"><dt>孢子印</dt><dd>${s.spore}</dd></div>
+      <div class="fact"><dt>厨房</dt><dd>${s.kitchen}</dd></div>
+    </dl>
+    ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
+    ${compareLinksFor(s.slug)}
+    ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
+    <p class="muted-note">${g.note}</p>
+    <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
+    ${sourcesHtml(s.sources)}`;
+  $("[data-share]", $("#sheet-body")).onclick = () => share(s.zh + " · 野菌速查", "sp-" + s.slug);
+  const d = $("#sheet");
+  if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
+  $("#sheet-body").scrollTop = 0;
+  $("[data-close]", d).focus();
+}
+function compareLinksFor(slug) {
+  const hits = DATA.compare.filter(c => c.cols.some(col => col[2] === slug));
+  if (!hits.length) return "";
+  return `<div class="link-row">${hits.map(c => `<a class="btn" href="#cmp-${c.id}">${icon("columns", "icon--sm")}对比：${esc(c.title)}</a>`).join("")}</div>`;
+}
+function closeSheet() { const d = $("#sheet"); if (d.open) { closingFromRoute = true; d.close(); closingFromRoute = false; } }
+$("#sheet").addEventListener("click", e => {
+  const d = e.currentTarget;
+  if (e.target.closest("[data-close]") || e.target === d) d.close();
+});
+$("#sheet").addEventListener("close", () => {
+  if (closingFromRoute) return;
+  if (currentHash().startsWith("sp-")) {
+    if (sheetPushed) { sheetPushed = false; try { history.back(); return; } catch (_) {} }
+    try { history.replaceState(null, "", "#species"); } catch (_) {}
+  }
+});
+
+/* ---------- toxic + compare ---------- */
+function toxCard(p) {
+  const deadly = p.level === "致命";
+  return `<article class="tox-card${deadly ? "" : " tox-card--poison"}" id="tx-${p.slug}">
+    <div class="tox-card__num" aria-hidden="true">${p.num}</div>
+    <h3 class="tox-card__name">${esc(p.zh)}<span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></h3>
+    <div class="tox-card__sub"><span class="latin">${esc(p.latin)}</span> · ${esc(p.en)}</div>
+    <div class="tox-card__body">
+      <div>${p.feat}</div>
+      ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
+      ${compareLinksFor(p.slug)}
+      <div class="link-row" style="margin-top:0">${photoLinks(p.latin)}<button class="btn" type="button" data-share-tx="${p.slug}" data-title="${esc(p.zh)}">${icon("share", "icon--sm")}分享</button></div>
+      ${sourcesHtml(p.sources)}
+    </div>
+  </article>`;
+}
+const KIND = { edible: "可食", caution: "谨慎", toxic: "有毒" };
+function cmpCard(c) {
+  const n = c.cols.length;
+  const colHtml = c.cols.map(([name, kind, slug]) => {
+    const href = slug ? (bySlug[slug] !== undefined ? "#sp-" + slug : "#tx-" + slug) : null;
+    return `<div class="cmp__col cmp__col--${kind}"><span class="cmp__kind">${KIND[kind]}</span>${href ? `<a href="${href}">${esc(name)}</a>` : esc(name)}</div>`;
+  }).join("");
+  const rows = c.rows.map(([label, cells]) => `<div class="cmp__row-label">${esc(label)}</div><div class="cmp__cells">${cells.map(x => `<div class="cmp__cell">${x}</div>`).join("")}</div>`).join("");
+  const src = c.src && c.src.length ? `<div class="cmp__src">来源：${c.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join("；")}</div>` : "";
+  return `<article class="cmp" id="cmp-${c.id}" style="--n:${n}">
+    <header class="cmp__head"><div><h3 class="cmp__title">${esc(c.title)}</h3><p class="cmp__lead">${esc(c.lead)}</p></div>
+      <button class="icon-btn" type="button" data-share-cmp="${c.id}" data-title="${esc(c.title)}" aria-label="分享这组对比">${icon("share")}</button></header>
+    <div class="cmp__table"><div class="cmp__cols">${colHtml}</div>${rows}</div>${src}
+  </article>`;
+}
+function renderToxic() {
+  $("#tox-grid").innerHTML = toxicAll.filter(p => !p.num.startsWith("+")).map(toxCard).join("");
+  $("#tox-grid-extra").innerHTML = toxicAll.filter(p => p.num.startsWith("+")).map(toxCard).join("");
+  $("#cmp-list").innerHTML = DATA.compare.map(cmpCard).join("");
+}
+$("#v-toxic").addEventListener("click", e => {
+  const a = e.target.closest("[data-share-tx]"); if (a) return share(a.dataset.title + " · 野菌速查", "tx-" + a.dataset.shareTx);
+  const b = e.target.closest("[data-share-cmp]"); if (b) return share(b.dataset.title + " · 野菌速查", "cmp-" + b.dataset.shareCmp);
+});
+
+/* ---------- finder ---------- */
+const STEPS = [
+  { key: "hym", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", opts: [["gills", "菌褶（刀片状）"], ["pores", "菌孔（海绵状）"], ["spines", "菌刺（下垂的软刺）"], ["ridges", "钝圆的棱脊或近光滑"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳"]] },
+  { key: "sub", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", opts: [["ground", "林地地面"], ["grass", "草地、草坪"], ["wood", "木头上（树干、树桩、倒木、木屑）"], ["under", "埋在土里（块菌）"]] },
+  { key: "spore", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", opts: [["white", "白 / 奶油", "#F8F6EE"], ["yellow", "黄 / 浅黄", "#E9D27A"], ["pink", "粉", "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", "#A8642E"], ["choc", "巧克力 / 紫褐", "#4E2E26"], ["olive", "橄榄褐", "#77703A"], ["black", "黑", "#151515"], ["green", "绿", "#7D9C6B"]] },
+  { key: "ring", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", opts: [["yes", "有"], ["no", "没有"]] },
+  { key: "volva", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
+];
+const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
+function fmatch(s, lenient) {
+  const why = [];
+  if (fstate.hym && s.hym !== fstate.hym) return null;
+  if (fstate.sub) {
+    const near = lenient && (fstate.sub === "ground" || fstate.sub === "grass") && (s.sub.includes("ground") || s.sub.includes("grass"));
+    if (!s.sub.includes(fstate.sub) && !near) return null;
+  }
+  if (fstate.spore && !s.spore.includes(fstate.spore) && !s.spore.includes("unknown")) return null;
+  if (fstate.ring === "yes" && !s.ring) return null;
+  if (fstate.ring === "no" && s.ring) { if (!lenient) return null; why.push("菌环可能已脱落"); }
+  if (fstate.volva === "yes" && !s.volva) return null;
+  if (fstate.volva === "no" && s.volva) { if (!lenient) return null; why.push("菌托常埋在土里"); }
+  return why;
+}
+function renderFinder() {
+  $("#finder-steps").innerHTML = STEPS.map((st, i) => `
+    <fieldset class="step"><legend><span class="step__num">${i + 1}</span>${esc(st.q)}</legend>
+      <p class="step__hint">${esc(st.hint)}</p>
+      <div class="chip-list">
+        <button type="button" class="chip" data-f="${st.key}" data-v="" aria-pressed="${fstate[st.key] === null}">不确定</button>
+        ${st.opts.map(([v, label, sw]) => `<button type="button" class="chip" data-f="${st.key}" data-v="${v}" aria-pressed="${fstate[st.key] === v}">${sw ? `<span class="swatch" style="background:${sw}"></span>` : ""}${esc(label)}</button>`).join("")}
+      </div></fieldset>`).join("") + `<button class="btn" type="button" id="finder-reset">重新开始</button>`;
+  const answered = Object.values(fstate).some(v => v !== null);
+  const jump = $("#finder-jump");
+  if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答左边（手机上是上面）任意一个问题，这里会列出可能的种类。</div>`; return; }
+  const tox = toxicAll.map(p => [p, fmatch(p, true)]).filter(([, w]) => w);
+  const ed = DATA.species.map((s, i) => [s, i, fmatch(s, false)]).filter(([, , w]) => w);
+  const toxHtml = tox.length ? `<ul class="res-list">${tox.map(([p, why]) => `<li><a class="res-item res-item--toxic" href="#tx-${p.slug}">
+      <span class="res-item__main"><span class="res-item__name">${esc(p.zh)}</span><span class="res-item__sub">${esc(p.level)} · ${esc(p.latin)}</span>${why.length ? `<span class="res-item__why">仍列出：${why.join("；")}</span>` : ""}</span>
+      <span class="level ${p.level === "致命" ? "level--deadly" : "level--poison"}">${esc(p.level)}</span>${icon("arrow")}</a></li>`).join("")}</ul>`
+    : `<p class="muted-note" style="margin-top:0">本站收录的 15 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
+  const edHtml = ed.length ? `<ul class="res-list">${ed.map(([s]) => `<li><a class="res-item" href="#sp-${s.slug}">
+      <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span><span class="res-item__sub">${esc(groupBy[s.group].short)} · ${esc(s.season)} · ${esc(s.latin)}</span></span>${icon("arrow")}</a></li>`).join("")}</ul>`
+    : `<div class="res-empty">没有符合的食用菌。试着把不确定的问题改成“不确定”。</div>`;
+  jump.hidden = false;
+  jump.innerHTML = `查看结果：毒菌 ${tox.length} · 食用菌 ${ed.length}${icon("chevron", "icon--sm")}`;
+  $("#finder-results").innerHTML = `
+    <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>${toxHtml}</div>
+    <div class="res-block"><h2 class="res-block__title">${icon("mushroom")}可能的食用菌（${ed.length}）</h2>${edHtml}</div>`;
+}
+$("#finder-steps").addEventListener("click", e => {
+  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); return renderFinder(); }
+  const b = e.target.closest("[data-f]"); if (!b) return;
+  const k = b.dataset.f, v = b.dataset.v || null;
+  fstate[k] = fstate[k] === v ? null : v; renderFinder();
+});
+
+/* ---------- recipes ---------- */
+function renderRecipes() {
+  $("#rc-grid").innerHTML = DATA.recipes.map((r, ri) => {
+    const metaIcons = ["users", "clock", "clock", "book"];
+    return `<article class="rc-card">
+      <header class="rc-card__head">
+        <div><h3 class="rc-card__name">${esc(r.zh)}</h3><div class="rc-card__en latin">${esc(r.en)}</div></div>
+        <div class="rc-card__num" aria-hidden="true">${String(ri + 1).padStart(2, "0")}</div>
+        <div class="rc-card__meta">${r.meta.split(" · ").map((m, k) => `<span>${icon(metaIcons[k] || "clock", "icon--sm")}${esc(m)}</span>`).join("")}</div>
+      </header>
+      <div class="rc-card__body">
+        <p class="rc-card__best" style="margin:0"><strong>用什么菌：</strong>${esc(r.best)}</p>
+        <div><h4>材料</h4><ul class="ing-list">${r.ing.map((x, k) => `<li><label for="ing-${ri}-${k}"><input type="checkbox" id="ing-${ri}-${k}"><span>${x}</span></label></li>`).join("")}</ul></div>
+        <div><h4>做法</h4><ol class="steps">${r.steps.map(x => `<li>${x}</li>`).join("")}</ol></div>
+        <div class="rc-card__tip">${icon("bulb")}<span>${esc(r.tip)}</span></div>
+      </div>
+    </article>`;
+  }).join("");
+  $("#rindex").innerHTML = DATA.rindex.map(r => `<li><span class="rindex__page">p${r.p}</span><span>${esc(r.zh)}${r.star ? '<span class="rindex__tag">已收录</span>' : ""}<span class="rindex__en">${esc(r.en)}</span></span></li>`).join("");
+}
+
+/* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison ---------- */
+const VIEWS = ["species", "finder", "toxic", "guide", "recipes", "emergency"];
+function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
+function parse(h) {
+  if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
+  if (h.startsWith("tx-") || h.startsWith("cmp-")) return { view: "toxic", target: h };
+  if (VIEWS.includes(h)) return { view: h };
+  return { view: "species" };
+}
+function show(v, opts = {}) {
+  VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
+  document.querySelectorAll("nav a").forEach(a => {
+    if (a.getAttribute("href") === "#" + v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  if (!opts.keepScroll) { try { window.scrollTo(0, 0); } catch (_) {} }
+  if (opts.focus) { const h = $("#h-" + v); h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+}
+function scrollToTarget(id) {
+  const el = document.getElementById(id); if (!el) return;
+  el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  el.classList.remove("is-target"); void el.offsetWidth; el.classList.add("is-target");
+}
+function apply(h, opts = {}) {
+  const r = parse(h);
+  if (r.sp !== undefined) {
+    if (!$("#v-species").classList.contains("is-active")) show("species");
+    openSpecies(r.sp); return;
+  }
+  closeSheet();
+  show(r.view, { focus: opts.focus && !r.target, keepScroll: !!r.target });
+  if (r.target) requestAnimationFrame(() => scrollToTarget(r.target));
+}
+function navigate(h) {
+  let pushed = false;
+  if (h !== currentHash()) { try { history.pushState(null, "", "#" + h); pushed = true; } catch (_) {} }
+  if (h.startsWith("sp-")) sheetPushed = pushed;
+  apply(h, { focus: true });
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (a) {
+    const h = a.getAttribute("href").slice(1);
+    if (h === "main") return;
+    e.preventDefault();
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-")) navigate(h);
+    return;
+  }
+  const j = e.target.closest("[data-jump]");
+  if (j) scrollToTarget(j.dataset.jump);
+});
+function route() { sheetPushed = false; apply(currentHash()); }
+window.addEventListener("popstate", route);
+window.addEventListener("hashchange", route);
+
+/* ---------- species events ---------- */
+let qTimer;
+$("#q").addEventListener("input", e => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = e.target.value.trim(); sync(); }, 120); });
+$("#q-clear").addEventListener("click", () => { state.q = ""; $("#q").value = ""; sync(); $("#q").focus(); });
+$("#reset-all").addEventListener("click", resetAll);
+$("#season-chips").addEventListener("click", e => { const b = e.target.closest("[data-season]"); if (b) { const k = b.dataset.season; state.season = state.season === k && k !== "all" ? "all" : k; sync(); } });
+$("#group-chips").addEventListener("click", e => { const b = e.target.closest("[data-group]"); if (b) { const k = b.dataset.group; state.group = state.group === k && k !== "all" ? "all" : k; sync(); } });
+$("#grid").addEventListener("click", e => {
+  if (e.target.closest("[data-reset]")) return resetAll();
+  const c = e.target.closest(".sp-card"); if (c) navigate("sp-" + DATA.species[+c.dataset.i].slug);
+});
+
+/* ---------- offline (service worker; only over http/https) ---------- */
+function setOffline(text, ready) { const el = $("#offline-status"); if (el) { el.textContent = text; el.classList.toggle("is-ready", !!ready); } }
+(function initOffline() {
+  let proto = ""; try { proto = location.protocol; } catch (_) {}
+  if (!("serviceWorker" in navigator) || !/^https?:$/.test(proto)) { setOffline("本地预览：上传到网站后才能离线使用", false); return; }
+  setOffline("正在准备离线版本…", false);
+  navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready)
+    .then(() => setOffline("已可离线使用", true))
+    .catch(() => setOffline("这个浏览器暂时无法离线使用", false));
+})();
+
+sync(); renderFinder(); renderToxic(); renderRecipes(); route();
+</script>
+</body>
+</html>

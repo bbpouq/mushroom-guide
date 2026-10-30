@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#15803D">
+<meta name="description" content="野生食用菌中文速查：识别特征、易混毒菌对比、按特征反查、中毒急救、采集与烹饪。">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="野菌速查">
+<title>野菌速查手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* Design system (ui-ux-pro-max): Minimalism & Swiss Style · nature palette (green + amber)
+   Type: Outfit headings / Work Sans body, Noto Sans SC for CJK · 8px spacing rhythm
+   Layout: phone = sticky header + sticky search + bottom nav; tablet = top nav; desktop = sidebar */
+:root {
+  --color-primary: #15803D;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #059669;
+  --color-accent: #D97706;
+  --color-on-accent: #000000;
+  --color-background: #F0FDF4;
+  --color-foreground: #0F172A;
+  --color-card: #FFFFFF;
+  --color-muted: #E6F2EA;
+  --color-muted-foreground: #475569;
+  --color-border: #CFE3D6;
+  --color-destructive: #DC2626;
+  --color-danger-text: #B91C1C;
+  --color-danger-surface: #FEF2F2;
+  --color-warning-text: #92400E;
+  --color-warning-surface: #FEF3C7;
+  --color-ring: #15803D;
+  --color-primary-surface: #DCFCE7;
+
+  --font-heading: "Outfit", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-body: "Work Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-7: 48px;
+  --radius-sm: 6px; --radius: 10px; --radius-lg: 16px;
+  --z-sticky: 10; --z-header: 20; --z-nav: 30; --z-toast: 40;
+  --dur-fast: 150ms; --dur: 220ms; --ease: cubic-bezier(.2, .7, .2, 1);
+  --target: 44px;
+  --header-h: 0px;
+  --icon-sm: 16px; --icon-md: 20px; --icon-lg: 24px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
+    --color-accent: #F59E0B; --color-on-accent: #000000;
+    --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
+    --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
+    --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: #2B1414;
+    --color-warning-text: #FCD34D; --color-warning-surface: #2D2410;
+    --color-ring: #4ADE80; --color-primary-surface: #14301F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-primary: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
+  --color-accent: #F59E0B; --color-on-accent: #000000;
+  --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
+  --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
+  --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: #2B1414;
+  --color-warning-text: #FCD34D; --color-warning-surface: #2D2410;
+  --color-ring: #4ADE80; --color-primary-surface: #14301F;
+  color-scheme: dark;
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--header-h) + 16px); -webkit-text-size-adjust: 100%; }
+/* species view has a sticky search bar too: keep focused cards clear of it */
+html:has(#v-species.is-active) { scroll-padding-top: calc(var(--header-h) + 112px); }
+body { margin: 0; background: var(--color-background); color: var(--color-foreground); font-family: var(--font-body); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-heading); margin: 0; line-height: 1.3; text-wrap: balance; letter-spacing: -.005em; }
+p { margin: 0 0 var(--space-3); }
+b, strong { font-weight: 700; }
+a { color: var(--color-primary); text-underline-offset: 3px; }
+button { font: inherit; color: inherit; }
+button, a, label, summary, .chip, input[type="checkbox"] { touch-action: manipulation; }
+:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+.latin { font-family: "Work Sans", Georgia, serif; font-style: italic; }
+.icon { width: var(--icon-md); height: var(--icon-md); flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icon--sm { width: var(--icon-sm); height: var(--icon-sm); }
+.icon--lg { width: var(--icon-lg); height: var(--icon-lg); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: var(--space-4); top: -60px; z-index: 100; background: var(--color-primary); color: var(--color-on-primary); padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); }
+.skip-link:focus { top: var(--space-2); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; } }
+
+/* ---------- shell ---------- */
+.app { min-height: 100%; display: grid; grid-template-columns: 1fr; }
+.sidenav { display: none; }
+.hdr { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-background); border-bottom: 1px solid var(--color-border); padding-top: env(safe-area-inset-top); }
+.hdr__row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); max-width: 1200px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: var(--space-3); color: var(--color-foreground); text-decoration: none; min-height: var(--target); }
+.brand__mark { width: 36px; height: 36px; border-radius: var(--radius); background: var(--color-primary); color: var(--color-on-primary); display: grid; place-items: center; }
+.brand__name { font-family: var(--font-heading); font-weight: 700; font-size: 18px; line-height: 1.2; display: block; }
+.brand__sub { font-size: 12px; color: var(--color-muted-foreground); display: block; line-height: 1.3; }
+.safety-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--color-danger-text); background: var(--color-danger-surface); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.topnav { display: none; }
+.botnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-nav); display: grid; grid-template-columns: repeat(5, 1fr); background: var(--color-card); border-top: 1px solid var(--color-border); padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.botnav__link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; font-size: 12px; color: var(--color-muted-foreground); text-decoration: none; border-radius: var(--radius); transition: color var(--dur-fast), background-color var(--dur-fast); }
+.botnav__link:active { background: var(--color-muted); }
+.botnav__link[aria-current="page"] { color: var(--color-primary); font-weight: 700; }
+.botnav__link[aria-current="page"] .icon { stroke-width: 2.4; }
+main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) var(--space-4) calc(88px + env(safe-area-inset-bottom)); }
+
+@media (min-width: 768px) {
+  .botnav { display: none; }
+  .hdr__row { padding: var(--space-3) var(--space-6); }
+  .topnav { display: flex; gap: var(--space-1); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6) var(--space-2); overflow-x: auto; }
+  .topnav__link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-4); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: 500; white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .topnav__link:hover { background: var(--color-muted); color: var(--color-foreground); }
+  .topnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); }
+  main { padding: var(--space-6) var(--space-6) var(--space-7); }
+}
+@media (min-width: 1024px) {
+  .app { grid-template-columns: 264px minmax(0, 1fr); }
+  .hdr { display: none; }
+  .sidenav { display: flex; flex-direction: column; gap: var(--space-5); position: sticky; top: 0; height: 100vh; padding: var(--space-5) var(--space-4); background: var(--color-card); border-right: 1px solid var(--color-border); }
+  .sidenav__list { display: flex; flex-direction: column; gap: var(--space-1); }
+  .sidenav__link { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target); padding: 0 var(--space-3); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: 500; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .sidenav__link:hover { background: var(--color-muted); color: var(--color-foreground); }
+  .sidenav__link[aria-current="page"] { background: var(--color-primary-surface); color: var(--color-primary); font-weight: 700; }
+  .sidenav__note { margin-top: auto; background: var(--color-danger-surface); color: var(--color-danger-text); border-radius: var(--radius); padding: var(--space-4); font-size: 13px; line-height: 1.6; }
+  .sidenav__note strong { display: block; font-family: var(--font-heading); font-size: 16px; margin-bottom: var(--space-1); }
+  main { padding: var(--space-6) var(--space-7) var(--space-7); }
+}
+
+/* ---------- views ---------- */
+.view { display: none; }
+.view.is-active { display: block; }
+.view__head { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); padding-bottom: var(--space-4); border-bottom: 2px solid var(--color-foreground); }
+.view__eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; color: var(--color-primary); text-transform: uppercase; font-family: var(--font-heading); }
+.view__title { font-size: clamp(28px, 5vw, 44px); font-weight: 700; }
+.view__lead { color: var(--color-muted-foreground); max-width: 62ch; margin: 0; }
+
+/* ---------- search & filters ---------- */
+.search-bar { position: sticky; top: var(--header-h); z-index: var(--z-sticky); background: var(--color-background); padding: var(--space-2) 0 var(--space-3); margin-bottom: var(--space-2); }
+.search-bar__label { display: block; font-size: 14px; font-weight: 600; margin-bottom: var(--space-1); }
+.search-field { position: relative; }
+.search-field .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--color-muted-foreground); pointer-events: none; }
+.search-field input { width: 100%; min-height: 48px; font: inherit; font-size: 16px; color: var(--color-foreground); background: var(--color-card); border: 1.5px solid var(--color-border); border-radius: var(--radius); padding: 0 52px 0 44px; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.search-field input::placeholder { color: var(--color-muted-foreground); }
+.search-field input:focus { outline: none; border-color: var(--color-ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 25%, transparent); }
+.search-field input::-webkit-search-cancel-button { display: none; }
+.search-field__clear { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); width: var(--target); height: var(--target); border: 0; background: transparent; border-radius: var(--radius); display: none; place-items: center; cursor: pointer; color: var(--color-muted-foreground); }
+.search-field__clear.is-visible { display: grid; }
+.search-field__clear:hover { color: var(--color-foreground); }
+.filters { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+.filter-group { display: grid; gap: var(--space-2); }
+@media (min-width: 768px) { .filter-group { grid-template-columns: 56px 1fr; align-items: start; } .filter-group__label { padding-top: 9px; } }
+.filter-group__label { font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); }
+.chip-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 1.5px solid var(--color-border); border-radius: 999px; background: var(--color-card); color: var(--color-foreground); font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast); }
+@media (pointer: coarse) { .chip { min-height: var(--target); } }
+.chip:hover { border-color: var(--color-muted-foreground); }
+.chip:active { background: var(--color-muted); }
+.chip[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.chip__count { font-variant-numeric: tabular-nums; opacity: .75; font-size: 13px; }
+.chip--now[aria-pressed="false"] { border-color: var(--color-accent); }
+.chip--now .icon { color: var(--color-accent); }
+.chip--now[aria-pressed="true"] .icon { color: currentColor; }
+.result-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); font-size: 14px; color: var(--color-muted-foreground); }
+.result-bar__count { font-variant-numeric: tabular-nums; }
+.btn-text { border: 0; background: none; color: var(--color-primary); font-weight: 600; cursor: pointer; min-height: var(--target); padding: 0 var(--space-2); border-radius: var(--radius-sm); }
+.group-note { font-size: 14px; color: var(--color-foreground); background: var(--color-card); border: 1px solid var(--color-border); border-left: 4px solid var(--color-primary); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+.group-note--risk { border-left-color: var(--color-destructive); }
+
+/* ---------- species cards ---------- */
+.sp-grid { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
+@media (min-width: 640px) { .sp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .sp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.sp-card { display: flex; flex-direction: column; gap: var(--space-2); text-align: left; width: 100%; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-4); cursor: pointer; transition: border-color var(--dur), box-shadow var(--dur), background-color var(--dur-fast); }
+.sp-card:hover { border-color: var(--color-primary); box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--color-foreground) 40%, transparent); }
+.sp-card:active { background: var(--color-muted); }
+.sp-card__meta { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); font-size: 12px; color: var(--color-muted-foreground); letter-spacing: .02em; }
+.sp-card__season { flex: none; font-size: 12px; font-weight: 600; color: var(--color-foreground); background: var(--color-muted); border-radius: var(--radius-sm); padding: 2px 8px; }
+.sp-card__name { font-size: 21px; font-weight: 700; }
+.sp-card__latin { font-size: 15px; color: var(--color-muted-foreground); margin-top: -4px; }
+.sp-card__feat { font-size: 14.5px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sp-card__warn { display: flex; gap: var(--space-2); align-items: flex-start; margin-top: auto; padding-top: var(--space-2); border-top: 1px dashed var(--color-border); font-size: 13px; color: var(--color-danger-text); }
+.sp-card__warn .icon { margin-top: 2px; }
+.sp-card__warn span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.month-strip { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
+.month-strip__cell { height: 6px; border-radius: 2px; background: var(--color-muted); }
+.month-strip__cell.is-in { background: var(--color-primary); }
+.month-strip__cell.is-now { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+.month-labels { display: grid; grid-template-columns: repeat(12, 1fr); font-size: 11px; color: var(--color-muted-foreground); text-align: center; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-sm); line-height: 1.5; }
+.badge--choice { background: var(--color-primary-surface); color: var(--color-primary); }
+.badge--cook { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.badge--risk, .badge--small { background: var(--color-danger-surface); color: var(--color-danger-text); }
+.badge--new { background: var(--color-muted); color: var(--color-foreground); border: 1px solid var(--color-border); }
+.empty-state { grid-column: 1 / -1; text-align: center; padding: var(--space-7) var(--space-4); color: var(--color-muted-foreground); }
+
+/* ---------- detail sheet ---------- */
+.sheet { border: 0; padding: 0; width: min(680px, 100%); max-height: 90vh; border-radius: var(--radius-lg); background: var(--color-card); color: var(--color-foreground); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .5); }
+.sheet::backdrop { background: rgba(5, 12, 8, .62); }
+@media (max-width: 767px) {
+  .sheet { margin: auto 0 0; max-width: 100%; width: 100%; max-height: 92vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .sheet[open] { animation: sheet-up var(--dur) var(--ease); }
+}
+@keyframes sheet-up { from { transform: translateY(32px); opacity: .5; } }
+.sheet__body { max-height: inherit; overflow-y: auto; padding: var(--space-4) var(--space-5) calc(var(--space-5) + env(safe-area-inset-bottom)); overscroll-behavior: contain; }
+@media (min-width: 768px) { .sheet__body { padding: var(--space-6); } }
+.sheet__bar { position: sticky; top: calc(-1 * var(--space-4)); display: flex; justify-content: space-between; align-items: center; background: var(--color-card); margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-5)) var(--space-3); padding: var(--space-2) var(--space-3) var(--space-2) var(--space-5); border-bottom: 1px solid var(--color-border); z-index: 1; }
+@media (min-width: 768px) { .sheet__bar { top: calc(-1 * var(--space-6)); margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-4); padding-left: var(--space-6); } }
+.sheet__group { font-size: 13px; font-weight: 600; color: var(--color-primary); }
+.icon-btn { width: var(--target); height: var(--target); border: 0; border-radius: var(--radius); background: transparent; display: grid; place-items: center; cursor: pointer; color: var(--color-foreground); transition: background-color var(--dur-fast); }
+.icon-btn:hover, .icon-btn:active { background: var(--color-muted); }
+.sheet__title { font-size: 30px; font-weight: 700; }
+.sheet__latin { font-size: 19px; color: var(--color-muted-foreground); }
+.sheet__en { font-size: 14px; color: var(--color-muted-foreground); }
+.sheet__months { margin: var(--space-4) 0 var(--space-3); }
+.facts { margin: var(--space-4) 0; }
+.fact { display: grid; grid-template-columns: 72px 1fr; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+.fact dt { font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); padding-top: 2px; }
+.fact dd { margin: 0; }
+.callout { display: flex; gap: var(--space-3); border-radius: var(--radius); padding: var(--space-3) var(--space-4); font-size: 15px; }
+.callout .icon { margin-top: 3px; }
+.callout--danger { background: var(--color-danger-surface); color: var(--color-danger-text); }
+.callout--info { background: var(--color-muted); color: var(--color-foreground); }
+.note-list { margin: var(--space-4) 0 0; padding-left: 1.2em; }
+.note-list li { margin-bottom: var(--space-2); }
+.note-list li::marker { color: var(--color-accent); }
+.muted-note { font-size: 13px; color: var(--color-muted-foreground); margin-top: var(--space-3); }
+.link-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+.btn { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-4); border-radius: var(--radius); border: 1.5px solid var(--color-border); background: var(--color-card); color: var(--color-foreground); text-decoration: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast); }
+.btn:hover { border-color: var(--color-foreground); }
+.btn:active { background: var(--color-muted); }
+.btn--primary { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
+.btn--primary:hover { border-color: var(--color-primary); filter: brightness(1.08); }
+.sources { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }
+.sources h3 { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
+.sources ol { margin: 0; padding-left: 1.3em; font-size: 14px; }
+.sources li { margin-bottom: var(--space-1); }
+.sources a { color: var(--color-muted-foreground); }
+.sources a:hover { color: var(--color-primary); }
+
+/* ---------- toxic ---------- */
+.danger-banner { display: flex; gap: var(--space-3); background: var(--color-danger-surface); color: var(--color-danger-text); border-radius: var(--radius); padding: var(--space-4) var(--space-5); margin-bottom: var(--space-5); }
+.danger-banner strong { display: block; font-family: var(--font-heading); font-size: 19px; }
+.tox-grid { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
+@media (min-width: 768px) { .tox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tox-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-1) var(--space-4); background: var(--color-card); border: 1px solid var(--color-border); border-top: 4px solid var(--color-destructive); border-radius: var(--radius); padding: var(--space-4) var(--space-5) var(--space-5); }
+.tox-card--poison { border-top-color: var(--color-accent); }
+.tox-card__num { grid-row: span 2; font-family: var(--font-heading); font-weight: 700; font-size: 40px; line-height: 1; color: var(--color-destructive); font-variant-numeric: tabular-nums; }
+.tox-card--poison .tox-card__num { color: var(--color-accent); }
+.tox-card__name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.tox-card__sub { font-size: 14px; color: var(--color-muted-foreground); }
+.tox-card__body { grid-column: 1 / -1; display: grid; gap: var(--space-3); margin-top: var(--space-3); }
+.level { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-body); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-sm); }
+.level--deadly { background: var(--color-destructive); color: #fff; }
+.level--poison { background: var(--color-accent); color: var(--color-on-accent); }
+:root[data-theme="dark"] .level--deadly { color: #1b0505; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .level--deadly { color: #1b0505; } }
+.subhead { margin: var(--space-7) 0 var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border); }
+.subhead h2 { font-size: 24px; font-weight: 700; }
+.subhead p { margin: var(--space-1) 0 0; color: var(--color-muted-foreground); }
+
+/* ---------- prose panels ---------- */
+.panel-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } .panel--wide { grid-column: 1 / -1; } }
+.panel { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-5); }
+.panel__title { display: flex; align-items: baseline; gap: var(--space-3); font-size: 20px; font-weight: 700; margin-bottom: var(--space-3); }
+.panel__num { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+.panel__tag { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--color-muted-foreground); }
+.panel p, .panel li { max-width: 72ch; }
+.panel ul, .panel ol { margin: 0; padding-left: 1.3em; }
+.panel li { margin-bottom: var(--space-2); }
+.panel li::marker { color: var(--color-primary); }
+.panel--danger { background: var(--color-danger-surface); border-color: transparent; }
+.panel--danger .panel__title { color: var(--color-danger-text); }
+.rules { list-style: none; padding: 0 !important; display: grid; gap: var(--space-4); counter-reset: rule; }
+.rules li { counter-increment: rule; display: grid; grid-template-columns: 36px 1fr; gap: var(--space-3); margin: 0; }
+.rules li::before { content: counter(rule); width: 36px; height: 36px; border-radius: 50%; background: var(--color-primary); color: var(--color-on-primary); display: grid; place-items: center; font-family: var(--font-heading); font-weight: 700; }
+.rules li:first-child::before { background: var(--color-destructive); color: #fff; }
+.steps { list-style: none; padding: 0 !important; counter-reset: step; }
+.steps li { counter-increment: step; position: relative; padding-left: 38px; margin-bottom: var(--space-3); }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 1px; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--color-primary); color: var(--color-primary); display: grid; place-items: center; font-size: 13px; font-weight: 700; font-family: var(--font-heading); }
+.kv { display: grid; grid-template-columns: 1fr; gap: 2px; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+.kv:first-of-type { border-top: 0; padding-top: 0; }
+@media (min-width: 560px) { .kv { grid-template-columns: 140px 1fr; gap: var(--space-4); } }
+.kv-k { font-weight: 700; }
+.kv-k small { display: block; font-weight: 500; color: var(--color-muted-foreground); font-size: 13px; }
+details.panel > summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; min-height: var(--target); font-family: var(--font-heading); font-size: 20px; font-weight: 700; }
+details.panel > summary::-webkit-details-marker { display: none; }
+details.panel > summary .icon { transition: transform var(--dur); }
+details.panel[open] > summary .icon { transform: rotate(180deg); }
+details.panel[open] > summary { margin-bottom: var(--space-3); }
+
+/* ---------- recipes ---------- */
+.rc-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .rc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+.rc-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; }
+.rc-card__head { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-3); padding: var(--space-5); border-bottom: 1px solid var(--color-border); background: var(--color-muted); }
+.rc-card__num { grid-row: span 2; font-family: var(--font-heading); font-weight: 700; font-size: 44px; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums; align-self: start; }
+.rc-card__name { font-size: 23px; font-weight: 700; }
+.rc-card__en { font-size: 15px; color: var(--color-muted-foreground); }
+.rc-card__meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-2); }
+.rc-card__meta span { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 2px 8px; font-variant-numeric: tabular-nums; }
+.rc-card__body { padding: var(--space-5); display: grid; gap: var(--space-4); }
+.rc-card__best { font-size: 14px; color: var(--color-muted-foreground); }
+.rc-card__best strong { color: var(--color-foreground); }
+.rc-card h4 { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); letter-spacing: .06em; margin-bottom: var(--space-2); }
+.ing-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+@media (min-width: 560px) { .ing-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-4); } }
+.ing-list label { display: flex; align-items: flex-start; gap: var(--space-3); min-height: 40px; padding: var(--space-2) 0; cursor: pointer; font-size: 15px; line-height: 1.5; }
+@media (pointer: coarse) { .ing-list label { min-height: var(--target); } }
+.ing-list input { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 2px solid var(--color-muted-foreground); border-radius: 6px; display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast); }
+.ing-list input:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.ing-list input:checked::after { content: ""; width: 10px; height: 6px; border: 2.5px solid var(--color-on-primary); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.ing-list input:checked + span { text-decoration: line-through; color: var(--color-muted-foreground); }
+.rc-card__tip { display: flex; gap: var(--space-2); font-size: 14px; background: var(--color-muted); border-radius: var(--radius-sm); padding: var(--space-3); }
+.rc-card__tip .icon { color: var(--color-accent); margin-top: 2px; }
+.rindex { list-style: none; padding: 0; margin: 0; columns: 1; column-gap: var(--space-6); }
+@media (min-width: 640px) { .rindex { columns: 2; } }
+@media (min-width: 1280px) { .rindex { columns: 3; } }
+.rindex li { break-inside: avoid; display: grid; grid-template-columns: 48px 1fr; padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); font-size: 15px; }
+.rindex__page { color: var(--color-accent); font-variant-numeric: tabular-nums; font-size: 14px; padding-top: 1px; font-weight: 600; }
+.rindex__en { display: block; font-size: 13px; color: var(--color-muted-foreground); }
+.rindex__tag { font-size: 11px; font-weight: 700; background: var(--color-primary); color: var(--color-on-primary); padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: 2px; }
+
+/* ---------- emergency entry ---------- */
+.sos-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: var(--target); padding: 0 14px; border-radius: 999px; background: var(--color-destructive); color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.sos-pill:active { filter: brightness(.92); }
+:root[data-theme="dark"] .sos-pill { color: #1b0505; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sos-pill { color: #1b0505; } }
+.sidenav__sos { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); min-height: 40px; padding: 0 12px; border-radius: var(--radius-sm); background: var(--color-destructive); color: #fff; font-weight: 700; text-decoration: none; }
+
+/* ---------- in-page jump buttons ---------- */
+.jump-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
+
+/* ---------- finder ---------- */
+.finder { display: grid; gap: var(--space-5); }
+@media (min-width: 1024px) { .finder { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; } .finder__results { position: sticky; top: var(--space-5); } }
+.step { border: 1px solid var(--color-border); background: var(--color-card); border-radius: var(--radius); padding: var(--space-4); margin: 0 0 var(--space-3); }
+.step legend { padding: 0 var(--space-1); font-family: var(--font-heading); font-weight: 700; font-size: 17px; }
+.step__hint { font-size: 13px; color: var(--color-muted-foreground); margin: 0 0 var(--space-3); }
+.step__num { color: var(--color-accent); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent); flex: none; }
+.finder__note { display: flex; gap: var(--space-2); font-size: 14px; background: var(--color-warning-surface); color: var(--color-warning-text); border-radius: var(--radius); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+.finder__note .icon { margin-top: 2px; }
+.res-block { margin-bottom: var(--space-5); }
+.res-block__title { display: flex; align-items: center; gap: var(--space-2); font-size: 17px; font-weight: 700; margin-bottom: var(--space-2); }
+.res-block--toxic .res-block__title { color: var(--color-danger-text); }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.res-item { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 56px; padding: var(--space-2) var(--space-4); text-align: left; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); color: var(--color-foreground); text-decoration: none; cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+.res-item:hover { border-color: var(--color-primary); }
+.res-item:active { background: var(--color-muted); }
+.res-item--toxic { border-left: 4px solid var(--color-destructive); }
+.res-item--toxic:hover { border-color: var(--color-destructive); }
+.res-item__main { flex: 1; min-width: 0; }
+.res-item__name { font-weight: 700; display: block; }
+.res-item__sub { display: block; font-size: 13px; color: var(--color-muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.res-item__why { display: block; font-size: 12px; color: var(--color-danger-text); }
+.finder__jump { position: sticky; top: calc(var(--header-h) + var(--space-2)); z-index: var(--z-sticky); width: 100%; justify-content: center; margin-bottom: var(--space-4); box-shadow: 0 6px 16px -8px rgba(0,0,0,.35); }
+.finder__jump[hidden] { display: none; }
+@media (min-width: 1024px) { .finder__jump { display: none !important; } }
+.finder__results { scroll-margin-top: calc(var(--header-h) + 16px); }
+.res-empty { color: var(--color-muted-foreground); background: var(--color-card); border: 1px dashed var(--color-border); border-radius: var(--radius); padding: var(--space-5); text-align: center; }
+
+/* ---------- compare ---------- */
+.cmp-list { display: grid; gap: var(--space-4); }
+.cmp { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; }
+.cmp__head { padding: var(--space-4) var(--space-5) var(--space-3); display: flex; justify-content: space-between; gap: var(--space-3); align-items: flex-start; }
+.cmp__title { font-size: 19px; font-weight: 700; }
+.cmp__lead { font-size: 14px; color: var(--color-muted-foreground); margin: var(--space-1) 0 0; }
+.cmp__table { display: grid; }
+.cmp__cols, .cmp__cells { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 1px; background: var(--color-border); }
+.cmp__col { background: var(--color-card); padding: var(--space-2) var(--space-3); font-weight: 700; font-size: 14px; display: flex; flex-direction: column; gap: 2px; border-top: 4px solid var(--color-border); }
+.cmp__col--edible { border-top-color: var(--color-primary); }
+.cmp__col--caution { border-top-color: var(--color-accent); }
+.cmp__col--toxic { border-top-color: var(--color-destructive); }
+.cmp__col a { color: inherit; text-decoration-color: var(--color-border); }
+.cmp__kind { font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+.cmp__col--edible .cmp__kind { color: var(--color-primary); }
+.cmp__col--caution .cmp__kind { color: var(--color-warning-text); }
+.cmp__col--toxic .cmp__kind { color: var(--color-danger-text); }
+.cmp__row-label { background: var(--color-muted); padding: 6px var(--space-3); font-size: 12px; font-weight: 700; color: var(--color-muted-foreground); letter-spacing: .04em; }
+.cmp__cell { background: var(--color-card); padding: var(--space-2) var(--space-3) var(--space-3); font-size: 14px; line-height: 1.55; }
+.cmp__src { padding: var(--space-2) var(--space-5) var(--space-4); font-size: 12px; color: var(--color-muted-foreground); }
+.cmp__src a { color: inherit; }
+.is-target { animation: target-flash 1.6s var(--ease); }
+@keyframes target-flash { 0%, 40% { box-shadow: 0 0 0 4px var(--color-accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+/* ---------- emergency ---------- */
+.sos-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .sos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+.call-card { background: var(--color-danger-surface); border-radius: var(--radius-lg); padding: var(--space-5); display: grid; gap: var(--space-3); }
+.call-card h2 { color: var(--color-danger-text); font-size: 22px; }
+.call-btn { display: flex; align-items: center; gap: var(--space-3); min-height: 64px; padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-destructive); color: #fff; text-decoration: none; }
+.call-btn--secondary { background: var(--color-card); color: var(--color-foreground); border: 1.5px solid var(--color-border); }
+.call-btn__label { display: block; font-size: 13px; opacity: .9; }
+.call-btn__num { display: block; font-family: var(--font-heading); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+:root[data-theme="dark"] .call-btn:not(.call-btn--secondary) { color: #1b0505; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .call-btn:not(.call-btn--secondary) { color: #1b0505; } }
+.delay-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.delay-table th, .delay-table td { text-align: left; padding: var(--space-2) var(--space-2) var(--space-2) 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.delay-table th { font-size: 12px; color: var(--color-muted-foreground); font-weight: 600; }
+.delay-table td:first-child { font-weight: 700; width: 34%; }
+@media (max-width: 599px) {
+  .delay-table thead { display: none; }
+  .delay-table tr { display: grid; gap: 2px; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+  .delay-table td { display: block; border: 0; padding: 0; width: auto !important; }
+  .delay-table td:nth-child(2)::before { content: "首发："; color: var(--color-muted-foreground); }
+  .delay-table td:nth-child(3)::before { content: "之后："; color: var(--color-muted-foreground); }
+}
+
+/* ---------- share + toast ---------- */
+.sheet__actions { display: flex; gap: var(--space-1); align-items: center; }
+.toast { position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom)); transform: translate(-50%, 12px); z-index: var(--z-toast); background: var(--color-foreground); color: var(--color-background); padding: var(--space-3) var(--space-4); border-radius: var(--radius); font-size: 14px; max-width: min(92vw, 520px); opacity: 0; pointer-events: none; transition: opacity var(--dur), transform var(--dur) var(--ease); word-break: break-all; }
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+@media (min-width: 768px) { .toast { bottom: var(--space-6); } }
+.offline-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--color-muted); }
+.offline-status.is-ready { background: var(--color-primary-surface); color: var(--color-primary); }
+
+.site-footer { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 2px solid var(--color-foreground); font-size: 13px; color: var(--color-muted-foreground); display: grid; gap: var(--space-2); max-width: 90ch; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-mushroom" viewBox="0 0 24 24"><path d="M3 12a9 7 0 0 1 18 0H3Z"/><path d="M9 12v6a3 3 0 0 0 6 0v-6"/></symbol>
+  <symbol id="i-skull" viewBox="0 0 24 24"><path d="M12 3a8 8 0 0 0-5 14.25V20h10v-2.75A8 8 0 0 0 12 3Z"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><path d="M10 20v-2M14 20v-2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="m9 4-6 2.5v13L9 17l6 2.5 6-2.5V4l-6 2.5L9 4Z"/><path d="M9 4v13M15 6.5v13"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 24 24"><path d="M3 12h13a6.5 6.5 0 0 1-13 0Z"/><path d="M16 12h5M7 8c0-1.5 1-1.5 1-3M11 8c0-1.5 1-1.5 1-3"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2.5Z"/><path d="M6 21h14v-4M9 7h7"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></symbol>
+  <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="sidenav" aria-label="侧边导航">
+    <a class="brand" href="#species">
+      <span class="brand__mark"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg></span>
+      <span><span class="brand__name">野菌速查</span><span class="brand__sub">识别 · 避毒 · 下厨</span></span>
+    </a>
+    <nav class="sidenav__list" aria-label="主导航">
+      <a class="sidenav__link" href="#species"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌</a>
+      <a class="sidenav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
+      <a class="sidenav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
+      <a class="sidenav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
+      <a class="sidenav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+    </nav>
+    <div class="sidenav__note"><strong>有任何疑问，就不要吃。</strong>本手册只是速查摘要，不能代替实物鉴定，也不能代替有经验的人或当地真菌协会。<br><a class="sidenav__sos" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a></div>
+  </aside>
+
+  <div>
+    <header class="hdr" id="hdr">
+      <div class="hdr__row">
+        <a class="brand" href="#species">
+          <span class="brand__mark"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg></span>
+          <span><span class="brand__name">野菌速查</span><span class="brand__sub">识别 · 避毒 · 下厨</span></span>
+        </a>
+        <a class="sos-pill" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
+      </div>
+      <nav class="topnav" aria-label="主导航">
+        <a class="topnav__link" href="#species"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌</a>
+        <a class="topnav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
+        <a class="topnav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
+        <a class="topnav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
+        <a class="topnav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+      </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- ================= SPECIES ================= -->
+      <section class="view" id="v-species" aria-labelledby="h-species">
+        <header class="view__head">
+          <span class="view__eyebrow">Field guide</span>
+          <h1 class="view__title" id="h-species">食用菌速查</h1>
+          <p class="view__lead">原书 52 种欧洲常见食用菌，另补充松茸等 7 种北美种类。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
+        </header>
+        <div class="search-bar">
+          <label class="search-bar__label" for="q">搜索菌名</label>
+          <div class="search-field">
+            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="中文名、英文名或学名，如 鸡油菌 / porcini">
+            <button class="search-field__clear" id="q-clear" type="button" aria-label="清除搜索"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="filter-group" role="group" aria-labelledby="lbl-season">
+            <span class="filter-group__label" id="lbl-season">季节</span>
+            <div class="chip-list" id="season-chips"></div>
+          </div>
+          <div class="filter-group" role="group" aria-labelledby="lbl-group">
+            <span class="filter-group__label" id="lbl-group">形态</span>
+            <div class="chip-list" id="group-chips"></div>
+          </div>
+        </div>
+        <div class="result-bar">
+          <span class="result-bar__count" id="count" role="status" aria-live="polite"></span>
+          <button class="btn-text" id="reset-all" type="button" hidden>清除筛选</button>
+        </div>
+        <div id="group-note"></div>
+        <div class="sp-grid" id="grid"></div>
+      </section>
+
+      <!-- ================= FINDER ================= -->
+      <section class="view" id="v-finder" aria-labelledby="h-finder">
+        <header class="view__head">
+          <span class="view__eyebrow">Identify by features</span>
+          <h1 class="view__title" id="h-finder">按特征查找</h1>
+          <p class="view__lead">手上有一朵不认识的菌？按看到的特征回答，列出可能的种类。<b>可能的毒菌会排在最前面。</b></p>
+        </header>
+        <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 59 种食用菌和 15 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
+        <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
+        <div class="finder">
+          <div class="finder__steps" id="finder-steps"></div>
+          <div class="finder__results" id="finder-results" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- ================= TOXIC ================= -->
+      <section class="view" id="v-toxic" aria-labelledby="h-toxic">
+        <header class="view__head">
+          <span class="view__eyebrow">Toxic look-alikes</span>
+          <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
+          <p class="view__lead">原书十大毒菌（p38–39）、北美采菌时最需要警惕的种类，以及 6 组最常混淆的食用菌和毒菌对比。</p>
+        </header>
+        <div class="danger-banner" role="note">
+          <svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><strong>少数毒菌可以致命，更多会造成严重肠胃不适。</strong>采到的东西只要有一点疑问，就扔掉。</div>
+        </div>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="tox-grid">十大毒菌</button>
+          <button class="chip" type="button" data-jump="tox-extra-head">北美补充</button>
+          <button class="chip" type="button" data-jump="cmp-head"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-columns"/></svg>易混对比</button>
+          <a class="chip" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
+        </div>
+        <div class="tox-grid" id="tox-grid"></div>
+        <div class="subhead" id="tox-extra-head"><h2>补充：北美的危险种类</h2><p>原书没有收录，但在北美采菌时最需要警惕。</p></div>
+        <div class="tox-grid" id="tox-grid-extra"></div>
+        <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 6 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
+        <div class="cmp-list" id="cmp-list"></div>
+        <div class="panel" style="margin-top: var(--space-6)">
+          <h2 class="panel__title">几条可以带走的规律</h2>
+          <ul>
+            <li>可食的蘑菇属也是白色带环的菌：<b>白色孢子印 + 基部有菌托</b>就要高度警惕鹅膏。采白色有褶菌时一定挖出完整柄基。</li>
+            <li>羊肚菌是<b>凹坑</b>，鹿花菌是<b>脑回状褶</b>。</li>
+            <li>鸡油菌是钝圆的<b>棱脊</b>，不是刀片状的真菌褶；长在木头上、密集成簇的橙色菌要想到发光类脐菇。</li>
+            <li>墨水味，或柄基切开立即变铬黄：黄斑蘑菇。</li>
+            <li>大环柄菇类做孢子印：<b>绿色</b>就是有毒的大青褶伞。</li>
+            <li>长在木头上的小褐菇，孢子印锈褐色：可能是致命的纹缘盔孢伞。</li>
+            <li>【编者注】丝膜菌、史密斯鹅膏中毒症状可能数天后才出现。吃过野菌后身体不适，请尽早就医，并带上剩余菌样。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= GUIDE ================= -->
+      <section class="view" id="v-guide" aria-labelledby="h-guide">
+        <header class="view__head">
+          <span class="view__eyebrow">Field &amp; kitchen</span>
+          <h1 class="view__title" id="h-guide">采集与厨房</h1>
+          <p class="view__lead">出门前读一遍：守则、装备、时间、地点、怎么鉴定；采回家后怎么清理、烹饪和保存。</p>
+        </header>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="guide-field">采集</button>
+          <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
+          <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
+        </div>
+        <div class="panel-grid" id="guide-field">
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
+            <ol class="rules">
+              <li><div><b>拿不准，绝对不吃。</b>你必须确定它无毒。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请真菌专家或可靠图鉴确认。</div></li>
+              <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
+              <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
+              <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
+            </ol>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">02</span>带什么</h2>
+            <ul>
+              <li><b>宽底轻篮子</b>最好。塑料袋会挤坏菌子、让它们“出汗”。</li>
+              <li><b>采菌刀</b>：折叠刀，一侧带锯齿可刮泥，尾端带小刷子。普通小刀也行。</li>
+              <li><b>长手杖</b>：拨开落叶、标记位置、上下坡。</li>
+              <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路时朝车声方向走。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
+            <ul>
+              <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>。</li>
+              <li>春夏：连续几天透雨后转暖的温和天气最好；秋冬：温和潮湿的日子。久旱和暴雨都不利。</li>
+              <li>霜雪会让多数菌停止出菇，但管形鸡油菌、野生金针菇等耐寒。</li>
+              <li><b>早起</b>：菌子没被动物和行人破坏，你也是第一个到场的人。</li>
+            </ul>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">04</span>去哪里找</h2>
+            <p>我们采的只是真菌的“果实”。有的菌靠腐烂有机物生活，有的寄生在活树上，还有的与特定树种的根共生（菌根菌），所以可能长在离树一段距离的地方。附近出现其他（哪怕不能吃的）菌，往往是好兆头。</p>
+            <div class="kv"><div class="kv-k">阔叶林<small>栎、山毛榉、桦</small></div><div class="kv-v">美味牛肝菌、鸡油菌、灰喇叭菌、卷缘齿菌、皱盖罗鳞伞、栗色圆孔牛肝菌、夏松露；树干上：硫磺菌、牛排菌、木耳</div></div><div class="kv"><div class="kv-k">针叶林<small>松、云杉、落叶松</small></div><div class="kv-v">乳牛肝菌、褐环乳牛肝菌、厚环乳牛肝菌（落叶松）、松乳菇（二针松下湿地）、管形鸡油菌、绣球菌（树桩）、林生蘑菇</div></div><div class="kv"><div class="kv-k">混交林</div><div class="kv-v">美味牛肝菌（林道边）、红蜡蘑、紫丁香蘑（厚落叶层）、粗鳞青褶伞；倒木上：平菇、管形鸡油菌</div></div><div class="kv"><div class="kv-k">草地、牧场</div><div class="kv-v">四孢蘑菇（肥沃草地）、野蘑菇（马场）、草地马勃、高大环柄菇、粉紫香蘑、香杏丽蘑（春夏）、大秃马勃（翻动过的土）</div></div><div class="kv"><div class="kv-k">公园、园林、城市</div><div class="kv-v">硬柄小皮伞（草坪）、毛头鬼伞、荷叶离褶伞、斜盖伞、蜜环菌（腐朽阔叶树）、梨形马勃（腐木）</div></div>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">05</span>采摘</h2>
+            <ul>
+              <li><b>先鉴定。</b>检查整朵菌，记下生境、颜色、气味、大小、形状。同一种菌在不同生长阶段外观会变。</li>
+              <li><b>完整取下。</b>轻轻拔、或用刀尖撬出，保留柄基便于鉴定。不要硬扯，以免伤到菌丝。</li>
+              <li><b>只要状态最好的。</b>过熟、软烂、虫蛀多的留在原地散播孢子。</li>
+              <li><b>边采边清理。</b>刷掉杂物、切掉脏柄基，不同种类分开放。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">06</span>做孢子印</h2>
+            <ol class="steps">
+              <li>用<b>新鲜</b>菌子。切下菌盖，菌褶朝下放在纸上；拿不准颜色深浅就一半白纸、一半黑纸。</li>
+              <li>在菌盖顶滴一滴水，用玻璃碗扣住。</li>
+              <li>放几小时或过夜，轻轻拿开碗和菌盖即可看到。</li>
+              <li>在自然光下看：白至奶油、粉至红、赭至黏土色、锈褐、紫褐、黑；大青褶伞是<b>绿色</b>。</li>
+            </ol>
+            <p class="muted-note">同属内孢子颜色差别很小：鹅膏属白色，蘑菇属巧克力色，丝盖伞属、丝膜菌属和盔孢伞属褐色，粉褶菌属粉色。</p>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">07</span>看哪些特征</h2>
+            <div class="kv"><div class="kv-k">菌盖</div><div class="kv-v">颜色；形状（凸、锥、平、中凹、中央凸起）；表面（光滑、鳞片、残膜、黏滑）；边缘是否内卷、有条纹</div></div><div class="kv"><div class="kv-k">菌柄</div><div class="kv-v">有无<b>菌环</b>、<b>菌幕</b>、基部<b>菌托</b>；干还是黏；纵切看实心、空心还是分腔；有无网纹、鳞片</div></div><div class="kv"><div class="kv-k">菌盖下面<small>一定要翻过来看</small></div><div class="kv-v">是菌褶、菌刺、菌孔（海绵状），还是光滑面？很多菌从上面看像有褶，其实不是</div></div><div class="kv"><div class="kv-k">菌褶</div><div class="kv-v">疏密、长短是否一致、是否分叉；与柄的连接方式：<b>离生</b>（不碰柄）、<b>弯生</b>（近柄处凹缺）、<b>直生</b>、<b>延生</b>（沿柄下延）</div></div><div class="kv"><div class="kv-k">气味</div><div class="kv-v">杏仁味、面粉味、杏干香、墨水味等都是重要线索</div></div><div class="kv"><div class="kv-k">变色</div><div class="kv-v">切开或碰伤后是否变红、变黄、变蓝、变黑</div></div>
+          </section>
+          <details class="panel panel--wide">
+            <summary>术语小词典<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+            <div class="kv"><div class="kv-k">菌托</div><div class="kv-v">柄基部的袋状或环状结构，是幼菌外包膜的残留。鹅膏属的重要标志</div></div><div class="kv"><div class="kv-k">菌环</div><div class="kv-v">柄上的环状膜，是保护菌褶的内菌幕破裂后留下的</div></div><div class="kv"><div class="kv-k">菌幕</div><div class="kv-v">幼菌时包住全体（外菌幕）或连接盖缘与柄（内菌幕）的膜；丝膜菌的菌幕像蛛网</div></div><div class="kv"><div class="kv-k">离生／弯生／直生／延生</div><div class="kv-v">菌褶与柄的四种连接方式：不接触柄／近柄处凹缺／平直连到柄／沿柄向下延伸</div></div><div class="kv"><div class="kv-k">菌孔</div><div class="kv-v">牛肝菌等菌盖下管状结构的开口，看起来像海绵</div></div><div class="kv"><div class="kv-k">菌根</div><div class="kv-v">真菌与特定树种根系的共生关系，菌根菌只在相应树木附近出现</div></div><div class="kv"><div class="kv-k">腐生／寄生</div><div class="kv-v">靠分解死去的有机物生活／靠活的宿主生活</div></div><div class="kv"><div class="kv-k">水浸状</div><div class="kv-v">菌盖随含水量变化而变色的现象</div></div><div class="kv"><div class="kv-k">自溶</div><div class="kv-v">菌褶成熟后自己液化成黑色墨汁，如毛头鬼伞</div></div><div class="kv"><div class="kv-k">孢子印</div><div class="kv-v">菌盖放在纸上落下的孢子堆积，用来判断孢子颜色</div></div><div class="kv"><div class="kv-k">菌丝体</div><div class="kv-v">地下或基质中由细丝交织成的真菌主体；我们采的只是它的“果实”</div></div>
+          </details>
+        </div>
+        <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。</p></div>
+        <div class="panel-grid">
+          <section class="panel panel--danger panel--wide">
+            <h2 class="panel__title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>先看这里</h2>
+            <p><b>必须彻底煮熟：</b>羊肚菌、鹅膏类（赭盖鹅膏、橙黄鹅膏），生吃有毒；紫丁香蘑、粉紫香蘑、疣柄牛肝菌、蜜环菌也须煮熟。</p>
+            <p><b>可以生吃的少数：</b>田野蘑菇、牛肝菌（薄切拌沙拉）；松露（刨片）。</p>
+            <p style="margin:0">几种菌混着做时，注意各自所需时间不同，确保全部熟透。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">01</span>回家第一件事</h2>
+            <ul>
+              <li>尽快把收获摊在桌布上，挑掉杂物，<b>按种类分开</b>。有疑问的扔掉，或再核对一次。</li>
+              <li>湿透的先晾干，否则会发霉。</li>
+              <li>最好的幼嫩个体留给沙拉、主菜、腌制或冷冻；次一些的做汤、炖菜或晒干。</li>
+              <li>暂不处理就放阴凉处，铺湿布、盖湿布，可放 1–2 天。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">02</span>清洁</h2>
+            <ul>
+              <li><b>不要水洗</b>，吸水后会稀释风味。例外是<b>绣球菌</b>，可以洗。</li>
+              <li>大多数野菌不用去皮，例外是黏盖的<b>褐环乳牛肝菌</b>。</li>
+              <li><b>结实的</b>（牛肝菌、香蘑）：小湿刀刮去柄基杂物，顺柄刮净。</li>
+              <li><b>娇嫩的</b>（羊肚菌、鸡油菌）：软毛刷刷，嵌进去的泥用小刀挑出。</li>
+              <li><b>卷缘齿菌</b>：老的菌刺发苦，轻搓即可脱落。</li>
+              <li>清理好后冷藏：有盖盒子，上下垫湿厨房纸。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">03</span>切分</h2>
+            <p>一定要切开或掰开检查：虫从菌盖中心开始往外蛀，外表好看的里面可能全是虫孔。</p>
+            <ul>
+              <li><b>牛肝菌、硫磺菌、大马勃</b>：用刀切。大的盖柄分开，盖纵切片，柄切薄片。</li>
+              <li><b>羊肚菌</b>：拧下柄，大的纵切，检查空腔里有无虫。</li>
+              <li><b>卷缘齿菌等脆的</b>：用手掰成均匀小块。</li>
+              <li><b>鸡油菌等纤维质的</b>：从盖往下撕开；硬柄留着熬高汤。</li>
+            </ul>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title"><span class="panel__num">04</span>万能基础做法<span class="panel__tag">原书 p177</span></h2>
+            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，任何杂菌都适用。4 人份，约 35 分钟。</p>
+            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 杂菌 500 g 切厚片 · 盐、黑胡椒</p>
+            <ol class="steps">
+              <li>小火加热油、蒜和一半欧芹。</li>
+              <li>转大火下菌，勤翻炒 5 分钟，再转小火。</li>
+              <li>调味，小火煮约 20 分钟至软；留一点汁、但不能太干。</li>
+              <li>撒上余下的欧芹。</li>
+            </ol>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">05</span>烹饪方法</h2>
+            <div class="kv"><div class="kv-k">烤<small>适合牛肝菌</small></div><div class="kv-v">整颗放烤盘，加蒜瓣、香草，拌橄榄油。230°C 烤 30–40 分钟，中途翻一次。</div></div><div class="kv"><div class="kv-k">煎炒<small>适合鸡油菌、硬柄小皮伞</small></div><div class="kv-v">大火热锅，少量油或黄油，油热下菌，不停翻炒到边缘焦黄。</div></div><div class="kv"><div class="kv-k">铁板烤<small>适合马勃、高大环柄菇、田野蘑菇</small></div><div class="kv-v">切 1 cm 厚片，平底锅刷油，大火每面 2–3 分钟，中途转 90° 烙出格纹。</div></div><div class="kv"><div class="kv-k">烟熏<small>适合牛肝菌、鸡油菌、杂菌</small></div><div class="kv-v">通风处，炒锅中火放少量木屑，上架烤网放菌，盖紧，10–15 分钟。</div></div><div class="kv"><div class="kv-k">焯水<small>适合卷缘齿菌、松乳菇</small></div><div class="kv-v">盐水大滚，少量分批下锅煮 1 分钟，捞出放厨房纸上吸干。</div></div>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title"><span class="panel__num">06</span>保存</h2>
+            <p>干制最方便，可放很久；冷冻、腌制的宜在几个月内吃完。部分种类保存前要先<b>焯水</b>，可去除生菌中可能有的毒素，并保持颜色和形状。</p>
+            <div class="kv"><div class="kv-k">生冻<small>灰喇叭菌、羊肚菌、牛肝菌、香蘑</small></div><div class="kv-v">整颗装冷冻袋挤出空气封好，或先摊平冻硬再装袋。3 个月内吃完。</div></div><div class="kv"><div class="kv-k">炒后冷冻<small>鸡油菌、硫磺菌、蜜环菌</small></div><div class="kv-v">用黄油或橄榄油炒过，放凉后装密封盒。3 个月内吃完。</div></div><div class="kv"><div class="kv-k">菌酱冰块<small>杂菌</small></div><div class="kv-v">炒好后打成细末，倒入冰格冷冻，3 个月内用完。做酱、高汤、汤的增香块。</div></div><div class="kv"><div class="kv-k">烘干（大菌）<small>香蘑、牛肝菌、马勃、绣球菌</small></div><div class="kv-v">切片铺在垫布的烤盘上不重叠，烤箱最低温；勤检查，缩小变脆即取出。密封可存 1 年。</div></div><div class="kv"><div class="kv-k">晾干（小菌）<small>灰喇叭菌、鸡油菌</small></div><div class="kv-v">用针线穿成串，每颗之间打结不相碰，挂在温暖通风处。密封罐存 1 年。</div></div><div class="kv"><div class="kv-k">泡发</div><div class="kv-v">温水浸泡几小时，用漏勺捞出。泡菌水可做汤，但要过滤去沙。</div></div><div class="kv"><div class="kv-k">醋渍<small>幼嫩的羊肚菌、美味牛肝菌、硬柄小皮伞</small></div><div class="kv-v">水 240 ml + 酒醋 200 ml + 辣椒 2 个 + 蒜 1 瓣 + 胡椒粒少许，煮 10 分钟放凉，倒入装菌的罐中没过，可加月桂叶。阴凉避光存 3 个月；沥干拌油上桌。</div></div>
+          </section>
+        </div>
+        <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册。</p></div>
+        <div class="panel-grid">
+          <section class="panel">
+            <h2 class="panel__title">本机状态</h2>
+            <p><span class="offline-status" id="offline-status">检查中…</span></p>
+            <p class="muted-note">用网址打开过一次、状态显示“已可离线使用”后，就可以在没信号的地方打开了。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title">装到手机桌面</h2>
+            <ul>
+              <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
+              <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
+              <li>装好后从桌面图标打开，会像独立的 App 一样全屏显示。</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <!-- ================= RECIPES ================= -->
+      <section class="view" id="v-recipes" aria-labelledby="h-recipes">
+        <header class="view__head">
+          <span class="view__eyebrow">Recipes</span>
+          <h1 class="view__title" id="h-recipes">精选食谱</h1>
+          <p class="view__lead">6 道步骤简单、用料常见的菜。用量为公制，1 汤匙 ≈ 15 ml。勾选材料可以当购物清单用。</p>
+        </header>
+        <div class="rc-grid" id="rc-grid"></div>
+        <details class="panel" style="margin-top: var(--space-5)">
+          <summary>原书全部 53 道食谱<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+          <ul class="rindex" id="rindex"></ul>
+        </details>
+      </section>
+
+      <!-- ================= EMERGENCY ================= -->
+      <section class="view" id="v-emergency" aria-labelledby="h-emergency">
+        <header class="view__head">
+          <span class="view__eyebrow">Emergency</span>
+          <h1 class="view__title" id="h-emergency">中毒急救</h1>
+          <p class="view__lead">怀疑吃了有毒的野菌：<b>不要等症状</b>，立刻打电话。症状出现得越晚，往往越危险。</p>
+        </header>
+        <div class="sos-grid">
+          <section class="call-card" aria-labelledby="h-call">
+            <h2 id="h-call">1. 马上打电话</h2>
+            <a class="call-btn" href="tel:18002221222"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">美国毒物控制中心（免费，24 小时，全国通用）</span><span class="call-btn__num">1-800-222-1222</span></span></a>
+            <a class="call-btn" href="tel:911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">昏迷、抽搐、呼吸困难：直接打急救</span><span class="call-btn__num">911</span></span></a>
+            <a class="call-btn call-btn--secondary" href="tel:18005678911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">加拿大不列颠哥伦比亚省毒物中心（大温哥华地区：604-682-5050）</span><span class="call-btn__num">1-800-567-8911</span></span></a>
+            <p class="muted-note" style="margin:0">如果按钮拨不出去，请手动拨打上面的号码。其他国家请拨当地急救电话。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title">2. 保留证据</h2>
+            <ul>
+              <li><b>留下剩余的菌子和剩菜</b>，包括切下的柄基和边角料；能拍照就多角度拍照。这能帮医生和鉴定人员确认是哪一种。</li>
+              <li>记下<b>什么时候吃的、吃了多少、怎么做的</b>，以及第一次出现不适的时间。</li>
+              <li><b>一起吃过的人都要联系医生</b>，即使暂时没有症状。</li>
+            </ul>
+          </section>
+          <section class="panel panel--wide">
+            <h2 class="panel__title">3. 症状出现晚，不代表没事</h2>
+            <p>有几类最危险的毒菌，吃下后要过好几个小时甚至几天才出现症状，那时器官可能已经受损。</p>
+            <table class="delay-table">
+              <thead><tr><th>毒菌</th><th>首发症状</th><th>之后</th></tr></thead>
+              <tbody>
+                <tr><td>毒鹅膏、毁灭天使、纹缘盔孢伞（鹅膏毒素）</td><td>约 6–10 小时后恶心、呕吐、腹泻</td><td>约 36 小时肝功能指标升高，约 72 小时可发生肝衰竭。毒素<b>煮不坏</b></td></tr>
+                <tr><td>史密斯鹅膏</td><td>20 分钟到 1 天内腹痛、腹泻、呕吐</td><td>2–6 天后可发生肾衰竭，部分患者需要透析</td></tr>
+                <tr><td>细鳞丝膜菌等丝膜菌</td><td>可能数天后才出现</td><td>伤肾</td></tr>
+                <tr><td>大青褶伞、发光类脐菇</td><td>1–3 小时内剧烈呕吐腹泻</td><td>通常数天内恢复，但仍应就医</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <div class="sources panel--wide" style="grid-column: 1 / -1">
+            <h3>资料来源</h3>
+            <ol>
+              <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Galerina marginata（中毒时间线与毒物中心电话）</a></li>
+              <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Amanita smithiana</a></li>
+              <li><a href="https://en.wikipedia.org/wiki/Chlorophyllum_molybdites" target="_blank" rel="noopener">Wikipedia：Chlorophyllum molybdites</a></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>内容改写自 <i>The Edible Mushroom Book: A Guide to Foraging and Cooking</i>（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008）。“原书 p__”为英文原书页码。北美补充部分的资料来源见各条目详情。</p>
+        <p>原书以英国和欧洲物种为主。在北美、亚洲等地，同一种菌可能有不同的近似毒菌，请配合当地图鉴。标有【编者注】的是改写时补充的安全提示。</p>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<nav class="botnav" aria-label="主导航">
+  <a class="botnav__link" href="#species"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌</a>
+  <a class="botnav__link" href="#finder"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
+  <a class="botnav__link" href="#toxic"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-skull"/></svg>毒菌</a>
+  <a class="botnav__link" href="#guide"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-map"/></svg>指南</a>
+  <a class="botnav__link" href="#recipes"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+</nav>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheet-title"><div class="sheet__body" id="sheet-body"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = {"groups": [{"key": "extra", "name": "北美补充（原书未收录）", "short": "北美", "note": "原书以欧洲物种为主。这一组整理自北美的真菌学资料（大学博物馆、真菌学会、州政府自然资源部门、同行评审论文等），每种的来源附在详情页底部。季节因地区和海拔差别很大，仅供参考。"}, {"key": "morel", "name": "羊肚菌类", "short": "羊肚菌", "note": "头部呈蜂窝状，必须煮熟"}, {"key": "bolete", "name": "牛肝菌类", "short": "牛肝菌", "note": "菌盖下面是海绵状菌孔，不是菌褶"}, {"key": "chanterelle", "name": "鸡油菌类", "short": "鸡油菌", "note": "下面是钝圆的棱脊，不是刀片状真菌褶"}, {"key": "odd", "name": "形态特别的种类", "short": "特殊形态", "note": "齿、多孔、珊瑚状、胶质——不易与毒菌混淆"}, {"key": "puffball", "name": "马勃类", "short": "马勃", "note": "只吃切开后内部纯白、结实的幼体"}, {"key": "agaricus", "name": "蘑菇属（Agaricus）", "short": "蘑菇属", "note": "孢子印巧克力色；有菌环、无菌托。注意闻气味"}, {"key": "amanita", "name": "鹅膏属（Amanita）——高风险家族", "short": "鹅膏属", "note": "这一属包含最致命的毒菌。【编者注】新手建议完全不采"}, {"key": "parasol", "name": "大环柄菇类", "short": "环柄菇", "note": "大型伞状，菌环可上下滑动"}, {"key": "gilled", "name": "其他有褶菌", "short": "其他褶菌", "note": "有褶菌最易与毒菌混淆——每种都要核对孢子印"}, {"key": "truffle", "name": "块菌（松露）", "short": "松露", "note": "地下生长，需要经验、犬或猪来寻找"}], "species": [{"zh": "松茸", "en": "Matsutake / Pine mushroom", "latin": "Tricholoma matsutake", "latin2": "北美西部：T. murrillianum；北美东部：T. magnivelare", "page": null, "season": "秋–初冬", "months": [9, 10, 11, 12], "feat": "菌盖 6–20 cm，幼时白色、边缘内卷，长大后出现黄褐至褐色斑块和鳞片；菌褶白至奶油色、密，弯生或窄直生；幼时有棉絮状菌幕，破裂后在柄上留下下垂的<b>菌环</b>；<b>没有菌托</b>；菌柄粗壮致密，最宽处在菌环附近，向下渐细。<b>最关键的是气味</b>：辛香、像肉桂，常被形容为“肉桂糖混着脏袜子”。", "hab": "针叶林地面的厚落叶层中，常深埋在针叶下只顶起一个小土包。亚洲与赤松等松树共生；北美西部见于松、花旗松、西部铁杉、云杉林下", "spore": ["white"], "kitchen": "上品，香气是精华。不要水洗，擦净或刮去泥土即可；适合炭烤、清汤、松茸饭等简单做法", "warn": "<b>北美西部：史密斯鹅膏</b>（Amanita smithiana）与松茸同林生长、外形相近，误食可致肾衰竭。四点区分：①松茸有辛香味，史密斯鹅膏气味淡或难闻；②松茸柄致密、用拇指用力按不碎，史密斯鹅膏的柄会碎裂；③松茸柄最宽在地面以上，史密斯鹅膏在地面或地下最宽、向下收成萝卜状；④松茸的柄摇不下来，史密斯鹅膏轻摇常整根脱落。", "group": "extra", "flags": ["上品", "非原书"], "region": "北美西部 · 亚洲", "extra": ["<b>别耙地。</b>耙开落叶层找松茸会破坏菌丝，研究显示会降低之后几年的产量。", "<b>先查许可。</b>美国国家森林常把松茸与其他野菌分开管理：有的林区需要专门的松茸许可，有的完全不允许个人免费采集。出发前查当地林区的最新规定。", "<b>其他相似种：</b>假松茸 T. caligatum（可食，但常带苦味、香气弱）；Catathelasma 属（可食，柄上有不易看清的双层菌环）；T. focale（有腐败面粉味）。"], "links": [["iNaturalist：北美西部松茸", "https://www.inaturalist.org/taxa/search?q=Tricholoma+murrillianum"], ["iNaturalist：亚洲松茸", "https://www.inaturalist.org/taxa/search?q=Tricholoma+matsutake"]], "sources": [["UBC Beaty Museum · Mushrooms Up!：Tricholoma murrillianum", "https://explore.beatymuseum.ubc.ca/mushroomsup/T_murrillianum.html"], ["UBC Beaty Museum · Mushrooms Up!：Amanita smithiana", "https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html"], ["Kuo, M.（2023）MushroomExpert：Tricholoma murrillianum", "https://mushroomexpert.com/tricholoma_murrillianum.html"], ["Trudell et al.（2017）North American matsutake: names clarified, Mycologia 109(3)", "https://doi.org/10.1080/00275514.2017.1326780"], ["MykoWeb · California Fungi：Tricholoma murrillianum", "https://www.mykoweb.com/CAF/species/Tricholoma_murrillianum.html"], ["USDA Forest Service：Fremont-Winema 国家森林许可说明", "https://www.fs.usda.gov/main/fremont-winema/passes-permits"], ["Mushroom Appreciation：American Matsutake（采集与可持续）", "https://mushroom-appreciation.com/american-matsutake.html"]], "hym": "gills", "sub": ["ground"], "ring": true, "volva": false, "slug": "tricholoma-matsutake"}, {"zh": "太平洋金鸡油菌", "en": "Pacific golden chanterelle", "latin": "Cantharellus formosus", "region": "西北太平洋", "page": null, "season": "夏末–秋", "months": [8, 9, 10, 11], "feat": "菌盖 2–14 cm，亮黄至黄橙色、干燥，边缘内卷，长大后呈漏斗状；下面是<b>钝圆的假褶（棱脊）</b>，厚而疏、会分叉并有横脉，延生到柄上，颜色常比菌盖浅（橙黄到带粉的橙色）；碰伤先变黄、后变赭色；菌柄与盖同色或略浅，无菌环、无菌托。气味温和", "hab": "地上，与花旗松、西部铁杉、北美云杉等针叶树共生；广泛分布于不列颠哥伦比亚和西北太平洋", "spore": ["yellow"], "kitchen": "上品，生尝略带果香或微辣；煎炒、配奶油，做法同欧洲鸡油菌", "warn": "<b>发光类脐菇</b>：长在木头上、密集成簇，是刀片状真菌褶（有毒）；<b>假鸡油菌</b>：褶更薄、更橙、反复分叉；<b>毛钉菇</b>（Turbinellus floccosus）：喇叭更深、盖上有鳞片，可能引起肠胃不适", "group": "extra", "flags": ["上品", "非原书"], "extra": ["<b>白鸡油菌</b>（C. subalbidus）：同一地区的近亲，通体奶白色，同样可食。"], "sources": [["UBC Beaty Museum · Mushrooms Up!：Cantharellus formosus", "https://explore.beatymuseum.ubc.ca/mushroomsup/C_formosus.html"]], "hym": "ridges", "sub": ["ground"], "ring": false, "volva": false, "slug": "cantharellus-formosus"}, {"zh": "春王牛肝菌", "en": "Spring king bolete", "latin": "Boletus rex-veris", "region": "北美西部山地", "page": null, "season": "晚春", "months": [5, 6], "feat": "菌盖 9–18 cm，湿时黏；幼时近白色，之后带银色光泽的粉褐，最后变暗橄榄褐，手摸过的地方会变深；孔口幼时白→奶黄→黄橄榄，<b>碰伤不变色</b>；菌柄粗 2–6 cm，基部略膨大，<b>上半部有明显网纹</b>；肉白，切开不变色。常小簇生长", "hab": "山地针叶林（尤其松、冷杉）下，常见于土路和小径旁，有时半埋在土或落叶下。通常在 5 月底到 6 月初出现，常和羊肚菌季节的尾巴重叠", "spore": ["olive"], "kitchen": "上品，口感紧实；纽扣期最好，成熟的多拿来晒干", "warn": "与美味牛肝菌的区别：后者多在夏末秋季出、很少成簇、幼盖没有粉色调。<b>B. regius</b> 孔口亮黄、碰伤变蓝；<b>B. rubripes</b> 柄无网纹、孔口碰伤变蓝", "group": "extra", "flags": ["上品", "非原书"], "sources": [["MykoWeb · California Fungi：Boletus rex-veris", "https://www.mykoweb.com/CAF/species/Boletus_rex-veris.html"]], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "boletus-rex-veris"}, {"zh": "赞美牛肝菌", "en": "Admirable bolete", "latin": "Aureoboletus mirabilis", "region": "西北太平洋", "page": null, "season": "夏末–秋", "months": [8, 9, 10, 11], "feat": "菌盖深酒红至紫褐色、<b>天鹅绒质</b>（幼时略黏）；<b>孔口亮黄</b>；菌柄与盖同色但较浅。<b>常从长满苔藓的铁杉腐木或树桩上长出</b>，这在牛肝菌里很少见（其实是与铁杉根共生）", "hab": "从北加州到阿拉斯加的太平洋沿岸铁杉林、喀斯喀特山脉；偶见花旗松、红雪松", "spore": ["olive"], "kitchen": "可食；肉多汁、很难保存，宜鲜吃。风味评价不一，有人觉得平淡", "warn": null, "group": "extra", "flags": ["非原书"], "sources": [["Wikipedia：Aureoboletus mirabilis", "https://en.wikipedia.org/wiki/Aureoboletus_mirabilis"], ["MykoWeb · California Fungi：Aureoboletus mirabilis", "https://www.mykoweb.com/CAF/species/Aureoboletus_mirabilis.html"], ["IUCN 红色名录评估：Aureoboletus mirabilis", "https://redlist.info/iucn/species_view/811404/"]], "hym": "pores", "sub": ["wood", "ground"], "ring": false, "volva": false, "slug": "aureoboletus-mirabilis"}, {"zh": "龙虾菌", "en": "Lobster mushroom", "latin": "Hypomyces lactifluorum", "region": "全北美", "page": null, "season": "夏–秋", "months": [7, 8, 9, 10], "feat": "不是一种独立的蘑菇：一种寄生菌把白色的红菇或乳菇整个包裹起来。外层<b>亮橙至橙红、硬、布满细小颗粒</b>，老了变紫红；形状被扭曲，看不出原来的菌褶；切开内部白色紧实", "hab": "林地地面，常在针叶林中；宿主多为短柄红菇（Russula brevipes），有时是辣乳菇类", "spore": ["white"], "kitchen": "可食，口感紧实、带一点海鲜感；挑年轻、颜色偏浅、内部白而紧实的；切掉未被包裹、正在腐烂的部分", "warn": "宿主被完全包裹后就无法辨认。理论上它可能寄生在有毒的宿主上，目前未见确认的中毒报告；只采典型的亮橙、坚硬、表面颗粒状的个体。白色、粉色、黄色的“霉”可能是别的东西", "group": "extra", "flags": ["非原书"], "sources": [["Kuo, M. MushroomExpert：Hypomyces lactifluorum", "https://www.mushroomexpert.com/hypomyces_lactifluorum.html"], ["UBC Beaty Museum · Mushrooms Up!：Lobster mushroom", "https://explore.beatymuseum.ubc.ca/mushroomsup/H_lactifluorum.html"], ["Tom Volk's Fungus of the Month（威斯康星大学）", "https://botit.botany.wisc.edu/toms_fungi/aug2001.html"], ["Missouri Department of Conservation：Lobster Mushroom", "https://mdc.mo.gov/discover-nature/field-guide/lobster-mushroom"]], "hym": "other", "sub": ["ground"], "ring": false, "volva": false, "slug": "hypomyces-lactifluorum"}, {"zh": "灰树花（舞茸）", "en": "Hen of the woods / Maitake", "latin": "Grifola frondosa", "region": "北美东部", "page": null, "season": "秋", "months": [9, 10, 11], "feat": "一大团玫瑰花状，由许多<b>灰褐色扇形或匙形小盖</b>从一个多分枝的主干长出，小盖薄（3–6 mm）；下面是奶白色细孔，沿柄下延；肉白；<b>碰伤不变黑</b>", "hab": "栎树（偶尔枫树）基部或树桩旁，是树根的弱寄生菌，常年复一年长在同一棵树下。北美只见于落基山脉以东", "spore": ["white"], "kitchen": "上品；烤、煎、炖都好。老的会发苦、变柴。新鲜的用纸袋保存，不要放塑料袋", "warn": "<b>黑变多孔菌</b>（Meripilus sumstinei）：小盖更厚（12–19 mm）、碰伤变黑，可食但较差；<b>伯氏邦氏孔菌</b>（Bondarzewia berkeleyi）也常被误认，同样安全", "group": "extra", "flags": ["上品", "非原书"], "sources": [["Midwest Mycology：Grifola frondosa", "https://midwestmycology.org/grifola-frondosa/"], ["Missouri Department of Conservation：Hen of the Woods", "https://mdc.mo.gov/species/hen-woods-maitake"], ["AmericanMushrooms.com：Hen of the Woods", "https://americanmushrooms.com/edibles1.htm"]], "hym": "pores", "sub": ["wood"], "ring": false, "volva": false, "slug": "grifola-frondosa"}, {"zh": "猴头菇类", "en": "Lion's mane / Bear's head", "latin": "Hericium spp.", "region": "全北美", "page": null, "season": "夏末–冬", "months": [8, 9, 10, 11, 12, 1], "feat": "白色，<b>没有菌盖和菌褶，整团是下垂的柔软菌刺</b>。猴头菇（H. erinaceus）是一整团不分枝、刺长 1–5 cm；熊头（H. americanum）和针叶树珊瑚猴头（H. abietis）是分枝结构，刺成簇或成排。老了发黄", "hab": "枯木或活树伤口上。猴头菇和熊头长在阔叶树（栎、枫、山毛榉等）；H. abietis 长在针叶树（冷杉、花旗松）的枯木上", "spore": ["white"], "kitchen": "上品，趁刺还是白色到奶油色时采；发黄后容易发酸或有怪味。撕成块煎，口感像蟹肉", "warn": null, "group": "extra", "flags": ["上品", "非原书"], "extra": ["没有已知的有毒近似种，难点只在于分清是哪一种猴头。和所有野菌一样，第一次吃少量、彻底煮熟。"], "links": [["iNaturalist：猴头菇属", "https://www.inaturalist.org/taxa/search?q=Hericium"]], "sources": [["MykoWeb · California Fungi：Hericium erinaceus", "https://mykoweb.com/CAF/species/Hericium_erinaceus.html"], ["Midwest Mycology：Hericium", "https://midwestmycology.org/hericium-erinaceus/"], ["Wikipedia：Hericium erinaceus", "https://en.wikipedia.org/wiki/Hericium_erinaceus"]], "hym": "spines", "sub": ["wood"], "ring": false, "volva": false, "slug": "hericium"}, {"zh": "羊肚菌", "en": "Morel", "latin": "Morchella esculenta", "page": 40, "season": "春", "months": [3, 4, 5], "feat": "头部浅褐灰、蜂窝状凹坑；柄淡黄、中空", "hab": "林下草丛；火烧迹地；园林树皮覆盖物上", "spore": ["white"], "kitchen": "上品，带烟肉香。<b>绝不可生吃</b>", "warn": "鹿花菌：脑回状褶皱而非凹坑", "group": "morel", "flags": ["须煮熟", "上品"], "hym": "other", "sub": ["ground"], "ring": false, "volva": false, "slug": "morchella-esculenta"}, {"zh": "半离羊肚菌", "en": "Semifree morel", "latin": "Mitrophora semilibera", "page": 41, "season": "早春", "months": [2, 3, 4], "feat": "头小、暗褐，下缘与柄分离；柄长而色浅", "hab": "林中稀草、潮湿小径旁", "spore": ["white"], "kitchen": "肉薄、味淡雅；空腔要仔细清洗。<b>不可生吃</b>", "warn": "鹿花菌：脑回状褶皱而非凹坑", "group": "morel", "flags": ["须煮熟"], "hym": "other", "sub": ["ground"], "ring": false, "volva": false, "slug": "mitrophora-semilibera"}, {"zh": "美味牛肝菌（Porcini）", "en": "Cep", "latin": "Boletus edulis", "page": 60, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "面包状褐色盖；柄粗如桶，上部有细白网纹；孔口白→黄绿", "hab": "苔藓丰富的阔叶林与针叶林", "spore": ["olive"], "kitchen": "上品，配橄榄油最佳", "warn": null, "group": "bolete", "flags": ["上品"], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "boletus-edulis"}, {"zh": "网盖牛肝菌", "en": "Summer bolete", "latin": "Boletus reticulatus", "page": 61, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "似美味牛肝菌，但盖色更浅、易龟裂；网纹覆盖柄的大部分", "hab": "山毛榉、栎树下", "spore": ["olive"], "kitchen": "上品；比美味牛肝菌早几周出菇。幼嫩者可腌或生拌沙拉", "warn": null, "group": "bolete", "flags": ["上品"], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "boletus-reticulatus"}, {"zh": "褐黄牛肝菌", "en": "Bay bolete", "latin": "Boletus badius", "page": 82, "season": "晚秋", "months": [10, 11], "feat": "暗栗褐盖；柄圆柱形、红褐、无网纹；孔口黄绿、触碰变蓝（煮后消失）", "hab": "多在松树下，也见于阔叶林、云杉", "spore": ["olive"], "kitchen": "上品", "warn": null, "group": "bolete", "flags": ["上品"], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "boletus-badius"}, {"zh": "栗色圆孔牛肝菌", "en": "Chestnut bolete", "latin": "Gyroporus castaneus", "page": 62, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "橙褐盖；柄脆、内部分隔成腔；切开不变色", "hab": "栎树下为主，沙质土", "spore": ["yellow"], "kitchen": "温和带坚果香；选结实的", "warn": null, "group": "bolete", "flags": [], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "gyroporus-castaneus"}, {"zh": "橙黄疣柄牛肝菌", "en": "Red aspen bolete", "latin": "Leccinum aurantiacum", "page": 63, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "橙褐盖；柄上有红褐色鳞片；切开渐变灰黑", "hab": "山杨下，也见于杨、桦、栎", "spore": ["brown"], "kitchen": "温和", "warn": "疣柄牛肝菌属务必彻底煮熟【编者注】", "group": "bolete", "flags": ["须煮熟"], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "leccinum-aurantiacum"}, {"zh": "异色疣柄牛肝菌", "en": "Orange birch bolete", "latin": "Leccinum versipelle", "page": 64, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "亮橙盖；高柄密布黑色鳞片；切开变灰黑", "hab": "潮湿桦树林", "spore": ["brown"], "kitchen": "柄硬时只用盖；煮后会变黑", "warn": "疣柄牛肝菌属务必彻底煮熟【编者注】", "group": "bolete", "flags": ["须煮熟"], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "leccinum-versipelle"}, {"zh": "褐疣柄牛肝菌", "en": "Brown birch bolete", "latin": "Leccinum scabrum", "page": 65, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "褐色圆盖；白柄上有灰黑鳞片；孔口灰白", "hab": "桦树下潮湿地", "spore": ["brown"], "kitchen": "盖肉软，不耐放，采后尽快吃", "warn": "疣柄牛肝菌属务必彻底煮熟【编者注】", "group": "bolete", "flags": ["须煮熟"], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "leccinum-scabrum"}, {"zh": "褐环乳牛肝菌", "en": "Slippery jack", "latin": "Suillus luteus", "page": 66, "season": "夏末–秋", "months": [8, 9, 10], "feat": "盖黏滑、皮可撕下；孔口柠檬黄；菌环下面深紫色", "hab": "松树下", "spore": ["brown"], "kitchen": "可去盖皮再煮", "warn": "有人会过敏，初次少量", "group": "bolete", "flags": [], "hym": "pores", "sub": ["ground"], "ring": true, "volva": false, "slug": "suillus-luteus"}, {"zh": "乳牛肝菌", "en": "Bovine bolete", "latin": "Suillus bovinus", "page": 67, "season": "夏末–秋", "months": [8, 9, 10], "feat": "小型；橙至锈褐盖；橄榄色复孔；柄极短、无环", "hab": "二针松下，常在沙地", "spore": ["olive"], "kitchen": "温和", "warn": null, "group": "bolete", "flags": [], "hym": "pores", "sub": ["ground"], "ring": false, "volva": false, "slug": "suillus-bovinus"}, {"zh": "厚环乳牛肝菌", "en": "Larch bolete", "latin": "Suillus grevillei", "page": 83, "season": "秋", "months": [9, 10, 11], "feat": "亮黄至橙；有天竺葵气味", "hab": "落叶松附近（可离树较远）", "spore": ["brown"], "kitchen": "建议撕去盖上黏膜", "warn": null, "group": "bolete", "flags": [], "hym": "pores", "sub": ["ground"], "ring": true, "volva": false, "slug": "suillus-grevillei"}, {"zh": "鸡油菌", "en": "Chanterelle", "latin": "Cantharellus cibarius", "page": 45, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "黄色带一点红；有杏干香气", "hab": "排水良好的云杉、松、栎林下；成群", "spore": ["white"], "kitchen": "上品，生尝微辣；配奶油极佳", "warn": "发光类脐菇（长在枯树基部、成簇）；细鳞丝膜菌", "group": "chanterelle", "flags": ["上品"], "hym": "ridges", "sub": ["ground"], "ring": false, "volva": false, "slug": "cantharellus-cibarius"}, {"zh": "管形鸡油菌", "en": "Trumpet chanterelle", "latin": "Cantharellus tubaeformis", "page": 85, "season": "秋–冬", "months": [9, 10, 11, 12, 1], "feat": "暗褐波浪盖；灰色棱脊；亮黄中空柄。耐霜冻", "hab": "苔藓多的老云杉林", "spore": ["white"], "kitchen": "温和；量大，适合晒干", "warn": "细鳞丝膜菌", "group": "chanterelle", "flags": [], "hym": "ridges", "sub": ["ground"], "ring": false, "volva": false, "slug": "cantharellus-tubaeformis"}, {"zh": "灰喇叭菌（黑喇叭菌）", "en": "Horn of Plenty", "latin": "Craterellus cornucopioides", "page": 46, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "灰黑色喇叭状，不易发现，但常成片", "hab": "阔叶林落叶或苔藓中，尤其冬青下", "spore": ["white"], "kitchen": "切薄片；干制后更香，配海鲜好", "warn": null, "group": "chanterelle", "flags": [], "hym": "ridges", "sub": ["ground"], "ring": false, "volva": false, "slug": "craterellus-cornucopioides"}, {"zh": "卷缘齿菌（羊蹄菇）", "en": "Hedgehog fungus", "latin": "Hydnum repandum", "page": 71, "season": "秋", "months": [9, 10, 11], "feat": "奶油至赭色；盖下是易碎的细刺而非菌褶", "hab": "苔藓覆盖的林地，成圈或成簇", "spore": ["white"], "kitchen": "味浓；老的会苦，煮前刮去菌刺；适合焯水", "warn": null, "group": "odd", "flags": ["须煮熟"], "hym": "spines", "sub": ["ground"], "ring": false, "volva": false, "slug": "hydnum-repandum"}, {"zh": "硫磺菌（林中鸡）", "en": "Chicken-of-the-woods", "latin": "Laetiporus sulphureus", "page": 44, "season": "初夏–秋", "months": [6, 7, 8, 9, 10], "feat": "层叠的鲜黄橙色檐状大菌；老了变灰、易碎、木质化", "hab": "活阔叶树干上，尤其栎树", "spore": ["white"], "kitchen": "只吃嫩的；切薄片或细条", "warn": "可能过敏，尤其长在针叶树或桉树上的", "group": "odd", "flags": [], "hym": "pores", "sub": ["wood"], "ring": false, "volva": false, "slug": "laetiporus-sulphureus"}, {"zh": "牛排菌", "en": "Beefsteak fungus", "latin": "Fistulina hepatica", "page": 48, "season": "夏末–秋", "months": [8, 9, 10], "feat": "血红色舌状菌，切开像生牛肉、会渗红汁", "hab": "栎树、欧洲栗树干", "spore": ["white"], "kitchen": "微酸；切片像肉一样煎", "warn": null, "group": "odd", "flags": [], "hym": "pores", "sub": ["wood"], "ring": false, "volva": false, "slug": "fistulina-hepatica"}, {"zh": "绣球菌", "en": "Cauliflower fungus", "latin": "Sparassis crispa", "page": 47, "season": "夏末–秋", "months": [8, 9, 10], "feat": "奶白色，像一大颗花椰菜，常 1–9 kg", "hab": "松树干基部或树桩", "spore": ["white"], "kitchen": "只吃嫩的；<b>唯一建议水洗的种类</b>，洗后擦干", "warn": null, "group": "odd", "flags": [], "hym": "other", "sub": ["wood"], "ring": false, "volva": false, "slug": "sparassis-crispa"}, {"zh": "木耳", "en": "Jelly ear", "latin": "Auricularia auricula-judae", "page": 91, "season": "全年", "months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "feat": "耳朵形、胶质；外面有细绒毛", "hab": "潮湿林中阔叶树上，尤其接骨木", "spore": ["white"], "kitchen": "温和", "warn": null, "group": "odd", "flags": [], "hym": "other", "sub": ["wood"], "ring": false, "volva": false, "slug": "auricularia-auricula-judae"}, {"zh": "大秃马勃", "en": "Giant puffball", "latin": "Langermannia gigantea", "page": 68, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "白色，足球大小，可达 20–50 cm", "hab": "翻动过的土、田野草地、林缘", "spore": ["olive"], "kitchen": "只吃最结实的；可做浓汤、煎片", "warn": "【编者注】务必纵切：内部须均匀纯白，不能有菌盖菌褶轮廓（排除鹅膏“蛋”）", "group": "puffball", "flags": [], "hym": "other", "sub": ["grass", "ground"], "ring": false, "volva": false, "slug": "langermannia-gigantea"}, {"zh": "草地横膜马勃", "en": "Meadow puffball", "latin": "Vascellum pratense", "page": 69, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "2–4.5 cm 小球；可育部分与短柄之间有一层横膜", "hab": "草坡、公园、草坪", "spore": ["olive"], "kitchen": "只吃嫩的；适合天妇罗", "warn": "【编者注】纵切确认内部均匀纯白、无菌褶轮廓", "group": "puffball", "flags": [], "hym": "other", "sub": ["grass"], "ring": false, "volva": false, "slug": "vascellum-pratense"}, {"zh": "网纹马勃", "en": "Common puffball", "latin": "Lycoperdon perlatum", "page": 84, "season": "秋", "months": [9, 10, 11], "feat": "白色，表面有短疣刺，脱落后留下网纹", "hab": "林地土壤，也见于草地", "spore": ["olive"], "kitchen": "只吃白色幼嫩的；口感绵软", "warn": "【编者注】纵切确认内部均匀纯白、无菌褶轮廓", "group": "puffball", "flags": [], "hym": "other", "sub": ["ground", "grass"], "ring": false, "volva": false, "slug": "lycoperdon-perlatum"}, {"zh": "梨形马勃", "en": "Stump puffball", "latin": "Lycoperdon pyriforme", "page": 87, "season": "秋–冬", "months": [9, 10, 11, 12, 1], "feat": "米色梨形，成簇", "hab": "腐木上（而非草地）", "spore": ["olive"], "kitchen": "只吃白色实心的幼体", "warn": "【编者注】纵切确认内部均匀纯白、无菌褶轮廓", "group": "puffball", "flags": [], "hym": "other", "sub": ["wood"], "ring": false, "volva": false, "slug": "lycoperdon-pyriforme"}, {"zh": "四孢蘑菇（田野蘑菇）", "en": "Field mushroom", "latin": "Agaricus campestris", "page": 55, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "白盖→粉灰；褶粉红→巧克力褐；单层小菌环；无杏仁味", "hab": "施过粪肥、放牧马牛的开阔草地", "spore": ["choc"], "kitchen": "上品；可薄切生拌", "warn": "鳞柄白鹅膏（孢子白、有菌托）；黄斑蘑菇", "group": "agaricus", "flags": ["上品"], "hym": "gills", "sub": ["grass"], "ring": true, "volva": false, "slug": "agaricus-campestris"}, {"zh": "野蘑菇", "en": "Horse mushroom", "latin": "Agaricus arvensis", "page": 56, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "白至赭黄，伤处慢慢变赭黄；杏仁味；双层下垂菌环，下面似齿轮", "hab": "马场草地、草坪、公园，多成圈", "spore": ["choc"], "kitchen": "味浓；含镉，少量食用", "warn": "黄斑蘑菇：墨水味，柄基切开立即变亮黄", "group": "agaricus", "flags": ["少量食用"], "hym": "gills", "sub": ["grass"], "ring": true, "volva": false, "slug": "agaricus-arvensis"}, {"zh": "白林地蘑菇", "en": "Wood mushroom", "latin": "Agaricus silvicola", "page": 57, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "黄白光滑盖；柄基扁球形；肉渐变赭黄；杏仁味", "hab": "肥沃林地土", "spore": ["choc"], "kitchen": "含镉，少量食用", "warn": "黄斑蘑菇", "group": "agaricus", "flags": ["少量食用"], "hym": "gills", "sub": ["ground"], "ring": true, "volva": false, "slug": "agaricus-silvicola"}, {"zh": "林生蘑菇", "en": "Red-staining mushroom", "latin": "Agaricus silvaticus", "page": 80, "season": "秋", "months": [9, 10, 11], "feat": "褐色纤维状鳞片；白肉切开变深红", "hab": "松针堆、针叶林、木屑覆盖物", "spore": ["choc"], "kitchen": "味较浓", "warn": null, "group": "agaricus", "flags": [], "hym": "gills", "sub": ["ground"], "ring": true, "volva": false, "slug": "agaricus-silvaticus"}, {"zh": "大紫蘑菇（王子菇）", "en": "The prince", "latin": "Agaricus augustus", "page": 81, "season": "秋", "months": [9, 10, 11], "feat": "大型；盖上褐色同心鳞片；碰伤变黄；浓杏仁味", "hab": "肥沃林地、公园、堆肥", "spore": ["choc"], "kitchen": "味浓；含镉较多，少量食用", "warn": "黄斑蘑菇", "group": "agaricus", "flags": ["少量食用"], "hym": "gills", "sub": ["ground"], "ring": true, "volva": false, "slug": "agaricus-augustus"}, {"zh": "赭盖鹅膏", "en": "Tawny grisette", "latin": "Amanita fulva", "page": 50, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "深黄褐盖；柄光滑；白色菌托会染橙褐", "hab": "桦树林", "spore": ["white"], "kitchen": "<b>必须彻底煮熟</b>", "warn": "毒鹅膏", "group": "amanita", "flags": ["须煮熟", "高风险"], "hym": "gills", "sub": ["ground"], "ring": false, "volva": true, "slug": "amanita-fulva"}, {"zh": "橙黄鹅膏", "en": "Orange grisette", "latin": "Amanita crocea", "page": 51, "season": "初夏–秋", "months": [6, 7, 8, 9, 10], "feat": "亮橙褐盖；柄上有橙色絮状鳞；白色厚菌托", "hab": "肥沃土上的桦、云杉下", "spore": ["white"], "kitchen": "甜而带坚果味。<b>不可生吃</b>", "warn": "毒鹅膏", "group": "amanita", "flags": ["须煮熟", "高风险"], "hym": "gills", "sub": ["ground"], "ring": false, "volva": true, "slug": "amanita-crocea"}, {"zh": "橙盖鹅膏（凯撒蘑菇）", "en": "Caesar's mushroom", "latin": "Amanita caesarea", "page": 52, "season": "夏–初秋", "months": [6, 7, 8, 9], "feat": "金橙盖；<b>褶和柄黄色</b>；宽大白色菌托", "hab": "地中海地区沙质土的栎树下（英国无）", "spore": ["white"], "kitchen": "上品", "warn": "毒蝇鹅膏：褶为白色", "group": "amanita", "flags": ["上品", "高风险"], "hym": "gills", "sub": ["ground"], "ring": true, "volva": true, "slug": "amanita-caesarea"}, {"zh": "高大环柄菇", "en": "Parasol mushroom", "latin": "Macrolepiota procera", "page": 53, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "盖可达 40 cm；柄有蛇皮花纹；环可移动；肉不变色", "hab": "沙质草地、沙丘、林间空地", "spore": ["white", "pink"], "kitchen": "上品；整盖酿馅或裹粉炸", "warn": "大青褶伞（False parasol）：孢子印绿色", "group": "parasol", "flags": ["上品"], "hym": "gills", "sub": ["grass", "ground"], "ring": true, "volva": false, "slug": "macrolepiota-procera"}, {"zh": "粗鳞青褶伞", "en": "Shaggy parasol", "latin": "Chlorophyllum rhacodes", "page": 54, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "较小、柄无蛇皮纹；切开变红", "hab": "绿篱、公园、园林、堆肥", "spore": ["white"], "kitchen": "部分人会肠胃不适，首次少量", "warn": "大青褶伞：孢子印绿色", "group": "parasol", "flags": ["少量食用"], "hym": "gills", "sub": ["ground"], "ring": true, "volva": false, "slug": "chlorophyllum-rhacodes"}, {"zh": "香杏丽蘑（圣乔治口蘑）", "en": "St. George's mushroom", "latin": "Calocybe gambosa", "page": 42, "season": "春–夏", "months": [4, 5, 6, 7], "feat": "奶白至褐、肉厚；浓烈的面粉味；约 4 月 23 日前后出现", "hab": "肥沃草地、绿篱、钙质林地、园林", "spore": ["white"], "kitchen": "上品，肉质感", "warn": "粉褶菌属（褶与孢子印粉红）；变红丝盖伞（孢子印褐）", "group": "gilled", "flags": ["上品"], "hym": "gills", "sub": ["grass"], "ring": false, "volva": false, "slug": "calocybe-gambosa"}, {"zh": "硬柄小皮伞（仙环菇）", "en": "Fairy ring champignon", "latin": "Marasmius oreades", "page": 49, "season": "初夏–中秋", "months": [6, 7, 8, 9, 10], "feat": "浅皮革褐，小型；在草地形成“仙女环”；湿时变色", "hab": "草地、草坪", "spore": ["white"], "kitchen": "干制后做汤料很好", "warn": "白霜杯伞类：菌褶延生，同生境", "group": "gilled", "flags": [], "hym": "gills", "sub": ["grass"], "ring": false, "volva": false, "slug": "marasmius-oreades"}, {"zh": "斜盖伞", "en": "The miller", "latin": "Clitopilus prunulus", "page": 77, "season": "秋", "months": [9, 10, 11], "feat": "灰白色；强烈鲜面团味；粉色延生褶", "hab": "林地腐殖土、树附近草地", "spore": ["pink"], "kitchen": "温和", "warn": "外形接近两三种有毒白色杯伞——必须做孢子印", "group": "gilled", "flags": ["须煮熟"], "hym": "gills", "sub": ["ground", "grass"], "ring": false, "volva": false, "slug": "clitopilus-prunulus"}, {"zh": "皱盖罗鳞伞", "en": "Gypsy", "latin": "Cortinarius caperatus", "page": 58, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "黄褐皱纹盖，顶部常有白色蛛网状残膜；柄上有窄白环", "hab": "酸性土上的山毛榉、松、云杉下", "spore": ["brown"], "kitchen": "温和", "warn": "【编者注】同属丝膜菌有致命种，新手慎采", "group": "gilled", "flags": [], "hym": "gills", "sub": ["ground"], "ring": true, "volva": false, "slug": "cortinarius-caperatus"}, {"zh": "蓝黄红菇", "en": "Charcoal burner", "latin": "Russula cyanoxantha", "page": 59, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "盖色紫褐到橄榄绿混杂；<b>褶柔韧、有油感</b>（多数红菇褶易碎）", "hab": "山毛榉等阔叶林，酸性土", "spore": ["white"], "kitchen": "温和", "warn": null, "group": "gilled", "flags": [], "hym": "gills", "sub": ["ground"], "ring": false, "volva": false, "slug": "russula-cyanoxantha"}, {"zh": "红蜡蘑", "en": "Deceiver", "latin": "Laccaria laccata", "page": 70, "season": "夏–初冬", "months": [6, 7, 8, 9, 10, 11, 12], "feat": "粉褐色，颜色变化极大，干后褪色", "hab": "林中湿土、柳树下沼泽", "spore": ["white"], "kitchen": "柄硬，煮前去掉", "warn": null, "group": "gilled", "flags": [], "hym": "gills", "sub": ["ground"], "ring": false, "volva": false, "slug": "laccaria-laccata"}, {"zh": "肉色杯伞", "en": "Rickstone funnel cap", "latin": "Clitocybe geotropa", "page": 72, "season": "秋", "months": [9, 10, 11], "feat": "大型漏斗状盖，中央有凸起；淡肉褐色", "hab": "阔叶林，常成圈", "spore": ["white"], "kitchen": "温和；可配白芸豆", "warn": null, "group": "gilled", "flags": [], "hym": "gills", "sub": ["ground"], "ring": false, "volva": false, "slug": "clitocybe-geotropa"}, {"zh": "蜜环菌", "en": "Honey fungus", "latin": "Armillaria mellea", "page": 73, "season": "秋", "months": [9, 10, 11], "feat": "蜜黄至褐、有细鳞；有菌环；成簇", "hab": "枯死或濒死的阔叶树上及周围", "spore": ["white"], "kitchen": "味很浓；【编者注】须彻底煮熟", "warn": "部分人会肠胃不适", "group": "gilled", "flags": ["须煮熟"], "hym": "gills", "sub": ["wood"], "ring": true, "volva": false, "slug": "armillaria-mellea"}, {"zh": "紫丁香蘑", "en": "Wood blewit", "latin": "Lepista nuda", "page": 74, "season": "秋", "months": [9, 10, 11], "feat": "盖柄紫褐、褶更紫；香水般浓香", "hab": "堆肥、厚落叶层", "spore": ["pink"], "kitchen": "肉厚多汁。<b>必须煮熟</b>", "warn": "【编者注】紫色丝膜菌：孢子印锈褐，有蛛网膜", "group": "gilled", "flags": ["须煮熟"], "hym": "gills", "sub": ["ground"], "ring": false, "volva": false, "slug": "lepista-nuda"}, {"zh": "粉紫香蘑", "en": "Field blewit", "latin": "Lepista saeva", "page": 75, "season": "秋", "months": [9, 10, 11], "feat": "浅皮革色盖；柄鲜亮淡紫、纤维质；比紫丁香蘑更矮壮", "hab": "钙质开阔草地、路边、公园", "spore": ["pink"], "kitchen": "<b>必须煮熟</b>", "warn": "【编者注】紫色丝膜菌：孢子印锈褐，有蛛网膜", "group": "gilled", "flags": ["须煮熟"], "hym": "gills", "sub": ["grass"], "ring": false, "volva": false, "slug": "lepista-saeva"}, {"zh": "荷叶离褶伞（炸鸡菇）", "en": "Clustered domecap", "latin": "Lyophyllum decastes", "page": 76, "season": "晚秋", "months": [10, 11], "feat": "灰褐波浪边盖，有银色条纹；褶白至浅灰；密集成簇", "hab": "林道、园林、翻动过的土", "spore": ["white"], "kitchen": "温和", "warn": null, "group": "gilled", "flags": [], "hym": "gills", "sub": ["ground"], "ring": false, "volva": false, "slug": "lyophyllum-decastes"}, {"zh": "毛头鬼伞（鸡腿菇）", "en": "Lawyer's wig / Shaggy inkcap", "latin": "Coprinus comatus", "page": 78, "season": "秋", "months": [9, 10, 11], "feat": "高筒形白盖带毛鳞，很快自溶成墨汁", "hab": "草坪、路边、林道", "spore": ["black"], "kitchen": "只采嫩的，<b>当天回家就煮</b>；会出黑汁", "warn": null, "group": "gilled", "flags": [], "hym": "gills", "sub": ["grass"], "ring": true, "volva": false, "slug": "coprinus-comatus"}, {"zh": "松乳菇", "en": "Saffron milk cap", "latin": "Lactarius deliciosus", "page": 79, "season": "秋", "months": [9, 10, 11], "feat": "橙盖有深色同心环；伤处变绿；切开流橙色乳汁；柄有凹斑", "hab": "二针松下", "spore": ["white"], "kitchen": "<b>食用前先焯水</b>", "warn": null, "group": "gilled", "flags": ["须煮熟"], "hym": "gills", "sub": ["ground"], "ring": false, "volva": false, "slug": "lactarius-deliciosus"}, {"zh": "糙皮侧耳（平菇）", "en": "Oyster mushroom", "latin": "Pleurotus ostreatus", "page": 86, "season": "秋–冬", "months": [9, 10, 11, 12, 1], "feat": "牡蛎形，层叠；幼时蓝灰、肉结实", "hab": "枯死阔叶树或倒木", "spore": ["white"], "kitchen": "很温和、吃口感；去掉硬柄基；只吃嫩的", "warn": null, "group": "gilled", "flags": [], "hym": "gills", "sub": ["wood"], "ring": false, "volva": false, "slug": "pleurotus-ostreatus"}, {"zh": "野生金针菇（冬菇）", "en": "Velvet shank", "latin": "Flammulina velutipes", "page": 88, "season": "晚秋–冬", "months": [10, 11, 12, 1, 2], "feat": "橙褐色黏盖；柄天鹅绒质、深褐；密簇；耐霜冻", "hab": "衰弱的阔叶树上，尤其榆、柳、杨", "spore": ["white"], "kitchen": "温和", "warn": "【编者注】纹缘盔孢伞（致命）也长在木头上，孢子印锈褐", "group": "gilled", "flags": [], "hym": "gills", "sub": ["wood"], "ring": false, "volva": false, "slug": "flammulina-velutipes"}, {"zh": "夏块菌（夏松露）", "en": "Summer truffle", "latin": "Tuber aestivum", "page": 43, "season": "夏–秋", "months": [6, 7, 8, 9, 10], "feat": "黑色，表面金字塔形疣突；香气淡", "hab": "山毛榉、桦树根下土中", "spore": ["unknown"], "kitchen": "温和；可焗蛋、做酱", "warn": null, "group": "truffle", "flags": [], "hym": "other", "sub": ["under"], "ring": false, "volva": false, "slug": "tuber-aestivum"}, {"zh": "白松露", "en": "White truffle", "latin": "Tuber magnatum", "page": 89, "season": "秋–冬", "months": [9, 10, 11, 12, 1], "feat": "奶油至浅褐；肉硬脆；辛香浓烈", "hab": "意大利皮埃蒙特钙质土，栎、杨、柳根下", "spore": ["unknown"], "kitchen": "上品；生刨片撒在烩饭、意面、炒蛋上", "warn": null, "group": "truffle", "flags": ["上品"], "hym": "other", "sub": ["under"], "ring": false, "volva": false, "slug": "tuber-magnatum"}, {"zh": "黑孢块菌（佩里戈尔黑松露）", "en": "Périgord truffle", "latin": "Tuber melanosporum", "page": 90, "season": "晚秋–早春", "months": [10, 11, 12, 1, 2, 3], "feat": "煤黑色", "hab": "地中海地区钙质红土的栎树根下", "spore": ["unknown"], "kitchen": "上品；切薄片入酱、沙拉、意面", "warn": null, "group": "truffle", "flags": ["上品"], "hym": "other", "sub": ["under"], "ring": false, "volva": false, "slug": "tuber-melanosporum"}], "poison": [{"zh": "毒鹅膏（死帽蕈）", "en": "Death cap", "latin": "Amanita phalloides", "level": "致命", "feat": "菌盖光滑（常带橄榄绿色调）；菌柄白至灰绿；基部有明显的白色袋状菌托", "conf": "赭盖鹅膏、橙黄鹅膏（p50–51）", "hym": "gills", "spore": ["white"], "sub": ["ground"], "ring": true, "volva": true, "slug": "amanita-phalloides"}, {"zh": "鳞柄白鹅膏（致命白毒伞）", "en": "Destroying angel", "latin": "Amanita virosa", "level": "致命", "feat": "通体白色，盖上一般无鳞片；基部袋状菌托；孢子印白色", "conf": "蘑菇属（Agaricus）——但蘑菇属孢子印为巧克力色、无菌托", "hym": "gills", "spore": ["white"], "sub": ["ground"], "ring": true, "volva": true, "slug": "amanita-virosa"}, {"zh": "豹斑鹅膏", "en": "Panther cap", "latin": "Amanita pantherina", "level": "有毒", "feat": "褐色盖上散布白色疣点；菌环下垂、无条纹；基部球状、带一圈明显边缘。颜色多变", "conf": "与同样危险的毒蝇鹅膏同属", "hym": "gills", "spore": ["white"], "sub": ["ground"], "ring": true, "volva": true, "slug": "amanita-pantherina"}, {"zh": "变红丝盖伞", "en": "Reddish fiber cap", "latin": "Inocybe erubescens", "level": "有毒", "feat": "菌盖锥形、边缘内卷；整朵碰伤后变红；孢子印褐色", "conf": "香杏丽蘑 / 圣乔治口蘑（p42）", "hym": "gills", "spore": ["brown"], "sub": ["ground"], "ring": false, "volva": false, "slug": "inocybe-erubescens"}, {"zh": "细鳞丝膜菌", "en": "Foxy-orange web cap", "latin": "Cortinarius rubellus", "level": "致命", "feat": "菌盖尖顶、橙褐色；菌柄上有环带状残余菌幕", "conf": "鸡油菌、管形鸡油菌（p45、p85）", "hym": "gills", "spore": ["brown"], "sub": ["ground"], "ring": false, "volva": false, "slug": "cortinarius-rubellus"}, {"zh": "白霜杯伞类", "en": "Lawn funnel cap", "latin": "Clitocybe rivulosa", "level": "致命", "feat": "菌褶延生（沿柄下延）；柄白至浅褐；常长在草坪", "conf": "硬柄小皮伞（p49）、斜盖伞（p77）", "hym": "gills", "spore": ["white"], "sub": ["grass"], "ring": false, "volva": false, "slug": "clitocybe-rivulosa"}, {"zh": "鹿花菌（假羊肚菌）", "en": "False morel", "latin": "Gyromitra esculenta", "level": "致命", "feat": "菌盖暗褐、呈脑回状褶皱——是“褶”而不是羊肚菌的“蜂窝坑”", "conf": "羊肚菌（p40–41）", "hym": "other", "spore": ["unknown"], "sub": ["ground"], "ring": false, "volva": false, "slug": "gyromitra-esculenta"}, {"zh": "卷边桩菇", "en": "Brown roll rim", "latin": "Paxillus involutus", "level": "致命", "feat": "菌盖边缘强烈内卷、带绒毛；菌褶软、延生、可整片剥下", "conf": "—", "hym": "gills", "spore": ["brown"], "sub": ["ground"], "ring": false, "volva": false, "slug": "paxillus-involutus"}, {"zh": "黄斑蘑菇", "en": "Yellow stainer", "latin": "Agaricus xanthodermus", "level": "有毒", "feat": "菌盖常呈“方顶”；纵切后柄基部立刻变亮黄；有墨水/石炭酸味", "conf": "其他可食蘑菇属（p55–57）", "hym": "gills", "spore": ["choc"], "sub": ["grass"], "ring": true, "volva": false, "slug": "agaricus-xanthodermus"}, {"zh": "半裸盖菇", "en": "Liberty cap", "latin": "Psilocybe semilanceata", "level": "有毒", "feat": "小型；盖顶有尖乳突；柄细长、奶白或灰橄榄色。强致幻", "conf": "草地上的小型菌", "hym": "gills", "spore": ["choc"], "sub": ["grass"], "ring": false, "volva": false, "slug": "psilocybe-semilanceata"}], "poisonExtra": [{"zh": "史密斯鹅膏", "en": "Smith's amanita", "latin": "Amanita smithiana", "level": "有毒", "tag": "伤肾", "feat": "白至浅棕色菌盖 5–15 cm，常带白色疣；菌褶白、密；菌柄白，大部分埋在土里，在地面或地下最宽，向下收成萝卜或鱼雷状；气味起初温和，之后变得难闻（像变质的火腿）；孢子印白色。<br><b>中毒过程：</b>食后 20 分钟到 1 天内出现腹痛、腹泻、呕吐；2–6 天后可发生肾衰竭，部分患者需要住院透析。少到 2–3 朵就可能致病。", "conf": "松茸（北美西部常与松茸长在同一片林子里）", "sources": [["UBC Beaty Museum · Mushrooms Up!", "https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html"], ["Warden & Benjamin（1998）Acad Emerg Med 病例报告", "https://pubmed.ncbi.nlm.nih.gov/9715243/"], ["NAMA 北美中毒报告 2015–2016", "https://namyco.org/wp-content/uploads/2023/08/Mushroom_Poisoning_in_North_America_2015-2016.pdf"]], "hym": "gills", "spore": ["white"], "sub": ["ground"], "ring": true, "volva": false, "slug": "amanita-smithiana"}, {"zh": "北美毁灭天使", "en": "Destroying angels", "latin": "Amanita bisporigera / A. ocreata", "level": "致命", "tag": "伤肝", "feat": "<b>通体白色</b>，有菌环，基部有<b>袋状菌托</b>（常埋在土里，必须挖出来看）；孢子印白色。东部的 A. bisporigera 与栎树等阔叶树共生，夏秋出现；西部的 A. ocreata 见于加州和西北太平洋，也与栎树共生，体型通常更粗壮。含鹅膏毒素，没有特效解毒剂。北美野外指南里写作 A. virosa 或 A. verna 的，多半就是这两种", "conf": "白色蘑菇属（如野蘑菇）、马勃幼体（毁灭天使的“蛋”纵切后能看到菌盖和菌褶轮廓）", "sources": [["Kuo, M. MushroomExpert：Amanita bisporigera", "https://www.mushroomexpert.com/amanita_bisporigera.html"], ["UC Irvine 自然史：Amanita ocreata", "https://nathistoc.bio.uci.edu/Fungi/Amanita%20ocreata/index.htm"]], "hym": "gills", "spore": ["white"], "sub": ["ground"], "ring": true, "volva": true, "slug": "amanita-bisporigera"}, {"zh": "纹缘盔孢伞", "en": "Deadly galerina", "latin": "Galerina marginata", "level": "致命", "tag": "伤肝", "feat": "小型褐色菌：菌盖 1.5–5 cm，赭褐至橙褐、边缘较浅；菌褶褐色；<b>菌柄细（通常不到 0.6 cm）</b>，上部有小菌环（老了常脱落）；<b>孢子印锈褐色</b>；长在腐木或木屑上，有时看似从地上长出（下面埋着木头）。含鹅膏毒素，<b>煮不坏</b>：6–10 小时出现肠胃症状，约 72 小时可发生肝衰竭", "conf": "蜜环菌（孢子印白色、柄更粗）、野生金针菇（孢子印白色）、长在木屑上的裸盖菇", "sources": [["UBC Beaty Museum · Mushrooms Up!：Galerina marginata", "https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html"]], "hym": "gills", "spore": ["brown"], "sub": ["wood"], "ring": true, "volva": false, "slug": "galerina-marginata"}, {"zh": "发光类脐菇", "en": "Jack-o'-lantern", "latin": "Omphalotus illudens / O. olivascens", "level": "有毒", "feat": "橙色，<b>大团密集簇生在木头上</b>（或埋在地下的树根上，看起来像长在地上）；<b>真菌褶，刀片状、不分叉、延生</b>；西部的 O. olivascens 常带橄榄色调。新鲜菌褶在黑暗中有时会微弱发光。吃了会严重呕吐腹泻好几天", "conf": "鸡油菌：鸡油菌长在地上、很少密集成簇，下面是钝圆的棱脊，不是刀片状真菌褶", "sources": [["Kuo, M. MushroomExpert：Omphalotus illudens", "https://mushroomexpert.com/omphalotus_illudens.html"], ["Missouri Department of Conservation：Jack-o'-lantern", "https://mdc.mo.gov/node/249263"], ["Bay Area Mycological Society：Omphalotus olivascens", "https://bayareamushrooms.org/mushroommonth/jackolantern.html"]], "hym": "gills", "spore": ["white", "yellow"], "sub": ["wood"], "ring": false, "volva": false, "slug": "omphalotus-illudens"}, {"zh": "大青褶伞", "en": "Green-spored parasol", "latin": "Chlorophyllum molybdites", "level": "有毒", "feat": "<b>北美最常被误食的毒菌</b>。大型，白色菌盖带褐色鳞片，常在草坪、公园形成蘑菇圈；菌褶成熟后变灰绿；<b>孢子印绿色</b>（唯一绿孢子印的大型菌）；柄上没有蛇皮纹。食后 1–3 小时出现剧烈呕吐腹泻。东部和南部常见，西北太平洋少见", "conf": "高大环柄菇、粗鳞青褶伞（孢子印都是白色）", "sources": [["Wikipedia：Chlorophyllum molybdites", "https://en.wikipedia.org/wiki/Chlorophyllum_molybdites"], ["Bay Area Mycological Society：Other Toxic Mushrooms", "https://bayareamushrooms.org/poisonings/non_fatal.html"]], "hym": "gills", "spore": ["green"], "sub": ["grass"], "ring": true, "volva": false, "slug": "chlorophyllum-molybdites"}], "compare": [{"id": "chanterelle", "title": "鸡油菌 vs 发光类脐菇 vs 假鸡油菌", "lead": "橙黄色、漏斗状的菌最容易混。先看长在哪，再看菌盖下面。", "cols": [["鸡油菌类", "edible", "cantharellus-cibarius"], ["发光类脐菇", "toxic", "omphalotus-illudens"], ["假鸡油菌", "caution", null]], "rows": [["长在哪", ["地上，与树根共生；散生或成群，很少密集成簇", "<b>木头上</b>（或埋在地下的树根上），大团密集簇生", "地上或腐木上"]], ["菌盖下面", ["<b>钝圆的棱脊</b>：厚、会分叉、有横脉，延生到柄上", "<b>真菌褶</b>：刀片状、薄、不分叉、延生", "真菌褶：较薄、更橙，<b>反复分叉</b>"]], ["其他线索", ["欧洲鸡油菌有杏干香", "新鲜菌褶在黑暗中有时会微弱发光；西部种常带橄榄色调", "—"]], ["结论", ["可食（上品）", "<b>有毒</b>：严重呕吐腹泻数天", "可能轻度有毒，不建议吃"]]], "src": [["UBC Mushrooms Up!：Cantharellus formosus", "https://explore.beatymuseum.ubc.ca/mushroomsup/C_formosus.html"], ["MushroomExpert：Omphalotus illudens", "https://mushroomexpert.com/omphalotus_illudens.html"]]}, {"id": "matsutake", "title": "松茸 vs 史密斯鹅膏", "lead": "北美西部两者常长在同一片林子里，外形相近。史密斯鹅膏会伤肾，症状可能 2–6 天后才出现。", "cols": [["松茸", "edible", "tricholoma-matsutake"], ["史密斯鹅膏", "toxic", "amanita-smithiana"]], "rows": [["气味", ["<b>辛香、像肉桂</b>（“肉桂糖混脏袜子”）", "气味淡，之后变得难闻（像变质火腿）"]], ["用拇指用力按菌柄", ["致密，<b>按不碎</b>", "会<b>碎裂</b>"]], ["菌柄形状", ["最宽处在<b>地面以上</b>、菌环附近，向下渐细", "在<b>地面或地下最宽</b>，向下收成萝卜或鱼雷状"]], ["左右摇动菌柄", ["连得很牢，摇不下来", "常整根脱落，菌盖下留下圆坑"]], ["堆放一夜", ["菌柄不弯", "菌柄会弯曲，让菌褶重新朝下"]], ["孢子印", ["白色", "白色（<b>无法用来区分</b>）"]]], "src": [["UBC Mushrooms Up!：Amanita smithiana", "https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html"], ["UBC Mushrooms Up!：Tricholoma murrillianum", "https://explore.beatymuseum.ubc.ca/mushroomsup/T_murrillianum.html"]]}, {"id": "white-agaric", "title": "田野蘑菇 vs 毁灭天使 vs 黄斑蘑菇", "lead": "白色、有菌环的伞菌。最关键的两步：挖出完整柄基看菌托，做孢子印。", "cols": [["四孢蘑菇（田野蘑菇）", "edible", "agaricus-campestris"], ["毁灭天使 / 白毒伞", "toxic", "amanita-bisporigera"], ["黄斑蘑菇", "toxic", "agaricus-xanthodermus"]], "rows": [["菌褶颜色", ["幼时粉红，成熟后<b>巧克力褐</b>", "<b>始终白色</b>", "随成熟变深"]], ["孢子印", ["巧克力褐", "<b>白色</b>", "巧克力褐"]], ["柄基", ["无菌托", "<b>袋状菌托</b>，常埋在土里，必须挖出来看", "无菌托"]], ["切开柄基 / 气味", ["肉碰伤后微微变红；无杏仁味", "—", "柄基切开<b>立刻变亮铬黄</b>；有墨水或石炭酸味"]], ["结论", ["可食（上品）", "<b>致命</b>（伤肝）", "<b>有毒</b>（肠胃中毒）"]]], "src": [["MushroomExpert：Amanita bisporigera", "https://www.mushroomexpert.com/amanita_bisporigera.html"]]}, {"id": "morel", "title": "羊肚菌 vs 鹿花菌", "lead": "春季最常见的误采。", "cols": [["羊肚菌", "edible", "morchella-esculenta"], ["鹿花菌（假羊肚菌）", "toxic", "gyromitra-esculenta"]], "rows": [["头部表面", ["<b>蜂窝状凹坑</b>，有棱有坑", "<b>脑回状褶皱</b>，像脑子或一团揉皱的布"]], ["纵切", ["从头顶到柄基<b>整个中空</b>", "内部有棉絮状组织或多个小腔"]], ["结论", ["可食，但<b>必须彻底煮熟</b>，生吃有毒", "<b>致命</b>"]]], "src": []}, {"id": "parasol", "title": "高大环柄菇 vs 粗鳞青褶伞 vs 大青褶伞", "lead": "大型伞状菌。大青褶伞是北美最常被误食的毒菌，孢子印一做就能分开。", "cols": [["高大环柄菇", "edible", "macrolepiota-procera"], ["粗鳞青褶伞", "caution", "chlorophyllum-rhacodes"], ["大青褶伞", "toxic", "chlorophyllum-molybdites"]], "rows": [["孢子印", ["白或粉白", "白色", "<b>绿色</b>"]], ["菌柄", ["有<b>蛇皮花纹</b>，菌环可上下滑动", "无蛇皮纹", "无蛇皮纹"]], ["切开", ["肉不变色", "肉变红", "—"]], ["菌褶", ["白色", "白色", "成熟后<b>变灰绿</b>"]], ["常见生境", ["沙质草地、沙丘、林间空地", "绿篱、园林、堆肥", "草坪、公园（北美东部和南部常见）"]], ["结论", ["可食（上品）", "可食，部分人会肠胃不适，首次少量", "<b>有毒</b>：1–3 小时内剧烈呕吐腹泻"]]], "src": [["Wikipedia：Chlorophyllum molybdites", "https://en.wikipedia.org/wiki/Chlorophyllum_molybdites"]]}, {"id": "wood-clusters", "title": "蜜环菌 / 野生金针菇 vs 纹缘盔孢伞", "lead": "木头上成簇的褐色菌。纹缘盔孢伞含鹅膏毒素，煮不坏。孢子印是最可靠的区分方法。", "cols": [["蜜环菌", "caution", "armillaria-mellea"], ["野生金针菇", "edible", "flammulina-velutipes"], ["纹缘盔孢伞", "toxic", "galerina-marginata"]], "rows": [["孢子印", ["白色", "白色", "<b>锈褐色</b>"]], ["菌柄", ["较粗，通常超过 0.8 cm", "天鹅绒质，深褐色", "<b>细</b>，通常不到 0.6 cm"]], ["菌环", ["有", "无", "上部有小菌环，老了常脱落"]], ["菌盖", ["蜜黄至褐色，有细鳞", "橙褐色、湿时黏", "赭褐至橙褐，边缘较浅、光滑"]], ["结论", ["可食，须彻底煮熟；部分人会肠胃不适", "可食", "<b>致命</b>（伤肝）"]]], "src": [["UBC Mushrooms Up!：Galerina marginata", "https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html"]]}], "recipes": [{"no": "①", "zh": "野菌意式烤面包", "en": "Mushroom bruschetta", "meta": "4 人份 · 准备 10 分钟 · 烹饪 20 分钟 · 原书 p146", "best": "任何牛肝菌（美味牛肝菌最佳）", "ing": ["蒜 2 瓣", "特级初榨橄榄油 5 汤匙", "牛肝菌 300 g，粗切", "盐、黑胡椒", "黑橄榄 12 颗，切片", "厚切夏巴塔或意式面包 4 片"], "steps": ["1 瓣蒜用 4 汤匙油炒 1 分钟，下菌，大火勤翻炒约 5 分钟。", "轻轻调味，转小火再煮约 15 分钟至软；拌入橄榄，试味。", "同时在面包一面用刀尖划花，两面烤至微黄。", "划花的一面用另一瓣蒜擦过，刷上最后 1 汤匙油。", "把菌料一小堆一小堆放在面包上，立即上桌。"], "tip": "家里有剩的玉米糊（polenta），煎成片代替面包，有人觉得更好吃。"}, {"no": "②", "zh": "羊肚菌炒黄椒", "en": "Morels with yellow peppers", "meta": "4 人份 · 准备 15 分钟 · 烹饪 15 分钟 · 原书 p152", "best": "羊肚菌；也可用半离羊肚菌、平菇", "ing": ["特级初榨橄榄油 90 ml", "帕尔玛火腿 80 g，切细条", "红葱头 2 个，切极细", "羊肚菌 600 g，纵切片", "盐、黑胡椒、现磨肉豆蔻 1 小撮", "干白葡萄酒 240 ml", "黄甜椒 1 个，切细条", "平叶欧芹碎 2 汤匙"], "steps": ["大锅温油，下火腿和红葱头，偶尔翻炒约 5 分钟，至红葱头变软但不上色。", "加入羊肚菌，用盐、胡椒、肉豆蔻调味，炒 5 分钟；倒入白酒，小火再煮 5 分钟。", "加入甜椒条，小火煮约 5 分钟，至甜椒刚熟、仍保留脆感。", "试味，盛到温热的盘子里，撒上欧芹，立即上桌。"], "tip": "羊肚菌生吃有毒，这道菜总共煮约 15 分钟，务必按时间做足。"}, {"no": "③", "zh": "鸡油菌炒蛋", "en": "Scrambled Chanterelles", "meta": "4 人份 · 准备 10 分钟 · 烹饪 15 分钟 · 原书 p160", "best": "管形鸡油菌；也可用杂菌", "ing": ["无盐黄油 85 g", "橄榄油 2 汤匙", "蒜 1 瓣，切 2–3 块", "管形鸡油菌 350 g", "鸡蛋 8 个", "盐、黑胡椒", "淡奶油 60 ml", "帕玛森碎 25 g", "烤面包 4–8 片"], "steps": ["一半黄油与油、蒜同热，下菌炒 3 分钟，捞出蒜丢掉。", "另一锅融化剩余黄油，倒入加盐打散的蛋，小火轻推 2 分钟。", "加入奶油和炒好的菌，再煮 1–2 分钟。", "撒帕玛森和大量黑胡椒。", "堆在热吐司上，立即享用。"], "tip": "配一份清炒菠菜很合适，早午餐或晚餐都可以。"}, {"no": "④", "zh": "采集者烩饭", "en": "Foraging risotto", "meta": "4 人份 · 准备 10 分钟 · 烹饪 40 分钟 · 原书 p163", "best": "杂菌；也可用管形鸡油菌、蜜环菌", "ing": ["黄油 115 g，分成 8 份", "橄榄油 1 汤匙", "洋葱 2 个，切丁", "蒜 4 瓣", "冬南瓜（胡桃南瓜）250 g，切丁", "Arborio 米约 200 g（1 杯）", "热的菌菇高汤 850 ml–1 L", "杂菌 400 g，大的切片", "盐、黑胡椒"], "steps": ["大锅中火，用 2 份黄油加橄榄油炒洋葱和蒜，至变软但不上色。", "转大火加入南瓜，偶尔翻炒几分钟，至边缘开始焦黄。", "下米轻轻翻拌，至米粒裹满油脂、变得半透明。", "加一勺热高汤，不停搅拌，至汤几乎（但未完全）被吸收。", "照此一勺勺加汤约 20 分钟，至米粒变软、中心仍有嚼劲。", "另起一锅融化 2 份黄油，分批把菌炒软；加一点水把锅底焦香刮起，倒进烩饭里。", "米熟后拌入剩下 4 份黄油，调味，盛盘后把菌堆在饭上。"], "tip": "不同的菌熟得快慢不一，每种都要确认炒软了。"}, {"no": "⑤", "zh": "杂菌番茄意面", "en": "Pasta with mixed fungi sauce", "meta": "4 人份 · 准备 10 分钟 · 烹饪 20–25 分钟 · 原书 p168", "best": "杂菌；也可用田野蘑菇、美味牛肝菌", "ing": ["扁面或意大利面 400 g", "特级初榨橄榄油 120 ml", "蒜 3 瓣，切碎", "干牛至 1 汤匙", "熟番茄 300 g，去皮去籽切碎（或 400 g 罐装去皮番茄，沥干粗切）", "盐、黑胡椒", "糖 1 小撮（可选）", "杂菌 400 g，切片", "鳀鱼柳 4 条，切碎"], "steps": ["大锅盐水煮面。酱汁至少要煮 20 分钟，安排好时间。", "同时在大炒锅里把油、蒜、牛至加热 1–2 分钟，加入番茄，偶尔搅拌，煮 15 分钟。", "轻轻调味；用罐装番茄的话可加一小撮糖中和酸味。加入菌和鳀鱼。", "小火煮到菌变软，时间看菌的种类，多数需要 5–10 分钟。", "把酱倒在煮好的面上拌匀，立即上桌。"], "tip": "风味浓的菌更配鳀鱼的咸鲜。"}, {"no": "⑥", "zh": "野菌味噌汤", "en": "Wild mushroom and miso broth", "meta": "4 人份 · 准备 5 分钟 · 烹饪 15 分钟 · 原书 p173", "best": "杂菌；也可用平菇", "ing": ["花生油 1 汤匙", "红葱头 4 个，切细丁", "杂菌 200 g", "蒜 2 瓣，切碎", "小红辣椒 1 个，切碎（不想太辣可去籽）", "姜末 1 茶匙", "味噌 1 汤匙，先用少量高汤化开", "菌菇高汤 1 L", "酱油适量", "香菜半把：茎切小段，叶切碎"], "steps": ["大锅把油烧热（不要冒烟），下红葱头和菌，偶尔翻炒，至开始上色。", "加入蒜、辣椒、姜，不停翻炒 2 分钟，再倒入化开的味噌和高汤。", "煮到微滚就关火，静置几分钟让味道融合，加少许酱油。", "盛碗，撒上香菜。"], "tip": "快煮轻煮，保留野菌和味噌的清香。"}], "rindex": [{"p": 112, "zh": "马勃天妇罗", "en": "Puffball tempura", "star": false}, {"p": 114, "zh": "鸡油菌扇贝沙拉", "en": "Chanterelle and king scallop salad", "star": false}, {"p": 115, "zh": "白松露烩饭", "en": "Risotto with White truffle", "star": false}, {"p": 116, "zh": "羊肚菌派", "en": "Morel pie", "star": false}, {"p": 118, "zh": "牛肝菌冬季根菜炖五花", "en": "Petit salé with root vegetables and Porcini", "star": false}, {"p": 120, "zh": "奶油松乳菇", "en": "Saffron milk caps with cream", "star": false}, {"p": 121, "zh": "油封野兔配紫丁香蘑", "en": "Confit of wild rabbit with Wood blewit ragout", "star": false}, {"p": 122, "zh": "菊苣叶包田野蘑菇", "en": "Radicchio leaves filled with Field mushrooms", "star": false}, {"p": 124, "zh": "灰喇叭菌鱿鱼蛤蜊蛋面", "en": "Horn of Plenty with squid, clams, and egg noodles", "star": false}, {"p": 125, "zh": "酿高大环柄菇", "en": "Stuffed Parasol caps", "star": false}, {"p": 126, "zh": "管形鸡油菌扁面", "en": "Linguine and Trumpet chanterelles", "star": false}, {"p": 128, "zh": "夏松露焗蛋", "en": "Baked eggs with Summer truffle", "star": false}, {"p": 129, "zh": "齿菌酸模煎蛋饼", "en": "Hedgehog mushroom and sorrel frittata", "star": false}, {"p": 130, "zh": "煎鸡胸配松乳菇酱", "en": "Chicken breast with Saffron milk caps", "star": false}, {"p": 132, "zh": "鸡油菌菠菜派", "en": "Chanterelle and spinach pie", "star": false}, {"p": 133, "zh": "香脆牛肝菌盖", "en": "Crispy Bolete caps", "star": false}, {"p": 134, "zh": "大马勃奶油汤", "en": "Cream of Giant puffball soup", "star": false}, {"p": 136, "zh": "仙环菇水波蛋吐司", "en": "Fairy ring champignon and poached egg", "star": false}, {"p": 138, "zh": "肉色杯伞炖白芸豆", "en": "Rickstone funnel caps with cannellini", "star": false}, {"p": 139, "zh": "土豆根芹牛肝菌", "en": "Potato, celeriac, and Cep hats", "star": false}, {"p": 140, "zh": "温平菇沙拉", "en": "Warm salad of Oyster mushrooms", "star": false}, {"p": 142, "zh": "煎多宝鱼配松露酱", "en": "Turbot with Truffle sauce", "star": false}, {"p": 144, "zh": "齿菌酥包", "en": "Hedgehog mushroom parcels", "star": false}, {"p": 145, "zh": "米兰式炸大菌盖", "en": "Large fungi caps a cotoletta", "star": false}, {"p": 146, "zh": "野菌意式烤面包", "en": "Mushroom bruschetta", "star": true}, {"p": 148, "zh": "黑松露意面", "en": "Spaghetti with black Truffles", "star": false}, {"p": 149, "zh": "虾、扇贝配灰喇叭菌酱", "en": "Prawn, scallop, and Horn of Plenty sauce", "star": false}, {"p": 150, "zh": "烤野鸭配鸡油菌", "en": "Roast wild mallard with Chanterelles", "star": false}, {"p": 152, "zh": "羊肚菌炒黄椒", "en": "Morels with yellow peppers", "star": true}, {"p": 154, "zh": "煎马勃片", "en": "Fried Puffball slices", "star": false}, {"p": 155, "zh": "鸡油菌马斯卡彭酱", "en": "Chanterelle and mascarpone sauce", "star": false}, {"p": 156, "zh": "冬日紫丁香蘑温沙拉", "en": "Hot winter Wood blewit salad", "star": false}, {"p": 158, "zh": "蜜环菌挞", "en": "Honey fungus tart", "star": false}, {"p": 159, "zh": "香醋牛肝菌", "en": "Boletes with balsamic vinegar", "star": false}, {"p": 160, "zh": "鸡油菌炒蛋", "en": "Scrambled Chanterelles", "star": true}, {"p": 163, "zh": "采集者烩饭", "en": "Foraging risotto", "star": true}, {"p": 164, "zh": "野菌韭葱派", "en": "Wild mushroom and leek pie", "star": false}, {"p": 165, "zh": "猪里脊配杂菌", "en": "Pork tenderloin and mixed wild fungi", "star": false}, {"p": 166, "zh": "杂菌浓汤", "en": "Mixed fungi soup", "star": false}, {"p": 167, "zh": "杂菌乳清干酪酿鳎鱼", "en": "Sole stuffed with fungi and ricotta", "star": false}, {"p": 168, "zh": "杂菌番茄意面", "en": "Pasta with mixed fungi sauce", "star": true}, {"p": 170, "zh": "土豆杂菌焗", "en": "Potato and mixed fungi bake", "star": false}, {"p": 171, "zh": "牛排配蘑菇酱", "en": "Beef steak in mushroom sauce", "star": false}, {"p": 173, "zh": "野菌味噌汤", "en": "Wild mushroom and miso broth", "star": true}, {"p": 174, "zh": "野菌焗饭", "en": "Baked rice with mixed wild mushrooms", "star": false}, {"p": 175, "zh": "鸡肉蘑菇派", "en": "Chicken and mushroom pie", "star": false}, {"p": 176, "zh": "蘑菇酱古斯米", "en": "Couscous with mushroom ragout", "star": false}, {"p": 177, "zh": "香芹蒜香野菌", "en": "Mushrooms with parsley and garlic", "star": false}, {"p": 180, "zh": "野菌烩饭", "en": "Wild mushroom risotto", "star": false}, {"p": 181, "zh": "杂菌酱烩鸡", "en": "Chicken in a mixed fungi sauce", "star": false}, {"p": 183, "zh": "野菌披萨", "en": "Wild mushroom pizza", "star": false}, {"p": 184, "zh": "菌菇芝士千层面", "en": "Lasagna with fungi and cheeses", "star": false}, {"p": 185, "zh": "红鲻鱼焗杂菌", "en": "Baked red mullet and mixed wild mushrooms", "star": false}]};
+const MONTH = new Date().getMonth() + 1;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const strip = s => String(s).replace(/<[^>]+>/g, "");
+const icon = (id, cls = "") => `<svg class="icon ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const groupBy = Object.fromEntries(DATA.groups.map(g => [g.key, g]));
+const state = { q: "", group: "all", season: "all" };
+
+/* keep the sticky search bar directly under the (variable-height) header */
+const hdr = $("#hdr");
+const setHeaderH = () => document.documentElement.style.setProperty("--header-h", (hdr.offsetParent ? hdr.offsetHeight : 0) + "px");
+if (window.ResizeObserver) new ResizeObserver(setHeaderH).observe(hdr);
+window.addEventListener("resize", setHeaderH); setHeaderH();
+
+const SEASONS = [
+  { key: "all", label: "全部" },
+  { key: "now", label: `本月可采 · ${MONTH}月`, months: [MONTH] },
+  { key: "spring", label: "春", months: [3, 4, 5] },
+  { key: "summer", label: "夏", months: [6, 7, 8] },
+  { key: "autumn", label: "秋", months: [9, 10, 11] },
+  { key: "winter", label: "冬", months: [12, 1, 2] },
+];
+const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "少量食用": "small", "非原书": "new" };
+const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
+function monthStrip(ms, labels) {
+  const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}"></span>`).join("");
+  const lab = labels ? `<span class="month-labels" aria-hidden="true">${Array.from({ length: 12 }, (_, i) => `<span>${i + 1}</span>`).join("")}</span>` : "";
+  return `<span class="month-strip" role="img" aria-label="出菇月份：${ms.join("、")} 月">${cells}</span>${lab}`;
+}
+
+function matches(s) {
+  if (state.group !== "all" && s.group !== state.group) return false;
+  if (state.season !== "all") {
+    const ms = SEASONS.find(x => x.key === state.season).months;
+    if (!s.months.some(m => ms.includes(m))) return false;
+  }
+  if (state.q) {
+    const hay = [s.zh, s.en, s.latin, s.latin2 || "", s.region || "", strip(s.feat), strip(s.hab), groupBy[s.group].name].join(" ").toLowerCase();
+    if (!state.q.toLowerCase().split(/\s+/).every(t => hay.includes(t))) return false;
+  }
+  return true;
+}
+
+function renderChips() {
+  $("#season-chips").innerHTML = SEASONS.map(x => {
+    const n = x.key === "all" ? DATA.species.length : DATA.species.filter(s => s.months.some(m => x.months.includes(m))).length;
+    return `<button type="button" class="chip${x.key === "now" ? " chip--now" : ""}" data-season="${x.key}" aria-pressed="${state.season === x.key}">${x.key === "now" ? icon("calendar", "icon--sm") : ""}${esc(x.label)}<span class="chip__count">${n}</span></button>`;
+  }).join("");
+  $("#group-chips").innerHTML = `<button type="button" class="chip" data-group="all" aria-pressed="${state.group === "all"}">全部</button>` +
+    DATA.groups.map(g => `<button type="button" class="chip" data-group="${g.key}" aria-pressed="${state.group === g.key}">${esc(g.short)}</button>`).join("");
+}
+
+function renderGrid() {
+  const list = DATA.species.map((s, i) => [s, i]).filter(([s]) => matches(s));
+  $("#count").textContent = `显示 ${list.length} / ${DATA.species.length} 种`;
+  $("#reset-all").hidden = !(state.q || state.group !== "all" || state.season !== "all");
+  const g = state.group !== "all" ? groupBy[state.group] : null;
+  $("#group-note").innerHTML = g ? `<div class="group-note${g.key === "amanita" ? " group-note--risk" : ""}"><b>${esc(g.name)}</b>　${g.note}</div>` : "";
+  $("#grid").innerHTML = list.length ? list.map(([s, i]) => `
+    <button class="sp-card" type="button" data-i="${i}" aria-haspopup="dialog">
+      <span class="sp-card__meta"><span>${esc(groupBy[s.group].short)}${s.region ? " · " + esc(s.region) : ""}</span><span class="sp-card__season">${esc(s.season)}</span></span>
+      <span class="sp-card__name">${esc(s.zh)}</span>
+      <span class="sp-card__latin latin">${esc(s.latin)}</span>
+      ${monthStrip(s.months)}
+      <span class="sp-card__feat">${s.feat}</span>
+      ${badges(s.flags)}
+      ${s.warn ? `<span class="sp-card__warn">${icon("alert", "icon--sm")}<span><span class="sr-only">易混毒菌：</span>${s.warn}</span></span>` : ""}
+    </button>`).join("")
+    : `<div class="empty-state"><p>没有符合条件的菌。</p><button class="btn" type="button" data-reset>清除全部筛选</button></div>`;
+}
+function resetAll() { state.q = ""; state.group = "all"; state.season = "all"; $("#q").value = ""; sync(); }
+function sync() { renderChips(); renderGrid(); $("#q-clear").classList.toggle("is-visible", !!state.q); }
+
+function photoLinks(latin) {
+  latin = latin.split(" / ")[0].replace(" spp.", "");
+  const q = encodeURIComponent(latin);
+  return `<a class="btn btn--primary" href="https://www.inaturalist.org/taxa/search?q=${q}" target="_blank" rel="noopener">在 iNaturalist 看照片${icon("out", "icon--sm")}</a>
+          <a class="btn" href="https://en.wikipedia.org/wiki/${latin.replace(/ /g, "_")}" target="_blank" rel="noopener">维基百科${icon("out", "icon--sm")}</a>`;
+}
+function sourcesHtml(src) {
+  if (!src) return "";
+  return `<div class="sources"><h3>资料来源</h3><ol>${src.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ol></div>`;
+}
+
+const bySlug = Object.fromEntries(DATA.species.map((s, i) => [s.slug, i]));
+const toxicAll = DATA.poison.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, "0") }))
+  .concat(DATA.poisonExtra.map((p, j) => ({ ...p, num: "+" + (j + 1) })));
+
+/* ---------- share ---------- */
+let toastTimer;
+function toast(msg) {
+  const el = $("#toast"); el.textContent = msg; el.classList.add("is-on");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("is-on"), 2600);
+}
+function pageUrl(hash) { let base = ""; try { base = location.href.split("#")[0]; } catch (_) {} return base + "#" + hash; }
+async function share(title, hash) {
+  const url = pageUrl(hash);
+  try { if (navigator.share) { await navigator.share({ title, url }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+  try { await navigator.clipboard.writeText(url); toast("链接已复制"); } catch (_) { toast("复制这个链接：" + url); }
+}
+
+/* ---------- species sheet ---------- */
+let sheetPushed = false, closingFromRoute = false;
+function openSpecies(i) {
+  const s = DATA.species[i], g = groupBy[s.group];
+  $("#sheet-body").innerHTML = `
+    <div class="sheet__bar"><span class="sheet__group">${esc(g.name)}${s.region ? " · " + esc(s.region) : ""}</span>
+      <span class="sheet__actions">
+        <button class="icon-btn" type="button" data-share aria-label="分享这一种的链接">${icon("share")}</button>
+        <button class="icon-btn" type="button" data-close aria-label="关闭详情">${icon("x")}</button>
+      </span></div>
+    <h2 class="sheet__title" id="sheet-title">${esc(s.zh)}</h2>
+    <div class="sheet__latin latin">${esc(s.latin)}</div>
+    ${s.latin2 ? `<div class="sheet__en">${esc(s.latin2)}</div>` : ""}
+    <div class="sheet__en">${esc(s.en)} · ${s.page ? "原书 p" + s.page : "原书未收录"}</div>
+    <div class="sheet__months">${monthStrip(s.months, true)}</div>
+    ${badges(s.flags)}
+    <dl class="facts">
+      <div class="fact"><dt>识别</dt><dd>${s.feat}</dd></div>
+      <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
+      <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.page ? "以英国 / 欧洲为准" : "因地区而异"}）</dd></div>
+      <div class="fact"><dt>孢子印</dt><dd>${s.spore}</dd></div>
+      <div class="fact"><dt>厨房</dt><dd>${s.kitchen}</dd></div>
+    </dl>
+    ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
+    ${compareLinksFor(s.slug)}
+    ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
+    <p class="muted-note">${g.note}</p>
+    <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
+    ${sourcesHtml(s.sources)}`;
+  $("[data-share]", $("#sheet-body")).onclick = () => share(s.zh + " · 野菌速查", "sp-" + s.slug);
+  const d = $("#sheet");
+  if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
+  $("#sheet-body").scrollTop = 0;
+  $("[data-close]", d).focus();
+}
+function compareLinksFor(slug) {
+  const hits = DATA.compare.filter(c => c.cols.some(col => col[2] === slug));
+  if (!hits.length) return "";
+  return `<div class="link-row">${hits.map(c => `<a class="btn" href="#cmp-${c.id}">${icon("columns", "icon--sm")}对比：${esc(c.title)}</a>`).join("")}</div>`;
+}
+function closeSheet() { const d = $("#sheet"); if (d.open) { closingFromRoute = true; d.close(); closingFromRoute = false; } }
+$("#sheet").addEventListener("click", e => {
+  const d = e.currentTarget;
+  if (e.target.closest("[data-close]") || e.target === d) d.close();
+});
+$("#sheet").addEventListener("close", () => {
+  if (closingFromRoute) return;
+  if (currentHash().startsWith("sp-")) {
+    if (sheetPushed) { sheetPushed = false; try { history.back(); return; } catch (_) {} }
+    try { history.replaceState(null, "", "#species"); } catch (_) {}
+  }
+});
+
+/* ---------- toxic + compare ---------- */
+function toxCard(p) {
+  const deadly = p.level === "致命";
+  return `<article class="tox-card${deadly ? "" : " tox-card--poison"}" id="tx-${p.slug}">
+    <div class="tox-card__num" aria-hidden="true">${p.num}</div>
+    <h3 class="tox-card__name">${esc(p.zh)}<span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></h3>
+    <div class="tox-card__sub"><span class="latin">${esc(p.latin)}</span> · ${esc(p.en)}</div>
+    <div class="tox-card__body">
+      <div>${p.feat}</div>
+      ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
+      ${compareLinksFor(p.slug)}
+      <div class="link-row" style="margin-top:0">${photoLinks(p.latin)}<button class="btn" type="button" data-share-tx="${p.slug}" data-title="${esc(p.zh)}">${icon("share", "icon--sm")}分享</button></div>
+      ${sourcesHtml(p.sources)}
+    </div>
+  </article>`;
+}
+const KIND = { edible: "可食", caution: "谨慎", toxic: "有毒" };
+function cmpCard(c) {
+  const n = c.cols.length;
+  const colHtml = c.cols.map(([name, kind, slug]) => {
+    const href = slug ? (bySlug[slug] !== undefined ? "#sp-" + slug : "#tx-" + slug) : null;
+    return `<div class="cmp__col cmp__col--${kind}"><span class="cmp__kind">${KIND[kind]}</span>${href ? `<a href="${href}">${esc(name)}</a>` : esc(name)}</div>`;
+  }).join("");
+  const rows = c.rows.map(([label, cells]) => `<div class="cmp__row-label">${esc(label)}</div><div class="cmp__cells">${cells.map(x => `<div class="cmp__cell">${x}</div>`).join("")}</div>`).join("");
+  const src = c.src && c.src.length ? `<div class="cmp__src">来源：${c.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join("；")}</div>` : "";
+  return `<article class="cmp" id="cmp-${c.id}" style="--n:${n}">
+    <header class="cmp__head"><div><h3 class="cmp__title">${esc(c.title)}</h3><p class="cmp__lead">${esc(c.lead)}</p></div>
+      <button class="icon-btn" type="button" data-share-cmp="${c.id}" data-title="${esc(c.title)}" aria-label="分享这组对比">${icon("share")}</button></header>
+    <div class="cmp__table"><div class="cmp__cols">${colHtml}</div>${rows}</div>${src}
+  </article>`;
+}
+function renderToxic() {
+  $("#tox-grid").innerHTML = toxicAll.filter(p => !p.num.startsWith("+")).map(toxCard).join("");
+  $("#tox-grid-extra").innerHTML = toxicAll.filter(p => p.num.startsWith("+")).map(toxCard).join("");
+  $("#cmp-list").innerHTML = DATA.compare.map(cmpCard).join("");
+}
+$("#v-toxic").addEventListener("click", e => {
+  const a = e.target.closest("[data-share-tx]"); if (a) return share(a.dataset.title + " · 野菌速查", "tx-" + a.dataset.shareTx);
+  const b = e.target.closest("[data-share-cmp]"); if (b) return share(b.dataset.title + " · 野菌速查", "cmp-" + b.dataset.shareCmp);
+});
+
+/* ---------- finder ---------- */
+const STEPS = [
+  { key: "hym", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", opts: [["gills", "菌褶（刀片状）"], ["pores", "菌孔（海绵状）"], ["spines", "菌刺（下垂的软刺）"], ["ridges", "钝圆的棱脊或近光滑"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳"]] },
+  { key: "sub", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", opts: [["ground", "林地地面"], ["grass", "草地、草坪"], ["wood", "木头上（树干、树桩、倒木、木屑）"], ["under", "埋在土里（块菌）"]] },
+  { key: "spore", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", opts: [["white", "白 / 奶油", "#F8F6EE"], ["yellow", "黄 / 浅黄", "#E9D27A"], ["pink", "粉", "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", "#A8642E"], ["choc", "巧克力 / 紫褐", "#4E2E26"], ["olive", "橄榄褐", "#77703A"], ["black", "黑", "#151515"], ["green", "绿", "#7D9C6B"]] },
+  { key: "ring", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", opts: [["yes", "有"], ["no", "没有"]] },
+  { key: "volva", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
+];
+const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
+function fmatch(s, lenient) {
+  const why = [];
+  if (fstate.hym && s.hym !== fstate.hym) return null;
+  if (fstate.sub) {
+    const near = lenient && (fstate.sub === "ground" || fstate.sub === "grass") && (s.sub.includes("ground") || s.sub.includes("grass"));
+    if (!s.sub.includes(fstate.sub) && !near) return null;
+  }
+  if (fstate.spore && !s.spore.includes(fstate.spore) && !s.spore.includes("unknown")) return null;
+  if (fstate.ring === "yes" && !s.ring) return null;
+  if (fstate.ring === "no" && s.ring) { if (!lenient) return null; why.push("菌环可能已脱落"); }
+  if (fstate.volva === "yes" && !s.volva) return null;
+  if (fstate.volva === "no" && s.volva) { if (!lenient) return null; why.push("菌托常埋在土里"); }
+  return why;
+}
+function renderFinder() {
+  $("#finder-steps").innerHTML = STEPS.map((st, i) => `
+    <fieldset class="step"><legend><span class="step__num">${i + 1}</span>${esc(st.q)}</legend>
+      <p class="step__hint">${esc(st.hint)}</p>
+      <div class="chip-list">
+        <button type="button" class="chip" data-f="${st.key}" data-v="" aria-pressed="${fstate[st.key] === null}">不确定</button>
+        ${st.opts.map(([v, label, sw]) => `<button type="button" class="chip" data-f="${st.key}" data-v="${v}" aria-pressed="${fstate[st.key] === v}">${sw ? `<span class="swatch" style="background:${sw}"></span>` : ""}${esc(label)}</button>`).join("")}
+      </div></fieldset>`).join("") + `<button class="btn" type="button" id="finder-reset">重新开始</button>`;
+  const answered = Object.values(fstate).some(v => v !== null);
+  const jump = $("#finder-jump");
+  if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答左边（手机上是上面）任意一个问题，这里会列出可能的种类。</div>`; return; }
+  const tox = toxicAll.map(p => [p, fmatch(p, true)]).filter(([, w]) => w);
+  const ed = DATA.species.map((s, i) => [s, i, fmatch(s, false)]).filter(([, , w]) => w);
+  const toxHtml = tox.length ? `<ul class="res-list">${tox.map(([p, why]) => `<li><a class="res-item res-item--toxic" href="#tx-${p.slug}">
+      <span class="res-item__main"><span class="res-item__name">${esc(p.zh)}</span><span class="res-item__sub">${esc(p.level)} · ${esc(p.latin)}</span>${why.length ? `<span class="res-item__why">仍列出：${why.join("；")}</span>` : ""}</span>
+      <span class="level ${p.level === "致命" ? "level--deadly" : "level--poison"}">${esc(p.level)}</span>${icon("arrow")}</a></li>`).join("")}</ul>`
+    : `<p class="muted-note" style="margin-top:0">本站收录的 15 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
+  const edHtml = ed.length ? `<ul class="res-list">${ed.map(([s]) => `<li><a class="res-item" href="#sp-${s.slug}">
+      <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span><span class="res-item__sub">${esc(groupBy[s.group].short)} · ${esc(s.season)} · ${esc(s.latin)}</span></span>${icon("arrow")}</a></li>`).join("")}</ul>`
+    : `<div class="res-empty">没有符合的食用菌。试着把不确定的问题改成“不确定”。</div>`;
+  jump.hidden = false;
+  jump.innerHTML = `查看结果：毒菌 ${tox.length} · 食用菌 ${ed.length}${icon("chevron", "icon--sm")}`;
+  $("#finder-results").innerHTML = `
+    <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>${toxHtml}</div>
+    <div class="res-block"><h2 class="res-block__title">${icon("mushroom")}可能的食用菌（${ed.length}）</h2>${edHtml}</div>`;
+}
+$("#finder-steps").addEventListener("click", e => {
+  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); return renderFinder(); }
+  const b = e.target.closest("[data-f]"); if (!b) return;
+  const k = b.dataset.f, v = b.dataset.v || null;
+  fstate[k] = fstate[k] === v ? null : v; renderFinder();
+});
+
+/* ---------- recipes ---------- */
+function renderRecipes() {
+  $("#rc-grid").innerHTML = DATA.recipes.map((r, ri) => {
+    const metaIcons = ["users", "clock", "clock", "book"];
+    return `<article class="rc-card">
+      <header class="rc-card__head">
+        <div><h3 class="rc-card__name">${esc(r.zh)}</h3><div class="rc-card__en latin">${esc(r.en)}</div></div>
+        <div class="rc-card__num" aria-hidden="true">${String(ri + 1).padStart(2, "0")}</div>
+        <div class="rc-card__meta">${r.meta.split(" · ").map((m, k) => `<span>${icon(metaIcons[k] || "clock", "icon--sm")}${esc(m)}</span>`).join("")}</div>
+      </header>
+      <div class="rc-card__body">
+        <p class="rc-card__best" style="margin:0"><strong>用什么菌：</strong>${esc(r.best)}</p>
+        <div><h4>材料</h4><ul class="ing-list">${r.ing.map((x, k) => `<li><label for="ing-${ri}-${k}"><input type="checkbox" id="ing-${ri}-${k}"><span>${x}</span></label></li>`).join("")}</ul></div>
+        <div><h4>做法</h4><ol class="steps">${r.steps.map(x => `<li>${x}</li>`).join("")}</ol></div>
+        <div class="rc-card__tip">${icon("bulb")}<span>${esc(r.tip)}</span></div>
+      </div>
+    </article>`;
+  }).join("");
+  $("#rindex").innerHTML = DATA.rindex.map(r => `<li><span class="rindex__page">p${r.p}</span><span>${esc(r.zh)}${r.star ? '<span class="rindex__tag">已收录</span>' : ""}<span class="rindex__en">${esc(r.en)}</span></span></li>`).join("");
+}
+
+/* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison ---------- */
+const VIEWS = ["species", "finder", "toxic", "guide", "recipes", "emergency"];
+function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
+function parse(h) {
+  if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
+  if (h.startsWith("tx-") || h.startsWith("cmp-")) return { view: "toxic", target: h };
+  if (VIEWS.includes(h)) return { view: h };
+  return { view: "species" };
+}
+function show(v, opts = {}) {
+  VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
+  document.querySelectorAll("nav a").forEach(a => {
+    if (a.getAttribute("href") === "#" + v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  if (!opts.keepScroll) { try { window.scrollTo(0, 0); } catch (_) {} }
+  if (opts.focus) { const h = $("#h-" + v); h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+}
+function scrollToTarget(id) {
+  const el = document.getElementById(id); if (!el) return;
+  el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  el.classList.remove("is-target"); void el.offsetWidth; el.classList.add("is-target");
+}
+function apply(h, opts = {}) {
+  const r = parse(h);
+  if (r.sp !== undefined) {
+    if (!$("#v-species").classList.contains("is-active")) show("species");
+    openSpecies(r.sp); return;
+  }
+  closeSheet();
+  show(r.view, { focus: opts.focus && !r.target, keepScroll: !!r.target });
+  if (r.target) requestAnimationFrame(() => scrollToTarget(r.target));
+}
+function navigate(h) {
+  let pushed = false;
+  if (h !== currentHash()) { try { history.pushState(null, "", "#" + h); pushed = true; } catch (_) {} }
+  if (h.startsWith("sp-")) sheetPushed = pushed;
+  apply(h, { focus: true });
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (a) {
+    const h = a.getAttribute("href").slice(1);
+    if (h === "main") return;
+    e.preventDefault();
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-")) navigate(h);
+    return;
+  }
+  const j = e.target.closest("[data-jump]");
+  if (j) scrollToTarget(j.dataset.jump);
+});
+function route() { sheetPushed = false; apply(currentHash()); }
+window.addEventListener("popstate", route);
+window.addEventListener("hashchange", route);
+
+/* ---------- species events ---------- */
+let qTimer;
+$("#q").addEventListener("input", e => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = e.target.value.trim(); sync(); }, 120); });
+$("#q-clear").addEventListener("click", () => { state.q = ""; $("#q").value = ""; sync(); $("#q").focus(); });
+$("#reset-all").addEventListener("click", resetAll);
+$("#season-chips").addEventListener("click", e => { const b = e.target.closest("[data-season]"); if (b) { const k = b.dataset.season; state.season = state.season === k && k !== "all" ? "all" : k; sync(); } });
+$("#group-chips").addEventListener("click", e => { const b = e.target.closest("[data-group]"); if (b) { const k = b.dataset.group; state.group = state.group === k && k !== "all" ? "all" : k; sync(); } });
+$("#grid").addEventListener("click", e => {
+  if (e.target.closest("[data-reset]")) return resetAll();
+  const c = e.target.closest(".sp-card"); if (c) navigate("sp-" + DATA.species[+c.dataset.i].slug);
+});
+
+/* ---------- offline (service worker; only over http/https) ---------- */
+function setOffline(text, ready) { const el = $("#offline-status"); if (el) { el.textContent = text; el.classList.toggle("is-ready", !!ready); } }
+(function initOffline() {
+  let proto = ""; try { proto = location.protocol; } catch (_) {}
+  if (!("serviceWorker" in navigator) || !/^https?:$/.test(proto)) { setOffline("本地预览：上传到网站后才能离线使用", false); return; }
+  setOffline("正在准备离线版本…", false);
+  navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready)
+    .then(() => setOffline("已可离线使用", true))
+    .catch(() => setOffline("这个浏览器暂时无法离线使用", false));
+})();
+
+sync(); renderFinder(); renderToxic(); renderRecipes(); route();
+</script>
+</body>
+</html>
