@@ -50,8 +50,10 @@ NA_SPECIES = [
       spore="浅黄色", kitchen="上品，生尝略带果香或微辣；煎炒、配奶油，做法同欧洲鸡油菌",
       warn="<b>发光类脐菇</b>：长在木头上、密集成簇，是刀片状真菌褶（有毒）；<b>假鸡油菌</b>：褶更薄、更橙、反复分叉；<b>毛钉菇</b>（Turbinellus floccosus）：喇叭更深、盖上有鳞片，可能引起肠胃不适",
       group="extra", flags=["上品", "非原书"],
-      extra=["<b>白鸡油菌</b>（C. subalbidus）：同一地区的近亲，通体奶白色，同样可食。"],
-      sources=[("UBC Beaty Museum · Mushrooms Up!：Cantharellus formosus", UBC + "C_formosus.html")]),
+      extra=["<b>白鸡油菌</b>（C. subalbidus）：同一地区的近亲，通体奶白色，同样可食。",
+             "<b>喀斯喀特鸡油菌</b>（C. cascadensis）：菌盖亮黄、棱色浅（白至奶油色），菌柄基部常膨大，长在花旗松林中，常埋在落叶层下；分布于 BC 沿海、俄勒冈喀斯喀特山脉和加州内华达山脉，同样可食。"],
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Cantharellus formosus", UBC + "C_formosus.html"),
+               ("UBC Beaty Museum · Mushrooms Up!：Cantharellus cascadensis", UBC + "C_cascadensis.html")]),
  dict(zh="春王牛肝菌", en="Spring king bolete", latin="Boletus rex-veris", region="北美西部山地",
       page=None, season="晚春", months=[5, 6],
       feat="菌盖 9–18 cm，湿时黏；幼时近白色，之后带银色光泽的粉褐，最后变暗橄榄褐，手摸过的地方会变深；孔口幼时白→奶黄→黄橄榄，<b>碰伤不变色</b>；菌柄粗 2–6 cm，基部略膨大，<b>上半部有明显网纹</b>；肉白，切开不变色。常小簇生长",
@@ -114,11 +116,12 @@ NA_TOXIC += [
       conf="蜜环菌（孢子印白色、柄更粗）、野生金针菇（孢子印白色）、长在木屑上的裸盖菇",
       sources=[("UBC Beaty Museum · Mushrooms Up!：Galerina marginata", UBC + "G_marginata.html")]),
  dict(zh="发光类脐菇", en="Jack-o'-lantern", latin="Omphalotus illudens / O. olivascens", level="有毒",
-      feat="橙色，<b>大团密集簇生在木头上</b>（或埋在地下的树根上，看起来像长在地上）；<b>真菌褶，刀片状、不分叉、延生</b>；西部的 O. olivascens 常带橄榄色调。新鲜菌褶在黑暗中有时会微弱发光。吃了会严重呕吐腹泻好几天",
+      feat="橙色，<b>大团密集簇生在木头上</b>（或埋在地下的树根上，看起来像长在地上）；<b>真菌褶，刀片状、不分叉、延生</b>；西部的 O. olivascens 常带橄榄色调，主要见于加州；UBC 资料称 BC 省尚无记录，俄勒冈和华盛顿的少数记录也有待核实，但如果它向北扩散，西北太平洋也可能出现误食。新鲜菌褶在黑暗中有时会微弱发光。吃了会严重呕吐腹泻好几天",
       conf="鸡油菌：鸡油菌长在地上、很少密集成簇，下面是钝圆的棱脊，不是刀片状真菌褶",
       sources=[("Kuo, M. MushroomExpert：Omphalotus illudens", "https://mushroomexpert.com/omphalotus_illudens.html"),
                ("Missouri Department of Conservation：Jack-o'-lantern", "https://mdc.mo.gov/node/249263"),
-               ("Bay Area Mycological Society：Omphalotus olivascens", "https://bayareamushrooms.org/mushroommonth/jackolantern.html")]),
+               ("Bay Area Mycological Society：Omphalotus olivascens", "https://bayareamushrooms.org/mushroommonth/jackolantern.html"),
+               ("UBC Beaty Museum · Mushrooms Up!：Cantharellus cascadensis（西北太平洋分布说明）", "https://explore.beatymuseum.ubc.ca/mushroomsup/C_cascadensis.html")]),
  dict(zh="大青褶伞", en="Green-spored parasol", latin="Chlorophyllum molybdites", level="有毒",
       feat="<b>北美最常被误食的毒菌</b>。大型，白色菌盖带褐色鳞片，常在草坪、公园形成蘑菇圈；菌褶成熟后变灰绿；<b>孢子印绿色</b>（唯一绿孢子印的大型菌）；柄上没有蛇皮纹。食后 1–3 小时出现剧烈呕吐腹泻。东部和南部常见，西北太平洋少见",
       conf="高大环柄菇、粗鳞青褶伞（孢子印都是白色）",
@@ -157,6 +160,9 @@ NA_TOXIC += [
 
 # Editor's notes appended to book toxic entries (keyed by Latin name), with their sources
 NA_POISON_NOTES = {
+ "Amanita pantherina": dict(
+     note="<b>【编者注】北美西部的是西部豹斑鹅膏（A. pantherinoides）。</b>真正的豹斑鹅膏见于欧洲和美国东部；两者含同样的毒素（鹅膏蕈氨酸和蝇蕈醇），外形几乎无法区分。西部豹斑鹅膏盖褐色、散布白色疣，柄基球状，菌托紧贴柄基、顶部常外翻成一圈窄领；在城市绿化带里也很常见。<b>每年 4–6 月春季</b>，它造成的人和猫狗中毒特别多。",
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Amanita pantherinoides", UBC + "A_pantherinoides.html")]),
  "Amanita phalloides": dict(
      note="<b>【编者注】在西北太平洋正在扩散。</b>原产欧洲，随引种的鹅耳枥、欧洲栎、榛等树木传入；温哥华、维多利亚、西雅图的市区和郊区都有记录，常长在草坪和行道树下，在 BC 省还在向北、向原生林扩散。BC 省自 1997 年首次发现以来已有三起严重中毒：2003 年维多利亚一名男子把前院里的幼菇当成马勃；2008 年兰里一名女子把它当成<b>草菇</b>；2016 年维多利亚市中心一名三岁儿童误食后死亡。<b>幼菇很像草菇，但西北太平洋野外基本没有草菇</b>；草菇孢子印粉红，毒鹅膏孢子印白色。马勃要纵切检查：真马勃里面是均匀的白色，毒鹅膏的“蛋”里能看到菌盖和菌褶的轮廓。",
      sources=[("UBC Beaty Museum · Mushrooms Up!：Amanita phalloides（BC 省中毒案例）", UBC + "A_phalloides.html")]),
@@ -182,10 +188,35 @@ NA_TOXIC += [
       feat="纯白至象牙色、<b>薄而半透明</b>的扇形、舌形或耳形菌盖，1.5–10 cm，几乎没有柄，向基部渐窄；菌褶白、较密、窄，覆盖整个背面；孢子印白色；气味不明显。成群成丛长在<b>针叶树</b>（常是西部铁杉）的倒木和树桩上，见于沿海针叶林，从阿拉斯加到北加州都有。<br><b>中毒：</b>它原本在日本被当作季节美味。2004 年日本有 59 人吃后出现脑部损害症状，19 人死亡；患者平均约 69 岁，多数原本就有肾病。症状在吃后 1–31 天出现：行动困难甚至瘫痪、肌肉痉挛，之后抽搐。毒素至今不明，证据也是间接的，但 UBC 资料建议西北太平洋的天使之翼一律不要吃，有肾病的人尤其不要。",
       conf="糙皮侧耳（平菇）：平菇多长在阔叶树上，很少纯白，肉更厚；天使之翼只长在针叶树木头上",
       sources=[("UBC Beaty Museum · Mushrooms Up!：Pleurocybella porrigens", UBC + "P_porrigens.html")]),
+ dict(zh="毛钉菇", en="Scaly vase chanterelle", latin="Turbinellus floccosus", level="有毒", tag="肠胃",
+      feat="<b>深喇叭或花瓶状</b>，中央深凹，菌盖 5–15 cm，橙色，<b>盖面有一圈圈橙至深橙色鳞片</b>；幼时像一根顶部发黄的深褐色圆柱。盖下不是菌褶，而是<b>浅而不规则的皱纹状棱</b>，淡黄至奶油色，延生到柄上；菌柄 8–16 cm、粗，奶油色带黄橙。单生或成群，常排成弧形，长在混交针叶林地上。BC 沿海、阿拉斯加沿海、喀斯喀特山脉到加州中部都有。旧名 Gomphus floccosus。<br><b>中毒：</b>西北太平洋的毛钉菇都属可疑，部分人吃后恶心、呕吐、腹泻，有时 8–14 小时后才发作。<br><b>【编者注】</b>墨西哥和印度有被当作好食用菌的“毛钉菇”，但 DNA 显示那是不同的种，西北太平洋的不能照搬。",
+      conf="鸡油菌类：鸡油菌的棱较规则，形状不会像毛钉菇那样成深花瓶状，盖上也没有鳞片",
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Turbinellus floccosus", UBC + "T_floccosus.html")]),
 ]
 
 # Editor's notes added to book species (keyed by Latin name): extra lines, optional warn, sources
 NA_SPECIES_NOTES = {
+ "Hydnum repandum": dict(
+     extra=["<b>【编者注】西北太平洋的是美洲齿菌（H. washingtonianum）</b>，过去和欧洲、亚洲的种一起叫作 H. repandum。菌盖 3–15 cm，淡粉橙奶油色、<b>哑光</b>，碰伤变赭色；菌刺长达 1 cm、易掉，一直长到柄顶；肉厚、白、偏脆；长在北美云杉和混交针叶林地上。"
+            "另有较小的<b>脐齿菌</b>（H. umbilicatum），盖中央深凹、刺只长在盖下。两者都是好食用菌。"
+            "确认是齿菌：盖下是浅色的刺，不是菌孔或菌褶；肉嫩，不是橡胶质。<b>胶质刺菌</b>（Pseudohydnum gelatinosum）也有刺，但像橡皮、刺擦不掉。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Hydnum washingtonianum", UBC + "H_washingtonianum.html")]),
+ "Armillaria mellea": dict(
+     extra=["<b>【编者注】西北太平洋常见的是实柄蜜环菌（A. solidipes，旧称 A. ostoyae）</b>，大丛长在针叶树的树干、倒木或埋在土里的根上：盖淡粉褐、中央有褐至黄色小鳞片、边缘有放射沟纹；柄上部有白色菌环，边缘常带褐色；<b>柄基稍膨大后突然收住</b>（西部的 A. mellea 柄基则逐渐变尖）。"
+            "在 BC 省，A. solidipes 曾引起肠胃中毒；有人吃煮透的蜜环菌没事，也有人出现肠胃不适、发冷、抽筋、出汗。<b>必须彻底煮熟</b>。"
+            "纹缘盔孢伞、簇生垂幕菇、裸伞属、鳞伞属等也成丛长在木头上，可能被误当成蜜环菌：一定要做孢子印（蜜环菌是白色）。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Armillaria solidipes", UBC + "A_solidipes.html")]),
+ "Lactarius deliciosus": dict(
+     extra=["<b>【编者注】西北太平洋的“松乳菇”不是欧洲的松乳菇</b>，而是一个尚未正式命名的种（暂称西部松乳菇），多在松树或云杉下；碰伤和乳汁都会变绿。"
+            "同地区还有：<b>夏橙乳菇</b>（L. aestivus），乳汁橙色、很慢才变绿或不变绿，多在冷杉、铁杉下；<b>血红乳菇</b>（L. rubrilacteus），乳汁<b>暗红至红褐色</b>、慢慢变蓝绿，长在花旗松下。"
+            "这些橙色乳菇一般认为可食，但人类食用记录不多，偶尔引起肠胃不适；会富集重金属，污染地点采的不要吃。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Lactarius deliciosus（西部松乳菇）", UBC + "L_deliciosus.html")]),
+ "Lepista nuda": dict(
+     extra=["<b>【编者注】</b>西北太平洋也很常见，从草地、草坪到林缘都有，单生、成丛或成弧形。"
+            "<b>紫色丝膜菌</b>外形相近，但孢子印锈褐色，柄上的蛛网状菌幕残迹会被染成锈褐；"
+            "<b>西部紫蜡蘑</b>（Laccaria amethysteo-occidentalis）菌褶厚而稀、盖面哑光、柄纤维质很韧。"
+            "紫丁香蘑会富集铅等重金属，<b>路边等污染地点采的不要吃</b>；偶尔有人吃后肠胃不适，要煮熟、适量。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Lepista nuda", UBC + "L_nuda.html")]),
  "Morchella esculenta": dict(
      extra=["<b>【编者注】北美的羊肚菌和欧洲的不是同一批种。</b>西北太平洋常见三类："
             "①<b>火烧迹地羊肚菌</b>（如 M. sextelata）：针叶林火灾后的第一个春夏大量出现，之后几年逐渐减少；"
@@ -209,5 +240,7 @@ NA_SPECIES_NOTES = {
      sources=[("UBC Beaty Museum · Mushrooms Up!：Laetiporus conifericola", UBC + "L_conifericola.html")]),
  "Pleurotus ostreatus": dict(
      warn="<b>【编者注】贝形圆孢侧耳（天使之翼）</b>：纯白、薄、长在针叶树木头上，日本曾有致死报告",
-     sources=[("UBC Beaty Museum · Mushrooms Up!：Pleurocybella porrigens", UBC + "P_porrigens.html")]),
+     extra=["<b>【编者注】</b>西北太平洋的平菇过去都叫 P. ostreatus，但它和<b>肺形侧耳</b>（P. pulmonarius）、<b>杨树侧耳</b>（P. populinus）很难分开：肺形侧耳有时长在桤木上，杨树侧耳可能是落基山脉（也许包括 BC）黑杨和颤杨木头上最常见的平菇。这几种都可食。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Pleurocybella porrigens", UBC + "P_porrigens.html"),
+              ("UBC Beaty Museum · Mushrooms Up!：Pleurotus pulmonarius", UBC + "P_pulmonarius.html")]),
 }
