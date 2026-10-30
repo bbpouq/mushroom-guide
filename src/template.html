@@ -1019,7 +1019,7 @@ function fmatch(s, lenient) {
     const near = lenient && (fstate.sub === "ground" || fstate.sub === "grass") && (s.sub.includes("ground") || s.sub.includes("grass"));
     if (!s.sub.includes(fstate.sub) && !near) return null;
   }
-  if (fstate.spore && !s.spore.includes(fstate.spore) && !s.spore.includes("unknown")) return null;
+  if (fstate.spore && !s.sporeTags.includes(fstate.spore) && !s.sporeTags.includes("unknown")) return null;
   if (fstate.ring === "yes" && !s.ring) return null;
   if (fstate.ring === "no" && s.ring) { if (!lenient) return null; why.push("菌环可能已脱落"); }
   if (fstate.volva === "yes" && !s.volva) return null;
