@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 71 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 72 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -31,7 +31,8 @@ src/
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
   data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR, keyed by slug.
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
-  data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link.
+  data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
+                         and HEROES: the header photo behind each view's large title (none on the emergency view).
                          Pin a better photo in fetch_photos.PINNED rather than editing this file
   data/guide.py          Field/kitchen panels, glossary, the 6 featured recipes
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels
@@ -65,13 +66,19 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   answer still lists deadly amanitas and galerina, with the reason shown), and results put toxic first.
 - Permits and seasons vary by place. Phrase them as "check local rules" / "因地区而异".
 
-## Design system (from the ui-ux-pro-max skill)
+## Design system (iOS-style glass, since 2026-10)
 
-- Style: Minimalism / Swiss: grid, strong type hierarchy, thin rules, little decoration.
-- Palette tokens in `:root` (light) plus dark-mode overrides: primary green `#15803D`, accent amber
-  `#D97706` (fills only; text on it is black), danger red reserved for toxicity and emergency.
+- Style: iOS translucent materials over a soft grouped background (`#F2F2F7` light, `#000` dark) with a faint
+  green/amber/blue aura behind (`body::before`). Large bold titles, hairline (0.5px) separators, filled capsule
+  chips and buttons, cards with soft depth. No English eyebrows, thick rules or decorative numbering.
+- Glass (`backdrop-filter`, tokens `--glass`, `--glass-strong`, `--glass-blur`) only on bars and floating layers:
+  header, tab bar, sidebar, sticky search bar, sheet, toast, calendar sticky rows. Cards are translucent
+  (`--color-card`) without blur, which stays fast on phones. `prefers-reduced-transparency` and browsers without
+  backdrop-filter get opaque fills (`--color-card-solid`, `--color-background`).
+- Palette tokens in `:root` (light) plus dark-mode overrides: primary green `#15803D` (dark `#4ADE80`), accent
+  amber `#D97706` (fills only; text on it is black), danger red reserved for toxicity and emergency.
   Style everything through tokens; no raw hex in components.
-- Type: Outfit (headings) and Work Sans (body), with Noto Sans SC for Chinese. Base 16px.
+- Type: the platform system font (SF Pro / PingFang SC on Apple, Noto Sans SC or YaHei elsewhere). No web fonts.
 - Layering: use only the z-index scale `--z-sticky 10`, `--z-header 20`, `--z-nav 30`, `--z-toast 40`
   (dialogs use the top layer).
 - **Class names are component-prefixed** (`sp-card__name`, `badge--choice`, `tox-card`, ...). Never give an
@@ -105,3 +112,7 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 1. `python3 src/build_site.py`, then `python3 tests/test_site.py` must end with "ALL PASSED".
 2. Look at the changed view at 375px and 1440px, in both light and dark mode.
 3. For a release, bump the `CACHE` version in `public/sw.js`. Commit and push to `main`; GitHub Pages deploys it.
+
+## Aesthetic Judgment
+
+When doing design, creative, or artistic work — anything requiring aesthetic judgment such as UI design, visual assets, layouts, color choices, typography, animation, branding, or creative direction — read `TASTES.md` if it exists and apply its constraints to your output.

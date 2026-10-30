@@ -14,7 +14,7 @@ sys.path.insert(0, str(SRC))
 
 from data.book import GROUPS, POISON, RECIPES  # noqa: E402
 from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6  # noqa: E402
-from data.photos import PHOTOS, LICENCE_NAME, LICENCE_URL  # noqa: E402
+from data.photos import PHOTOS, HEROES, LICENCE_NAME, LICENCE_URL  # noqa: E402
 from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
 from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
@@ -131,6 +131,13 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("<!--N_COMPARE-->", str(len(COMPARE)))
         .replace("<!--N_BOOK-->", str(sum(1 for x in species if x.get("page"))))
         .replace("<!--N_NA-->", str(sum(1 for x in species if not x.get("page")))))
+for view, h in HEROES.items():
+    assert (OUT.parent / "photos" / h["file"]).exists(), f"missing hero photo {h['file']}"
+    html = html.replace(f"<!--HERO:{view}-->", (
+        f'<img class="view__hero" src="photos/{h["file"]}" alt="" decoding="async"{"" if view == "species" else " loading=\"lazy\""}>'
+        f'<span class="view__credit">照片：<a href="{h["photo_url"]}" target="_blank" rel="noopener">{h["author"]}</a>'
+        f' · <a href="{LICENCE_URL[h["licence"]]}" target="_blank" rel="noopener">{LICENCE_NAME[h["licence"]]}</a> · iNaturalist</span>'))
+assert "<!--HERO:" not in html, "a view header has no hero photo in data/photos.HEROES"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "
       f"{len(COMPARE)} comparisons, {len(html.encode()) // 1024} KB")

@@ -12,40 +12,47 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="野菌速查">
 <title>野菌速查手册</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Work+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* Design system (ui-ux-pro-max): Minimalism & Swiss Style · nature palette (green + amber)
-   Type: Outfit headings / Work Sans body, Noto Sans SC for CJK · 8px spacing rhythm
-   Layout: phone = sticky header + sticky search + bottom nav; tablet = top nav; desktop = sidebar */
+/* Design system: iOS-style translucent materials ("glass") over a soft grouped background.
+   Bars, sheet and toast use backdrop blur; cards are translucent without blur (cheap on phones).
+   Type: the platform system font (SF Pro / PingFang SC on Apple devices) · 4px spacing rhythm
+   Layout: phone = glass header + glass tab bar; tablet = top nav; desktop = glass sidebar
+   Reduced transparency: every glass surface falls back to an opaque fill. */
 :root {
   --color-primary: #15803D;
   --color-on-primary: #FFFFFF;
   --color-secondary: #059669;
   --color-accent: #D97706;
   --color-on-accent: #000000;
-  --color-background: #F0FDF4;
-  --color-foreground: #0F172A;
-  --color-card: #FFFFFF;
-  --color-muted: #E6F2EA;
-  --color-muted-foreground: #475569;
-  --color-border: #CFE3D6;
+  --color-background: #F2F2F7;
+  --color-foreground: #1C1C1E;
+  --color-card: rgba(255, 255, 255, .78);
+  --color-muted: rgba(118, 118, 128, .12);
+  --color-muted-foreground: #5C5C61;
+  --color-border: rgba(60, 60, 67, .14);
   --color-destructive: #DC2626;
   --color-danger-text: #B91C1C;
-  --color-danger-surface: #FEF2F2;
+  --color-danger-surface: rgba(255, 59, 48, .10);
   --color-warning-text: #92400E;
-  --color-warning-surface: #FEF3C7;
+  --color-warning-surface: rgba(255, 149, 0, .14);
   --color-ring: #15803D;
-  --color-primary-surface: #DCFCE7;
+  --color-primary-surface: rgba(52, 199, 89, .16);
+  --color-card-solid: #FFFFFF;
+  --glass: rgba(249, 249, 251, .68);
+  --glass-strong: rgba(250, 250, 252, .86);
+  --glass-edge: rgba(255, 255, 255, .6);
+  --glass-blur: saturate(180%) blur(22px);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, .14);
+  --aura-1: rgba(52, 199, 89, .20); --aura-2: rgba(255, 179, 64, .16); --aura-3: rgba(90, 200, 250, .14);
   --color-chart: #15803D;
   --color-seq-1: #22C55E; --color-seq-2: #15803D; --color-seq-3: #14532D;
 
-  --font-heading: "Outfit", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  --font-body: "Work Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
 
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-7: 48px;
-  --radius-sm: 6px; --radius: 10px; --radius-lg: 16px;
+  --radius-sm: 8px; --radius: 14px; --radius-lg: 22px;
   --z-sticky: 10; --z-header: 20; --z-nav: 30; --z-toast: 40;
   --dur-fast: 150ms; --dur: 220ms; --ease: cubic-bezier(.2, .7, .2, 1);
   --target: 44px;
@@ -57,22 +64,28 @@
   :root:not([data-theme="light"]) {
     --color-primary: #4ADE80; --color-chart: #16A34A; --color-seq-1: #166534; --color-seq-2: #16A34A; --color-seq-3: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
     --color-accent: #F59E0B; --color-on-accent: #000000;
-    --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
-    --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
-    --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: #2B1414;
-    --color-warning-text: #FCD34D; --color-warning-surface: #2D2410;
-    --color-ring: #4ADE80; --color-primary-surface: #14301F;
+    --color-background: #000000; --color-foreground: #F2F2F7; --color-card: rgba(28, 28, 30, .78);
+    --color-muted: rgba(118, 118, 128, .24); --color-muted-foreground: #AEAEB2; --color-border: rgba(255, 255, 255, .10);
+    --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: rgba(255, 69, 58, .16);
+    --color-warning-text: #FCD34D; --color-warning-surface: rgba(255, 159, 10, .16);
+    --color-ring: #4ADE80; --color-primary-surface: rgba(48, 209, 88, .18);
+    --color-card-solid: #1C1C1E; --glass: rgba(22, 22, 24, .62); --glass-strong: rgba(28, 28, 30, .86); --glass-edge: rgba(255, 255, 255, .08);
+    --shadow-card: none; --shadow-float: 0 12px 40px rgba(0, 0, 0, .5);
+    --aura-1: rgba(48, 209, 88, .16); --aura-2: rgba(255, 159, 10, .10); --aura-3: rgba(100, 210, 255, .10);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --color-primary: #4ADE80; --color-chart: #16A34A; --color-seq-1: #166534; --color-seq-2: #16A34A; --color-seq-3: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
   --color-accent: #F59E0B; --color-on-accent: #000000;
-  --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
-  --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
-  --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: #2B1414;
-  --color-warning-text: #FCD34D; --color-warning-surface: #2D2410;
-  --color-ring: #4ADE80; --color-primary-surface: #14301F;
+  --color-background: #000000; --color-foreground: #F2F2F7; --color-card: rgba(28, 28, 30, .78);
+  --color-muted: rgba(118, 118, 128, .24); --color-muted-foreground: #AEAEB2; --color-border: rgba(255, 255, 255, .10);
+  --color-destructive: #F87171; --color-danger-text: #FCA5A5; --color-danger-surface: rgba(255, 69, 58, .16);
+  --color-warning-text: #FCD34D; --color-warning-surface: rgba(255, 159, 10, .16);
+  --color-ring: #4ADE80; --color-primary-surface: rgba(48, 209, 88, .18);
+  --color-card-solid: #1C1C1E; --glass: rgba(22, 22, 24, .62); --glass-strong: rgba(28, 28, 30, .86); --glass-edge: rgba(255, 255, 255, .08);
+  --shadow-card: none; --shadow-float: 0 12px 40px rgba(0, 0, 0, .5);
+  --aura-1: rgba(48, 209, 88, .16); --aura-2: rgba(255, 159, 10, .10); --aura-3: rgba(100, 210, 255, .10);
   color-scheme: dark;
 }
 
@@ -89,7 +102,7 @@ a { color: var(--color-primary); text-underline-offset: 3px; }
 button { font: inherit; color: inherit; }
 button, a, label, summary, .chip, input[type="checkbox"] { touch-action: manipulation; }
 :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
-.latin { font-family: "Work Sans", Georgia, serif; font-style: italic; }
+.latin { font-style: italic; }
 .icon { width: var(--icon-md); height: var(--icon-md); flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .icon--sm { width: var(--icon-sm); height: var(--icon-sm); }
 .icon--lg { width: var(--icon-lg); height: var(--icon-lg); }
@@ -433,7 +446,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .jump-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
 
 /* ---------- finder ---------- */
-.finder { display: grid; gap: var(--space-5); }
+.finder { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
 @media (min-width: 1024px) { .finder { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; } .finder__results { position: sticky; top: var(--space-5); } }
 .step { border: 1px solid var(--color-border); background: var(--color-card); border-radius: var(--radius); padding: var(--space-4); margin: 0 0 var(--space-3); }
 .step legend { padding: 0 var(--space-1); font-family: var(--font-heading); font-weight: 700; font-size: 17px; }
@@ -445,7 +458,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .res-block { margin-bottom: var(--space-5); }
 .res-block__title { display: flex; align-items: center; gap: var(--space-2); font-size: 17px; font-weight: 700; margin-bottom: var(--space-2); }
 .res-block--toxic .res-block__title { color: var(--color-danger-text); }
-.res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
 .res-item { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 56px; padding: var(--space-2) var(--space-4); text-align: left; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); color: var(--color-foreground); text-decoration: none; cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
 .res-item:hover { border-color: var(--color-primary); }
 .res-item:active { background: var(--color-muted); }
@@ -517,6 +530,120 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .offline-status.is-ready { background: var(--color-primary-surface); color: var(--color-primary); }
 
 .site-footer { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 2px solid var(--color-foreground); font-size: 13px; color: var(--color-muted-foreground); display: grid; gap: var(--space-2); max-width: 90ch; }
+
+/* ---------- iOS glass layer ---------- */
+body { letter-spacing: 0; }
+body::before { content: ""; position: fixed; inset: -10vmax; z-index: -1; pointer-events: none;
+  background: radial-gradient(40vmax 40vmax at 12% 8%, var(--aura-1), transparent 70%),
+              radial-gradient(36vmax 36vmax at 92% 18%, var(--aura-2), transparent 70%),
+              radial-gradient(44vmax 44vmax at 70% 96%, var(--aura-3), transparent 70%); }
+h1, h2, h3, h4 { letter-spacing: -.01em; }
+.hdr, .botnav, .search-bar, .toast, .cal__readout, .cal__table thead th, .sheet__bar { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+.hdr { background: var(--glass); border-bottom: .5px solid var(--color-border); }
+.botnav { background: var(--glass); border-top: .5px solid var(--color-border); }
+.botnav__link { font-size: 11px; font-weight: 500; }
+.botnav__link:active { background: transparent; opacity: .6; }
+.botnav__link[aria-current="page"] { font-weight: 600; }
+.search-bar { background: var(--glass); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); padding-left: var(--space-4); padding-right: var(--space-4); border-bottom: .5px solid var(--color-border); }
+@media (min-width: 768px) { .search-bar { margin-left: calc(-1 * var(--space-6)); margin-right: calc(-1 * var(--space-6)); padding-left: var(--space-6); padding-right: var(--space-6); } }
+@media (min-width: 1024px) { .search-bar { margin-left: calc(-1 * var(--space-7)); margin-right: calc(-1 * var(--space-7)); padding-left: var(--space-7); padding-right: var(--space-7); } }
+.search-bar__label { font-size: 13px; color: var(--color-muted-foreground); font-weight: 500; }
+.search-field input { background: var(--color-muted); border: 0; border-radius: 12px; }
+.search-field input:focus { border-color: var(--color-ring); box-shadow: 0 0 0 4px var(--color-primary-surface); }
+.cal__readout, .cal__table thead th { background: var(--glass); }
+.cal__table thead th { outline-color: transparent; }
+.cal__table thead th.is-now { background: var(--color-primary-surface); }
+
+/* large titles, no Swiss rules or English eyebrows */
+.view__head { border-bottom: 0; padding-bottom: 0; gap: var(--space-1); }
+.view__eyebrow { display: none; }
+.view__title { font-size: clamp(30px, 6vw, 40px); font-weight: 700; letter-spacing: -.02em; }
+.subhead { border-bottom: 0; padding-bottom: 0; margin: var(--space-7) 0 var(--space-3); }
+.subhead h2 { font-size: 22px; letter-spacing: -.01em; }
+.site-footer { border-top: .5px solid var(--color-border); }
+.panel__num { color: var(--color-muted-foreground); font-weight: 500; }
+
+/* surfaces: translucent cards with soft depth */
+.sp-card, .panel, .tox-card, .rc-card, .cmp, .step, .group-note { border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
+.sp-card, .tox-card, .rc-card, .cmp, .panel { border-radius: var(--radius-lg); }
+.sp-card:hover { border-color: var(--glass-edge); box-shadow: var(--shadow-float); }
+.sp-card:active { background: var(--color-card); transform: scale(.985); }
+.sp-card { transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur) var(--ease); }
+.sp-card__warn { border-top: .5px solid var(--color-border); }
+.sp-card__season { background: var(--color-muted); border-radius: 999px; padding: 2px 10px; }
+.sp-card__img { border-radius: 12px; }
+.tox-card { border-top: .5px solid var(--glass-edge); position: relative; overflow: hidden; align-content: start; }
+.tox-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--color-destructive); }
+.tox-card--poison::before { background: var(--color-accent); }
+.group-note { border-left: 0; border-radius: var(--radius); }
+.step { border-radius: var(--radius-lg); }
+.step legend { float: left; width: 100%; padding: 0; margin-bottom: var(--space-1); }
+.step legend + * { clear: both; }
+
+/* controls: filled capsules like iOS */
+.chip { border: 0; background: var(--color-muted); min-height: 34px; padding: 0 14px; font-weight: 500; }
+.chip:hover { background: color-mix(in srgb, var(--color-muted) 100%, var(--color-foreground) 6%); }
+.chip[aria-pressed="true"] { background: var(--color-primary); color: var(--color-on-primary); }
+.btn { border: 0; background: var(--color-muted); border-radius: 12px; font-weight: 600; }
+.btn:hover { border-color: transparent; background: color-mix(in srgb, var(--color-muted) 100%, var(--color-foreground) 6%); }
+.btn:active { opacity: .7; }
+.btn--primary { background: var(--color-primary); color: var(--color-on-primary); }
+.btn--primary:hover { background: var(--color-primary); filter: brightness(1.06); }
+.finds__input { background: var(--color-muted); border: 0; border-radius: 12px; }
+.finds__input:focus { outline: 2px solid var(--color-ring); outline-offset: 0; }
+.finds__del.is-confirm { background: var(--color-danger-surface); color: var(--color-danger-text); }
+.icon-btn { border-radius: 999px; background: var(--color-muted); }
+
+/* sheet: glass bottom sheet with a grabber on phones */
+.sheet { background: var(--glass-strong); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--shadow-float); border: .5px solid var(--glass-edge); }
+.sheet::backdrop { background: rgba(0, 0, 0, .32); }
+.sheet__bar { background: transparent; border-bottom: .5px solid var(--color-border); }
+@media (max-width: 767px) {
+  .sheet { border-radius: 14px 14px 0 0; }
+  .sheet__body::before { content: ""; display: block; width: 36px; height: 5px; border-radius: 3px; background: var(--color-muted-foreground); opacity: .4; margin: 0 auto var(--space-2); }
+}
+.facts { border-radius: var(--radius); }
+
+/* toast: dark glass capsule */
+.toast { background: rgba(30, 30, 32, .82); color: #F2F2F7; border-radius: 999px; box-shadow: var(--shadow-float); }
+
+/* tablet + desktop navigation */
+@media (min-width: 768px) {
+  .topnav__link[aria-current="page"] { background: var(--color-primary-surface); color: var(--color-primary); font-weight: 600; }
+  .topnav__link { border-radius: 999px; }
+}
+@media (min-width: 1024px) {
+  .sidenav { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-right: .5px solid var(--color-border); }
+  .sidenav__link { border-radius: 12px; }
+  .sidenav__note { border-radius: var(--radius); }
+}
+
+/* view header photos: large title over a photo with a dark scrim */
+.view__head:has(> .view__hero) { position: relative; isolation: isolate; overflow: hidden; align-content: end; min-height: 220px;
+  padding: 88px var(--space-5) var(--space-5); border-radius: var(--radius-lg); color: #fff; box-shadow: var(--shadow-card); }
+.view__head:has(> .view__hero)::before { content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(to top, rgba(0, 0, 0, .74) 0%, rgba(0, 0, 0, .48) 50%, rgba(0, 0, 0, .10) 100%); }
+.view__hero { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+.view__head:has(> .view__hero) .view__lead { color: rgba(255, 255, 255, .92); }
+.view__head:has(> .view__hero) .view__lead a { color: #fff; }
+.view__credit { position: absolute; top: var(--space-3); right: var(--space-3); max-width: calc(100% - 2 * var(--space-3)); font-size: 11px; line-height: 1.4;
+  color: rgba(255, 255, 255, .9); background: rgba(0, 0, 0, .32); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  padding: 3px 10px; border-radius: 999px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.view__credit a { color: inherit; }
+.view__head:has(> .view__hero) .btn { background: rgba(255, 255, 255, .22); color: #fff; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.view__head:has(> .view__hero) .link-row { margin-top: var(--space-2); }
+@media (min-width: 768px) { .view__head:has(> .view__hero) { min-height: 260px; padding: 120px var(--space-6) var(--space-6); } }
+
+/* accessibility: no translucency when the system asks for it, or where blur is unsupported */
+@media (prefers-reduced-transparency: reduce) {
+  body::before { display: none; }
+  .hdr, .botnav, .sidenav, .sheet, .toast, .search-bar, .cal__readout, .cal__table thead th { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--color-background); }
+  .sheet { background: var(--color-card-solid); }
+  .sp-card, .panel, .tox-card, .rc-card, .cmp, .step { background: var(--color-card-solid); }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hdr, .botnav, .sidenav, .sheet, .search-bar { background: var(--color-background); }
+}
 </style>
 </head>
 <body>
@@ -586,6 +713,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       <!-- ================= SPECIES ================= -->
       <section class="view" id="v-species" aria-labelledby="h-species">
         <header class="view__head">
+          <img class="view__hero" src="photos/hero-species.webp" alt="" decoding="async"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/168845865" target="_blank" rel="noopener">Alan Rockefeller</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY</a> · iNaturalist</span>
           <span class="view__eyebrow">Field guide</span>
           <h1 class="view__title" id="h-species">食用菌速查</h1>
           <p class="view__lead">原书 52 种欧洲常见食用菌，另补充松茸等 12 种北美种类。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
@@ -620,6 +748,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       <!-- ================= FINDER ================= -->
       <section class="view" id="v-finder" aria-labelledby="h-finder">
         <header class="view__head">
+          <img class="view__hero" src="photos/hero-finder.webp" alt="" decoding="async" loading="lazy"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/22093962" target="_blank" rel="noopener">Christian Schwarz</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC</a> · iNaturalist</span>
           <span class="view__eyebrow">Identify by features</span>
           <h1 class="view__title" id="h-finder">按特征查找</h1>
           <p class="view__lead">手上有一朵不认识的菌？按看到的特征回答，列出可能的种类。<b>可能的毒菌会排在最前面。</b></p>
@@ -635,9 +764,10 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       <!-- ================= TOXIC ================= -->
       <section class="view" id="v-toxic" aria-labelledby="h-toxic">
         <header class="view__head">
+          <img class="view__hero" src="photos/hero-toxic.webp" alt="" decoding="async" loading="lazy"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/448681419" target="_blank" rel="noopener">Borja Fierro-Leva</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY</a> · iNaturalist</span>
           <span class="view__eyebrow">Toxic look-alikes</span>
           <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
-          <p class="view__lead">原书十大毒菌（p38–39）、北美采菌时最需要警惕的种类，以及 6 组最常混淆的食用菌和毒菌对比。</p>
+          <p class="view__lead">原书十大毒菌（p38–39）、北美采菌时最需要警惕的种类，以及 9 组最常混淆的食用菌和毒菌对比。</p>
         </header>
         <div class="danger-banner" role="note">
           <svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg>
@@ -671,6 +801,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       <!-- ================= GUIDE ================= -->
       <section class="view" id="v-guide" aria-labelledby="h-guide">
         <header class="view__head">
+          <img class="view__hero" src="photos/hero-guide.webp" alt="" decoding="async" loading="lazy"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/11502906" target="_blank" rel="noopener">Christian Schwarz</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC</a> · iNaturalist</span>
           <span class="view__eyebrow">Field &amp; kitchen</span>
           <h1 class="view__title" id="h-guide">采集与厨房</h1>
           <p class="view__lead">出门前读一遍：守则、装备、时间、地点、怎么鉴定；采回家后怎么清理、烹饪和保存。</p>
@@ -851,6 +982,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       <!-- ================= RECIPES ================= -->
       <section class="view" id="v-log" aria-labelledby="h-log">
         <header class="view__head">
+          <img class="view__hero" src="photos/hero-log.webp" alt="" decoding="async" loading="lazy"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/250397284" target="_blank" rel="noopener">Filip Fuljer</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC</a> · iNaturalist</span>
           <span class="view__eyebrow">Field log</span>
           <h1 class="view__title" id="h-log">采集记录</h1>
           <p class="view__lead">记下在哪里、什么时候找到了什么，明年同一时间再去看看。</p>
@@ -872,6 +1004,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 
       <section class="view" id="v-recipes" aria-labelledby="h-recipes">
         <header class="view__head">
+          <img class="view__hero" src="photos/hero-recipes.webp" alt="" decoding="async" loading="lazy"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/29239600" target="_blank" rel="noopener">Davide Puddu</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY</a> · iNaturalist</span>
           <span class="view__eyebrow">Recipes</span>
           <h1 class="view__title" id="h-recipes">精选食谱</h1>
           <p class="view__lead">6 道步骤简单、用料常见的菜。用量为公制，1 汤匙 ≈ 15 ml。勾选材料可以当购物清单用。</p>
