@@ -1,5 +1,5 @@
 /* 野菌速查 service worker: cache the app shell for offline use */
-const CACHE = "mushroom-guide-v12";
+const CACHE = "mushroom-guide-v13";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
@@ -20,6 +20,11 @@ self.addEventListener("fetch", e => {
       const net = fetch(req).then(r => { c.put(req, r.clone()); return r; }).catch(() => hit);
       return hit || net;
     })));
+    return;
+  }
+  // example photos: cache each one the first time it is shown, so it is there offline later
+  if (url.origin === self.location.origin && url.pathname.includes("/photos/")) {
+    e.respondWith(caches.open(CACHE).then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }))));
     return;
   }
   // own files: cache first
