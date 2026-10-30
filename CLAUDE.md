@@ -5,7 +5,7 @@ A Simplified-Chinese, mobile-first field guide to wild mushrooms, shared with fr
 look-alike comparisons, an emergency page, field/kitchen guides and recipes, installable as an
 offline PWA. Site copy is Simplified Chinese; the owner writes in both Chinese and English.
 
-Live: https://mushroom-guide.shizyang666.workers.dev (Cloudflare Worker `mushroom-guide`, static assets only)
+Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.github/workflows/pages.yml`)
 
 ## Commands
 
@@ -14,7 +14,6 @@ python3 src/build_site.py            # regenerate public/index.html from src/ (a
 python3 tests/test_site.py           # 57 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
-npx wrangler deploy                  # manual deploy (normally: push to main, Workers Builds deploys)
 ```
 
 Test setup, once: `pip install playwright pillow && python3 -m playwright install chromium`.
@@ -33,7 +32,7 @@ src/
   make_icons.py          App icons
 public/                  Deployed as-is: index.html (generated, do not hand-edit), sw.js, manifest, icons
 tests/test_site.py       Playwright checks (starts its own server)
-wrangler.jsonc           Assets-only Worker config. Keep "name": "mushroom-guide" or the live URL changes.
+.github/workflows/pages.yml  Pages deploy on push to main; fails if public/index.html is stale (rebuild before committing)
 ```
 
 Never hand-edit `public/index.html`; edit `src/` and rebuild. When shipping a user-visible change,
@@ -91,7 +90,7 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 
 1. `python3 src/build_site.py`, then `python3 tests/test_site.py` must end with "ALL PASSED".
 2. Look at the changed view at 375px and 1440px, in both light and dark mode.
-3. For a release, bump the `CACHE` version in `public/sw.js`. Commit and push to `main`; Cloudflare deploys it.
+3. For a release, bump the `CACHE` version in `public/sw.js`. Commit and push to `main`; GitHub Pages deploys it.
 
 ## Ideas not yet built
 

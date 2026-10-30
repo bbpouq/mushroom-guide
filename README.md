@@ -2,7 +2,7 @@
 
 一个中文野生菌速查网站：食用菌识别、易混毒菌对比、按特征反查、中毒急救、采集与烹饪。可以装到手机桌面离线使用。
 
-线上地址：https://mushroom-guide.shizyang666.workers.dev
+线上地址：https://bbpouq.github.io/mushroom-guide/
 
 ## 目录
 
@@ -13,7 +13,7 @@ src/                    源文件（改内容和样式都在这里）
   build_site.py         生成 public/index.html
 public/                 网站本体（直接部署这些文件，index.html 由脚本生成，不要手改）
 tests/test_site.py      端到端检查（手机 / 平板 / 电脑、离线、深链接等）
-wrangler.jsonc          Cloudflare Workers 部署配置（只托管静态文件）
+.github/workflows/      GitHub Pages 自动发布
 CLAUDE.md               给 Claude Code 的项目说明
 ```
 
@@ -28,13 +28,9 @@ python3 tests/test_site.py    # 跑检查，应显示 ALL PASSED
 
 ## 部署
 
-仓库已连接 Cloudflare Workers Builds：推送到 `main` 分支后会自动部署，网址不变。
+用 GitHub Pages 托管：推送到 `main` 分支后，GitHub Actions（`.github/workflows/pages.yml`）会重新生成 `public/index.html`，确认它和仓库里的一致，再把 `public/` 发布出去。也可以在 Actions 页面手动运行。
 
-手动部署（需要 Node.js）：
-
-```sh
-npx wrangler deploy
-```
+仓库设置里 Pages 的来源要选 “GitHub Actions”（Settings → Pages → Source）。
 
 本地预览：
 

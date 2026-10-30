@@ -1,9 +1,0 @@
-{
-  // 野菌速查手册：纯静态网站，Cloudflare 直接托管 public/ 里的文件，不运行任何代码
-  "name": "mushroom-guide",
-  "compatibility_date": "2026-10-01",
-  "assets": {
-    "directory": "./public",
-    "not_found_handling": "single-page-application"
-  }
-}
