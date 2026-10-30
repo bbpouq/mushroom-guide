@@ -97,6 +97,8 @@ def run():
         pg = ctx.new_page()
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         check("deep link opens species sheet", pg.evaluate("document.getElementById('sheet').open") and "松茸" in pg.inner_text("#sheet-title"))
+        check("sheet shows a 12-month Pacific Northwest seasonality chart",
+              pg.locator("#sheet .obs-chart__col").count() == 12 and "月" in pg.inner_text("#sheet .obs-chart__readout"))
         check("sheet shows the spore print text, not the finder tag", "白色" in pg.inner_text("#sheet") and "white" not in pg.inner_text("#sheet"))
         pg.click('#sheet a[href="#guide-check"]'); pg.wait_for_timeout(1100)
         check("sheet links to the before-you-eat checklist",

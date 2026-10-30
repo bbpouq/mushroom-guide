@@ -38,6 +38,7 @@
   --color-warning-surface: #FEF3C7;
   --color-ring: #15803D;
   --color-primary-surface: #DCFCE7;
+  --color-chart: #15803D;
 
   --font-heading: "Outfit", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --font-body: "Work Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -53,7 +54,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-primary: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
+    --color-primary: #4ADE80; --color-chart: #16A34A; --color-on-primary: #052E16; --color-secondary: #34D399;
     --color-accent: #F59E0B; --color-on-accent: #000000;
     --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
     --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
@@ -64,7 +65,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --color-primary: #4ADE80; --color-on-primary: #052E16; --color-secondary: #34D399;
+  --color-primary: #4ADE80; --color-chart: #16A34A; --color-on-primary: #052E16; --color-secondary: #34D399;
   --color-accent: #F59E0B; --color-on-accent: #000000;
   --color-background: #0B1410; --color-foreground: #E8F3EC; --color-card: #121D17;
   --color-muted: #1A2A21; --color-muted-foreground: #A3B8AA; --color-border: #2A4134;
@@ -341,6 +342,18 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .sidenav__sos { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); min-height: 40px; padding: 0 12px; border-radius: var(--radius-sm); background: var(--color-destructive); color: #fff; font-weight: 700; text-decoration: none; }
 
 /* ---------- in-page jump buttons ---------- */
+/* iNaturalist seasonality chart (species sheet) */
+.obs-chart { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.obs-chart__title { font-size: 16px; font-weight: 700; }
+.obs-chart__sub { margin: var(--space-1) 0 0; font-size: 13px; color: var(--color-muted-foreground); }
+.obs-chart__readout { margin: var(--space-3) 0 var(--space-2); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; min-height: 1.65em; }
+.obs-chart__plot { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 112px; border-bottom: 1px solid var(--color-muted-foreground); }
+.obs-chart__col { position: relative; display: flex; align-items: flex-end; justify-content: center; border-radius: var(--radius-sm) var(--radius-sm) 0 0; transition: background-color var(--dur-fast); }
+.obs-chart__col.is-active { background: var(--color-muted); }
+.obs-chart__bar { width: min(24px, 64%); background: var(--color-chart); border-radius: 4px 4px 0 0; }
+.obs-chart__months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); margin-top: var(--space-1); font-size: 12px; color: var(--color-muted-foreground); text-align: center; font-variant-numeric: tabular-nums; }
+.obs-chart__note { margin: var(--space-3) 0 0; font-size: 13px; color: var(--color-muted-foreground); }
+
 /* before-you-eat checklist */
 .eat-check { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: 0; }
 .eat-check li { margin: 0; border-top: 1px solid var(--color-border); max-width: none; }
@@ -975,6 +988,7 @@ function openSpecies(i) {
     ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
     ${compareLinksFor(s.slug)}
     <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a></div>
+    ${obsChart(s)}
     ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
     <p class="muted-note">${g.note}</p>
     <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
@@ -985,6 +999,33 @@ function openSpecies(i) {
   $("#sheet-body").scrollTop = 0;
   $("[data-close]", d).focus();
 }
+function obsChart(s) {
+  const o = s.obs; if (!o) return "";
+  const total = o.counts.reduce((a, b) => a + b, 0);
+  const where = "BC、华盛顿、俄勒冈";
+  const link = `<a href="https://www.inaturalist.org/observations?place_id=${DATA.obsPlaces}&quality_grade=research&taxon_id=${o.id}" target="_blank" rel="noopener">在 iNaturalist 查看记录</a>`;
+  if (total < 30) return `<section class="obs-chart"><h3 class="obs-chart__title">西北太平洋什么时候能见到</h3>
+    <p class="obs-chart__note">${total ? `iNaturalist 上${where}只有 ${total} 条研究级记录（<span class="latin">${esc(o.taxon)}</span>），太少，看不出季节。` : `iNaturalist 上目前没有${where}的研究级记录（<span class="latin">${esc(o.taxon)}</span>）。`}${total ? link : ""}</p></section>`;
+  const max = Math.max(...o.counts), peak = o.counts.indexOf(max);
+  const cols = o.counts.map((n, i) => `<div class="obs-chart__col${i === peak ? " is-active" : ""}" data-m="${i}"><span class="obs-chart__bar" style="height:${n ? Math.max(2, Math.round(n / max * 100)) : 0}%"></span></div>`).join("");
+  return `<section class="obs-chart" aria-labelledby="obs-title">
+    <h3 class="obs-chart__title" id="obs-title">西北太平洋什么时候能见到</h3>
+    <p class="obs-chart__sub">iNaturalist 研究级观察 · ${where} · 共 ${total.toLocaleString("en")} 条 · <span class="latin">${esc(o.taxon)}</span></p>
+    <p class="obs-chart__readout" aria-hidden="true" data-peak="${peak}">${peak + 1} 月：${max.toLocaleString("en")} 条（最多）</p>
+    <div class="obs-chart__plot" aria-hidden="true" data-counts="${o.counts.join(",")}">${cols}</div>
+    <div class="obs-chart__months" aria-hidden="true">${o.counts.map((_, i) => `<span>${i + 1}</span>`).join("")}</div>
+    <table class="sr-only"><caption>每月观察记录数</caption><tr><th scope="col">月份</th><th scope="col">记录数</th></tr>${o.counts.map((n, i) => `<tr><td>${i + 1} 月</td><td>${n}</td></tr>`).join("")}</table>
+    <p class="obs-chart__note">数量反映的是人们什么时候出门拍照上传，不等于产量；具体时间因地区、海拔和当年天气而异。数据取自 ${DATA.obsFetched}。${link}</p>
+  </section>`;
+}
+function obsReadout(plot, i) {
+  const counts = plot.dataset.counts.split(",").map(Number), out = plot.parentElement.querySelector(".obs-chart__readout");
+  const peak = +out.dataset.peak, k = i === null ? peak : i;
+  plot.querySelectorAll(".obs-chart__col").forEach((c, j) => c.classList.toggle("is-active", j === k));
+  out.textContent = `${k + 1} 月：${counts[k].toLocaleString("en")} 条${k === peak ? "（最多）" : ""}`;
+}
+document.addEventListener("pointerover", e => { const c = e.target.closest(".obs-chart__col"); if (c) obsReadout(c.parentElement, +c.dataset.m); });
+document.addEventListener("pointerout", e => { const p = e.target.closest(".obs-chart__plot"); if (p && !p.contains(e.relatedTarget)) obsReadout(p, null); });
 function compareLinksFor(slug) {
   const hits = DATA.compare.filter(c => c.cols.some(col => col[2] === slug));
   if (!hits.length) return "";

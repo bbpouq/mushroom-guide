@@ -11,9 +11,10 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 60 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 61 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
+python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
 ```
 
 Test setup, once: `pip install playwright pillow && python3 -m playwright install chromium`.
@@ -27,6 +28,8 @@ src/
                          plus NA_SPECIES_NOTES / NA_POISON_NOTES: 【编者注】 added to book entries, keyed by Latin name
   data/tags.py           Feature-finder tags for every edible AND toxic species, keyed by Chinese name
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
+  data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR, keyed by slug.
+                         Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
   data/guide.py          Field/kitchen panels, glossary, the 6 featured recipes
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels
   build_site.py          Assembles public/index.html; validates tags, slugs and comparison links
