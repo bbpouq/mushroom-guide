@@ -14,7 +14,7 @@ sys.path.insert(0, str(SRC))
 
 from data.book import GROUPS, POISON, RECIPES  # noqa: E402
 from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6  # noqa: E402
-from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC  # noqa: E402
+from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
 from data.compare import COMPARE  # noqa: E402
 
@@ -61,6 +61,12 @@ groups.insert(0, NA_GROUP)
 species[0:0] = [dict(s) for s in NA_SPECIES]
 poison = [dict(zh=zh, en=en, latin=latin, level=level, feat=feat, conf=conf) for zh, en, latin, level, feat, conf in POISON]
 poison_extra = [dict(p) for p in NA_TOXIC]
+for p in poison:
+    if p["latin"] in NA_POISON_NOTES:
+        n = NA_POISON_NOTES[p["latin"]]
+        p["feat"] += "<br>" + n["note"]
+        p["sources"] = n["sources"]
+assert set(NA_POISON_NOTES) <= {p["latin"] for p in poison}, "NA_POISON_NOTES names an unknown book species"
 
 # ---- finder tags + slugs ----
 for item in species + poison + poison_extra:
@@ -93,7 +99,9 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("<!--FEATURES-->", kv(FEATURES))
         .replace("<!--COOK-->", kv(COOK))
         .replace("<!--KEEP-->", kv(KEEP))
-        .replace("<!--GLOSS-->", kv(GLOSS)))
+        .replace("<!--GLOSS-->", kv(GLOSS))
+        .replace("<!--N_EDIBLE-->", str(len(species)))
+        .replace("<!--N_TOXIC-->", str(len(poison) + len(poison_extra))))
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "
       f"{len(COMPARE)} comparisons, {len(html.encode()) // 1024} KB")
