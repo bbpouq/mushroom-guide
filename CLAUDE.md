@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 71 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 72 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -65,13 +65,19 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   answer still lists deadly amanitas and galerina, with the reason shown), and results put toxic first.
 - Permits and seasons vary by place. Phrase them as "check local rules" / "因地区而异".
 
-## Design system (from the ui-ux-pro-max skill)
+## Design system (iOS-style glass, since 2026-10)
 
-- Style: Minimalism / Swiss: grid, strong type hierarchy, thin rules, little decoration.
-- Palette tokens in `:root` (light) plus dark-mode overrides: primary green `#15803D`, accent amber
-  `#D97706` (fills only; text on it is black), danger red reserved for toxicity and emergency.
+- Style: iOS translucent materials over a soft grouped background (`#F2F2F7` light, `#000` dark) with a faint
+  green/amber/blue aura behind (`body::before`). Large bold titles, hairline (0.5px) separators, filled capsule
+  chips and buttons, cards with soft depth. No English eyebrows, thick rules or decorative numbering.
+- Glass (`backdrop-filter`, tokens `--glass`, `--glass-strong`, `--glass-blur`) only on bars and floating layers:
+  header, tab bar, sidebar, sticky search bar, sheet, toast, calendar sticky rows. Cards are translucent
+  (`--color-card`) without blur, which stays fast on phones. `prefers-reduced-transparency` and browsers without
+  backdrop-filter get opaque fills (`--color-card-solid`, `--color-background`).
+- Palette tokens in `:root` (light) plus dark-mode overrides: primary green `#15803D` (dark `#4ADE80`), accent
+  amber `#D97706` (fills only; text on it is black), danger red reserved for toxicity and emergency.
   Style everything through tokens; no raw hex in components.
-- Type: Outfit (headings) and Work Sans (body), with Noto Sans SC for Chinese. Base 16px.
+- Type: the platform system font (SF Pro / PingFang SC on Apple, Noto Sans SC or YaHei elsewhere). No web fonts.
 - Layering: use only the z-index scale `--z-sticky 10`, `--z-header 20`, `--z-nav 30`, `--z-toast 40`
   (dialogs use the top layer).
 - **Class names are component-prefixed** (`sp-card__name`, `badge--choice`, `tox-card`, ...). Never give an

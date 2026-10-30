@@ -148,6 +148,7 @@ def run():
         for k, v in [("hym", "gills"), ("sub", "wood"), ("spore", "white")]:
             pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
         res = pg.inner_text("#finder-results")
+        check("finder results do not widen the phone page", pg.evaluate("document.documentElement.scrollWidth") <= 390)
         check("finder gills+wood+white", "发光类脐菇" in res and "蜜环菌" in res and "纹缘盔孢伞" not in res)
         pg.click("#finder-reset")
         for k, v in [("hym", "gills"), ("sub", "ground"), ("spore", "white"), ("volva", "no")]:
