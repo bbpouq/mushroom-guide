@@ -113,6 +113,17 @@ def run():
         pg.click("#eat-check li >> nth=0"); pg.click("#eat-check li >> nth=1")
         check("checklist counts ticks", pg.inner_text("#eat-check-count") == "已核对 2 / 9")
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
+        pg.click('#sheet a[data-log-sp]'); pg.wait_for_timeout(1100)
+        check("sheet 'log this find' opens the log with the species chosen",
+              pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and pg.input_value("#finds-sp") == "tricholoma-matsutake")
+        pg.fill("#finds-place", "测试步道"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(200)
+        pg.reload(); pg.wait_for_timeout(700)
+        check("a saved find survives a reload", "松茸" in pg.inner_text("#finds-list") and "测试步道" in pg.inner_text("#finds-list"))
+        pg.click("#finds-list [data-del]"); pg.wait_for_timeout(100)
+        armed = pg.locator("#finds-list .finds__item").count() == 1
+        pg.click("#finds-list [data-del]"); pg.wait_for_timeout(200)
+        check("deleting a find takes two taps", armed and pg.locator("#finds-list .finds__item").count() == 0)
+        pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         pg.click("[data-close]"); pg.wait_for_timeout(150)
         check("closing a directly opened sheet goes to #species", pg.evaluate("location.hash") == "#species")
         pg.click(".sp-card >> nth=3"); pg.wait_for_timeout(250)

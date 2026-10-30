@@ -381,6 +381,31 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .cal__rest { margin: var(--space-4) 0 0; font-size: 14px; color: var(--color-muted-foreground); max-width: 72ch; }
 @media (min-width: 768px) { .cal { --cal-readout-h: 44px; } .cal__table col.cal__namecol { width: 13em; } .cal__table { font-size: 14px; } }
 
+/* personal finds log (guide view; stored on this device only) */
+.finds { max-width: 960px; }
+.finds__note { margin: 0 0 var(--space-4); font-size: 14px; color: var(--color-muted-foreground); max-width: 72ch; }
+.finds__form { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 768px) { .finds__form { grid-template-columns: 1fr 1fr; } .finds__field--wide { grid-column: 1 / -1; } }
+.finds__field { display: grid; gap: var(--space-1); }
+.finds__field[hidden] { display: none; }
+.finds__label { font-size: 14px; font-weight: 600; }
+.finds__input { width: 100%; min-height: var(--target); padding: var(--space-2) var(--space-3); font: inherit; font-size: 16px; color: var(--color-foreground); background: var(--color-card); border: 1.5px solid var(--color-border); border-radius: var(--radius); }
+.finds__input:focus { outline: 2px solid var(--color-ring); outline-offset: 1px; border-color: var(--color-ring); }
+textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
+.finds__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.finds__list { list-style: none; margin: var(--space-5) 0 0; padding: 0; border-top: 1px solid var(--color-border); }
+.finds__item { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-3); align-items: start; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+.finds__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); }
+.finds__date { font-size: 14px; color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
+.finds__name { font-weight: 700; }
+.finds__name a { color: var(--color-foreground); }
+.finds__meta { grid-column: 1; margin: 0; font-size: 15px; color: var(--color-muted-foreground); overflow-wrap: anywhere; }
+.finds__del { grid-column: 2; grid-row: 1 / span 2; }
+.finds__del.is-confirm { border-color: var(--color-destructive); color: var(--color-danger-text); }
+.finds__empty { margin: var(--space-5) 0 0; color: var(--color-muted-foreground); }
+.finds__bar { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; justify-content: space-between; margin-top: var(--space-4); }
+.finds__count { font-size: 14px; color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
+
 /* before-you-eat checklist */
 .eat-check { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: 0; }
 .eat-check li { margin: 0; border-top: 1px solid var(--color-border); max-width: none; }
@@ -507,7 +532,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
   <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
 </svg>
 
 <div class="app">
@@ -640,6 +665,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
         <div class="jump-row">
           <button class="chip" type="button" data-jump="guide-field">采集</button>
           <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
+          <button class="chip" type="button" data-jump="guide-log"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>我的记录</button>
           <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
           <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
           <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
@@ -732,6 +758,20 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
             <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/L_nuda.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Lepista nuda（重金属）</a></li>
             <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/S_radicata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Sparassis radicata（第一次只吃一两勺）</a></li>
           </ol></div>
+        </section>
+        <div class="subhead" id="guide-log"><h2>我的采集记录</h2><p>记下在哪里、什么时候找到了什么，明年同一时间再去看看。</p></div>
+        <section class="finds" aria-labelledby="finds-title">
+          <h2 class="sr-only" id="finds-title">新增一条采集记录</h2>
+          <p class="finds__note">记录<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，可以随时导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
+          <form class="finds__form" id="finds-form" novalidate>
+            <div class="finds__field"><label class="finds__label" for="finds-sp">找到了什么</label><select class="finds__input" id="finds-sp"></select></div>
+            <div class="finds__field" id="finds-other-wrap" hidden><label class="finds__label" for="finds-other">名字或描述</label><input class="finds__input" id="finds-other" type="text" maxlength="60" autocomplete="off" placeholder="如：褐色小伞菌，没认出来"></div>
+            <div class="finds__field"><label class="finds__label" for="finds-date">日期</label><input class="finds__input" id="finds-date" type="date" required></div>
+            <div class="finds__field"><label class="finds__label" for="finds-place">地点</label><input class="finds__input" id="finds-place" type="text" maxlength="80" autocomplete="off" placeholder="如：某某步道，花旗松林下"></div>
+            <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="400" placeholder="数量、长在什么上、孢子印颜色、吃了没有、味道如何……"></textarea></div>
+            <div class="finds__actions finds__field--wide"><button class="btn btn--primary" type="submit"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>记下来</button></div>
+          </form>
+          <div id="finds-list" aria-live="polite"></div>
         </section>
         <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。</p></div>
         <div class="panel-grid">
@@ -1018,7 +1058,7 @@ function openSpecies(i) {
     </dl>
     ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
     ${compareLinksFor(s.slug)}
-    <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a></div>
+    <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#guide-log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a></div>
     ${obsChart(s)}
     ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
     <p class="muted-note">${g.note}</p>
@@ -1199,6 +1239,79 @@ function eatCount() { const b = [...eatBoxes()]; $("#eat-check-count").textConte
 $("#eat-check").addEventListener("change", eatCount);
 $("#eat-check-reset").addEventListener("click", () => { eatBoxes().forEach(x => { x.checked = false; }); eatCount(); });
 
+/* ---------- personal finds log (localStorage, this device only) ---------- */
+const FINDS_KEY = "mushroom-guide:finds:v1";
+function findsLoad() { try { const v = localStorage.getItem(FINDS_KEY); const a = v ? JSON.parse(v) : []; return Array.isArray(a) ? a : []; } catch (_) { return null; } }
+function findsSave(list) { try { localStorage.setItem(FINDS_KEY, JSON.stringify(list)); return true; } catch (_) { return false; } }
+function todayISO() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+function findsName(f) { const i = bySlug[f.sp]; return i !== undefined ? DATA.species[i].zh : (f.other || "未命名"); }
+function renderFinds() {
+  const list = findsLoad();
+  if (list === null) { $("#finds-list").innerHTML = `<p class="finds__empty">这个浏览器不允许保存数据（例如无痕模式或预览窗口），记录功能用不了。</p>`; return; }
+  if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。</p>`; return; }
+  const items = [...list].sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id).map(f => {
+    const i = bySlug[f.sp], name = i !== undefined ? `<a href="#sp-${f.sp}">${esc(DATA.species[i].zh)}</a>` : esc(f.other || "未命名");
+    const meta = [f.place, f.notes].filter(Boolean).map(esc).join(" · ");
+    return `<li class="finds__item"><div class="finds__head"><span class="finds__date">${esc(f.date || "")}</span><span class="finds__name">${name}</span></div>
+      ${meta ? `<p class="finds__meta">${meta}</p>` : ""}
+      <button class="btn finds__del" type="button" data-del="${f.id}" aria-label="删除 ${esc(f.date || "")} ${esc(findsName(f))} 这条记录">${icon("trash", "icon--sm")}<span>删除</span></button></li>`;
+  }).join("");
+  $("#finds-list").innerHTML = `<ul class="finds__list">${items}</ul>
+    <div class="finds__bar"><span class="finds__count">共 ${list.length} 条</span><button class="btn" type="button" id="finds-export">${icon("download", "icon--sm")}导出 CSV 备份</button></div>`;
+}
+function findsInit() {
+  const opts = [...DATA.species].map((s, i) => [s.zh, s.slug]).sort((a, b) => a[0].localeCompare(b[0], "zh-Hans-CN"));
+  $("#finds-sp").innerHTML = `<option value="">其他 / 没认出来</option>` + opts.map(([zh, sl]) => `<option value="${sl}">${esc(zh)}</option>`).join("");
+  $("#finds-date").value = todayISO();
+  $("#finds-other-wrap").hidden = false;
+  renderFinds();
+}
+$("#finds-sp").addEventListener("change", e => { $("#finds-other-wrap").hidden = !!e.target.value; });
+$("#finds-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const list = findsLoad();
+  if (list === null) { toast("这个浏览器不能保存记录"); return; }
+  const sp = $("#finds-sp").value, other = $("#finds-other").value.trim();
+  if (!sp && !other) { toast("先选一种菌，或者写下名字"); $("#finds-other").focus(); return; }
+  list.push({ id: Date.now(), sp, other: sp ? "" : other, date: $("#finds-date").value || todayISO(),
+              place: $("#finds-place").value.trim(), notes: $("#finds-notes").value.trim() });
+  if (!findsSave(list)) { toast("保存失败：浏览器存储已满或不可用"); return; }
+  $("#finds-other").value = ""; $("#finds-notes").value = "";
+  renderFinds(); toast("已记下");
+});
+let delArmed = null, delTimer;
+$("#finds-list").addEventListener("click", e => {
+  if (e.target.closest("#finds-export")) return findsExport();
+  const b = e.target.closest("[data-del]"); if (!b) return;
+  if (delArmed !== b) {
+    if (delArmed) { delArmed.classList.remove("is-confirm"); delArmed.querySelector("span").textContent = "删除"; }
+    delArmed = b; b.classList.add("is-confirm"); b.querySelector("span").textContent = "确认删除";
+    clearTimeout(delTimer); delTimer = setTimeout(() => { if (delArmed) { delArmed.classList.remove("is-confirm"); delArmed.querySelector("span").textContent = "删除"; delArmed = null; } }, 4000);
+    return;
+  }
+  delArmed = null; clearTimeout(delTimer);
+  const list = findsLoad(); if (list === null) return;
+  findsSave(list.filter(f => String(f.id) !== b.dataset.del)); renderFinds(); toast("已删除");
+});
+function findsExport() {
+  const list = findsLoad() || [];
+  const q = v => `"${String(v || "").replace(/"/g, '""')}"`;
+  const rows = [["日期", "菌名", "学名", "地点", "备注"]].concat(list.map(f => {
+    const i = bySlug[f.sp]; return [f.date, findsName(f), i !== undefined ? DATA.species[i].latin : "", f.place, f.notes];
+  }));
+  const csv = "\ufeff" + rows.map(r => r.map(q).join(",")).join("\r\n");
+  try {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    a.download = `采集记录-${todayISO()}.csv`; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  } catch (_) { toast("这个窗口不能下载文件，请在浏览器中打开网站再导出"); }
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-log-sp]"); if (!a) return;
+  $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; $("#finds-date").value = todayISO();
+});
+
 /* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
 const VIEWS = ["species", "finder", "toxic", "guide", "recipes", "emergency"];
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
@@ -1311,7 +1424,7 @@ document.addEventListener("pointerover", e => {
   $("#cal-readout").textContent = `${c.dataset.name} · ${+c.dataset.m + 1} 月：${(+c.dataset.n).toLocaleString("en")} 条${c.hasAttribute("data-peak") ? "（高峰）" : ""}`;
 });
 
-sync(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); route();
+sync(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); route();
 </script>
 </body>
 </html>
