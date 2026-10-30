@@ -120,8 +120,8 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
   html { scroll-padding-bottom: 0; }
   .botnav { display: none; }
   .hdr__row { padding: var(--space-3) var(--space-6); }
-  .topnav { display: flex; gap: var(--space-1); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6) var(--space-2); overflow-x: auto; }
-  .topnav__link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-4); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: 500; white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
+  .topnav { display: flex; gap: var(--space-1); max-width: 1200px; min-width: 0; margin: 0 auto; padding: 0 var(--space-4) var(--space-2); overflow-x: auto; }
+  .topnav__link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-3); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: 500; white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
   .topnav__link:hover { background: var(--color-muted); color: var(--color-foreground); }
   .topnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); }
   main { padding: var(--space-6) var(--space-6) var(--space-7); }
@@ -532,7 +532,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
   <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
-  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol><symbol id="i-notebook" viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6z"/><path d="M6 3v18M4 7h4M4 12h4M4 17h4M11 8h5M11 12h5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
 </svg>
 
 <div class="app">
@@ -546,6 +546,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       <a class="sidenav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
       <a class="sidenav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
       <a class="sidenav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
+      <a class="sidenav__link" href="#log"><svg class="icon" aria-hidden="true"><use href="#i-notebook"/></svg>采集记录</a>
       <a class="sidenav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
     </nav>
     <div class="sidenav__note"><strong>有任何疑问，就不要吃。</strong>本手册只是速查摘要，不能代替实物鉴定，也不能代替有经验的人或当地真菌协会。<br><a class="sidenav__sos" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a></div>
@@ -565,6 +566,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
         <a class="topnav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
         <a class="topnav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
         <a class="topnav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
+        <a class="topnav__link" href="#log"><svg class="icon" aria-hidden="true"><use href="#i-notebook"/></svg>采集记录</a>
         <a class="topnav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
       </nav>
     </header>
@@ -665,7 +667,6 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
         <div class="jump-row">
           <button class="chip" type="button" data-jump="guide-field">采集</button>
           <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
-          <button class="chip" type="button" data-jump="guide-log"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>我的记录</button>
           <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
           <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
           <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
@@ -692,7 +693,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
           <section class="panel">
             <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
             <ul>
-              <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>。</li>
+              <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>，可以用本站的<a href="#log">采集记录</a>。</li>
               <li>春夏：连续几天透雨后转暖的温和天气最好；秋冬：温和潮湿的日子。久旱和暴雨都不利。</li>
               <li>霜雪会让多数菌停止出菇，但管形鸡油菌、野生金针菇等耐寒。</li>
               <li><b>早起</b>：菌子没被动物和行人破坏，你也是第一个到场的人。</li>
@@ -759,21 +760,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
             <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/S_radicata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Sparassis radicata（第一次只吃一两勺）</a></li>
           </ol></div>
         </section>
-        <div class="subhead" id="guide-log"><h2>我的采集记录</h2><p>记下在哪里、什么时候找到了什么，明年同一时间再去看看。</p></div>
-        <section class="finds" aria-labelledby="finds-title">
-          <h2 class="sr-only" id="finds-title">新增一条采集记录</h2>
-          <p class="finds__note">记录<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，可以随时导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
-          <form class="finds__form" id="finds-form" novalidate>
-            <div class="finds__field"><label class="finds__label" for="finds-sp">找到了什么</label><select class="finds__input" id="finds-sp"></select></div>
-            <div class="finds__field" id="finds-other-wrap" hidden><label class="finds__label" for="finds-other">名字或描述</label><input class="finds__input" id="finds-other" type="text" maxlength="60" autocomplete="off" placeholder="如：褐色小伞菌，没认出来"></div>
-            <div class="finds__field"><label class="finds__label" for="finds-date">日期</label><input class="finds__input" id="finds-date" type="date" required></div>
-            <div class="finds__field"><label class="finds__label" for="finds-place">地点</label><input class="finds__input" id="finds-place" type="text" maxlength="80" autocomplete="off" placeholder="如：某某步道，花旗松林下"></div>
-            <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="400" placeholder="数量、长在什么上、孢子印颜色、吃了没有、味道如何……"></textarea></div>
-            <div class="finds__actions finds__field--wide"><button class="btn btn--primary" type="submit"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>记下来</button></div>
-          </form>
-          <div id="finds-list" aria-live="polite"></div>
-        </section>
-        <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。</p></div>
+        <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。做什么菜，见<a href="#recipes">精选食谱</a>。</p></div>
         <div class="panel-grid">
           <section class="panel panel--danger panel--wide">
             <h2 class="panel__title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>先看这里</h2>
@@ -851,6 +838,27 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
       </section>
 
       <!-- ================= RECIPES ================= -->
+      <section class="view" id="v-log" aria-labelledby="h-log">
+        <header class="view__head">
+          <span class="view__eyebrow">Field log</span>
+          <h1 class="view__title" id="h-log">采集记录</h1>
+          <p class="view__lead">记下在哪里、什么时候找到了什么，明年同一时间再去看看。</p>
+        </header>
+        <section class="finds" aria-labelledby="finds-title">
+          <h2 class="sr-only" id="finds-title">新增一条采集记录</h2>
+          <p class="finds__note">记录<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，可以随时导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
+          <form class="finds__form" id="finds-form" novalidate>
+            <div class="finds__field"><label class="finds__label" for="finds-sp">找到了什么</label><select class="finds__input" id="finds-sp"></select></div>
+            <div class="finds__field" id="finds-other-wrap" hidden><label class="finds__label" for="finds-other">名字或描述</label><input class="finds__input" id="finds-other" type="text" maxlength="60" autocomplete="off" placeholder="如：褐色小伞菌，没认出来"></div>
+            <div class="finds__field"><label class="finds__label" for="finds-date">日期</label><input class="finds__input" id="finds-date" type="date" required></div>
+            <div class="finds__field"><label class="finds__label" for="finds-place">地点</label><input class="finds__input" id="finds-place" type="text" maxlength="80" autocomplete="off" placeholder="如：某某步道，花旗松林下"></div>
+            <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="400" placeholder="数量、长在什么上、孢子印颜色、吃了没有、味道如何……"></textarea></div>
+            <div class="finds__actions finds__field--wide"><button class="btn btn--primary" type="submit"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>记下来</button></div>
+          </form>
+          <div id="finds-list" aria-live="polite"></div>
+        </section>
+      </section>
+
       <section class="view" id="v-recipes" aria-labelledby="h-recipes">
         <header class="view__head">
           <span class="view__eyebrow">Recipes</span>
@@ -924,7 +932,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
   <a class="botnav__link" href="#finder"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-filter"/></svg>特征查找</a>
   <a class="botnav__link" href="#toxic"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-skull"/></svg>毒菌</a>
   <a class="botnav__link" href="#guide"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-map"/></svg>指南</a>
-  <a class="botnav__link" href="#recipes"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+  <a class="botnav__link" href="#log"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook"/></svg>记录</a>
 </nav>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-title"><div class="sheet__body" id="sheet-body"></div></dialog>
@@ -1054,11 +1062,11 @@ function openSpecies(i) {
       <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
       <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.page ? "以英国 / 欧洲为准" : "因地区而异"}）</dd></div>
       <div class="fact"><dt>孢子印</dt><dd>${s.spore}</dd></div>
-      <div class="fact"><dt>厨房</dt><dd>${s.kitchen}</dd></div>
+      <div class="fact"><dt>厨房</dt><dd>${s.kitchen}<br><a href="#recipes">看精选食谱</a></dd></div>
     </dl>
     ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
     ${compareLinksFor(s.slug)}
-    <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#guide-log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a></div>
+    <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a></div>
     ${obsChart(s)}
     ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
     <p class="muted-note">${g.note}</p>
@@ -1313,11 +1321,12 @@ document.addEventListener("click", e => {
 });
 
 /* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
-const VIEWS = ["species", "finder", "toxic", "guide", "recipes", "emergency"];
+const VIEWS = ["species", "finder", "toxic", "guide", "log", "recipes", "emergency"];
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
 function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
   if (h.startsWith("tx-") || h.startsWith("cmp-")) return { view: "toxic", target: h };
+  if (h === "guide-log") return { view: "log" };  // older links to the log when it lived in the guide view
   if (h.startsWith("guide-") && document.getElementById(h)) return { view: "guide", target: h };
   if (VIEWS.includes(h)) return { view: h };
   return { view: "species" };

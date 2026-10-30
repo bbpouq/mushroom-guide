@@ -17,7 +17,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
-VIEWS = ["species", "finder", "toxic", "guide", "recipes", "emergency"]
+VIEWS = ["species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
 NAV = {375: ".botnav", 768: ".topnav", 1024: ".sidenav__list", 1440: ".sidenav__list"}
 failures = []
 
@@ -84,11 +84,11 @@ def run():
             check(f"{w}px sticky search under header and unobscured {ov}", not ov["leaked"] and (w >= 1024 or ov["top"] == ov["header"]))
             pg.evaluate("window.scrollTo(0, 0)")
             nav = NAV[w]
-            for v in ["finder", "toxic", "guide", "recipes", "species"]:
+            for v in ["finder", "toxic", "guide", "log", "species"]:
                 pg.click(f'{nav} a[href="#{v}"]'); pg.wait_for_timeout(80)
             check(f"{w}px nav cycles", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species")
             pg.go_back(); pg.wait_for_timeout(150)
-            check(f"{w}px back button", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes")
+            check(f"{w}px back button", pg.evaluate("document.querySelector('.view.is-active').id") == "v-log")
             check(f"{w}px no JS errors {errs}", not errs)
             ctx.close()
 
@@ -113,9 +113,12 @@ def run():
         pg.click("#eat-check li >> nth=0"); pg.click("#eat-check li >> nth=1")
         check("checklist counts ticks", pg.inner_text("#eat-check-count") == "已核对 2 / 9")
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
+        pg.click('#sheet a[href="#recipes"]'); pg.wait_for_timeout(300)
+        check("recipes reachable on a phone from a species sheet", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes")
+        pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         pg.click('#sheet a[data-log-sp]'); pg.wait_for_timeout(1100)
         check("sheet 'log this find' opens the log with the species chosen",
-              pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and pg.input_value("#finds-sp") == "tricholoma-matsutake")
+              pg.evaluate("document.querySelector('.view.is-active').id") == "v-log" and pg.input_value("#finds-sp") == "tricholoma-matsutake")
         pg.fill("#finds-place", "测试步道"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(200)
         pg.reload(); pg.wait_for_timeout(700)
         check("a saved find survives a reload", "松茸" in pg.inner_text("#finds-list") and "测试步道" in pg.inner_text("#finds-list"))
@@ -163,7 +166,7 @@ def run():
         host.eval_on_selector("#f", "(f, h) => f.srcdoc = h", html); host.wait_for_timeout(900)
         fr = host.frames[1]
         ok = []
-        for v in ["finder", "toxic", "guide", "recipes", "species"]:
+        for v in ["finder", "toxic", "guide", "log", "species"]:
             fr.click(f'.botnav a[href="#{v}"]'); host.wait_for_timeout(80)
             ok.append(fr.evaluate("document.querySelector('.view.is-active').id") == f"v-{v}")
         fr.click(".sp-card >> nth=0"); host.wait_for_timeout(200)
