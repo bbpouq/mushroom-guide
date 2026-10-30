@@ -188,8 +188,11 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .sp-card:active { background: var(--color-muted); }
 .sp-card__meta { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); font-size: 12px; color: var(--color-muted-foreground); letter-spacing: .02em; }
 .sp-card__season { flex: none; font-size: 12px; font-weight: 600; color: var(--color-foreground); background: var(--color-muted); border-radius: var(--radius-sm); padding: 2px 8px; }
+.sp-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+.sp-card__title { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sp-card__img { flex: none; width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); background: var(--color-muted); }
 .sp-card__name { font-size: 21px; font-weight: 700; }
-.sp-card__latin { font-size: 15px; color: var(--color-muted-foreground); margin-top: -4px; }
+.sp-card__latin { font-size: 15px; color: var(--color-muted-foreground); }
 .sp-card__feat { font-size: 14.5px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sp-card__warn { display: flex; gap: var(--space-2); align-items: flex-start; margin-top: auto; padding-top: var(--space-2); border-top: 1px dashed var(--color-border); font-size: 13px; color: var(--color-danger-text); }
 .sp-card__warn .icon { margin-top: 2px; }
@@ -343,6 +346,14 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .sidenav__sos { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); min-height: 40px; padding: 0 12px; border-radius: var(--radius-sm); background: var(--color-destructive); color: #fff; font-weight: 700; text-decoration: none; }
 
 /* ---------- in-page jump buttons ---------- */
+/* example photo (species sheet, toxic card) */
+.photo { margin: var(--space-4) 0 0; }
+.photo__img { display: block; width: 100%; height: auto; max-height: 360px; object-fit: cover; border-radius: var(--radius); background: var(--color-muted); }
+.photo--compact { margin: 0; }
+.photo--compact .photo__img { max-width: 320px; max-height: 220px; }
+.photo__cap { margin-top: var(--space-2); font-size: 12px; line-height: 1.55; color: var(--color-muted-foreground); max-width: 72ch; }
+.photo__cap a { color: inherit; }
+
 /* iNaturalist seasonality chart (species sheet) */
 .obs-chart { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
 .obs-chart__title { font-size: 16px; font-weight: 700; }
@@ -1001,8 +1012,9 @@ function renderGrid() {
   $("#grid").innerHTML = list.length ? list.map(([s, i]) => `
     <button class="sp-card" type="button" data-i="${i}" aria-haspopup="dialog">
       <span class="sp-card__meta"><span>${esc(groupBy[s.group].short)}${s.region ? " · " + esc(s.region) : ""}</span><span class="sp-card__season">${esc(s.season)}</span></span>
-      <span class="sp-card__name">${esc(s.zh)}</span>
-      <span class="sp-card__latin latin">${esc(s.latin)}</span>
+      <span class="sp-card__head"><span class="sp-card__title"><span class="sp-card__name">${esc(s.zh)}</span>
+        <span class="sp-card__latin latin">${esc(s.latin)}</span></span>
+        ${s.photo ? `<img class="sp-card__img" src="photos/${s.photo.file}" width="72" height="72" loading="lazy" decoding="async" alt="">` : ""}</span>
       ${monthStrip(s.months)}
       <span class="sp-card__feat">${s.feat}</span>
       ${badges(s.flags)}
@@ -1055,6 +1067,7 @@ function openSpecies(i) {
     <div class="sheet__latin latin">${esc(s.latin)}</div>
     ${s.latin2 ? `<div class="sheet__en">${esc(s.latin2)}</div>` : ""}
     <div class="sheet__en">${esc(s.en)} · ${s.page ? "原书 p" + s.page : "原书未收录"}</div>
+    ${photoFig(s)}
     <div class="sheet__months">${monthStrip(s.months, true)}</div>
     ${badges(s.flags)}
     <dl class="facts">
@@ -1077,6 +1090,14 @@ function openSpecies(i) {
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   $("#sheet-body").scrollTop = 0;
   $("[data-close]", d).focus();
+}
+function photoFig(x, compact) {
+  const p = x.photo; if (!p) return "";
+  const other = p.taxon !== x.latin.split(" / ")[0] ? `（照片学名 <span class="latin">${esc(p.taxon)}</span>）` : "";
+  return `<figure class="photo${compact ? " photo--compact" : ""}">
+    <img class="photo__img" src="photos/${p.file}" width="${p.w}" height="${p.h}" loading="lazy" decoding="async" alt="${esc(x.zh)}的示例照片">
+    <figcaption class="photo__cap">示例照片${other} · <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a> · <a href="${p.licUrl}" target="_blank" rel="noopener">${esc(p.lic)}</a> · iNaturalist<br>【编者注】照片只是一个例子。同一种菌的颜色和形状会随年龄、天气和产地变化很大，不能只凭照片鉴定。</figcaption>
+  </figure>`;
 }
 function obsChart(s) {
   const o = s.obs; if (!o) return "";
@@ -1131,6 +1152,7 @@ function toxCard(p) {
     <h3 class="tox-card__name">${esc(p.zh)}<span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></h3>
     <div class="tox-card__sub"><span class="latin">${esc(p.latin)}</span> · ${esc(p.en)}</div>
     <div class="tox-card__body">
+      ${photoFig(p, true)}
       <div>${p.feat}</div>
       ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
       ${compareLinksFor(p.slug)}

@@ -11,10 +11,11 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 70 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 71 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
+python3 src/fetch_photos.py          # pick example photos for species that lack one (--all to re-pick); needs network + Pillow
 ```
 
 Test setup, once: `pip install playwright pillow && python3 -m playwright install chromium`.
@@ -30,6 +31,8 @@ src/
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
   data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR, keyed by slug.
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
+  data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link.
+                         Pin a better photo in fetch_photos.PINNED rather than editing this file
   data/guide.py          Field/kitchen panels, glossary, the 6 featured recipes
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels
   build_site.py          Assembles public/index.html; validates tags, slugs and comparison links
@@ -47,8 +50,10 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - **Safety first.** Never weaken or remove a warning, the "有任何疑问，就不要吃" message, look-alike notes,
   must-cook flags or the emergency page. New edible species must list their dangerous look-alikes (`warn`).
 - **No book images, ever.** The source book's photos and recipe photos are copyrighted; the site is public.
-  Only add photos the owner took or properly licensed images (e.g. CC on Wikimedia Commons) with attribution.
-  Species cards link out to iNaturalist and Wikipedia for photos instead.
+  Only add photos the owner took or properly licensed images, always shown with author, licence and a link.
+  Example photos come from iNaturalist: CC0, public domain, CC BY, BY-SA, BY-NC and BY-NC-SA are accepted
+  (the site is free and non-commercial; if that ever changes, NC photos must be replaced). No "ND" licences.
+  Every photo caption says it is only an example and not enough to identify a mushroom.
 - **Non-book content needs sources.** Anything not from the book (North American species, toxic additions,
   comparisons, emergency info) must carry `sources` with links. Prefer UBC Beaty Museum "Mushrooms Up!",
   MushroomExpert, MykoWeb/California Fungi, NAMA, state or provincial agencies, USDA Forest Service and
@@ -103,7 +108,6 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 
 ## Ideas not yet built
 
-- Photos: only owner-taken or properly licensed images, with attribution.
 
 ## Aesthetic Judgment
 

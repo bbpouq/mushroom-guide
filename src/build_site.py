@@ -14,6 +14,7 @@ sys.path.insert(0, str(SRC))
 
 from data.book import GROUPS, POISON, RECIPES  # noqa: E402
 from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6  # noqa: E402
+from data.photos import PHOTOS, LICENCE_NAME, LICENCE_URL  # noqa: E402
 from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
 from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
@@ -97,6 +98,13 @@ for s in species:
     o = SEASONALITY.get(s["slug"])
     if o:
         s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"])
+
+for item in species + poison + poison_extra:
+    ph = PHOTOS.get(item["slug"])
+    if ph:
+        assert (OUT.parent / "photos" / ph["file"]).exists(), f"missing photo file {ph['file']}"
+        item["photo"] = dict(file=ph["file"], w=ph["w"], h=ph["h"], taxon=ph["taxon"], author=ph["author"],
+                             lic=LICENCE_NAME[ph["licence"]], licUrl=LICENCE_URL[ph["licence"]], url=ph["photo_url"])
 
 recipes = [dict(r) for r in RECIPES6]
 rindex = [dict(p=p, zh=zh.replace(" ★", ""), en=en, star=p in FEATURED) for p, zh, en in RECIPES]

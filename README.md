@@ -53,6 +53,8 @@ cd public && python3 -m http.server 8000
   - 同行评审论文（如 *Mycologia*、*Toxins*、*Mycological Progress*）
   - iNaturalist 上经鉴定的观察记录（只用来确认某个种在西北太平洋有没有分布）
 
+示例照片来自 iNaturalist 上的开放许可照片（CC0、公有领域、CC BY、CC BY-SA、CC BY-NC、CC BY-NC-SA），每张都在图下注明作者、许可证和原图链接。本站免费、不商用；如果将来用于商业用途，需要换掉 NC 许可的照片。
+
 没有找到可靠来源的说法不会写进网站。
 
 本站只是速查摘要，不能代替实物鉴定。**有任何疑问，就不要吃。**

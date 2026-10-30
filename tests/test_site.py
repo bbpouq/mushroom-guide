@@ -105,6 +105,10 @@ def run():
         check("deep link opens species sheet", pg.evaluate("document.getElementById('sheet').open") and "松茸" in pg.inner_text("#sheet-title"))
         check("sheet shows a 12-month Pacific Northwest seasonality chart",
               pg.locator("#sheet .obs-chart__col").count() == 12 and "月" in pg.inner_text("#sheet .obs-chart__readout"))
+        pg.wait_for_timeout(500)
+        check("sheet shows an example photo with author and licence",
+              pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return !!i && i.complete && i.naturalWidth > 0; })()")
+              and "CC" in pg.inner_text("#sheet .photo__cap") and "不能只凭照片鉴定" in pg.inner_text("#sheet .photo__cap"))
         check("sheet shows the spore print text, not the finder tag", "白色" in pg.inner_text("#sheet") and "white" not in pg.inner_text("#sheet"))
         pg.click('#sheet a[href="#guide-check"]'); pg.wait_for_timeout(1100)
         check("sheet links to the before-you-eat checklist",
