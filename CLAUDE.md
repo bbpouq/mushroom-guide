@@ -98,3 +98,7 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 - A "before you eat" checklist (dig out the base, spore print, smell, compare with look-alikes).
 - A personal finds log kept in localStorage (per device only; wrap storage in try/catch).
 - Photos: only owner-taken or properly licensed images, with attribution.
+
+## Aesthetic Judgment
+
+When doing design, creative, or artistic work — anything requiring aesthetic judgment such as UI design, visual assets, layouts, color choices, typography, animation, branding, or creative direction — read `TASTES.md` if it exists and apply its constraints to your output.
