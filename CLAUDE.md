@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 65 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 70 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -75,7 +75,8 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - Composable building blocks that may be combined with a component class: `btn`, `chip`, `icon`, `icon-btn`, `latin`.
 - Touch targets at least 44px on coarse pointers; SVG icons only (no emoji); visible labels on inputs;
   respect `prefers-reduced-motion`; no horizontal overflow at 375px (wide tables must reflow on phones).
-- Phone: sticky header plus bottom nav (at most 5 tabs). Tablet: top nav. Desktop (1024px and up): sidebar.
+- Phone: sticky header plus bottom nav (at most 5 tabs: 食用菌 / 特征查找 / 毒菌 / 指南 / 记录; 食谱 is reached from the guide
+  view and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 6 views.
 
 ## Routing (keep it script-driven)
 
@@ -83,10 +84,10 @@ The page is often opened inside sandboxed previews (chat apps, file viewers) whe
 navigates the frame away and blanks the page. All in-page links are intercepted in JS. History is
 updated with `pushState` inside try/catch, so it works where allowed and fails silently elsewhere.
 
-- Views: `#species`, `#finder`, `#toxic`, `#guide`, `#recipes`, `#emergency`
+- Views: `#species`, `#finder`, `#toxic`, `#guide`, `#log` (personal finds log), `#recipes`, `#emergency`
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` scrolls to a toxic card, `#cmp-<id>` to a comparison,
   `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist;
-  `#guide-calendar`, the season calendar built from `data/seasonality.py`; `#guide-log`, the personal finds log)
+  `#guide-calendar`, the season calendar built from `data/seasonality.py`). The old `#guide-log` link still opens `#log`.
 - The finds log lives in `localStorage` under `mushroom-guide:finds:v1` (this device only, never uploaded).
   Every storage call is wrapped in try/catch; if storage is unavailable the log says so instead of failing.
 - Slugs come from the Latin name (`Boletus edulis` becomes `boletus-edulis`). Hash names stay plain ASCII.
