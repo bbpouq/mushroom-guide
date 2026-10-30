@@ -100,3 +100,5 @@ HEROES = {
  'log': {'id': 250397284, 'file': 'hero-log.webp', 'author': 'Filip Fuljer', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/250397284'},
  'recipes': {'id': 29239600, 'file': 'hero-recipes.webp', 'author': 'Davide Puddu', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/29239600'},
 }
+RECIPE_PHOTOS = {
+}

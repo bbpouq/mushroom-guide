@@ -13,8 +13,8 @@ ROOT = SRC.parent
 sys.path.insert(0, str(SRC))
 
 from data.book import GROUPS, POISON, RECIPES  # noqa: E402
-from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6  # noqa: E402
-from data.photos import PHOTOS, HEROES, LICENCE_NAME, LICENCE_URL  # noqa: E402
+from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6, RECIPES6_EXTRA, RECIPES_ORIG  # noqa: E402
+from data.photos import PHOTOS, HEROES, RECIPE_PHOTOS, LICENCE_NAME, LICENCE_URL  # noqa: E402
 from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
 from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
@@ -106,7 +106,22 @@ for item in species + poison + poison_extra:
         item["photo"] = dict(file=ph["file"], w=ph["w"], h=ph["h"], taxon=ph["taxon"], author=ph["author"],
                              lic=LICENCE_NAME[ph["licence"]], licUrl=LICENCE_URL[ph["licence"]], url=ph["photo_url"])
 
-recipes = [dict(r) for r in RECIPES6]
+recipes = [dict(r, **x) for r, x in zip(RECIPES6, RECIPES6_EXTRA, strict=True)] + [dict(r) for r in RECIPES_ORIG]
+by_slug = {x["slug"]: x for x in species}
+assert len({r["id"] for r in recipes}) == len(recipes), "duplicate recipe id"
+for r in recipes:
+    for sl in r["sp"]:
+        assert sl in by_slug, f"recipe {r['id']} names unknown species {sl}"
+    r["spLinks"] = [[sl, by_slug[sl]["zh"]] for sl in r["sp"]]
+    d = RECIPE_PHOTOS.get(r["id"])
+    if d:  # a photo of the dish itself
+        assert (OUT.parent / "photos" / d["file"]).exists(), f"missing recipe photo {d['file']}"
+        r["photo"] = dict(file=d["file"], dish=True, author=d["author"], lic=LICENCE_NAME[d["licence"]],
+                          licUrl=LICENCE_URL[d["licence"]], url=d["photo_url"], site=d["site"])
+    elif by_slug[r["sp"][0]].get("photo"):  # otherwise the main mushroom's example photo
+        ph, sp = by_slug[r["sp"][0]]["photo"], by_slug[r["sp"][0]]
+        r["photo"] = dict(file=ph["file"], dish=False, sp=sp["slug"], spName=sp["zh"], author=ph["author"],
+                          lic=ph["lic"], licUrl=ph["licUrl"], url=ph["url"], site="iNaturalist")
 rindex = [dict(p=p, zh=zh.replace(" ★", ""), en=en, star=p in FEATURED) for p, zh, en in RECIPES]
 
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
@@ -129,6 +144,8 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("<!--N_EDIBLE-->", str(len(species)))
         .replace("<!--N_TOXIC-->", str(len(poison) + len(poison_extra)))
         .replace("<!--N_COMPARE-->", str(len(COMPARE)))
+        .replace("<!--N_RECIPES-->", str(len(recipes)))
+        .replace("<!--N_BOOKRECIPES-->", str(len(RECIPES6)))
         .replace("<!--N_BOOK-->", str(sum(1 for x in species if x.get("page"))))
         .replace("<!--N_NA-->", str(sum(1 for x in species if not x.get("page")))))
 for view, h in HEROES.items():

@@ -130,6 +130,12 @@ def run():
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         pg.click('#sheet a[href="#recipes"]'); pg.wait_for_timeout(300)
         check("recipes reachable on a phone from a species sheet", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes")
+        n_rc = pg.locator("#rc-grid .rc-card").count()
+        check(f"recipes: {n_rc} cards, each with a photo", n_rc >= 20 and pg.locator("#rc-grid .rc-card__img").count() == n_rc)
+        pg.click('#rc-filter [data-rc-style="中式"]'); pg.wait_for_timeout(150)
+        styles = pg.eval_on_selector_all("#rc-grid .rc-card__meta span:last-child", "els => els.map(e => e.textContent)")
+        check("recipe filter shows only that style", styles and all(x == "中式" for x in styles))
+        pg.click('#rc-filter [data-rc-style="全部"]')
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         pg.click('#sheet a[data-log-sp]'); pg.wait_for_timeout(1100)
         check("sheet 'log this find' opens the log with the species chosen",

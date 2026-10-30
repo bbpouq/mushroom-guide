@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 72 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 74 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -33,8 +33,11 @@ src/
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
   data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
                          and HEROES: the header photo behind each view's large title (none on the emergency view).
+                         RECIPE_PHOTOS (dish photos, keyed by recipe id) is optional; without one a recipe shows its
+                         main mushroom's example photo, captioned as such
                          Pin a better photo in fetch_photos.PINNED rather than editing this file
-  data/guide.py          Field/kitchen panels, glossary, the 6 featured recipes
+  data/guide.py          Field/kitchen panels, glossary, recipes: RECIPES6 (rewritten from the book) and RECIPES_ORIG
+                         (our own; every recipe names its mushrooms in `sp` and carries a safety tip)
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels
   build_site.py          Assembles public/index.html; validates tags, slugs and comparison links
   make_icons.py          App icons
@@ -64,6 +67,8 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - Every species, edible or toxic, needs an entry in `data/tags.py`; the build fails otherwise.
 - The finder must stay conservative: toxic species are matched leniently (a "no volva" or "no ring"
   answer still lists deadly amanitas and galerina, with the reason shown), and results put toxic first.
+- Our own recipes must use only mushrooms the site covers, say "cook thoroughly" where it matters, and repeat
+  the species' key look-alike warning in the tip. Never suggest eating a mushroom raw.
 - Permits and seasons vary by place. Phrase them as "check local rules" / "因地区而异".
 
 ## Design system (iOS-style glass, since 2026-10)

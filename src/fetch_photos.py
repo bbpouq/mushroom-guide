@@ -158,7 +158,12 @@ def main():
             f'last run {date.today().isoformat()}. Do not edit by hand: pin a photo in fetch_photos.PINNED instead."""\n\n'
             f'LICENCE_NAME = {LICENCE_NAME!r}\nLICENCE_URL = {LICENCE_URL!r}\nPHOTOS = {{\n')
     body += "".join(f" {k!r}: {v!r},\n" for k, v in out.items())
+    try:
+        from data.photos import RECIPE_PHOTOS as recipe_photos  # written by fetch_recipe_photos.py; keep as is
+    except ImportError:
+        recipe_photos = {}
     body += "}\nHEROES = {\n" + "".join(f" {k!r}: {v!r},\n" for k, v in heroes.items()) + "}\n"
+    body += "RECIPE_PHOTOS = {\n" + "".join(f" {k!r}: {v!r},\n" for k, v in recipe_photos.items()) + "}\n"
     (SRC / "data" / "photos.py").write_text(body, encoding="utf-8")
     kb = sum(f.stat().st_size for f in OUT.glob("*.webp")) // 1024
     print(f"wrote src/data/photos.py ({len(out)} photos, {kb} KB in public/photos/)")

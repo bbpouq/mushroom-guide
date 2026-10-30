@@ -323,7 +323,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .rc-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
 @media (min-width: 1024px) { .rc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
 .rc-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); overflow: hidden; }
-.rc-card__head { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-3); padding: var(--space-5); border-bottom: 1px solid var(--color-border); background: var(--color-muted); }
+.rc-card__head { display: grid; grid-template-columns: 1fr; gap: var(--space-1) var(--space-3); padding: var(--space-5); border-bottom: 1px solid var(--color-border); background: var(--color-muted); }
 .rc-card__num { grid-row: span 2; font-family: var(--font-heading); font-weight: 700; font-size: 44px; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums; align-self: start; }
 .rc-card__name { font-size: 23px; font-weight: 700; }
 .rc-card__en { font-size: 15px; color: var(--color-muted-foreground); }
@@ -343,6 +343,18 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .ing-list input:checked + span { text-decoration: line-through; color: var(--color-muted-foreground); }
 .rc-card__tip { display: flex; gap: var(--space-2); font-size: 14px; background: var(--color-muted); border-radius: var(--radius-sm); padding: var(--space-3); }
 .rc-card__tip .icon { color: var(--color-accent); margin-top: 2px; }
+.rc-filter { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+.rc-card__fig { margin: 0; }
+.rc-card__img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--color-muted); }
+.rc-card__cap { padding: var(--space-2) var(--space-5) 0; font-size: 12px; line-height: 1.5; color: var(--color-muted-foreground); }
+.rc-card__cap a { color: inherit; }
+.rc-card__sp { display: inline-flex; flex-wrap: wrap; gap: 4px 8px; }
+.rc-card__more > summary { list-style: none; display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-4); border-radius: 12px; background: var(--color-muted); font-weight: 600; font-size: 14px; cursor: pointer; }
+.rc-card__more > summary::-webkit-details-marker { display: none; }
+.rc-card__more > summary .icon { transition: transform var(--dur-fast); }
+.rc-card__more[open] > summary .icon { transform: rotate(180deg); }
+.rc-card__more[open] > summary { margin-bottom: var(--space-4); }
+.rc-card__detail { display: grid; gap: var(--space-4); }
 .rindex { list-style: none; padding: 0; margin: 0; columns: 1; column-gap: var(--space-6); }
 @media (min-width: 640px) { .rindex { columns: 2; } }
 @media (min-width: 1280px) { .rindex { columns: 3; } }
@@ -1007,8 +1019,10 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
           <!--HERO:recipes-->
           <span class="view__eyebrow">Recipes</span>
           <h1 class="view__title" id="h-recipes">精选食谱</h1>
-          <p class="view__lead">6 道步骤简单、用料常见的菜。用量为公制，1 汤匙 ≈ 15 ml。勾选材料可以当购物清单用。</p>
+          <p class="view__lead"><!--N_RECIPES--> 道菜：<!--N_BOOKRECIPES--> 道改写自原书，其余是本站原创。用量为公制，1 汤匙 ≈ 15 ml；勾选材料可以当购物清单用。</p>
         </header>
+        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>野生菌必须百分之百确认种类，并彻底煮熟。</b>第一次吃某种菌只吃一小份，并留一两朵生的样本。每道菜也都可以用超市的栽培菌来做。</div></div>
+        <div class="rc-filter" id="rc-filter" role="group" aria-label="按菜系筛选"></div>
         <div class="rc-grid" id="rc-grid"></div>
         <details class="panel" style="margin-top: var(--space-5)">
           <summary>原书全部 53 道食谱<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
@@ -1376,25 +1390,37 @@ $("#finder-steps").addEventListener("click", e => {
 });
 
 /* ---------- recipes ---------- */
+let rcStyle = "全部";
 function renderRecipes() {
+  const styles = ["全部", ...new Set(DATA.recipes.map(r => r.style))];
+  $("#rc-filter").innerHTML = styles.map(st => `<button type="button" class="chip" data-rc-style="${esc(st)}" aria-pressed="${st === rcStyle}">${esc(st)}<span class="chip__count">${st === "全部" ? DATA.recipes.length : DATA.recipes.filter(r => r.style === st).length}</span></button>`).join("");
+  const metaIcons = ["users", "clock", "clock", "book"];
   $("#rc-grid").innerHTML = DATA.recipes.map((r, ri) => {
-    const metaIcons = ["users", "clock", "clock", "book"];
-    return `<article class="rc-card">
+    if (rcStyle !== "全部" && r.style !== rcStyle) return "";
+    const ph = r.photo;
+    const fig = ph ? `<figure class="rc-card__fig"><img class="rc-card__img" src="photos/${ph.file}" alt="${esc(ph.dish ? r.zh : "主料" + ph.spName)}" loading="lazy" decoding="async">
+      <figcaption class="rc-card__cap">${ph.dish ? "菜品照片" : `主料示例：<a href="#sp-${ph.sp}">${esc(ph.spName)}</a>`} · <a href="${ph.url}" target="_blank" rel="noopener">${esc(ph.author)}</a> · <a href="${ph.licUrl}" target="_blank" rel="noopener">${esc(ph.lic)}</a> · ${esc(ph.site)}</figcaption></figure>` : "";
+    return `<article class="rc-card" id="rc-${r.id}">
+      ${fig}
       <header class="rc-card__head">
         <div><h3 class="rc-card__name">${esc(r.zh)}</h3><div class="rc-card__en latin">${esc(r.en)}</div></div>
-        <div class="rc-card__num" aria-hidden="true">${String(ri + 1).padStart(2, "0")}</div>
-        <div class="rc-card__meta">${r.meta.split(" · ").map((m, k) => `<span>${icon(metaIcons[k] || "clock", "icon--sm")}${esc(m)}</span>`).join("")}</div>
+        <div class="rc-card__meta">${r.meta.split(" · ").map((m, k) => `<span>${icon(metaIcons[k] || "clock", "icon--sm")}${esc(m)}</span>`).join("")}<span>${esc(r.style)}</span></div>
       </header>
       <div class="rc-card__body">
-        <p class="rc-card__best" style="margin:0"><strong>用什么菌：</strong>${esc(r.best)}</p>
-        <div><h4>材料</h4><ul class="ing-list">${r.ing.map((x, k) => `<li><label for="ing-${ri}-${k}"><input type="checkbox" id="ing-${ri}-${k}"><span>${x}</span></label></li>`).join("")}</ul></div>
-        <div><h4>做法</h4><ol class="steps">${r.steps.map(x => `<li>${x}</li>`).join("")}</ol></div>
-        <div class="rc-card__tip">${icon("bulb")}<span>${esc(r.tip)}</span></div>
+        <p class="rc-card__best" style="margin:0"><strong>用什么菌：</strong>${esc(r.best)}${r.spLinks.length ? `<br><span class="rc-card__sp">${r.spLinks.map(([sl, zh]) => `<a href="#sp-${sl}">${esc(zh)}</a>`).join("")}</span>` : ""}</p>
+        <details class="rc-card__more"><summary>材料和做法${icon("chevron", "icon--sm")}</summary>
+          <div class="rc-card__detail">
+            <div><h4>材料</h4><ul class="ing-list">${r.ing.map((x, k) => `<li><label for="ing-${ri}-${k}"><input type="checkbox" id="ing-${ri}-${k}"><span>${x}</span></label></li>`).join("")}</ul></div>
+            <div><h4>做法</h4><ol class="steps">${r.steps.map(x => `<li>${x}</li>`).join("")}</ol></div>
+          </div>
+        </details>
+        <div class="rc-card__tip">${icon("bulb")}<span>${r.tip}</span></div>
       </div>
     </article>`;
   }).join("");
   $("#rindex").innerHTML = DATA.rindex.map(r => `<li><span class="rindex__page">p${r.p}</span><span>${esc(r.zh)}${r.star ? '<span class="rindex__tag">已收录</span>' : ""}<span class="rindex__en">${esc(r.en)}</span></span></li>`).join("");
 }
+$("#rc-filter").addEventListener("click", e => { const b = e.target.closest("[data-rc-style]"); if (!b) return; rcStyle = b.dataset.rcStyle; renderRecipes(); });
 
 /* ---------- before-you-eat checklist ---------- */
 const eatBoxes = () => document.querySelectorAll("#eat-check input");
