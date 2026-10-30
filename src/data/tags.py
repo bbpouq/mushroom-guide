@@ -60,4 +60,7 @@ TAGS = {
  "虾味红菇": T("gills", "white", "ground"),
  "贝形圆孢侧耳（天使之翼）": T("gills", "white", "wood"),
  "毛钉菇": T("ridges", "unknown", "ground"),
+ "花旗松乳牛肝菌（胖杰克）": T("pores", "brown", "ground", ring=True),
+ "糖果乳菇": T("gills", ["white", "yellow"], ["ground", "wood"]),
+ "紫陀螺菌（猪耳）": T("ridges", ["yellow", "brown"], "ground"),
 }
