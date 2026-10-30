@@ -106,9 +106,6 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 2. Look at the changed view at 375px and 1440px, in both light and dark mode.
 3. For a release, bump the `CACHE` version in `public/sw.js`. Commit and push to `main`; GitHub Pages deploys it.
 
-## Ideas not yet built
-
-
 ## Aesthetic Judgment
 
 When doing design, creative, or artistic work — anything requiring aesthetic judgment such as UI design, visual assets, layouts, color choices, typography, animation, branding, or creative direction — read `TASTES.md` if it exists and apply its constraints to your output.
