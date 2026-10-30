@@ -57,4 +57,6 @@ TAGS = {
  "簇生垂幕菇": T("gills", ["black", "choc"], "wood", ring=True),
  "毒蝇鹅膏": T("gills", "white", "ground", ring=True, volva=True),
  "波地钟菌": T("other", "unknown", "ground"),
+ "虾味红菇": T("gills", "white", "ground"),
+ "贝形圆孢侧耳（天使之翼）": T("gills", "white", "wood"),
 }

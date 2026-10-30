@@ -161,3 +161,53 @@ NA_POISON_NOTES = {
      note="<b>【编者注】在西北太平洋正在扩散。</b>原产欧洲，随引种的鹅耳枥、欧洲栎、榛等树木传入；温哥华、维多利亚、西雅图的市区和郊区都有记录，常长在草坪和行道树下，在 BC 省还在向北、向原生林扩散。BC 省自 1997 年首次发现以来已有三起严重中毒：2003 年维多利亚一名男子把前院里的幼菇当成马勃；2008 年兰里一名女子把它当成<b>草菇</b>；2016 年维多利亚市中心一名三岁儿童误食后死亡。<b>幼菇很像草菇，但西北太平洋野外基本没有草菇</b>；草菇孢子印粉红，毒鹅膏孢子印白色。马勃要纵切检查：真马勃里面是均匀的白色，毒鹅膏的“蛋”里能看到菌盖和菌褶的轮廓。",
      sources=[("UBC Beaty Museum · Mushrooms Up!：Amanita phalloides（BC 省中毒案例）", UBC + "A_phalloides.html")]),
 }
+
+# ---- Pacific Northwest edible additions (2026-10) ----
+NA_SPECIES += [
+ dict(zh="虾味红菇", en="Shrimp russula", latin="Russula xerampelina", region="西北太平洋 · 北温带",
+      page=None, season="夏末–秋", months=[8, 9, 10, 11],
+      feat="菌盖 5–15 cm（偶达 20 cm），<b>酒红至紫色</b>，也有红褐、偶尔黄褐色的，中央常凹陷、颜色最深，湿时微黏；菌褶奶油色，老了变赭黄，碰伤处变褐，质脆，少数分叉；菌柄白色常带粉红晕，<b>手摸或刮过的地方会慢慢变褐</b>，质脆、一掰就断；没有菌环和菌托；<b>有鱼或虾的气味</b>，成熟后更明显；味道温和",
+      hab="针叶林或混交林地上，加州沿海尤其多见于花旗松下。广义的虾味红菇遍布北半球温带和北方林；西北太平洋的可能其实是另一个种，西部还有气味相同的近似种 R. viridofusca",
+      spore="奶油色", kitchen="多数人可食。没有已知的毒素，但偶有体质特殊的人吃后不适；第一次吃先少量",
+      warn="<b>辛辣的红菇</b>：味道辣的红菇可能引起肠胃中毒。<b>会变黑的红菇类</b>（菌盖灰、褐或黑，碰伤后变红或变黑）：亚洲的亚稀褶红菇（R. subnigricans）在日本已致 8 人死亡，西北太平洋虽然没有记录，但近缘种也可能有毒，一律不要吃",
+      group="extra", flags=["非原书"],
+      extra=["<b>【编者注】</b>红菇属很难认到种。只采同时符合这几点的：酒红紫色菌盖、奶油至黄色菌褶、菌柄碰过后慢慢变褐、有鱼虾味且味道温和。"],
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Russula xerampelina", UBC + "R_xerampelina.html"),
+               ("MykoWeb · California Fungi：Russula xerampelina", "https://www.mykoweb.com/CAF/species/Russula_xerampelina.html"),
+               ("Kuo, M. MushroomExpert：Russula xerampelina", "https://www.mushroomexpert.com/russula_xerampelina.html")]),
+]
+
+NA_TOXIC += [
+ dict(zh="贝形圆孢侧耳（天使之翼）", en="Angel wings", latin="Pleurocybella porrigens", level="有毒", tag="已有致死报告",
+      feat="纯白至象牙色、<b>薄而半透明</b>的扇形、舌形或耳形菌盖，1.5–10 cm，几乎没有柄，向基部渐窄；菌褶白、较密、窄，覆盖整个背面；孢子印白色；气味不明显。成群成丛长在<b>针叶树</b>（常是西部铁杉）的倒木和树桩上，见于沿海针叶林，从阿拉斯加到北加州都有。<br><b>中毒：</b>它原本在日本被当作季节美味。2004 年日本有 59 人吃后出现脑部损害症状，19 人死亡；患者平均约 69 岁，多数原本就有肾病。症状在吃后 1–31 天出现：行动困难甚至瘫痪、肌肉痉挛，之后抽搐。毒素至今不明，证据也是间接的，但 UBC 资料建议西北太平洋的天使之翼一律不要吃，有肾病的人尤其不要。",
+      conf="糙皮侧耳（平菇）：平菇多长在阔叶树上，很少纯白，肉更厚；天使之翼只长在针叶树木头上",
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Pleurocybella porrigens", UBC + "P_porrigens.html")]),
+]
+
+# Editor's notes added to book species (keyed by Latin name): extra lines, optional warn, sources
+NA_SPECIES_NOTES = {
+ "Morchella esculenta": dict(
+     extra=["<b>【编者注】北美的羊肚菌和欧洲的不是同一批种。</b>西北太平洋常见三类："
+            "①<b>火烧迹地羊肚菌</b>（如 M. sextelata）：针叶林火灾后的第一个春夏大量出现，之后几年逐渐减少；"
+            "②<b>“天然林”羊肚菌</b> M. snyderi：长在没有烧过的林子里，棱起初偏黄、后来变黑，柄成熟后常有深沟和凹坑；"
+            "③<b>园林羊肚菌</b> M. importuna：长在城市花坛、树皮覆盖物上，冬末早春出现。"
+            "这些种外形相近，有的只能靠 DNA 区分，做法和注意事项都一样：<b>必须彻底煮熟</b>。去火烧迹地采之前，先查当地是否需要许可、是否封林（因地区而异）。"],
+     sources=[("Kuo, M. MushroomExpert：Morchella sextelata（火烧迹地）", "https://www.mushroomexpert.com/morchella_sextelata.html"),
+              ("Kuo, M. MushroomExpert：Morchella snyderi", "https://www.mushroomexpert.com/morchella_snyderi.html"),
+              ("Kuo, M. MushroomExpert：Morchella importuna（园林）", "https://www.mushroomexpert.com/morchella_importuna.html")]),
+ "Sparassis crispa": dict(
+     extra=["<b>【编者注】西北太平洋的是另一个种：西部绣球菌（S. radicata）。</b>旧图鉴常把它也叫作 S. crispa，DNA 研究显示 S. crispa 其实是欧洲种。"
+            "西部绣球菌长在花旗松、北美云杉的根部或枯干基部（加州沿海也见于松树下），一丛 10–50 cm，像一盘奶油色的扁面条，可以连续几年在同一处长出。"
+            "可食、口感脆，但有少数人吃后肠胃不适：彻底煮熟，第一次只吃一两勺。"
+            "别和珊瑚菌混：珊瑚菌从地上长出，分枝是直立的圆柱形，很多有毒。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Sparassis radicata", UBC + "S_radicata.html"),
+              ("Hughes et al.（2014）The Sparassis crispa complex, Mycological Progress 13", "https://doi.org/10.1007/s11557-013-0927-1")]),
+ "Laetiporus sulphureus": dict(
+     extra=["<b>【编者注】西北太平洋针叶树上的是针叶硫磺菌（L. conifericola）</b>，常长在花旗松、北美云杉的活树或枯木上；西部阔叶树（栎、桉）上的是另一个种 L. gilbertsonii。"
+            "有人吃硫磺菌后出现肠胃不适、皮疹、发烧、潮红或头痛；曾有一名女性吃了几口后 19 小时休克死亡，同桌的人都没事，可能是个人体质。"
+            "只吃新鲜、嫩的边缘部分，彻底煮熟，第一次只吃一勺。"],
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Laetiporus conifericola", UBC + "L_conifericola.html")]),
+ "Pleurotus ostreatus": dict(
+     warn="<b>【编者注】贝形圆孢侧耳（天使之翼）</b>：纯白、薄、长在针叶树木头上，日本曾有致死报告",
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Pleurocybella porrigens", UBC + "P_porrigens.html")]),
+}

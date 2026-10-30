@@ -14,7 +14,7 @@ sys.path.insert(0, str(SRC))
 
 from data.book import GROUPS, POISON, RECIPES  # noqa: E402
 from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6  # noqa: E402
-from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES  # noqa: E402
+from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
 from data.compare import COMPARE  # noqa: E402
 
@@ -56,6 +56,16 @@ for gi, (title, note, items) in enumerate(GROUPS):
                             months=SEASON_MONTHS[season], feat=feat, hab=hab, spore=spore,
                             kitchen=kitchen, warn=warn, group=GROUP_KEYS[gi], flags=flags))
 
+# ---- editor's notes on book species (regional counterparts, extra warnings) ----
+assert set(NA_SPECIES_NOTES) <= {s["latin"] for s in species}, "NA_SPECIES_NOTES names an unknown book species"
+for s in species:
+    n = NA_SPECIES_NOTES.get(s["latin"])
+    if n:
+        s["extra"] = n.get("extra", [])
+        if n.get("warn"):
+            s["warn"] = (s["warn"] + "；" if s["warn"] else "") + n["warn"]
+        s["sources"] = n["sources"]
+
 # ---- North American additions go first ----
 groups.insert(0, NA_GROUP)
 species[0:0] = [dict(s) for s in NA_SPECIES]
@@ -72,7 +82,9 @@ assert set(NA_POISON_NOTES) <= {p["latin"] for p in poison}, "NA_POISON_NOTES na
 for item in species + poison + poison_extra:
     if item["zh"] not in TAGS:
         sys.exit(f"missing finder tags for {item['zh']} (add it to src/data/tags.py)")
-    item.update(TAGS[item["zh"]])
+    tags = dict(TAGS[item["zh"]])
+    tags["sporeTags"] = tags.pop("spore")  # keep the descriptive spore text shown on species sheets
+    item.update(tags)
     item["slug"] = slug(item["latin"])
 assert len({x["slug"] for x in species}) == len(species), "duplicate species slug"
 known = {x["slug"] for x in species + poison + poison_extra}
