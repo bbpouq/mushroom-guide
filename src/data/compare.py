@@ -3,14 +3,15 @@
 
 # ---------- side-by-side look-alike comparisons ----------
 COMPARE = [
- dict(id="chanterelle", title="鸡油菌 vs 发光类脐菇 vs 假鸡油菌", lead="橙黄色、漏斗状的菌最容易混。先看长在哪，再看菌盖下面。",
-      cols=[("鸡油菌类", "edible", "cantharellus-cibarius"), ("发光类脐菇", "toxic", "omphalotus-illudens"), ("假鸡油菌", "caution", None)],
-      rows=[("长在哪", ["地上，与树根共生；散生或成群，很少密集成簇", "<b>木头上</b>（或埋在地下的树根上），大团密集簇生", "地上或腐木上"]),
-            ("菌盖下面", ["<b>钝圆的棱脊</b>：厚、会分叉、有横脉，延生到柄上", "<b>真菌褶</b>：刀片状、薄、不分叉、延生", "真菌褶：较薄、更橙，<b>反复分叉</b>"]),
-            ("其他线索", ["欧洲鸡油菌有杏干香", "新鲜菌褶在黑暗中有时会微弱发光；西部种常带橄榄色调", "—"]),
-            ("结论", ["可食（上品）", "<b>有毒</b>：严重呕吐腹泻数天", "可能轻度有毒，不建议吃"])],
+ dict(id="chanterelle", title="鸡油菌 vs 发光类脐菇 vs 假鸡油菌 vs 毛钉菇", lead="橙黄色、漏斗状的菌最容易混。先看长在哪，再看菌盖下面。",
+      cols=[("鸡油菌类", "edible", "cantharellus-cibarius"), ("发光类脐菇", "toxic", "omphalotus-illudens"), ("假鸡油菌", "caution", None), ("毛钉菇", "toxic", "turbinellus-floccosus")],
+      rows=[("长在哪", ["地上，与树根共生；散生或成群，很少密集成簇", "<b>木头上</b>（或埋在地下的树根上），大团密集簇生", "地上或腐木上", "地上，混交针叶林，常排成弧形"]),
+            ("菌盖下面", ["<b>钝圆的棱脊</b>：厚、会分叉、有横脉，延生到柄上", "<b>真菌褶</b>：刀片状、薄、不分叉、延生", "真菌褶：较薄、更橙，<b>反复分叉</b>", "浅而<b>不规则的皱纹状棱</b>，淡黄至奶油色"]),
+            ("其他线索", ["欧洲鸡油菌有杏干香", "新鲜菌褶在黑暗中有时会微弱发光；西部种常带橄榄色调", "—", "<b>深花瓶状</b>，盖上有一圈圈橙色<b>鳞片</b>"]),
+            ("结论", ["可食（上品）", "<b>有毒</b>：严重呕吐腹泻数天", "可能轻度有毒，不建议吃", "<b>有毒</b>：肠胃不适，可能 8–14 小时后才发作"])],
       src=[("UBC Mushrooms Up!：Cantharellus formosus", "https://explore.beatymuseum.ubc.ca/mushroomsup/C_formosus.html"),
-           ("MushroomExpert：Omphalotus illudens", "https://mushroomexpert.com/omphalotus_illudens.html")]),
+           ("MushroomExpert：Omphalotus illudens", "https://mushroomexpert.com/omphalotus_illudens.html"),
+           ("UBC Mushrooms Up!：Turbinellus floccosus", "https://explore.beatymuseum.ubc.ca/mushroomsup/T_floccosus.html")]),
  dict(id="matsutake", title="松茸 vs 史密斯鹅膏", lead="北美西部两者常长在同一片林子里，外形相近。史密斯鹅膏会伤肾，症状可能 2–6 天后才出现。",
       cols=[("松茸", "edible", "tricholoma-matsutake"), ("史密斯鹅膏", "toxic", "amanita-smithiana")],
       rows=[("气味", ["<b>辛香、像肉桂</b>（“肉桂糖混脏袜子”）", "气味淡，之后变得难闻（像变质火腿）"]),
