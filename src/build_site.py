@@ -14,6 +14,7 @@ sys.path.insert(0, str(SRC))
 
 from data.book import GROUPS, POISON, RECIPES  # noqa: E402
 from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6  # noqa: E402
+from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
 from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
 from data.compare import COMPARE  # noqa: E402
@@ -92,11 +93,16 @@ for c in COMPARE:
     for name, kind, sl in c["cols"]:
         assert sl is None or sl in known, f"compare '{c['id']}' links unknown slug {sl}"
 
+for s in species:
+    o = SEASONALITY.get(s["slug"])
+    if o:
+        s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"])
+
 recipes = [dict(r) for r in RECIPES6]
 rindex = [dict(p=p, zh=zh.replace(" ★", ""), en=en, star=p in FEATURED) for p, zh, en in RECIPES]
 
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
-            compare=COMPARE, recipes=recipes, rindex=rindex)
+            compare=COMPARE, recipes=recipes, rindex=rindex, obsFetched=FETCHED, obsPlaces=PLACES)
 
 
 def kv(items):
