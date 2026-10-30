@@ -76,7 +76,7 @@
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-padding-top: calc(var(--header-h) + 16px); -webkit-text-size-adjust: 100%; }
+html { scroll-padding-top: calc(var(--header-h) + 16px); scroll-padding-bottom: calc(80px + env(safe-area-inset-bottom)); -webkit-text-size-adjust: 100%; }
 /* species view has a sticky search bar too: keep focused cards clear of it */
 html:has(#v-species.is-active) { scroll-padding-top: calc(var(--header-h) + 112px); }
 body { margin: 0; background: var(--color-background); color: var(--color-foreground); font-family: var(--font-body); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
@@ -115,6 +115,7 @@ button, a, label, summary, .chip, input[type="checkbox"] { touch-action: manipul
 main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) var(--space-4) calc(88px + env(safe-area-inset-bottom)); }
 
 @media (min-width: 768px) {
+  html { scroll-padding-bottom: 0; }
   .botnav { display: none; }
   .hdr__row { padding: var(--space-3) var(--space-6); }
   .topnav { display: flex; gap: var(--space-1); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6) var(--space-2); overflow-x: auto; }
@@ -531,7 +532,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
           <h1 class="view__title" id="h-finder">按特征查找</h1>
           <p class="view__lead">手上有一朵不认识的菌？按看到的特征回答，列出可能的种类。<b>可能的毒菌会排在最前面。</b></p>
         </header>
-        <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 59 种食用菌和 15 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
+        <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 <!--N_EDIBLE--> 种食用菌和 <!--N_TOXIC--> 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
         <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
         <div class="finder">
           <div class="finder__steps" id="finder-steps"></div>
@@ -1041,7 +1042,7 @@ function renderFinder() {
   const toxHtml = tox.length ? `<ul class="res-list">${tox.map(([p, why]) => `<li><a class="res-item res-item--toxic" href="#tx-${p.slug}">
       <span class="res-item__main"><span class="res-item__name">${esc(p.zh)}</span><span class="res-item__sub">${esc(p.level)} · ${esc(p.latin)}</span>${why.length ? `<span class="res-item__why">仍列出：${why.join("；")}</span>` : ""}</span>
       <span class="level ${p.level === "致命" ? "level--deadly" : "level--poison"}">${esc(p.level)}</span>${icon("arrow")}</a></li>`).join("")}</ul>`
-    : `<p class="muted-note" style="margin-top:0">本站收录的 15 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
+    : `<p class="muted-note" style="margin-top:0">本站收录的 ${DATA.poison.length + DATA.poisonExtra.length} 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
   const edHtml = ed.length ? `<ul class="res-list">${ed.map(([s]) => `<li><a class="res-item" href="#sp-${s.slug}">
       <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span><span class="res-item__sub">${esc(groupBy[s.group].short)} · ${esc(s.season)} · ${esc(s.latin)}</span></span>${icon("arrow")}</a></li>`).join("")}</ul>`
     : `<div class="res-empty">没有符合的食用菌。试着把不确定的问题改成“不确定”。</div>`;

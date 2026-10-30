@@ -51,4 +51,10 @@ TAGS = {
  "纹缘盔孢伞": T("gills", "brown", "wood", ring=True),
  "发光类脐菇": T("gills", ["white", "yellow"], "wood"),
  "大青褶伞": T("gills", "green", "grass", ring=True),
+ # ring=True on the small deadly species keeps them listed whichever ring answer is given
+ "致命小环柄菇": T("gills", "white", ["grass", "ground"], ring=True),
+ "皱盖锥盖伞": T("gills", "brown", ["ground", "wood"], ring=True),
+ "簇生垂幕菇": T("gills", ["black", "choc"], "wood", ring=True),
+ "毒蝇鹅膏": T("gills", "white", "ground", ring=True, volva=True),
+ "波地钟菌": T("other", "unknown", "ground"),
 }

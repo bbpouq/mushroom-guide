@@ -125,3 +125,39 @@ NA_TOXIC += [
       sources=[("Wikipedia：Chlorophyllum molybdites", "https://en.wikipedia.org/wiki/Chlorophyllum_molybdites"),
                ("Bay Area Mycological Society：Other Toxic Mushrooms", "https://bayareamushrooms.org/poisonings/non_fatal.html")]),
 ]
+
+# ---- Pacific Northwest toxic additions (2026-10) ----
+INAT_PNW = "https://www.inaturalist.org/observations?place_id=7085,46,10&quality_grade=research&taxon_id="
+NA_TOXIC += [
+ dict(zh="致命小环柄菇", en="Deadly parasol", latin="Lepiota subincarnata", level="致命", tag="伤肝",
+      feat="小型伞菌：菌盖 1.5–6 cm，幼时整个裹着一层粉褐色绒毛，展开后裂成<b>一圈圈粉褐色鳞片、露出白底</b>，中央仍留一团绒毛；菌褶白色、离生；菌柄细（0.15–0.7 cm），下部约四分之三有与盖同色的<b>环带状绒毛</b>，上方只有一圈不明显的绒质环痕；没有菌托；孢子印白色；气味不明显，或带甜的果香。长在城市草坪、花园、覆盖木屑上，也见于林下。不列颠哥伦比亚（大温哥华、温哥华岛南部）、华盛顿、俄勒冈都有记录。<br><b>中毒过程：</b>含鹅膏毒素。6–12 小时（最长 36 小时）后腹痛、呕吐、水样腹泻，约一天后好转；约 72 小时后肠胃症状复发，并出现肝衰竭迹象。<br><b>【编者注】</b>1988 年大温哥华地区一名男子把自家草坪上的这种菇当成仙环菇，做进早餐煎蛋卷，中毒身亡。凡是菌褶白色离生、菌盖粉褐/橙褐/褐色的小型伞菌，都可能含鹅膏毒素，一律不要吃。",
+      conf="硬柄小皮伞（仙环菇）：同样长在草坪上，但仙环菇菌盖光滑、浅褐，菌柄光滑、没有环带",
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Lepiota subincarnata", UBC + "L_subincarnata.html"),
+               ("iNaturalist：BC / 华盛顿 / 俄勒冈的研究级观察", INAT_PNW + "382931")]),
+ dict(zh="皱盖锥盖伞", en="Deadly conocybe", latin="Pholiotina rugosa", level="致命", tag="伤肝",
+      feat="不起眼的“小褐菇”：菌盖 1–2.5 cm，钝锥形到近平展，黄褐至暗茶褐色，湿时边缘有条纹，干后褪成浅米褐；菌褶米色→浅褐→锈褐；菌柄细（1–3 mm）、易断、中空，上部有<b>膜质菌环，环的上面有纵沟纹</b>，常被孢子染成锈褐色，老了会萎缩甚至消失；<b>孢子印锈褐色</b>。散生或小群生在土上，常靠近木屑和枯枝。旧名 Conocybe filaris。含鹅膏毒素。<br><b>【编者注】</b>iNaturalist 上不列颠哥伦比亚、华盛顿、俄勒冈都有经鉴定的记录。这类小褐菇只凭肉眼很难认到种，一律不要采来吃。",
+      conf="纹缘盔孢伞等其他小褐菇（同为锈褐色孢子印，同样含鹅膏毒素）",
+      sources=[("MykoWeb · California Fungi：Pholiotina rugosa", "https://www.mykoweb.com/CAF/species/Pholiotina_rugosa.html"),
+               ("iNaturalist：BC / 华盛顿 / 俄勒冈的研究级观察", INAT_PNW + "877494")]),
+ dict(zh="簇生垂幕菇", en="Sulphur tuft", latin="Hypholoma fasciculare", level="有毒", tag="肠胃",
+      feat="菌盖 1–6 cm（偶达 10 cm），<b>硫黄色至黄橙、黄褐色</b>，中央较深，光滑不黏；幼时边缘内卷，常挂着蛛网状菌幕残片，被孢子染成紫黑色；<b>菌褶幼时黄色带绿调</b>，成熟后变暗灰褐、带紫色；菌柄 3–7 cm、细，黄至黄褐；<b>孢子印紫黑色</b>；味极苦。<b>大丛密集地长在倒木、树桩和木屑上</b>，阔叶树、针叶树都长，常铺满整根木头。北半球温带普遍，西北太平洋很常见。<br><b>中毒过程：</b>食后 5–10 小时出现恶心、呕吐和剧烈腹泻。",
+      conf="蜜环菌（孢子印白色、菌盖有鳞片、幼时柄上有绵质菌环）；烟色垂幕菇 H. capnoides（只长在针叶树木头上，幼褶烟灰色，可食，但很容易与致命的纹缘盔孢伞混淆）",
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Hypholoma fasciculare", UBC + "H_fasciculare.html")]),
+ dict(zh="毒蝇鹅膏", en="Fly agaric", latin="Amanita muscaria", level="有毒", tag="神经",
+      feat="典型的“童话蘑菇”。菌盖 5–20 cm，多为鲜红或猩红、向边缘褪成橙黄，也有浅黄、橙、褐色的类型；盖上散布白至奶黄色的<b>金字塔形疣</b>（像碎奶酪，雨一冲就掉），边缘有放射状沟纹；菌褶白、密、离生；菌柄白，基部膨大，上部挂着大而下垂的<b>裙状菌环</b>；柄基的菌托<b>碎成几圈松散的棉絮状环带</b>，不是完整的袋状；孢子印白色。与栎、桦等阔叶树和针叶树共生，城市里也很常见，夏末到秋季出现。西北美洲的毒蝇鹅膏其实至少包括三个种。<br><b>中毒：</b>含神经毒素，引起醉酒样症状和谵妄；对猫狗也有毒。",
+      conf="橙盖鹅膏（凯撒蘑菇，原书 p52）：凯撒蘑菇菌褶黄色，毒蝇鹅膏菌褶白色",
+      sources=[("UBC Beaty Museum · Mushrooms Up!：Amanita muscaria", UBC + "A_muscaria.html")]),
+ dict(zh="波地钟菌", en="Early false morel", latin="Verpa bohemica", level="有毒", tag="因人而异",
+      feat="早春的“假羊肚菌”，有些地方被误叫作“早羊肚菌”：比羊肚菌出得早，又和羊肚菌季节重叠。菌帽 2–4 cm 高，钟形或近锥形，<b>表面是纵向皱褶</b>（老了也可能像有凹坑），黄褐至褐色；<b>菌帽只在顶端连着菌柄，下缘整圈悬空</b>，像套在手指上的顶针；菌柄 8–22 cm，奶白至暗黄，常有一圈圈细小鳞屑；纵切后菌柄里<b>塞着棉花糖似的白色絮状组织</b>。早春长在阔叶树下，有时在针叶树下。<br><b>毒性：</b>能不能吃一直有争议。北美很多图鉴把它列为可疑或有毒，美国 FDA 把它和鹿花菌一起归为有毒的假羊肚菌。部分人吃后出现严重肠胃不适和暂时性的协调障碍（走路不稳），吃得多或连续几天吃时更常见。2020 年的一篇毒理学综述建议把它视为不可食。",
+      conf="半离羊肚菌：它的菌帽只有下半部与柄分离，上半部连在柄上；纵切后从头到柄整个中空，没有絮状组织",
+      sources=[("Kuo, M.（2019）MushroomExpert：Verpa bohemica", "https://www.mushroomexpert.com/verpa_bohemica.html"),
+               ("Lagrange & Vernoux（2020）Toxins 12(8):482，假羊肚菌与羊肚菌的肼类毒素综述", "https://doi.org/10.3390/toxins12080482"),
+               ("iNaturalist：BC / 华盛顿 / 俄勒冈的研究级观察", INAT_PNW + "126131")]),
+]
+
+# Editor's notes appended to book toxic entries (keyed by Latin name), with their sources
+NA_POISON_NOTES = {
+ "Amanita phalloides": dict(
+     note="<b>【编者注】在西北太平洋正在扩散。</b>原产欧洲，随引种的鹅耳枥、欧洲栎、榛等树木传入；温哥华、维多利亚、西雅图的市区和郊区都有记录，常长在草坪和行道树下，在 BC 省还在向北、向原生林扩散。BC 省自 1997 年首次发现以来已有三起严重中毒：2003 年维多利亚一名男子把前院里的幼菇当成马勃；2008 年兰里一名女子把它当成<b>草菇</b>；2016 年维多利亚市中心一名三岁儿童误食后死亡。<b>幼菇很像草菇，但西北太平洋野外基本没有草菇</b>；草菇孢子印粉红，毒鹅膏孢子印白色。马勃要纵切检查：真马勃里面是均匀的白色，毒鹅膏的“蛋”里能看到菌盖和菌褶的轮廓。",
+     sources=[("UBC Beaty Museum · Mushrooms Up!：Amanita phalloides（BC 省中毒案例）", UBC + "A_phalloides.html")]),
+}
