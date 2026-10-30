@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 58 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 60 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 ```
@@ -23,7 +23,8 @@ Test setup, once: `pip install playwright pillow && python3 -m playwright instal
 ```
 src/
   data/book.py           European species, top-10 toxic, recipe index (rewritten from the book; page numbers = English original)
-  data/north_america.py  North American additions: NA_GROUP, NA_SPECIES, NA_TOXIC (each entry cites sources)
+  data/north_america.py  North American additions: NA_GROUP, NA_SPECIES, NA_TOXIC (each entry cites sources),
+                         plus NA_SPECIES_NOTES / NA_POISON_NOTES: 【编者注】 added to book entries, keyed by Latin name
   data/tags.py           Feature-finder tags for every edible AND toxic species, keyed by Chinese name
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
   data/guide.py          Field/kitchen panels, glossary, the 6 featured recipes
@@ -80,7 +81,8 @@ navigates the frame away and blanks the page. All in-page links are intercepted 
 updated with `pushState` inside try/catch, so it works where allowed and fails silently elsewhere.
 
 - Views: `#species`, `#finder`, `#toxic`, `#guide`, `#recipes`, `#emergency`
-- Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` scrolls to a toxic card, `#cmp-<id>` to a comparison
+- Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` scrolls to a toxic card, `#cmp-<id>` to a comparison,
+  `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist)
 - Slugs come from the Latin name (`Boletus edulis` becomes `boletus-edulis`). Hash names stay plain ASCII.
 - In-page jumps use `<button data-jump="id">`, not anchors.
 - Scroll offsets come from `html { scroll-padding-top }` (header height is measured into `--header-h`).
@@ -95,6 +97,5 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 ## Ideas not yet built
 
 - A 12-month season calendar showing all species at once.
-- A "before you eat" checklist (dig out the base, spore print, smell, compare with look-alikes).
 - A personal finds log kept in localStorage (per device only; wrap storage in try/catch).
 - Photos: only owner-taken or properly licensed images, with attribution.

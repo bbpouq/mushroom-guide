@@ -341,6 +341,19 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
 .sidenav__sos { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3); min-height: 40px; padding: 0 12px; border-radius: var(--radius-sm); background: var(--color-destructive); color: #fff; font-weight: 700; text-decoration: none; }
 
 /* ---------- in-page jump buttons ---------- */
+/* before-you-eat checklist */
+.eat-check { list-style: none; margin: 0; padding: 0 !important; display: grid; gap: 0; }
+.eat-check li { margin: 0; border-top: 1px solid var(--color-border); max-width: none; }
+.eat-check li:first-child { border-top: 0; }
+.eat-check label { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-3); align-items: start; min-height: var(--target); padding: var(--space-3) 0; cursor: pointer; }
+.eat-check input { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: 2px 0 0; border: 2px solid var(--color-muted-foreground); border-radius: var(--radius-sm); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast); }
+.eat-check input:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.eat-check input:checked::after { content: ""; width: 10px; height: 6px; border: 2.5px solid var(--color-on-primary); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.eat-check input:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+.eat-check__text { max-width: 72ch; }
+.eat-check__text b { display: block; }
+.eat-check__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.eat-check__count { font-variant-numeric: tabular-nums; color: var(--color-muted-foreground); font-size: 15px; }
 .jump-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
 
 /* ---------- finder ---------- */
@@ -454,7 +467,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
   <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
 </svg>
 
 <div class="app">
@@ -560,7 +573,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
         <div class="tox-grid" id="tox-grid"></div>
         <div class="subhead" id="tox-extra-head"><h2>补充：北美的危险种类</h2><p>原书没有收录，但在北美采菌时最需要警惕。</p></div>
         <div class="tox-grid" id="tox-grid-extra"></div>
-        <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 6 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
+        <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 <!--N_COMPARE--> 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
         <div class="cmp-list" id="cmp-list"></div>
         <div class="panel" style="margin-top: var(--space-6)">
           <h2 class="panel__title">几条可以带走的规律</h2>
@@ -585,6 +598,7 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
         </header>
         <div class="jump-row">
           <button class="chip" type="button" data-jump="guide-field">采集</button>
+          <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
           <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
           <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
         </div>
@@ -649,6 +663,32 @@ details.panel[open] > summary { margin-bottom: var(--space-3); }
             <!--GLOSS-->
           </details>
         </div>
+        <div class="subhead" id="guide-check"><h2>吃之前：逐条检查</h2><p>每次下锅前都过一遍。全部打勾也不等于安全。</p></div>
+        <section class="panel panel--wide" aria-labelledby="eat-check-title">
+          <h2 class="sr-only" id="eat-check-title">吃之前检查清单</h2>
+          <div class="callout callout--danger" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>有任何疑问，就不要吃。</b>有一项做不到或对不上，就把它扔掉。</div></div>
+          <ol class="eat-check" id="eat-check">
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>挖出完整的柄基</b>整朵连根挖出，看有没有袋状菌托。毒鹅膏的菌托常埋在土里，柄基断在土中就看不到了。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>做孢子印</b>白色孢子印、白色菌褶，再加上菌环或菌托，先按鹅膏处理；长在木头上、孢子印锈褐色的小褐菇，可能是致命的纹缘盔孢伞。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>纵切开看</b>马勃内部必须是均匀的纯白，看到菌盖和菌褶的轮廓就是鹅膏的“蛋”；羊肚菌应该从头到柄整个中空。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>闻气味，看变色和乳汁</b>碰伤或切开后的颜色变化、乳菇乳汁的颜色、特殊气味，按这个物种页面上写的逐项核对。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>对照易混毒菌</b>打开物种页面的“易混毒菌”和对比表逐项比较。有一项对不上，就不吃。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>确认采集地点干净</b>路边、工业区等污染地点的菌会富集铅等重金属，不要吃。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>留一两朵生的样本</b>单独放进冰箱，不要一起煮掉。万一不舒服，医生和专家可以据此鉴定。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>第一次吃的种类：彻底煮熟，只吃一两勺</b>同一种菌，有人吃了没事，有人会不适。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>知道出事打什么电话</b>一旦不舒服，立即联系毒物中心，不要等。很多毒菌要过 6–12 小时甚至更久才发作。</span></label></li>
+          </ol>
+          <div class="eat-check__foot">
+            <span class="eat-check__count" id="eat-check-count" aria-live="polite">已核对 0 / 9</span>
+            <span class="link-row" style="margin-top:0"><a class="btn" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a><button class="btn" type="button" id="eat-check-reset">清空，检查下一种</button></span>
+          </div>
+          <div class="sources"><h3>资料来源</h3><ol>
+            <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/A_phalloides.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Amanita phalloides（菌托、马勃纵切、保留样本、发作时间）</a></li>
+            <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Galerina marginata</a></li>
+            <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/L_nuda.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Lepista nuda（重金属）</a></li>
+            <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/S_radicata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Sparassis radicata（第一次只吃一两勺）</a></li>
+          </ol></div>
+        </section>
         <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。</p></div>
         <div class="panel-grid">
           <section class="panel panel--danger panel--wide">
@@ -934,6 +974,7 @@ function openSpecies(i) {
     </dl>
     ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
     ${compareLinksFor(s.slug)}
+    <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a></div>
     ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
     <p class="muted-note">${g.note}</p>
     <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
@@ -1080,12 +1121,19 @@ function renderRecipes() {
   $("#rindex").innerHTML = DATA.rindex.map(r => `<li><span class="rindex__page">p${r.p}</span><span>${esc(r.zh)}${r.star ? '<span class="rindex__tag">已收录</span>' : ""}<span class="rindex__en">${esc(r.en)}</span></span></li>`).join("");
 }
 
-/* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison ---------- */
+/* ---------- before-you-eat checklist ---------- */
+const eatBoxes = () => document.querySelectorAll("#eat-check input");
+function eatCount() { const b = [...eatBoxes()]; $("#eat-check-count").textContent = `已核对 ${b.filter(x => x.checked).length} / ${b.length}`; }
+$("#eat-check").addEventListener("change", eatCount);
+$("#eat-check-reset").addEventListener("click", () => { eatBoxes().forEach(x => { x.checked = false; }); eatCount(); });
+
+/* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
 const VIEWS = ["species", "finder", "toxic", "guide", "recipes", "emergency"];
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
 function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
   if (h.startsWith("tx-") || h.startsWith("cmp-")) return { view: "toxic", target: h };
+  if (h.startsWith("guide-") && document.getElementById(h)) return { view: "guide", target: h };
   if (VIEWS.includes(h)) return { view: h };
   return { view: "species" };
 }
@@ -1124,7 +1172,7 @@ document.addEventListener("click", e => {
     const h = a.getAttribute("href").slice(1);
     if (h === "main") return;
     e.preventDefault();
-    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-")) navigate(h);
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-")) navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
