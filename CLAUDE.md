@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 75 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 77 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -90,6 +90,13 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - Palette tokens in `:root` (light) plus dark-mode overrides: primary green `#15803D` (dark `#4ADE80`), accent
   amber `#D97706` (fills only; text on it is black), danger red reserved for toxicity and emergency.
   Style everything through tokens; no raw hex in components.
+- Motion (since 2026-11): views fade in with a springy header; cards ease in as they scroll into view
+  (IntersectionObserver adds `is-reveal` / `is-shown`, skipped under reduced motion); controls shrink on press;
+  header photos drift slowly; the phone species sheet can be dragged down to close. Never animate warnings.
+  Animate `.view` with opacity only: a transform on it moves the sticky search bar inside.
+- The finder has a small interactive 3D mushroom (`#model`, a lathe renderer on a 2D canvas, no library): drag to
+  rotate, tap a part for its explanation; each finder question has a "在模型上看" button. Part colours are the
+  `--model-*` tokens. It pauses when off screen.
 - Type: the platform system font (SF Pro / PingFang SC on Apple, Noto Sans SC or YaHei elsewhere). No web fonts.
 - Layering: use only the z-index scale `--z-sticky 10`, `--z-header 20`, `--z-nav 30`, `--z-toast 40`
   (dialogs use the top layer).

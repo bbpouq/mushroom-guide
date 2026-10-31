@@ -165,6 +165,14 @@ def run():
         check("SOS -> emergency view with tel link", pg.evaluate("document.querySelector('.view.is-active').id") == "v-emergency"
               and pg.locator('a[href="tel:18002221222"]').count() == 1)
         pg.click('.botnav a[href="#finder"]'); pg.wait_for_timeout(100)
+        pg.locator("#model").scroll_into_view_if_needed(); pg.wait_for_timeout(400)
+        painted = pg.evaluate("""(() => { const c = document.getElementById('model-canvas'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+            let n = 0; for (let i = 3; i < d.length; i += 4 * 97) if (d[i] > 0) n++; return n; })()""")
+        pg.click('#model-parts [data-model-part="volva"]'); pg.wait_for_timeout(200)
+        check(f"3D model draws ({painted} samples) and explains a picked part", painted > 50 and "菌托" in pg.inner_text("#model-desc"))
+        pg.click('#finder-steps [data-model-part="ring"]'); pg.wait_for_timeout(300)
+        check("a finder question's 'see on model' selects that part",
+              pg.get_attribute('#model-parts [data-model-part="ring"]', "aria-pressed") == "true")
         for k, v in [("hym", "gills"), ("sub", "wood"), ("spore", "white")]:
             pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
         res = pg.inner_text("#finder-results")

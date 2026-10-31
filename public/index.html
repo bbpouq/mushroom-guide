@@ -44,6 +44,8 @@
   --glass-blur: saturate(180%) blur(22px);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
   --shadow-float: 0 12px 40px rgba(0, 0, 0, .14);
+  --spring: cubic-bezier(.34, 1.56, .64, 1);
+  --model-cap: #9A6A43; --model-gill: #EFE4CC; --model-stem: #F2ECDF; --model-ring: #FBF8F1; --model-volva: #F6F2EA; --model-ground: rgba(92, 64, 40, .62);
   --aura-1: rgba(52, 199, 89, .20); --aura-2: rgba(255, 179, 64, .16); --aura-3: rgba(90, 200, 250, .14);
   --color-chart: #15803D;
   --color-seq-1: #22C55E; --color-seq-2: #15803D; --color-seq-3: #14532D;
@@ -591,7 +593,7 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
 .tox-card--poison::before { background: var(--color-accent); }
 .group-note { border-left: 0; border-radius: var(--radius); }
 .step { border-radius: var(--radius-lg); }
-.step legend { float: left; width: 100%; padding: 0; margin-bottom: var(--space-1); }
+.step legend { float: left; width: 100%; padding: 0; margin-bottom: var(--space-1); display: flex; align-items: center; gap: var(--space-1); }
 .step legend + * { clear: both; }
 
 /* controls: filled capsules like iOS */
@@ -648,6 +650,44 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .view__head:has(> .view__hero) .btn { background: rgba(255, 255, 255, .22); color: #fff; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .view__head:has(> .view__hero) .link-row { margin-top: var(--space-2); }
 @media (min-width: 768px) { .view__head:has(> .view__hero) { min-height: 260px; padding: 120px var(--space-6) var(--space-6); } }
+
+/* ---------- motion: physical, state-confirming, never on warnings ---------- */
+/* whole view: opacity only, so sticky bars inside it never move; the header gets the lift */
+.view.is-active { animation: view-in 320ms var(--ease) backwards; }
+@keyframes view-in { from { opacity: 0; } }
+.view.is-active > .view__head { animation: head-in 520ms var(--spring) backwards; }
+@keyframes head-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
+.is-reveal { opacity: 0; transform: translateY(16px) scale(.985); transition: opacity 420ms var(--ease), transform 560ms var(--spring); transition-delay: var(--reveal-delay, 0ms); }
+.is-reveal.is-shown { opacity: 1; transform: none; }
+.view__hero { animation: hero-drift 26s ease-in-out infinite alternate; transform-origin: 60% 40%; }
+@keyframes hero-drift { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-1.5%, -1%); } }
+.chip, .btn, .icon-btn, .botnav__link, .res-item { transition: transform 260ms var(--spring), background-color var(--dur-fast), opacity var(--dur-fast); }
+.chip:active, .btn:active, .icon-btn:active, .res-item:active { transform: scale(.94); }
+.botnav__link:active { transform: scale(.9); }
+.botnav__link[aria-current="page"] .icon { animation: tab-pop 480ms var(--spring); }
+@keyframes tab-pop { 0% { transform: scale(.7) translateY(2px); } 100% { transform: none; } }
+.sheet[open] .month-strip__cell { animation: month-pop 420ms var(--spring) backwards; animation-delay: calc(120ms + var(--m, 0) * 28ms); }
+@keyframes month-pop { from { transform: scale(.3); opacity: 0; } }
+.sheet[open] .photo__img { animation: photo-in 600ms var(--ease) backwards; }
+@keyframes photo-in { from { transform: scale(1.06); opacity: 0; } }
+.sheet.is-dragging { transition: none; }
+.sheet.is-settling { transition: transform 320ms var(--spring); }
+.chip[aria-pressed="true"] { animation: chip-pick 360ms var(--spring); }
+@keyframes chip-pick { 0% { transform: scale(.9); } 100% { transform: none; } }
+
+/* ---------- 3D mushroom model (finder) ---------- */
+.model { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-4) var(--space-3); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
+.model__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); }
+.model__title { font-size: 20px; font-weight: 700; }
+.model__hint { margin: 0; font-size: 13px; color: var(--color-muted-foreground); }
+.model__stage { position: relative; margin: var(--space-2) 0; border-radius: var(--radius); overflow: hidden;
+  background: radial-gradient(80% 70% at 50% 35%, var(--color-primary-surface), transparent 70%); }
+.model__canvas { display: block; width: 100%; height: 260px; touch-action: pan-y; cursor: grab; }
+.model__canvas:active { cursor: grabbing; }
+.model__parts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.model__desc { margin: var(--space-3) 0 0; min-height: 3.3em; font-size: 15px; line-height: 1.6; max-width: 72ch; }
+.step__model { margin-left: auto; font-size: 13px; font-weight: 500; color: var(--color-primary); background: none; border: 0; padding: 0 var(--space-1); min-height: 32px; cursor: pointer; }
+@media (min-width: 768px) { .model__canvas { height: 320px; } }
 
 /* accessibility: no translucency when the system asks for it, or where blur is unsupported */
 @media (prefers-reduced-transparency: reduce) {
@@ -769,6 +809,12 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
           <p class="view__lead">手上有一朵不认识的菌？按看到的特征回答，列出可能的种类。<b>可能的毒菌会排在最前面。</b></p>
         </header>
         <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 64 种食用菌和 22 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
+        <section class="model" id="model" aria-labelledby="model-title">
+          <div class="model__head"><h2 class="model__title" id="model-title">认识一朵菌</h2><p class="model__hint">拖动可以旋转；点部位名称或模型看说明。</p></div>
+          <div class="model__stage"><canvas class="model__canvas" id="model-canvas" role="img" aria-label="一朵伞菌的三维模型：菌盖、菌褶、菌环、菌柄和埋在土里的菌托"></canvas></div>
+          <div class="model__parts" id="model-parts" role="group" aria-label="选择部位"></div>
+          <p class="model__desc" id="model-desc" aria-live="polite"></p>
+        </section>
         <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
         <div class="finder">
           <div class="finder__steps" id="finder-steps"></div>
@@ -1121,7 +1167,7 @@ const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "�
 const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
 function monthStrip(ms) {
   // numbered circles: filled = in season, ringed = this month
-  const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}" aria-hidden="true">${i + 1}</span>`).join("");
+  const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}" style="--m:${i}" aria-hidden="true">${i + 1}</span>`).join("");
   return `<span class="month-strip" role="img" aria-label="出菇月份：${ms.join("、")} 月">${cells}</span>`;
 }
 
@@ -1329,11 +1375,11 @@ $("#v-toxic").addEventListener("click", e => {
 
 /* ---------- finder ---------- */
 const STEPS = [
-  { key: "hym", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", opts: [["gills", "菌褶（刀片状）"], ["pores", "菌孔（海绵状）"], ["spines", "菌刺（下垂的软刺）"], ["ridges", "钝圆的棱脊或近光滑"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳"]] },
-  { key: "sub", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", opts: [["ground", "林地地面"], ["grass", "草地、草坪"], ["wood", "木头上（树干、树桩、倒木、木屑）"], ["under", "埋在土里（块菌）"]] },
-  { key: "spore", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", opts: [["white", "白 / 奶油", "#F8F6EE"], ["yellow", "黄 / 浅黄", "#E9D27A"], ["pink", "粉", "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", "#A8642E"], ["choc", "巧克力 / 紫褐", "#4E2E26"], ["olive", "橄榄褐", "#77703A"], ["black", "黑", "#151515"], ["green", "绿", "#7D9C6B"]] },
-  { key: "ring", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", opts: [["yes", "有"], ["no", "没有"]] },
-  { key: "volva", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
+  { key: "hym", part: "gills", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", opts: [["gills", "菌褶（刀片状）"], ["pores", "菌孔（海绵状）"], ["spines", "菌刺（下垂的软刺）"], ["ridges", "钝圆的棱脊或近光滑"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳"]] },
+  { key: "sub", part: "volva", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", opts: [["ground", "林地地面"], ["grass", "草地、草坪"], ["wood", "木头上（树干、树桩、倒木、木屑）"], ["under", "埋在土里（块菌）"]] },
+  { key: "spore", part: "gills", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", opts: [["white", "白 / 奶油", "#F8F6EE"], ["yellow", "黄 / 浅黄", "#E9D27A"], ["pink", "粉", "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", "#A8642E"], ["choc", "巧克力 / 紫褐", "#4E2E26"], ["olive", "橄榄褐", "#77703A"], ["black", "黑", "#151515"], ["green", "绿", "#7D9C6B"]] },
+  { key: "ring", part: "ring", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", opts: [["yes", "有"], ["no", "没有"]] },
+  { key: "volva", part: "volva", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
 ];
 const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
 function fmatch(s, lenient) {
@@ -1352,7 +1398,7 @@ function fmatch(s, lenient) {
 }
 function renderFinder() {
   $("#finder-steps").innerHTML = STEPS.map((st, i) => `
-    <fieldset class="step"><legend><span class="step__num">${i + 1}</span>${esc(st.q)}</legend>
+    <fieldset class="step"><legend><span class="step__num">${i + 1}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
       <p class="step__hint">${esc(st.hint)}</p>
       <div class="chip-list">
         <button type="button" class="chip" data-f="${st.key}" data-v="" aria-pressed="${fstate[st.key] === null}">不确定</button>
@@ -1493,6 +1539,189 @@ document.addEventListener("click", e => {
   const a = e.target.closest("[data-log-sp]"); if (!a) return;
   $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; $("#finds-date").value = todayISO();
 });
+
+/* ---------- 3D mushroom model: a tiny lathe renderer on a 2D canvas (no library, works offline) ---------- */
+const MODEL_PARTS = [
+  ["cap", "菌盖", "菌伞的顶部。看颜色、表面是光滑还是有鳞片或疣、湿时黏不黏，以及边缘有没有条纹。"],
+  ["gills", "菌褶", "菌盖下面一片片刀片状的薄片，孢子从这里落下。看颜色和疏密，是否延伸到柄上。有的菌这里是海绵状的菌孔或下垂的菌刺。"],
+  ["ring", "菌环", "菌柄上部的一圈膜，是幼时包住菌褶的菌幕留下的。老了可能脱落，所以“没有菌环”不能排除鹅膏。"],
+  ["stem", "菌柄", "看粗细、表面纹路、质地是脆还是韧，纵切后是实心还是空心。"],
+  ["volva", "菌托", "柄基的袋状结构，是鹅膏的重要标志，<b>常埋在土里</b>：一定要把整朵菌连根挖出来看。"],
+];
+const MODEL_VIEW = { cap: [0.6, 0.55], gills: [0.6, -0.42], ring: [0.9, 0.05], stem: [0.9, 0.1], volva: [0.6, 0.32] };
+const model = (() => {
+  const cv = $("#model-canvas"); if (!cv || !cv.getContext) return null;
+  const ctx = cv.getContext("2d");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const quads = [];
+  const lathe = (part, prof, seg = 36, shade = 1) => {           // prof: [[radius, height], ...] from top to bottom
+    for (let k = 0; k < seg; k++) {
+      const a0 = k / seg * Math.PI * 2, a1 = (k + 1) / seg * Math.PI * 2;
+      for (let j = 0; j < prof.length - 1; j++) {
+        const [r0, y0] = prof[j], [r1, y1] = prof[j + 1];
+        quads.push({ part, shade, p: [[r0 * Math.cos(a0), y0, r0 * Math.sin(a0)], [r0 * Math.cos(a1), y0, r0 * Math.sin(a1)],
+                                       [r1 * Math.cos(a1), y1, r1 * Math.sin(a1)], [r1 * Math.cos(a0), y1, r1 * Math.sin(a0)]] });
+      }
+    }
+  };
+  const capTop = Array.from({ length: 9 }, (_, i) => { const t = i / 8; return [Math.sin(t * Math.PI / 2) * 1.05, 1.42 + 0.55 * Math.cos(t * Math.PI / 2)]; });
+  lathe("cap", capTop);
+  lathe("cap", [[1.05, 1.42], [0.6, 1.5], [0.2, 1.53]], 36, 0.8);            // underside of the cap, above the gills
+  for (let k = 0; k < 40; k++) {                                              // gills: thin radial plates under the cap
+    const a = k / 40 * Math.PI * 2, c = Math.cos(a), sn = Math.sin(a);
+    const rs = [0.2, 0.45, 0.7, 0.9, 1.02];
+    for (let j = 0; j < rs.length - 1; j++) {
+      const top = r => 1.53 - (r - 0.2) * 0.13, depth = r => 0.16 * Math.sin(Math.PI * (r - 0.2) / 0.84);
+      const r0 = rs[j], r1 = rs[j + 1];
+      quads.push({ part: "gills", shade: 1, p: [[r0 * c, top(r0), r0 * sn], [r1 * c, top(r1), r1 * sn],
+                                                [r1 * c, top(r1) - depth(r1), r1 * sn], [r0 * c, top(r0) - depth(r0), r0 * sn]] });
+    }
+  }
+  lathe("stem", [[0.17, 1.52], [0.18, 1.1], [0.2, 0.6], [0.26, 0.25], [0.24, 0.05]]);
+  lathe("ring", [[0.19, 1.24], [0.27, 1.16], [0.33, 1.02], [0.34, 0.95]], 36, 0.95);
+  lathe("volva", [[0.36, 0.42], [0.37, 0.25], [0.33, 0.06], [0.2, -0.04], [0, -0.06]]);
+  for (let k = 0; k < 28; k++) {                                              // soil, translucent, so the buried cup shows
+    const a0 = k / 28 * Math.PI * 2, a1 = (k + 1) / 28 * Math.PI * 2;
+    [[0.38, 0.9], [0.9, 1.35]].forEach(([r0, r1]) => quads.push({ part: "ground", shade: 1, p: [
+      [r0 * Math.cos(a0), 0.2, r0 * Math.sin(a0)], [r0 * Math.cos(a1), 0.2, r0 * Math.sin(a1)],
+      [r1 * Math.cos(a1), 0.2, r1 * Math.sin(a1)], [r1 * Math.cos(a0), 0.2, r1 * Math.sin(a0)]] }));
+  }
+  let yaw = 0.7, pitch = 0.18, tYaw = yaw, tPitch = pitch, sel = null, visible = false, dragging = false, last = 0, raf = 0, idleUntil = 0;
+  const colors = {};
+  const toRGBA = c => {                                    // let the canvas normalise any CSS colour, then read the numbers
+    ctx.fillStyle = "#000"; ctx.fillStyle = c; const v = ctx.fillStyle;
+    if (v[0] === "#") return [1, 3, 5].map(i => parseInt(v.slice(i, i + 2), 16)).concat(1);
+    const m = v.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2], m.length > 3 ? m[3] : 1];
+  };
+  const readColors = () => {
+    const cs = getComputedStyle(document.documentElement);
+    ["cap", "gill", "stem", "ring", "volva", "ground"].forEach(k => { colors[k === "gill" ? "gills" : k] = toRGBA(cs.getPropertyValue("--model-" + k).trim()); });
+    colors.hi = toRGBA(cs.getPropertyValue("--color-primary").trim());
+  };
+  const mix = (c, f) => `rgba(${Math.round(c[0] * f)}, ${Math.round(c[1] * f)}, ${Math.round(c[2] * f)}, ${c[3]})`;
+  let W = 0, H = 0, dpr = 1, screen = [];
+  const size = () => { dpr = Math.min(2, devicePixelRatio || 1); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; };
+  const draw = () => {
+    if (!W) size();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const D = 5, f = Math.min(W, H * 1.2) * 0.27 * D, midY = 0.92;
+    const L = [0.35, 0.8, 0.5];
+    screen = quads.map(q => {
+      const v = q.p.map(([x, y, z]) => {
+        const x1 = x * cy - z * sy, z1 = x * sy + z * cy, y1 = y - midY;
+        const y2 = y1 * cp - z1 * sp, z2 = y1 * sp + z1 * cp;
+        return [x1, y2, z2];
+      });
+      const ux = v[1][0] - v[0][0], uy = v[1][1] - v[0][1], uz = v[1][2] - v[0][2];
+      const wx = v[3][0] - v[0][0], wy = v[3][1] - v[0][1], wz = v[3][2] - v[0][2];
+      let nx = uy * wz - uz * wy, ny = uz * wx - ux * wz, nz = ux * wy - uy * wx; const nl = Math.hypot(nx, ny, nz) || 1;
+      const lit = 0.45 + 0.55 * Math.abs((nx * L[0] + ny * L[1] + nz * L[2]) / nl);
+      const pts = v.map(([x, y, z]) => { const k = f / (D - z); return [W / 2 + x * k, H * 0.5 - y * k]; });
+      return { q, pts, z: (v[0][2] + v[1][2] + v[2][2] + v[3][2]) / 4, lit };
+    }).sort((a, b) => a.z - b.z);
+    for (const t of screen) {
+      const base = colors[t.q.part];
+      const on = sel && t.q.part === sel;
+      ctx.globalAlpha = t.q.part === "ground" ? 1 : (sel && !on ? 0.45 : 1);
+      ctx.fillStyle = mix(on ? colors.hi : base, Math.min(1, t.lit * t.q.shade));
+      ctx.beginPath(); t.pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fill();
+      if (t.q.part !== "ground") { ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 0.6; ctx.stroke(); }
+    }
+    ctx.globalAlpha = 1;
+  };
+  const tick = now => {
+    raf = 0; if (!visible) return;
+    const dt = Math.min(50, now - (last || now)); last = now;
+    if (!dragging && !reduce && now > idleUntil && !sel) tYaw += dt * 0.00035;
+    yaw += (tYaw - yaw) * 0.12; pitch += (tPitch - pitch) * 0.12;
+    draw();
+    if (dragging || Math.abs(tYaw - yaw) > 1e-3 || Math.abs(tPitch - pitch) > 1e-3 || (!reduce && !sel)) raf = requestAnimationFrame(tick);
+  };
+  const kick = () => { if (!raf) { last = 0; raf = requestAnimationFrame(tick); } };
+  const describe = () => {
+    $("#model-parts").innerHTML = MODEL_PARTS.map(([k, zh]) => `<button type="button" class="chip" data-model-part="${k}" aria-pressed="${sel === k}">${zh}</button>`).join("");
+    const d = MODEL_PARTS.find(([k]) => k === sel);
+    $("#model-desc").innerHTML = d ? `<b>${d[1]}：</b>${d[2]}` : "点一个部位看它是什么、为什么要看。";
+  };
+  const select = part => {
+    sel = sel === part ? null : part;
+    if (sel) { const [y, pt] = MODEL_VIEW[sel]; tYaw = yaw + ((y - yaw) % (Math.PI * 2)); tPitch = pt; }
+    idleUntil = performance.now() + 4000; describe(); kick();
+  };
+  // pointer: drag to rotate, tap to pick the part under the finger
+  let sx = 0, sy0 = 0, moved = false;
+  cv.addEventListener("pointerdown", e => { dragging = true; moved = false; sx = e.clientX; sy0 = e.clientY; cv.setPointerCapture(e.pointerId); kick(); });
+  cv.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy0; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+    tYaw += dx * 0.012; yaw = tYaw; tPitch = Math.max(-0.6, Math.min(0.75, tPitch + dy * 0.008)); pitch = tPitch;
+    sx = e.clientX; sy0 = e.clientY; kick();
+  });
+  const end = e => {
+    if (!dragging) return; dragging = false; idleUntil = performance.now() + 3000;
+    if (!moved) {                                                            // a tap: hit-test front to back
+      const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      for (let i = screen.length - 1; i >= 0; i--) {
+        const t = screen[i]; if (t.q.part === "ground") continue;
+        let inside = false;
+        for (let a = 0, b = 3; a < 4; b = a++) {
+          const [xa, ya] = t.pts[a], [xb, yb] = t.pts[b];
+          if ((ya > y) !== (yb > y) && x < (xb - xa) * (y - ya) / (yb - ya) + xa) inside = !inside;
+        }
+        if (inside) { select(t.q.part); break; }
+      }
+    }
+  };
+  cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-model-part]"); if (!b) return;
+    const part = b.dataset.modelPart;
+    if (b.closest(".step")) { sel = null; scrollToTarget("model"); }
+    select(part);
+  });
+  if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }).observe(cv);
+  else visible = true;
+  addEventListener("resize", () => { W = 0; kick(); });
+  const mq = matchMedia("(prefers-color-scheme: dark)"); (mq.addEventListener ? mq.addEventListener("change", () => { readColors(); kick(); }) : 0);
+  readColors(); describe(); kick();
+  return { select, draw: () => { W = 0; draw(); } };
+})();
+
+/* ---------- cards ease in as they scroll into view (skipped when motion is reduced) ---------- */
+(() => {
+  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const SEL = ".sp-card, .tox-card, .rc-card, .cmp, .panel, .res-item, .model";
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("is-shown"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
+  const scan = root => {
+    let n = 0;
+    root.querySelectorAll(SEL).forEach(el => {
+      if (el.classList.contains("is-reveal") || el.closest(".sheet")) return;
+      el.classList.add("is-reveal"); el.style.setProperty("--reveal-delay", Math.min(n++, 6) * 45 + "ms"); io.observe(el);
+    });
+  };
+  scan(document);
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(nd => { if (nd.nodeType === 1) scan(nd.parentNode || nd); }))).observe($("main"), { childList: true, subtree: true });
+})();
+
+/* ---------- phones: drag the species sheet down to close it, like an iOS sheet ---------- */
+(() => {
+  const d = $("#sheet"); let y0 = null, dy = 0, t0 = 0;
+  d.addEventListener("pointerdown", e => {
+    if (!matchMedia("(max-width: 767px)").matches || e.pointerType === "mouse") return;
+    if (!e.target.closest(".sheet__bar") || e.target.closest("button")) return;
+    y0 = e.clientY; dy = 0; t0 = performance.now(); d.classList.add("is-dragging"); d.setPointerCapture(e.pointerId);
+  });
+  d.addEventListener("pointermove", e => { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); d.style.transform = `translateY(${dy}px)`; });
+  const up = () => {
+    if (y0 === null) return; y0 = null; d.classList.remove("is-dragging");
+    const fast = dy / Math.max(1, performance.now() - t0) > 0.6;
+    if (dy > 140 || (fast && dy > 40)) { d.style.transform = ""; $("[data-close]", d).click(); return; }
+    d.classList.add("is-settling"); d.style.transform = "";
+    setTimeout(() => d.classList.remove("is-settling"), 340);
+  };
+  d.addEventListener("pointerup", up); d.addEventListener("pointercancel", up);
+})();
 
 /* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
 const VIEWS = ["species", "finder", "toxic", "guide", "log", "recipes", "emergency"];

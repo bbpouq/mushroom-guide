@@ -6,7 +6,7 @@
 - Never put blur on cards or list rows; keep `backdrop-filter` for bars, sheets and toasts.
 - Never use English eyebrows, thick rules, decorative numbering or web fonts.
 - Never use amber `#D97706` as text; it is a fill, with black text on it.
-- Never animate for decoration; motion only confirms a state change.
+- Never animate a warning, look-alike note or the emergency page; motion must not compete with safety.
 
 ## REQUIRE
 - Use iOS materials: translucent bars at `saturate(180%) blur(22px)` over a grouped background `#F2F2F7` / `#000`.
@@ -14,7 +14,8 @@
 - Use `0.5px` hairline separators and soft card depth `0 6px 20px rgba(0,0,0,.05)`; no card shadow in dark mode.
 - Use filled capsules for chips and buttons; green `#15803D` (`#4ADE80` dark) marks the selected state.
 - Maintain radii of `8px`, `12px`, `14px` and `22px`; sheets open from the bottom with a grabber on phones.
-- Ensure every glass surface has an opaque fallback for reduced transparency.
+- Use springy, physical motion (`cubic-bezier(.34,1.56,.64,1)`): press-to-shrink, pop-in, drag-to-dismiss.
+- Ensure every glass surface has an opaque fallback, and every animation stops under reduced motion.
 - Write Chinese copy that is plain, calm and short.
 
 ## WHEN AMBIGUOUS
