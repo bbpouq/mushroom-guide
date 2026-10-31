@@ -1730,7 +1730,11 @@ const model = (() => {
   io.observe(stage);
   async function start() {
     let THREE;
-    try { THREE = await import("./vendor/three-0.160.0.module.min.js"); } catch (_) { return; }
+    // our own copy first (works offline); the same release from jsDelivr only if that copy is missing
+    for (const src of ["./vendor/three-0.160.0.module.min.js", "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js"]) {
+      try { THREE = await import(src); break; } catch (_) {}
+    }
+    if (!THREE) return;
     let renderer;
     try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (_) { return; }
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
