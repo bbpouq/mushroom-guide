@@ -94,7 +94,7 @@ for c in COMPARE:
     for name, kind, sl in c["cols"]:
         assert sl is None or sl in known, f"compare '{c['id']}' links unknown slug {sl}"
 
-for s in species:
+for s in species + poison + poison_extra:
     o = SEASONALITY.get(s["slug"])
     if o:
         s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"])

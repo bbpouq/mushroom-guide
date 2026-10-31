@@ -280,6 +280,9 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .tox-card--poison .tox-card__num { color: var(--color-accent); }
 .tox-card__name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 .tox-card__sub { font-size: 14px; color: var(--color-muted-foreground); }
+.tox-card__season { margin: 0; font-size: 13px; color: var(--color-muted-foreground); }
+div.tox-card__season { display: grid; gap: var(--space-2); }
+.tox-card__season-label { font-weight: 600; color: var(--color-foreground); }
 .tox-card__body { grid-column: 1 / -1; display: grid; gap: var(--space-3); margin-top: var(--space-3); }
 .level { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-body); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-sm); }
 .level--deadly { background: var(--color-destructive); color: #fff; }
@@ -1238,6 +1241,16 @@ function openSpecies(i) {
   $("#sheet-body").scrollTop = 0;
   $("[data-close]", d).focus();
 }
+/* toxic cards: months with Pacific Northwest records, drawn wide on purpose (any month with >= 5% of the peak) */
+function toxMonths(p) {
+  const o = p.obs; if (!o) return "";
+  const total = o.counts.reduce((a, b) => a + b, 0);
+  if (total < 30) return `<p class="tox-card__season">西北太平洋记录很少（${total} 条），看不出季节，<b>全年都要警惕</b>。</p>`;
+  const max = Math.max(...o.counts);
+  const ms = o.counts.map((n, i) => (n / max >= 0.05 ? i + 1 : 0)).filter(Boolean);
+  return `<div class="tox-card__season"><span class="tox-card__season-label">西北太平洋出现的月份（iNaturalist 记录）</span>${monthStrip(ms)}
+    <span>其他月份也可能出现，<b>不能用月份排除毒菌</b>。</span></div>`;
+}
 function photoFig(x, compact) {
   const p = x.photo; if (!p) return "";
   const other = p.taxon !== x.latin.split(" / ")[0] ? `（照片学名 <span class="latin">${esc(p.taxon)}</span>）` : "";
@@ -1300,6 +1313,7 @@ function toxCard(p) {
     <div class="tox-card__sub"><span class="latin">${esc(p.latin)}</span> · ${esc(p.en)}</div>
     <div class="tox-card__body">
       ${photoFig(p, true)}
+      ${toxMonths(p)}
       <div>${p.feat}</div>
       ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
       ${compareLinksFor(p.slug)}

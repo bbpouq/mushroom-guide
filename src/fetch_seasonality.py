@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Fetch month-of-year observation counts from iNaturalist for every edible species, limited to the
+"""Fetch month-of-year observation counts from iNaturalist for every edible and toxic species, limited to the
 Pacific Northwest (British Columbia, Washington, Oregon), and write src/data/seasonality.py.
 
 Run by hand when you want fresh numbers (needs network); the site build only reads the saved file:
@@ -16,8 +16,8 @@ from pathlib import Path
 
 SRC = Path(__file__).resolve().parent
 sys.path.insert(0, str(SRC))
-from data.book import GROUPS  # noqa: E402
-from data.north_america import NA_SPECIES  # noqa: E402
+from data.book import GROUPS, POISON  # noqa: E402
+from data.north_america import NA_SPECIES, NA_TOXIC  # noqa: E402
 
 API = "https://api.inaturalist.org/v1"
 PLACES = "7085,46,10"  # British Columbia, Washington, Oregon
@@ -32,6 +32,10 @@ PNW_TAXON = {
     "Armillaria mellea": "Armillaria",
     "Morchella esculenta": "Morchella",
     "Pleurotus ostreatus": "Pleurotus",
+    # toxic species: the western counterpart named in the site's notes
+    "Amanita pantherina": "Amanita pantherinoides",
+    "Amanita bisporigera / A. ocreata": "Amanita ocreata",
+    "Omphalotus illudens / O. olivascens": "Omphalotus olivascens",
 }
 # Book species that have their own Pacific Northwest entry; their local records belong to that entry.
 SKIP = {"Cantharellus cibarius"}
@@ -60,7 +64,8 @@ def taxon(name):
 
 
 def main():
-    names = [s["latin"] for s in NA_SPECIES] + [sp[2] for _, _, items in GROUPS for sp in items]
+    names = ([s["latin"] for s in NA_SPECIES] + [sp[2] for _, _, items in GROUPS for sp in items]
+             + [p[2] for p in POISON] + [p["latin"] for p in NA_TOXIC])
     out = {}
     for latin in names:
         if latin in SKIP:
