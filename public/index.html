@@ -594,6 +594,7 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
 
 /* controls: filled capsules like iOS */
 .chip { border: 0; background: var(--color-muted); min-height: 34px; padding: 0 14px; font-weight: 500; }
+a.chip { color: var(--color-foreground); text-decoration: none; }
 .chip:hover { background: color-mix(in srgb, var(--color-muted) 100%, var(--color-foreground) 6%); }
 .chip[aria-pressed="true"] { background: var(--color-primary); color: var(--color-on-primary); }
 .btn { border: 0; background: var(--color-muted); border-radius: 12px; font-weight: 600; }
@@ -823,6 +824,7 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
           <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
           <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
           <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
+          <a class="chip" href="#recipes"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-book"/></svg>精选食谱</a>
           <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
         </div>
         <div class="panel-grid" id="guide-field">

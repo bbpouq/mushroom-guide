@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 74 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 75 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -95,7 +95,7 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - Touch targets at least 44px on coarse pointers; SVG icons only (no emoji); visible labels on inputs;
   respect `prefers-reduced-motion`; no horizontal overflow at 375px (wide tables must reflow on phones).
 - Phone: sticky header plus bottom nav (at most 5 tabs: 食用菌 / 特征查找 / 毒菌 / 指南 / 记录; 食谱 is reached from the guide
-  view and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 6 views.
+  view's jump row and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 6 views.
 
 ## Routing (keep it script-driven)
 
