@@ -48,8 +48,8 @@ for gi, (title, note, items) in enumerate(GROUPS):
         flags = []
         if re.search("必须|不可生吃|彻底煮熟|焯水", plain + (warn or "")):
             flags.append("须煮熟")
-        if "少量" in plain:
-            flags.append("少量食用")
+        if "不宜多吃" in plain:
+            flags.append("不宜多吃")
         if "上品" in plain:
             flags.append("上品")
         if GROUP_KEYS[gi] == "amanita":
@@ -172,7 +172,8 @@ photo_bytes = dict(small=sum((OUT.parent / "photos" / f).stat().st_size for f in
                    + sum((OUT.parent / "photos" / h["file"]).stat().st_size for h in HEROES.values()),
                    hd=sum((OUT.parent / "photos" / p["hd"]["file"]).stat().st_size for p in _ph.values() if p.get("hd")))
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
-            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES, photoBytes=photo_bytes)
+            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES, photoBytes=photo_bytes,
+            built=__import__("datetime").date.today().isoformat())
 # the page and the service worker must agree on the name of the photo cache
 MEDIA = re.search(r'const MEDIA = "([^"]+)"', (OUT.parent / "sw.js").read_text(encoding="utf-8")).group(1)
 
@@ -206,6 +207,9 @@ for view, h in HEROES.items():
 assert "<!--HERO:" not in html, "a view header has no hero photo in data/photos.HEROES"
 # readers have no context for "the book": the page names it once, in full, in the footer
 assert "原书" not in html, "the page mentions 原书; name the book in full in the footer instead"
+# advice that must never come back: trial portions, "works for any mushroom", detox by cooking, raw eating, walking toward traffic noise
+for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生"]:
+    assert bad not in html, f"unsafe advice is back on the page: {bad}"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "
       f"{len(COMPARE)} comparisons, {len(html.encode()) // 1024} KB")

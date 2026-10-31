@@ -257,6 +257,13 @@ def run():
             pg.goto(url + "#" + target); pg.wait_for_timeout(1100)
             top = pg.evaluate(f"document.getElementById('{target}').getBoundingClientRect().top")
             check(f"#{target} scrolls just under header (top={round(top)})", 0 <= top < 200)
+        check("safety copy: no trial portions or detox claims, and cooking is said not to make toxic mushrooms safe",
+              not any(x in html for x in ["只吃一两勺", "只吃一小份", "任何杂菌", "朝车声", "生拌"]) and "都不能让有毒的菌变安全" in html)
+        check("emergency page says do not induce vomiting or wait, and the guide has S.T.O.P. for getting lost",
+              "不要自己催吐" in html and "不要等症状出现" in html and "S.T.O.P." in html and 'href="tel:911"' in html)
+        pg.goto(url + "#home"); pg.wait_for_timeout(300)
+        pg.click(".home-safety__sos"); pg.wait_for_timeout(300)
+        check("'I may have eaten an uncertain mushroom' opens the emergency page", pg.evaluate("document.querySelector('.view.is-active').id") == "v-emergency")
         pg.click(".sos-pill"); pg.wait_for_timeout(150)
         check("SOS -> emergency view with tel link", pg.evaluate("document.querySelector('.view.is-active').id") == "v-emergency"
               and pg.locator('a[href="tel:18002221222"]').count() == 1)
@@ -281,6 +288,8 @@ def run():
         res = pg.inner_text("#finder-results")
         check("finder results do not widen the phone page", pg.evaluate("document.documentElement.scrollWidth") <= 390)
         check("finder gills+wood+white", "发光类脐菇" in res and "蜜环菌" in res and "纹缘盔孢伞" not in pg.inner_text(".res-block--toxic"))
+        check("finder results say they are candidates only and link to the emergency page",
+              "不判断能不能吃" in res and pg.locator('#finder-results .res-safe a[href="#emergency"]').count() == 1)
         check("finder shows what matched and what is unchecked, with no score",
               "相符：" in res and "未确认：" in res and "%" not in res and "还没确认 2 项" in res)
         pg.click('[data-wiz="prev"]'); pg.wait_for_timeout(50)

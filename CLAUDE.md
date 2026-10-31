@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 120 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 124 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -85,6 +85,16 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   the species' key look-alike warning in the tip. Never suggest eating a mushroom raw, anywhere on the site
   (the kitchen guide says to cook every wild mushroom thoroughly).
 - Permits and seasons vary by place. Phrase them as "check local rules" / "因地区而异".
+- **No trial portions, no detox claims (2026-11 safety audit).** Never advise "first time, eat only a spoonful / a small
+  portion": the advice is "have an experienced person confirm it in person, cook thoroughly". Never say blanching, boiling,
+  pickling, freezing or drying removes toxins; say they cannot make a toxic mushroom safe (source: KU Health System Poison
+  Control). No "works with any mushroom" recipes: name the species. The build fails on a list of banned phrases
+  (`build_site.py`); add to it rather than removing from it.
+- The emergency page says: call now, do not wait for symptoms, do not induce vomiting unless poison control says so, no
+  home remedies, keep the mushroom and leftovers (source: California Poison Control). "我可能吃了不确定的菌" on the home
+  view opens it. The guide's lost-in-the-woods panel follows S.T.O.P. and "stay put" (BC SAR Association, AdventureSmart).
+- Species pages state their review status honestly: compiled by the editor from the listed sources, not reviewed by a
+  mycologist, with the build date (`DATA.built`). Never invent reviewers, review dates or expert sign-off.
 
 ## House UI rules (2026-11, apply to every change)
 

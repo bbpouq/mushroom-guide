@@ -119,7 +119,7 @@ RECIPES6_EXTRA = [
 
 # Our own recipes (not from the book). Wild mushrooms must be identified with certainty and cooked through;
 # every recipe also works with the cultivated mushroom named in `best`.
-SAFE_NOTE = "野生菌必须百分之百确认种类，并彻底煮熟；第一次吃某种菌只吃一小份。"
+SAFE_NOTE = "只用由有经验的人当面确认过种类的野生菌，并彻底煮熟；烹饪、冷冻、干燥都不能让有毒的菌变安全。"
 RECIPES_ORIG = [
  dict(id="matsutake-rice", style="日式", sp=["tricholoma-matsutake"], zh="松茸饭", en="Matsutake rice",
       meta="3–4 人份 · 准备 15 分钟 · 烹饪 35 分钟", best="松茸；没有松茸可用香菇或杏鲍菇（香气会差很多）",
@@ -261,7 +261,7 @@ RECIPES_ORIG = [
              "菌片放进沸水焯 3 分钟，捞出擦干。",
              "依次蘸面粉、蛋液、面包糠。",
              "平底锅放油，中火每面煎 4 分钟到金黄，撒盐和红椒粉，挤柠檬汁。"],
-      tip="有人吃硫磺菌后过敏或肠胃不适，第一次只吃一两块；长在桉树或针叶树上的更要小心。"),
+      tip="有人吃硫磺菌后会过敏或肠胃不适，长在桉树或针叶树上的更要小心；吃后不舒服，马上联系毒物中心。"),
  dict(id="cauliflower-soup", style="日式", sp=["sparassis-crispa"], zh="绣球菌清汤", en="Cauliflower mushroom clear soup",
       meta="3–4 人份 · 准备 20 分钟 · 烹饪 20 分钟", best="绣球菌、西部绣球菌",
       ing=["绣球菌 200 g", "鸡汤或昆布高汤 1 L", "嫩豆腐 半块，切小块", "姜 2 片", "盐、淡酱油、葱花"],

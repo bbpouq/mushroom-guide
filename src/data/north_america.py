@@ -283,14 +283,14 @@ NA_SPECIES_NOTES = {
  "Sparassis crispa": dict(
      extra=["<b>【编者注】西北太平洋的是另一个种：西部绣球菌（S. radicata）。</b>旧图鉴常把它也叫作 S. crispa，DNA 研究显示 S. crispa 其实是欧洲种。"
             "西部绣球菌长在花旗松、北美云杉的根部或枯干基部（加州沿海也见于松树下），一丛 10–50 cm，像一盘奶油色的扁面条，可以连续几年在同一处长出。"
-            "可食、口感脆，但有少数人吃后肠胃不适：彻底煮熟，第一次只吃一两勺。"
+            "可食、口感脆，但有少数人吃后肠胃不适：彻底煮熟；吃后不舒服，马上联系毒物中心。"
             "别和珊瑚菌混：珊瑚菌从地上长出，分枝是直立的圆柱形，很多有毒。"],
      sources=[("UBC Beaty Museum · Mushrooms Up!：Sparassis radicata", UBC + "S_radicata.html"),
               ("Hughes et al.（2014）The Sparassis crispa complex, Mycological Progress 13", "https://doi.org/10.1007/s11557-013-0927-1")]),
  "Laetiporus sulphureus": dict(
      extra=["<b>【编者注】西北太平洋针叶树上的是针叶硫磺菌（L. conifericola）</b>，常长在花旗松、北美云杉的活树或枯木上；西部阔叶树（栎、桉）上的是另一个种 L. gilbertsonii。"
             "有人吃硫磺菌后出现肠胃不适、皮疹、发烧、潮红或头痛；曾有一名女性吃了几口后 19 小时休克死亡，同桌的人都没事，可能是个人体质。"
-            "只吃新鲜、嫩的边缘部分，彻底煮熟，第一次只吃一勺。"],
+            "只用新鲜、嫩的边缘部分，彻底煮熟；吃后出现上面这些症状，马上联系毒物中心或就医。"],
      sources=[("UBC Beaty Museum · Mushrooms Up!：Laetiporus conifericola", UBC + "L_conifericola.html")]),
  "Pleurotus ostreatus": dict(
      warn="<b>【编者注】贝形圆孢侧耳（天使之翼）</b>：纯白、薄、长在针叶树木头上，日本曾有致死报告",

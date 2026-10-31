@@ -1115,6 +1115,8 @@ fieldset.finds__field { border: 0; margin: 0; padding: 0; min-width: 0; }
 .obs-years__y { font-size: 11px; color: var(--color-muted-foreground); line-height: 1; }
 .obs-years__note { margin: var(--space-2) 0 0; font-size: 12px; color: var(--color-muted-foreground); }
 
+.sos-dont { margin: var(--space-2) 0 0; padding-left: 1.2em; font-size: 15px; line-height: 1.6; color: var(--color-danger-text); }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1256,8 +1258,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <svg class="icon icon--lg" aria-hidden="true"><use href="#i-shield"/></svg>
           <div>
             <h2 class="home-safety__title" id="home-safety-title">认出来，不等于可以吃</h2>
-            <p>本站帮你学习和缩小范围，<b>不能确认任何一朵菌可以食用</b>。特征查找只列候选种；结果里没有毒菌，不代表手上的菌没毒。第一次吃一种菌，请有经验的人或当地菌会当面确认。<b>有任何疑问，就不要吃。</b></p>
-            <div class="link-row"><a class="btn" href="#guide-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查清单</a><a class="btn home-safety__sos" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a></div>
+            <p>本站帮你学习和缩小范围，<b>不能确认任何一朵菌可以食用</b>。烹饪、冷冻、干燥都不能让有毒的菌变安全。特征查找只列候选种；结果里没有毒菌，不代表手上的菌没毒。第一次吃一种菌，请有经验的人或当地菌会当面确认。<b>有任何疑问，就不要吃。</b></p>
+            <div class="link-row"><a class="btn" href="#guide-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查清单</a><a class="btn home-safety__sos" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>我可能吃了不确定的菌</a></div>
           </div>
         </section>
         <article class="today" id="today" aria-labelledby="today-name"></article>
@@ -1403,8 +1405,21 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <li><b>宽底轻篮子</b>最好。塑料袋会挤坏菌子、让它们“出汗”。</li>
               <li><b>采菌刀</b>：折叠刀，一侧带锯齿可刮泥，尾端带小刷子。普通小刀也行。</li>
               <li><b>长手杖</b>：拨开落叶、标记位置、上下坡。</li>
-              <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路时朝车声方向走。</li>
+              <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路了怎么办，见下面的“迷路或受伤”。</li>
             </ul>
+          </section>
+          <section class="panel panel--danger" aria-labelledby="lost-title">
+            <h2 class="panel__title" id="lost-title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>迷路或受伤：停下来（S.T.O.P.）</h2>
+            <ul>
+              <li><b>出门前</b>把去哪、走哪条路、几点回来告诉家人或朋友，过时没回就报警。带上头灯、保暖衣物、哨子；手机充满电，离线地图提前下好。</li>
+              <li><b>停（Stop）</b>：一发现找不到路就停下，<b>不要继续乱走</b>，更不要为了找路钻进陌生地形。离原路越远，搜救范围越大。</li>
+              <li><b>想（Think）与看（Observe）</b>：冷静回想来路，看看周围有什么危险；用手机或 GPS 看自己的位置。</li>
+              <li><b>计划（Plan）</b>：有信号就打 <a href="tel:911">911</a>（有卫星求救功能的手机或卫星信使也能用）；<b>原地等待</b>，保暖、喝水、找避风处；用哨子或闪光求救，<b>每组三声</b>。</li>
+            </ul>
+            <div class="sources"><h3>资料来源</h3><ol>
+              <li><a href="https://www.bcsara.com/public-safety/" target="_blank" rel="noopener">BC Search and Rescue Association：Public Safety（S.T.O.P.、原地等待）</a></li>
+              <li><a href="https://www.adventuresmart.ca/" target="_blank" rel="noopener">AdventureSmart（加拿大户外安全项目：行程计划、必备物品）</a></li>
+            </ol></div>
           </section>
           <section class="panel">
             <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
@@ -1478,7 +1493,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <li><label><input type="checkbox"><span class="eat-check__text"><b>对照易混毒菌</b>打开物种页面的“易混毒菌”和对比表逐项比较。有一项对不上，就不吃。</span></label></li>
             <li><label><input type="checkbox"><span class="eat-check__text"><b>确认采集地点干净</b>路边、工业区等污染地点的菌会富集铅等重金属，不要吃。</span></label></li>
             <li><label><input type="checkbox"><span class="eat-check__text"><b>留一两朵生的样本</b>单独放进冰箱，不要一起煮掉。万一不舒服，医生和专家可以据此鉴定。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>第一次吃的种类：彻底煮熟，只吃一两勺</b>同一种菌，有人吃了没事，有人会不适。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>第一次吃的种类：先请有经验的人当面确认</b>自己对照图鉴认出来的不算数。确认过也要彻底煮熟；同一种菌，有人吃了没事，有人会不适。</span></label></li>
             <li><label><input type="checkbox"><span class="eat-check__text"><b>知道出事打什么电话</b>一旦不舒服，立即联系毒物中心，不要等。很多毒菌要过 6–12 小时甚至更久才发作。</span></label></li>
           </ol>
           <div class="eat-check__foot">
@@ -1489,7 +1504,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/A_phalloides.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Amanita phalloides（菌托、马勃纵切、保留样本、发作时间）</a></li>
             <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Galerina marginata</a></li>
             <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/L_nuda.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Lepista nuda（重金属）</a></li>
-            <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/S_radicata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Sparassis radicata（第一次只吃一两勺）</a></li>
+            <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/S_radicata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Sparassis radicata（个人体质不同）</a></li>
+            <li><a href="https://www.kansashealthsystem.com/medical-services/poison-control/common-poisons/mushrooms" target="_blank" rel="noopener">The University of Kansas Health System Poison Control：Mushrooms（烹饪、冷冻、干燥不能去毒；症状可能几天后才出现）</a></li>
           </ol></div>
         </section>
         <div class="subhead" id="guide-kitchen"><h2>厨房处理</h2><p>采回家之后：整理、清洁、切分、烹饪和保存。做什么菜，见<a href="#recipes">精选食谱</a>。</p></div>
@@ -1497,6 +1513,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <section class="panel panel--danger panel--wide">
             <h2 class="panel__title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>先看这里</h2>
             <p><b>必须彻底煮熟：</b>羊肚菌、鹅膏类（赭盖鹅膏、橙黄鹅膏），生吃有毒；紫丁香蘑、粉紫香蘑、疣柄牛肝菌、蜜环菌也须煮熟。</p>
+            <p><b>烹饪、煮沸、焯水、腌渍、冷冻、干燥，都不能让有毒的菌变安全。</b>有毒的菌怎么做都有毒；身份没确认的菌，不要下锅。</p>
             <p><b>【编者注】所有野生菌都建议彻底煮熟再吃。</b>田野蘑菇、牛肝菌、松露在一些地方有生食的做法，但生吃更容易引起肠胃不适，本站不推荐。</p>
             <p style="margin:0">几种菌混着做时，注意各自所需时间不同，确保全部熟透。</p>
           </section>
@@ -1531,9 +1548,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             </ul>
           </section>
           <section class="panel">
-            <h2 class="panel__title"><span class="panel__num">04</span>万能基础做法</h2>
-            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，任何杂菌都适用。4 人份，约 35 分钟。</p>
-            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 杂菌 500 g 切厚片 · 盐、黑胡椒</p>
+            <h2 class="panel__title"><span class="panel__num">04</span>基础做法：香芹蒜香</h2>
+            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，也适合鸡油菌、卷缘齿菌等本站列为可食、<b>已经当面确认过身份</b>的种类。羊肚菌、鹅膏类等“须煮熟”的种类按各自页面的要求煮够时间。4 人份，约 35 分钟。</p>
+            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 已确认身份的可食菌 500 g 切厚片 · 盐、黑胡椒</p>
             <ol class="steps">
               <li>小火加热油、蒜和一半欧芹。</li>
               <li>转大火下菌，勤翻炒 5 分钟，再转小火。</li>
@@ -1547,7 +1564,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           </section>
           <section class="panel panel--wide">
             <h2 class="panel__title"><span class="panel__num">06</span>保存</h2>
-            <p>干制最方便，可放很久；冷冻、腌制的宜在几个月内吃完。部分种类保存前要先<b>焯水</b>，可去除生菌中可能有的毒素，并保持颜色和形状。</p>
+            <p>干制最方便，可放很久；冷冻、腌制的宜在几个月内吃完。部分种类保存前先<b>焯水</b>，是为了保持颜色和形状，<b>不是为了去毒</b>：焯水、冷冻、干燥都不能让有毒的菌变安全。</p>
             <!--KEEP-->
           </section>
         </div>
@@ -1670,7 +1687,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <h1 class="view__title" id="h-recipes">精选食谱</h1>
           <p class="view__lead"><!--N_RECIPES--> 道家常做法，中式、日式、西式都有。用量为公制，1 汤匙 ≈ 15 ml；勾选材料可以当购物清单用。</p>
         </header>
-        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>野生菌必须百分之百确认种类，并彻底煮熟。</b>第一次吃某种菌只吃一小份，并留一两朵生的样本。每道菜也都可以用超市的栽培菌来做。</div></div>
+        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>食谱只适用于已经由有经验的人当面确认过身份的菌，并要彻底煮熟。</b>烹饪不能让有毒的菌变安全。下锅前留一两朵生的样本放冰箱。每道菜也都可以用超市的栽培菌来做。</div></div>
         <div class="rc-filter" id="rc-filter" role="group" aria-label="按菜系筛选"></div>
         <div class="rc-grid" id="rc-grid"></div>
       </section>
@@ -1689,6 +1706,11 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <a class="call-btn" href="tel:911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">昏迷、抽搐、呼吸困难：直接打急救</span><span class="call-btn__num">911</span></span></a>
             <a class="call-btn call-btn--secondary" href="tel:18005678911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">加拿大不列颠哥伦比亚省毒物中心（大温哥华地区：604-682-5050）</span><span class="call-btn__num">1-800-567-8911</span></span></a>
             <p class="muted-note" style="margin:0">如果按钮拨不出去，请手动拨打上面的号码。其他国家请拨当地急救电话。</p>
+            <ul class="sos-dont">
+              <li><b>不要等症状出现</b>：即使现在没事也马上打，出现症状后治疗更难。</li>
+              <li><b>不要自己催吐</b>，除非毒物中心让你这么做。</li>
+              <li><b>不要试网上的“解毒”偏方</b>，按毒物中心和医生的指示做。</li>
+            </ul>
           </section>
           <section class="panel">
             <h2 class="panel__title">2. 保留证据</h2>
@@ -1716,6 +1738,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <ol>
               <li><a href="https://poisonhelp.hrsa.gov/" target="_blank" rel="noopener">美国卫生与公众服务部 HRSA：Poison Help 1-800-222-1222（全美通用）</a></li>
               <li><a href="https://www.dpic.org/" target="_blank" rel="noopener">BC Drug and Poison Information Centre（BC 省毒物中心）</a></li>
+              <li><a href="https://calpoison.org/node/1706" target="_blank" rel="noopener">California Poison Control System：Plants &amp; Mushrooms（不要催吐、不要等症状、保留样本）</a></li>
+              <li><a href="https://www.kansashealthsystem.com/medical-services/poison-control/common-poisons/mushrooms" target="_blank" rel="noopener">The University of Kansas Health System Poison Control：Mushrooms（烹饪不能去毒、症状可能几天后才出现）</a></li>
               <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Galerina marginata（中毒时间线与毒物中心电话）</a></li>
               <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Amanita smithiana</a></li>
               <li><a href="https://en.wikipedia.org/wiki/Chlorophyllum_molybdites" target="_blank" rel="noopener">Wikipedia：Chlorophyllum molybdites</a></li>
@@ -1790,7 +1814,7 @@ const SEASONS = [
   { key: "autumn", label: "秋", months: [9, 10, 11] },
   { key: "winter", label: "冬", months: [12, 1, 2] },
 ];
-const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "少量食用": "small", "西北太平洋常见": "local", "西北太平洋少见": "rare" };
+const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "不宜多吃": "small", "西北太平洋常见": "local", "西北太平洋少见": "rare" };
 const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
 function monthStrip(ms) {
   // numbered circles: filled = in season, ringed = this month
@@ -1976,6 +2000,7 @@ function dataNotes(x) {
     <li><span class="src-type src-type--community">社区观察</span>季节和记录数：iNaturalist 研究级观察（BC、华盛顿、俄勒冈），取自 ${DATA.obsFetched}。反映的是人们什么时候拍照上传，不等于产量，也不是实时预测。</li>
     ${x.photo ? `<li><span class="src-type src-type--community">示例照片</span>iNaturalist 用户 ${esc(x.photo.author)}，${esc(x.photo.lic)}。只是一个例子，不能只凭照片鉴定。</li>` : ""}
     <li><span class="src-type src-type--editor">编者注</span>标有【编者注】的是本站补充的安全提示。</li>
+    <li><span class="src-type src-type--editor">审核状态</span>本站编辑根据上面列出的资料整理，<b>没有经过真菌学专家逐条审核</b>。资料整理到 ${DATA.built}。发现错误请告诉站长。</li>
   </ul>`;
 }
 $("#sheet").addEventListener("click", e => {
@@ -2243,6 +2268,7 @@ function renderFinder() {
   $("#finder-results").innerHTML = `
     <div class="res-sum"><b>已回答 ${answered} / ${STEPS.length} 题</b> · 相符的毒菌 ${tox.length} 种、其他种 ${ed.length} 种（本站共收录 ${toxicAll.length + DATA.species.length} 种）。
       ${answered < 3 ? "回答的特征还少，候选会很多。" : ""}本站不计算匹配分数或概率：“相符”只说明没有矛盾，不说明就是它。</div>
+    <div class="callout callout--info res-safe" role="note">${icon("shield")}<div>这里只列外形相符的候选，<b>不判断能不能吃</b>。本站没收录的菌不会出现在结果里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
     ${fstate.volva === "yes" ? `<div class="callout callout--danger" role="alert">${icon("skull")}<div><b>你看到了菌托。</b>这是鹅膏的重要标志，西北太平洋最致命的毒菌多是鹅膏。<b>不要吃。</b></div></div>` : ""}
     ${deadly.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>按目前的回答，仍可能是这些致命毒菌：</b>${deadly.map(p => `<a href="#tx-${p.slug}">${esc(p.zh)}</a>`).join("、")}。没有把它们一一排除之前，不要考虑食用。</div></div>` : ""}
     ${open.length ? `<div class="res-open"><b>还没确认 ${open.length} 项：</b>${open.map(x => `<button type="button" class="res-open__item" data-step="${STEPS.indexOf(x)}">${esc(x.short)}<span>${esc(F_TIP[x.key])}</span></button>`).join("")}</div>` : ""}
