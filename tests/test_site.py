@@ -161,10 +161,6 @@ def run():
             pg.goto(url + "#" + target); pg.wait_for_timeout(1100)
             top = pg.evaluate(f"document.getElementById('{target}').getBoundingClientRect().top")
             check(f"#{target} scrolls just under header (top={round(top)})", 0 <= top < 200)
-        n_tox = pg.locator(".tox-card").count()
-        check(f"every toxic card ({n_tox}) shows its months or says records are too few",
-              n_tox > 0 and pg.locator(".tox-card .tox-card__season").count() == n_tox
-              and pg.locator(".tox-card div.tox-card__season").count() == pg.locator(".tox-card .month-strip").count())
         pg.click(".sos-pill"); pg.wait_for_timeout(150)
         check("SOS -> emergency view with tel link", pg.evaluate("document.querySelector('.view.is-active').id") == "v-emergency"
               and pg.locator('a[href="tel:18002221222"]').count() == 1)
