@@ -730,6 +730,19 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
   background: rgba(0, 0, 0, .38); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .today__nav { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; }
 .today__prev .icon { transform: scaleX(-1); }
+/* phone: a shorter card (smaller photo, tighter spacing, fewer lines of description) */
+@media (max-width: 767px) {
+  .today__media { aspect-ratio: 16 / 10; }
+  .today__over { padding: var(--space-4) var(--space-4) var(--space-3); }
+  .today__name { font-size: 26px; }
+  .today__latin { font-size: 14px; }
+  .today__body { gap: var(--space-3); padding: var(--space-2) var(--space-4) var(--space-4); }
+  .today__text { font-size: 15px; line-height: 1.55; }
+  .today__text--clamp, .today__warn > div { -webkit-line-clamp: 2; line-clamp: 2; }
+  .today__meta { -webkit-line-clamp: 1; line-clamp: 1; }
+  .today__recipes { margin-inline: calc(-1 * var(--space-4)); padding-inline: var(--space-4); scroll-padding-left: var(--space-4); }
+  .today .callout { padding: var(--space-2) var(--space-3); font-size: 14px; gap: var(--space-2); }
+}
 @media (min-width: 768px) { .today__name { font-size: 40px; } .today__over { padding: var(--space-6) var(--space-6) var(--space-5); } .today__body { padding: var(--space-4) var(--space-6) var(--space-6); }
   .today__recipes { margin-inline: calc(-1 * var(--space-6)); padding-inline: var(--space-6); scroll-padding-left: var(--space-6); } }
 @media (min-width: 1024px) {
@@ -1945,7 +1958,7 @@ function todayBody(s) {
         <p class="today__text">${s.kitchen}</p>
         <div class="today__recipes">${recipes.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}<a class="chip" href="#recipes">${recipes.length ? "更多食谱" : "看精选食谱"}</a></div></section>
       ${s.warn ? `<div class="callout callout--danger today__warn" role="note">${icon("alert")}<div><b>易混毒菌：</b>${s.warn}</div></div>` : ""}
-      <div class="callout callout--info" role="note">${icon("shield")}<div><b>有任何疑问，就不要吃。</b>第一次吃一种菌，先请当地菌会或有经验的人当面确认，再对照<a href="#guide-check">吃之前检查清单</a>。</div></div>
+      <div class="callout callout--info" role="note">${icon("shield")}<div><b>有任何疑问，就不要吃。</b>第一次吃先请有经验的人当面确认，再对照<a href="#guide-check">检查清单</a>。</div></div>
       <div class="today__actions">
         <a class="btn btn--primary" href="#sp-${s.slug}">完整介绍和易混对比${icon("arrow", "icon--sm")}</a>
         <span class="today__nav">
