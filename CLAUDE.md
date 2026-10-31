@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 84 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 85 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -102,7 +102,9 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   fails. Part colours are the `--model-*` tokens. Both pause when off screen.
 - Species view opens with the "今日一菌" card (`#today`): one in-season, common (>= 300 PNW records) edible per day, never a
   "高风险" one, picked by date; photo with the name over it, then 认识它, 怎么吃 (kitchen note plus recipes that use it), its
-  look-alike warning and "有任何疑问，就不要吃". Arrows step to other days. Below it, "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
+  look-alike warning and "有任何疑问，就不要吃". Arrows step to other days. The card keeps one size on every day: JS reserves
+  the tallest possible body (measured off screen per width), and the description, habitat and look-alike note are clamped to a few
+  lines like the species cards (full text in the sheet). Never clamp the kitchen note. Below it, "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
   cards lead with a full-width photo. Toxic species use the same card (`sp-card sp-card--toxic`, red or amber top
   edge) in the same grid, and open the same sheet with the full description, notes, look-alikes and sources. Desktop cards tilt toward the pointer; header photos move with parallax.
 - The page grid uses `minmax(0, 1fr)` and `main { min-width: 0 }` so a scrolling strip can never widen the page.

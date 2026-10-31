@@ -112,6 +112,13 @@ def run():
         check(f"'today' card shows a species ({name0}) with how to eat it and the safety line",
               bool(name0) and "怎么吃" in txt and "有任何疑问，就不要吃" in txt and "不能只凭照片鉴定" in txt
               and pg.evaluate("document.querySelector('#today .today__img').naturalWidth > 0"))
+        size = []
+        for _ in range(10):
+            size.append(pg.evaluate("[document.getElementById('today').offsetHeight, Math.round(document.querySelector('#today [data-today=\"1\"]').getBoundingClientRect().top + scrollY)]"))
+            pg.click('#today [data-today="1"]'); pg.wait_for_timeout(40)
+        check(f"'today' card keeps one size and its arrows stay put across days {sorted(set(map(tuple, size)))}",
+              len(set(map(tuple, size))) == 1)
+        pg.click('#today [data-today="0"]'); pg.wait_for_timeout(100)
         pg.click('#today [data-today="1"]'); pg.wait_for_timeout(150)
         name1 = pg.inner_text("#today-name"); kick1 = pg.inner_text("#today .today__kicker")
         pg.click('#today [data-today="0"]'); pg.wait_for_timeout(150)

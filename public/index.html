@@ -705,23 +705,37 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .today__kicker { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, .88); }
 .today__name { margin: 0; font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; }
 .today__latin { font-size: 15px; color: rgba(255, 255, 255, .85); }
-.today__body { display: grid; gap: var(--space-4); padding: var(--space-3) var(--space-5) var(--space-5); }
+.today__body { display: flex; flex-direction: column; gap: var(--space-4); min-height: var(--today-body-h, 0px); padding: var(--space-3) var(--space-5) var(--space-5); }
 .today__credit { margin: 0; font-size: 11px; line-height: 1.5; color: var(--color-muted-foreground); }
 .today__credit a { color: inherit; }
 .today__sec { display: grid; gap: var(--space-1); }
 .today__h { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); }
 .today__text { margin: 0; font-size: 16px; line-height: 1.6; }
 .today__meta { margin: 0; font-size: 13px; line-height: 1.5; color: var(--color-muted-foreground); }
-.today__recipes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+/* the description and habitat are trimmed to a few lines so every day's card is close to one size; the full text is in the sheet.
+   Never trim the kitchen note (it can say "never raw") or the warnings. */
+.today__text--clamp, .today__meta { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.today__meta { -webkit-line-clamp: 2; line-clamp: 2; }
+/* like the species cards, the card shows the start of the look-alike note; the button below opens it in full */
+.today__warn > div { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.today__recipes { display: flex; gap: var(--space-2); margin: var(--space-2) calc(-1 * var(--space-5)) 0; padding: 0 var(--space-5) 2px;
+  overflow-x: auto; scrollbar-width: none; scroll-padding-left: var(--space-5); }
+.today__recipes::-webkit-scrollbar { display: none; }
+.today__recipes .chip { flex: none; white-space: nowrap; }
 .today__recipes .chip { display: inline-flex; align-items: center; gap: 6px; }
 .today__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.today__sec + .callout { margin-top: auto; }
+.today__back { position: absolute; top: var(--space-3); right: var(--space-3); display: inline-flex; align-items: center; gap: 6px; min-height: var(--target);
+  padding: 0 var(--space-4); border: 0; border-radius: 999px; font: inherit; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer;
+  background: rgba(0, 0, 0, .38); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .today__nav { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; }
 .today__prev .icon { transform: scaleX(-1); }
-@media (min-width: 768px) { .today__name { font-size: 40px; } .today__over { padding: var(--space-6) var(--space-6) var(--space-5); } .today__body { padding: var(--space-4) var(--space-6) var(--space-6); } }
+@media (min-width: 768px) { .today__name { font-size: 40px; } .today__over { padding: var(--space-6) var(--space-6) var(--space-5); } .today__body { padding: var(--space-4) var(--space-6) var(--space-6); }
+  .today__recipes { margin-inline: calc(-1 * var(--space-6)); padding-inline: var(--space-6); scroll-padding-left: var(--space-6); } }
 @media (min-width: 1024px) {
   .today { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
   .today__media { aspect-ratio: auto; min-height: 460px; }
-  .today__body { align-content: start; padding-top: var(--space-6); }
+  .today__body { padding-top: var(--space-6); }
 }
 .view__hero { translate: 0 var(--hero-shift, 0px); }
 @media (hover: hover) and (pointer: fine) {
@@ -1907,50 +1921,72 @@ const model = (() => {
 
 /* ---------- species view: one mushroom a day ---------- */
 // Each day shows one common Pacific Northwest edible that is in season that month (never a "高风险" one, e.g. an amanita).
-let todayOff = 0;
+let todayOff = 0, todayFit = 0;
+const todayOk = s => s.pnw >= 300 && !s.flags.includes("高风险") && s.photo;
+function todayPool(m) {
+  const pool = DATA.species.filter(s => todayOk(s) && s.months.includes(m));
+  return pool.length ? pool : DATA.species.filter(todayOk);
+}
 function todayPick(off) {
   const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + off);
-  const ok = s => s.pnw >= 300 && !s.flags.includes("高风险") && s.photo;
-  let pool = DATA.species.filter(s => ok(s) && s.months.includes(d.getMonth() + 1));
-  if (!pool.length) pool = DATA.species.filter(ok);
+  const pool = todayPool(d.getMonth() + 1);
   const day = Math.floor((d.getTime() - d.getTimezoneOffset() * 6e4) / 864e5);
   return { d, s: pool[day % pool.length] };
 }
+function todayBody(s) {
+  const p = s.photo, g = groupBy[s.group], recipes = DATA.recipes.filter(r => r.sp.includes(s.slug));
+  return `
+      <p class="today__credit">示例照片，不能只凭照片鉴定 · <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a> · <a href="${p.licUrl}" target="_blank" rel="noopener">${esc(p.lic)}</a> · iNaturalist</p>
+      ${badges(s.flags)}
+      <section class="today__sec"><h3 class="today__h">${icon("search", "icon--sm")}认识它</h3>
+        <p class="today__text today__text--clamp">${s.feat}</p>
+        <p class="today__meta">${esc(g.name)} · ${s.hab} · ${esc(s.season)} · 孢子印${s.spore}</p></section>
+      <section class="today__sec"><h3 class="today__h">${icon("pan", "icon--sm")}怎么吃</h3>
+        <p class="today__text">${s.kitchen}</p>
+        <div class="today__recipes">${recipes.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}<a class="chip" href="#recipes">${recipes.length ? "更多食谱" : "看精选食谱"}</a></div></section>
+      ${s.warn ? `<div class="callout callout--danger today__warn" role="note">${icon("alert")}<div><b>易混毒菌：</b>${s.warn}</div></div>` : ""}
+      <div class="callout callout--info" role="note">${icon("shield")}<div><b>有任何疑问，就不要吃。</b>第一次吃一种菌，先请当地菌会或有经验的人当面确认，再对照<a href="#guide-check">吃之前检查清单</a>。</div></div>
+      <div class="today__actions">
+        <a class="btn btn--primary" href="#sp-${s.slug}">完整介绍和易混对比${icon("arrow", "icon--sm")}</a>
+        <span class="today__nav">
+          <button class="icon-btn today__prev" type="button" data-today="-1" aria-label="前一天">${icon("arrow")}</button>
+          <button class="icon-btn" type="button" data-today="1" aria-label="后一天">${icon("arrow")}</button>
+        </span>
+      </div>`;
+}
 function renderToday() {
-  const { d, s } = todayPick(todayOff), p = s.photo, g = groupBy[s.group];
+  const { d, s } = todayPick(todayOff), p = s.photo;
   const date = `${d.getMonth() + 1} 月 ${d.getDate()} 日`;
   const when = todayOff === 0 ? "今日一菌" : todayOff === -1 ? "昨天" : todayOff === 1 ? "明天" : todayOff < 0 ? `${-todayOff} 天前` : `${todayOff} 天后`;
-  const recipes = DATA.recipes.filter(r => r.sp.includes(s.slug));
   $("#today").innerHTML = `
     <div class="today__media">
       <img class="today__img" src="photos/${p.file}" width="${p.w}" height="${p.h}" decoding="async" alt="${esc(s.zh)}的示例照片">
+      ${todayOff ? `<button class="today__back" type="button" data-today="0">${icon("calendar", "icon--sm")}回到今天</button>` : ""}
       <div class="today__over">
         <span class="today__kicker">${icon("calendar", "icon--sm")}${when} · ${date}</span>
         <h2 class="today__name" id="today-name">${esc(s.zh)}</h2>
         <span class="today__latin latin">${esc(s.latin)}</span>
       </div>
     </div>
-    <div class="today__body">
-      <p class="today__credit">示例照片，不能只凭照片鉴定 · <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a> · <a href="${p.licUrl}" target="_blank" rel="noopener">${esc(p.lic)}</a> · iNaturalist</p>
-      ${badges(s.flags)}
-      <section class="today__sec"><h3 class="today__h">${icon("search", "icon--sm")}认识它</h3>
-        <p class="today__text">${s.feat}</p>
-        <p class="today__meta">${esc(g.name)} · ${s.hab} · ${esc(s.season)} · 孢子印${s.spore}</p></section>
-      <section class="today__sec"><h3 class="today__h">${icon("pan", "icon--sm")}怎么吃</h3>
-        <p class="today__text">${s.kitchen}</p>
-        <div class="today__recipes">${recipes.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}<a class="chip" href="#recipes">${recipes.length ? "更多食谱" : "看精选食谱"}</a></div></section>
-      ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易混毒菌：</b>${s.warn}</div></div>` : ""}
-      <div class="callout callout--info" role="note">${icon("shield")}<div><b>有任何疑问，就不要吃。</b>第一次吃一种菌，先请当地菌会或有经验的人当面确认，再对照<a href="#guide-check">吃之前检查清单</a>。</div></div>
-      <div class="today__actions">
-        <a class="btn btn--primary" href="#sp-${s.slug}">完整介绍和易混对比${icon("arrow", "icon--sm")}</a>
-        <span class="today__nav">
-          ${todayOff ? `<button class="btn-text" type="button" data-today="0">回到今天</button>` : ""}
-          <button class="icon-btn today__prev" type="button" data-today="-1" aria-label="前一天">${icon("arrow")}</button>
-          <button class="icon-btn" type="button" data-today="1" aria-label="后一天">${icon("arrow")}</button>
-        </span>
-      </div>
-    </div>`;
+    <div class="today__body">${todayBody(s)}</div>`;
+  fitToday();
 }
+// Keep the card one size on every day: reserve the height of the tallest card any day can show (measured off screen
+// at the current width), so the page below never jumps and the arrows stay under the finger.
+function fitToday() {
+  const body = $("#today .today__body"), w = body ? body.offsetWidth : 0;
+  if (!w || todayFit === w) return;
+  todayFit = w;
+  const probe = document.createElement("div");
+  probe.className = "today__body"; probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText = `position:absolute;left:-10000px;top:0;visibility:hidden;width:${w}px;min-height:0`;
+  $("#today").appendChild(probe);
+  let max = 0;
+  for (const s of DATA.species.filter(todayOk)) { probe.innerHTML = todayBody(s); max = Math.max(max, probe.offsetHeight); }
+  probe.remove();
+  $("#today").style.setProperty("--today-body-h", max + "px");
+}
+if (window.ResizeObserver) new ResizeObserver(() => fitToday()).observe($("#today"));
 $("#today").addEventListener("click", e => {
   const b = e.target.closest("[data-today]"); if (!b) return;
   const k = +b.dataset.today; todayOff = k ? todayOff + k : 0;
