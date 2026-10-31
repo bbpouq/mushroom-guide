@@ -12,8 +12,8 @@ SRC = Path(__file__).resolve().parent
 ROOT = SRC.parent
 sys.path.insert(0, str(SRC))
 
-from data.book import GROUPS, POISON, RECIPES  # noqa: E402
-from data.guide import COOK, FEATURED, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6, RECIPES6_EXTRA, RECIPES_ORIG  # noqa: E402
+from data.book import GROUPS, POISON  # noqa: E402
+from data.guide import COOK, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6, RECIPES6_EXTRA, RECIPES_ORIG  # noqa: E402
 from data.photos import PHOTOS, HEROES, RECIPE_PHOTOS, LICENCE_NAME, LICENCE_URL  # noqa: E402
 from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
 from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
@@ -122,10 +122,9 @@ for r in recipes:
         ph, sp = by_slug[r["sp"][0]]["photo"], by_slug[r["sp"][0]]
         r["photo"] = dict(file=ph["file"], dish=False, sp=sp["slug"], spName=sp["zh"], author=ph["author"],
                           lic=ph["lic"], licUrl=ph["licUrl"], url=ph["url"], site="iNaturalist")
-rindex = [dict(p=p, zh=zh.replace(" ★", ""), en=en, star=p in FEATURED) for p, zh, en in RECIPES]
 
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
-            compare=COMPARE, recipes=recipes, rindex=rindex, obsFetched=FETCHED, obsPlaces=PLACES)
+            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES)
 
 
 def kv(items):
@@ -145,7 +144,6 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("<!--N_TOXIC-->", str(len(poison) + len(poison_extra)))
         .replace("<!--N_COMPARE-->", str(len(COMPARE)))
         .replace("<!--N_RECIPES-->", str(len(recipes)))
-        .replace("<!--N_BOOKRECIPES-->", str(len(RECIPES6)))
         .replace("<!--N_BOOK-->", str(sum(1 for x in species if x.get("page"))))
         .replace("<!--N_NA-->", str(sum(1 for x in species if not x.get("page")))))
 for view, h in HEROES.items():
@@ -155,6 +153,8 @@ for view, h in HEROES.items():
         f'<span class="view__credit">照片：<a href="{h["photo_url"]}" target="_blank" rel="noopener">{h["author"]}</a>'
         f' · <a href="{LICENCE_URL[h["licence"]]}" target="_blank" rel="noopener">{LICENCE_NAME[h["licence"]]}</a> · iNaturalist</span>'))
 assert "<!--HERO:" not in html, "a view header has no hero photo in data/photos.HEROES"
+# readers have no context for "the book": the page names it once, in full, in the footer
+assert "原书" not in html, "the page mentions 原书; name the book in full in the footer instead"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "
       f"{len(COMPARE)} comparisons, {len(html.encode()) // 1024} KB")

@@ -64,6 +64,8 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   peer-reviewed papers. Do not state facts you cannot source.
 - Safety notes we added that are not in the book are labelled `【编者注】`.
 - Book text is our own Chinese rewrite. Keep rewriting, and never paste passages from the book or the web.
+- Site copy never says "原书" or cites book page numbers (readers have no context for them; the build fails on
+  "原书"). The book is credited once, by full title, in the footer. Page numbers stay in `data/book.py` only.
 - Every species, edible or toxic, needs an entry in `data/tags.py`; the build fails otherwise.
 - The finder must stay conservative: toxic species are matched leniently (a "no volva" or "no ring"
   answer still lists deadly amanitas and galerina, with the reason shown), and results put toxic first.
