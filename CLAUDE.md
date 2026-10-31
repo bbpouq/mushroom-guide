@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 86 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 104 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -33,8 +33,8 @@ src/
   data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR, keyed by slug.
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
   data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
-                         and HEROES: the header photo behind each view's large title (none on the species view, whose
-                         "今日一菌" card leads with a photo, and none on the emergency view).
+                         and HEROES: the header photo behind each view's large title (the home view's sits behind the search box;
+                         none on the species view and none on the emergency view).
                          RECIPE_PHOTOS (dish photos, keyed by recipe id) is optional; without one a recipe shows its
                          main mushroom's example photo, captioned as such
                          Pin a better photo in fetch_photos.PINNED rather than editing this file
@@ -77,34 +77,50 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - The finder must stay conservative: toxic species are matched leniently (a "no volva" or "no ring"
   answer still lists deadly amanitas and galerina, with the reason shown), and results put toxic first.
 - Our own recipes must use only mushrooms the site covers, say "cook thoroughly" where it matters, and repeat
-  the species' key look-alike warning in the tip. Never suggest eating a mushroom raw.
+  the species' key look-alike warning in the tip. Never suggest eating a mushroom raw, anywhere on the site
+  (the kitchen guide says to cook every wild mushroom thoroughly).
 - Permits and seasons vary by place. Phrase them as "check local rules" / "因地区而异".
 
 ## Design system (iOS-style glass, since 2026-10)
 
-- Style: iOS translucent materials over a soft grouped background (`#F2F2F7` light, `#000` dark) with a faint
-  green/amber/blue aura behind (`body::before`). Large bold titles, hairline (0.5px) separators, filled capsule
+- Style (since 2026-11): "modern nature science × field journal": iOS-style translucent bars over warm ivory (`#F5F2EA`
+  light, forest black `#0C0F0D` dark) with a faint moss/amber aura behind (`body::before`). Large bold titles, hairline (0.5px) separators, filled capsule
   chips and buttons, cards with soft depth. No English eyebrows, thick rules or decorative numbering.
 - Glass (`backdrop-filter`, tokens `--glass`, `--glass-strong`, `--glass-blur`) only on bars and floating layers:
   header, tab bar, sidebar, sticky search bar, sheet, toast, calendar sticky rows. Cards are translucent
   (`--color-card`) without blur, which stays fast on phones. `prefers-reduced-transparency` and browsers without
   backdrop-filter get opaque fills (`--color-card-solid`, `--color-background`).
-- Palette tokens in `:root` (light) plus dark-mode overrides: primary green `#15803D` (dark `#4ADE80`), accent
-  amber `#D97706` (fills only; text on it is black), danger red reserved for toxicity and emergency.
+- Palette tokens in `:root` (light) plus dark-mode overrides: forest green `#2D5A3D` (dark `#9CCB9F`), moss `#5E7334`,
+  muted amber `#C98A2B` (fills only; text on it is black), danger red reserved for toxicity and emergency.
+  Green marks interaction only; never use it as a "safe/edible" verdict (the 上品 and 西北太平洋常见 badges are amber and grey).
   Style everything through tokens; no raw hex in components.
 - Motion (since 2026-11): views fade in with a springy header; cards ease in as they scroll into view
   (IntersectionObserver adds `is-reveal` / `is-shown`, skipped under reduced motion); controls shrink on press;
   header photos drift slowly; the phone species sheet can be dragged down to close. Never animate warnings.
   Animate `.view` with opacity only: a transform on it moves the sticky search bar inside.
+- The finder (特征识别) is a step-by-step guide: one question at a time with a progress row (tap any step to change it),
+  "不知道，跳过" on every question, 上一题, and a short "why this matters". It asks only the five features every species is tagged
+  with in `data/tags.py`; do not add questions without checked tags for every species. Results never score or rank by
+  probability: each candidate shows 相符 / 仍列出 (kept despite a contradicting answer) / 未确认, deadly matches are named in an
+  alert as soon as one answer is given, a volva answer raises the amanita alarm, and toxic species come first.
 - The finder has an interactive 3D mushroom (`#model`): drag to rotate, tap a part for its explanation; each
   finder question has a "在模型上看" button. three.js (vendored, imported only when the model scrolls into view)
   renders it with soft light and shadows; a small 2D-canvas lathe renderer is the fallback when WebGL or the import
   fails. Part colours are the `--model-*` tokens. Both pause when off screen.
-- Species view opens with the "今日一菌" card (`#today`): one in-season, common (>= 300 PNW records) edible per day, never a
+- Home view (`#home`, the default) has a hero photo with a search box (edible and toxic species, toxic first; an empty
+  result says not being listed does not mean safe), four entry cards (识别 / 图鉴 / 毒菌与近似种 / 记录), the "认出来，不等于
+  可以吃" note, the "今日一菌" card (`#today`): one in-season, common (>= 300 PNW records) edible per day, never a
   "高风险" one, picked by date; photo with the name over it, then 认识它, 怎么吃 (kitchen note plus recipes that use it), its
   look-alike warning and "有任何疑问，就不要吃". Arrows step to other days. The card keeps one size on every day: JS reserves
   the tallest possible body (measured off screen per width), and the description, habitat and look-alike note are clamped to a few
-  lines like the species cards (full text in the sheet). Never clamp the kitchen note. Below it, "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
+  lines like the species cards (full text in the sheet). Never clamp the kitchen note. Then "N 月可以找", 季节变化 (species whose
+  historical iNaturalist records rise or fall next month, labelled as past records, not a forecast) and learning links.
+- The species view is the edible 图鉴 (catalog). The species sheet opens with the photo (tap to zoom the 1024px copy full
+  screen, `#zoom`), names, a one-line summary and three quick facts, then sticky section jumps: 快速鉴别 (the tagged features),
+  易混毒菌 (warning plus photo pairs of every comparison it is in), 生态与季节, 厨房, 资料来源 (sources labelled by kind:
+  官方机构 / 学术文献 / 专业参考 / 社区观察 / 百科 / 图书, plus where the season data and photo come from).
+- Comparisons show each mushroom's photo (tap to zoom) and switch between 并排 and 逐个看 (default on phones for 3+ columns),
+  and say that no single difference is enough to eat. SpeciesSpecies
   cards lead with a full-width photo. Toxic species use the same card (`sp-card sp-card--toxic`, red or amber top
   edge) in the same grid, and open the same sheet with the full description, notes, look-alikes and sources. Desktop cards tilt toward the pointer; header photos move with parallax.
 - The page grid uses `minmax(0, 1fr)` and `main { min-width: 0 }` so a scrolling strip can never widen the page.
@@ -117,8 +133,8 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
 - Composable building blocks that may be combined with a component class: `btn`, `chip`, `icon`, `icon-btn`, `latin`.
 - Touch targets at least 44px on coarse pointers; SVG icons only (no emoji); visible labels on inputs;
   respect `prefers-reduced-motion`; no horizontal overflow at 375px (wide tables must reflow on phones).
-- Phone: sticky header plus bottom nav (at most 5 tabs: 食用菌 / 特征查找 / 毒菌 / 指南 / 记录; 食谱 is reached from the guide
-  view's jump row and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 6 views.
+- Phone: sticky header plus bottom nav (at most 5 tabs: 首页 / 识别 / 图鉴 / 毒菌 / 记录; 指南 and 食谱 are reached from the home
+  view, the guide view's jump row and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 7 views.
 
 ## Routing (keep it script-driven)
 
@@ -126,11 +142,12 @@ The page is often opened inside sandboxed previews (chat apps, file viewers) whe
 navigates the frame away and blanks the page. All in-page links are intercepted in JS. History is
 updated with `pushState` inside try/catch, so it works where allowed and fails silently elsewhere.
 
-- Views: `#species`, `#finder`, `#toxic`, `#guide`, `#log` (personal finds log), `#recipes`, `#emergency`
+- Views: `#home` (default), `#species`, `#finder`, `#toxic`, `#guide`, `#log` (personal finds log), `#recipes`, `#emergency`
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` opens a toxic species sheet (same sheet, closing goes
   back to `#toxic`), `#cmp-<id>` scrolls to a comparison,
   `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist;
-  `#guide-calendar`, the season calendar built from `data/seasonality.py`), `#rc-<id>` opens a recipe in the recipes view. The old `#guide-log` link still opens `#log`.
+  `#guide-calendar`, the season calendar built from `data/seasonality.py`), `#rc-<id>` opens a recipe in the recipes view, `#guide-gloss` opens the glossary.
+  A sheet opened from any view stays over that view; closing it returns there and keeps the scroll position. The old `#guide-log` link still opens `#log`.
 - The finds log lives in `localStorage` under `mushroom-guide:finds:v1` (this device only, never uploaded).
   Every storage call is wrapped in try/catch; if storage is unavailable the log says so instead of failing.
 - Slugs come from the Latin name (`Boletus edulis` becomes `boletus-edulis`). Hash names stay plain ASCII.

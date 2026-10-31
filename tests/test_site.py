@@ -214,6 +214,27 @@ def run():
         pg.click("#tox-grid .sp-card >> nth=0"); pg.wait_for_timeout(500)
         check(f"toxic list uses the species card pattern ({n_tx} cards) and opens a sheet",
               n_tx == 22 and pg.locator("#tox-grid .sp-card__photo").count() == n_tx and pg.evaluate("document.getElementById('sheet').open"))
+        pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
+        body = pg.inner_text("#sheet-body")
+        check("species sheet: photo first, quick facts, sections and typed sources",
+              pg.evaluate("document.querySelector('#sheet-body .photo').compareDocumentPosition(document.getElementById('sheet-title')) & 4") > 0
+              and pg.locator("#sheet-body .sheet__q").count() == 3 and pg.locator("#sheet-body .sheet__sec").count() == 5
+              and pg.locator("#sheet-body .src-type").count() >= 2 and pg.locator("#sheet-body .look-pair").count() >= 1)
+        pg.click("#sheet-body .photo__zoom"); pg.wait_for_timeout(300)
+        check("tapping a photo opens the high-resolution copy full screen", pg.evaluate("document.getElementById('zoom').open")
+              and pg.evaluate("document.getElementById('zoom-img').src").endswith("-hd.webp") and "不能只凭照片鉴定" in pg.inner_text("#zoom-cap"))
+        pg.click("#zoom [data-zoom-close]"); pg.wait_for_timeout(150)
+        check("closing the zoom leaves the sheet open", not pg.evaluate("document.getElementById('zoom').open") and pg.evaluate("document.getElementById('sheet').open"))
+        pg.click("#sheet [data-close]"); pg.wait_for_timeout(300)
+        pg.goto(url + "#cmp-chanterelle"); pg.wait_for_timeout(1000)
+        card = "#cmp-chanterelle"
+        sw0 = pg.locator(f"{card} .cmp__tab").count()
+        pg.click(f'{card} [data-cmp-k="1"]'); pg.wait_for_timeout(100)
+        one = pg.inner_text(f"{card} .cmp__one")
+        pg.click(f'{card} [data-cmp-mode="side"]'); pg.wait_for_timeout(100)
+        check("comparisons show photos and switch between one-at-a-time and side by side",
+              sw0 == 4 and "发光类脐菇" in one and pg.locator(f"{card} .cmp__col").count() == 4
+              and pg.locator(f"{card} .cmp__pic img").count() >= 3 and "不足以单独确认" in pg.inner_text(card))
         for target in ["cmp-matsutake"]:
             pg.goto(url + "#" + target); pg.wait_for_timeout(1100)
             top = pg.evaluate(f"document.getElementById('{target}').getBoundingClientRect().top")
@@ -230,19 +251,32 @@ def run():
             let n = 0; for (let i = 3; i < d.length; i += 4 * 97) if (d[i] > 0) n++; return n; })()""")
         pg.click('#model-parts [data-model-part="volva"]'); pg.wait_for_timeout(200)
         check(f"3D model draws ({painted} samples) and explains a picked part", painted > 50 and "菌托" in pg.inner_text("#model-desc"))
+        pg.click('#finder-steps .wiz__dot[data-step="3"]'); pg.wait_for_timeout(100)
         pg.click('#finder-steps [data-model-part="ring"]'); pg.wait_for_timeout(300)
         check("a finder question's 'see on model' selects that part",
               pg.get_attribute('#model-parts [data-model-part="ring"]', "aria-pressed") == "true")
+        pg.click('#finder-steps .wiz__dot[data-step="0"]'); pg.wait_for_timeout(100)
+        check("the finder asks one question at a time with progress", pg.locator("#finder-steps .wiz__q").count() == 1
+              and pg.locator("#finder-steps .wiz__dot").count() == 5 and "1 / 5" in pg.inner_text("#finder-steps legend"))
         for k, v in [("hym", "gills"), ("sub", "wood"), ("spore", "white")]:
             pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
         res = pg.inner_text("#finder-results")
         check("finder results do not widen the phone page", pg.evaluate("document.documentElement.scrollWidth") <= 390)
-        check("finder gills+wood+white", "发光类脐菇" in res and "蜜环菌" in res and "纹缘盔孢伞" not in res)
+        check("finder gills+wood+white", "发光类脐菇" in res and "蜜环菌" in res and "纹缘盔孢伞" not in pg.inner_text(".res-block--toxic"))
+        check("finder shows what matched and what is unchecked, with no score",
+              "相符：" in res and "未确认：" in res and "%" not in res and "还没确认 2 项" in res)
+        pg.click('[data-wiz="prev"]'); pg.wait_for_timeout(50)
+        check("the finder can step back to change an answer", "3 / 5" in pg.inner_text("#finder-steps legend")
+              and pg.get_attribute('[data-f="spore"][data-v="white"]', "aria-pressed") == "true")
         pg.click("#finder-reset")
-        for k, v in [("hym", "gills"), ("sub", "ground"), ("spore", "white"), ("volva", "no")]:
+        for k, v in [("hym", "gills"), ("sub", "ground"), ("spore", "white"), ("ring", ""), ("volva", "no")]:
             pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
         res = pg.inner_text("#finder-results")
-        check("finder keeps deadly amanitas when volva=no", "毒鹅膏" in res and "菌托常埋在土里" in res)
+        check("finder keeps deadly amanitas when volva=no, warns early and allows skipping",
+              "毒鹅膏" in res and "菌托常埋在土里" in res and "仍可能是这些致命毒菌" in res and "菌环" in pg.inner_text(".res-open"))
+        pg.click("#finder-reset"); pg.click('[data-f="hym"][data-v="gills"]'); pg.click('[data-f="sub"][data-v="ground"]')
+        pg.click('[data-f="spore"][data-v="white"]'); pg.click('[data-f="ring"][data-v=""]'); pg.click('[data-f="volva"][data-v="yes"]'); pg.wait_for_timeout(50)
+        check("seeing a volva raises the amanita alarm at once", "你看到了菌托" in pg.inner_text("#finder-results"))
         ctx.grant_permissions(["clipboard-read", "clipboard-write"], origin=url.rstrip("/"))
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(500)
         pg.evaluate("navigator.share = undefined"); pg.click("[data-share]"); pg.wait_for_timeout(250)

@@ -502,18 +502,38 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .cmp__table { display: grid; }
 .cmp__cols, .cmp__cells { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 1px; background: var(--color-border); }
 .cmp__col { background: var(--color-card); padding: var(--space-2) var(--space-3); font-weight: 700; font-size: 14px; display: flex; flex-direction: column; gap: 2px; border-top: 4px solid var(--color-border); }
-.cmp__col--edible { border-top-color: var(--color-primary); }
+.cmp__col--edible { border-top-color: var(--color-muted-foreground); }
 .cmp__col--caution { border-top-color: var(--color-accent); }
 .cmp__col--toxic { border-top-color: var(--color-destructive); }
 .cmp__col a { color: inherit; text-decoration-color: var(--color-border); }
 .cmp__kind { font-size: 11px; font-weight: 600; letter-spacing: .04em; }
-.cmp__col--edible .cmp__kind { color: var(--color-primary); }
+.cmp__col--edible .cmp__kind { color: var(--color-muted-foreground); }
 .cmp__col--caution .cmp__kind { color: var(--color-warning-text); }
 .cmp__col--toxic .cmp__kind { color: var(--color-danger-text); }
 .cmp__row-label { background: var(--color-muted); padding: 6px var(--space-3); font-size: 12px; font-weight: 700; color: var(--color-muted-foreground); letter-spacing: .04em; }
 .cmp__cell { background: var(--color-card); padding: var(--space-2) var(--space-3) var(--space-3); font-size: 14px; line-height: 1.55; }
 .cmp__src { padding: var(--space-2) var(--space-5) var(--space-4); font-size: 12px; color: var(--color-muted-foreground); }
 .cmp__src a { color: inherit; }
+.cmp__pic { display: block; width: 100%; padding: 0; border: 0; background: var(--color-muted); border-radius: 8px; overflow: hidden; cursor: zoom-in; margin-bottom: 4px; }
+.cmp__pic img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.cmp__pic--none { display: grid; place-items: center; aspect-ratio: 4 / 3; font-size: 11px; font-weight: 500; color: var(--color-muted-foreground); cursor: default; }
+.cmp__modes { display: flex; gap: var(--space-2); padding: 0 var(--space-5) var(--space-3); }
+.cmp__modes .chip { display: inline-flex; align-items: center; gap: 6px; }
+.cmp__tabs { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding: 0 var(--space-5) var(--space-3); }
+.cmp__tabs::-webkit-scrollbar { display: none; }
+.cmp__tab { flex: none; min-height: var(--target); padding: 0 var(--space-4); border: 0; border-radius: 999px; background: var(--color-muted); font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
+.cmp__tab[aria-selected="true"] { background: var(--color-foreground); color: var(--color-background); }
+.cmp__tab--toxic[aria-selected="true"] { background: var(--color-destructive); color: #fff; }
+.cmp__one { border-top: 4px solid var(--color-border); margin: 0 var(--space-5); padding-top: var(--space-3); }
+.cmp__one-head { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-3); align-items: center; }
+.cmp__one-name { font-size: 18px; font-weight: 700; }
+.cmp__one-name a { color: inherit; }
+.cmp__one-rows { margin: var(--space-3) 0 0; }
+.cmp__one-rows > div { display: grid; grid-template-columns: 88px 1fr; gap: var(--space-3); padding: var(--space-2) 0; border-top: .5px solid var(--color-border); font-size: 15px; line-height: 1.55; }
+.cmp__one-rows dt { font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); }
+.cmp__one-rows dd { margin: 0; }
+.cmp__note { display: flex; gap: 6px; align-items: flex-start; margin: var(--space-3) var(--space-5) 0; font-size: 13px; line-height: 1.5; color: var(--color-danger-text); }
+.cmp__note .icon { margin-top: 2px; }
 .is-target { animation: target-flash 1.6s var(--ease); }
 @keyframes target-flash { 0%, 40% { box-shadow: 0 0 0 4px var(--color-accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
 
@@ -829,6 +849,83 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .home-learn__item > span { display: grid; line-height: 1.4; }
 .home-learn__item > span > span { font-size: 13px; color: var(--color-muted-foreground); }
 
+/* ---------- species sheet: photo first, quick facts, section jumps, look-alike pairs, zoom ---------- */
+.sheet__bar + .photo { margin-top: 0; }
+.photo__zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: var(--radius); }
+.photo__zoom-icon { position: absolute; right: var(--space-2); bottom: var(--space-2); width: 32px; height: 32px; padding: 7px; border-radius: 999px;
+  color: #fff; background: rgba(0, 0, 0, .42); }
+.sheet__title { margin-top: var(--space-4); }
+.sheet__one { margin: var(--space-3) 0 0; font-size: 17px; line-height: 1.55; }
+.sheet__quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: var(--space-4) 0 var(--space-3); border-radius: var(--radius); overflow: hidden; background: var(--color-border); }
+.sheet__q { background: var(--color-card-solid); padding: var(--space-2) var(--space-3); }
+.sheet__q dt { font-size: 12px; color: var(--color-muted-foreground); }
+.sheet__q dd { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.sheet__bar { background: var(--glass-strong); }
+.sheet__nav { position: sticky; top: var(--sheet-bar-h, 44px); z-index: 1; display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; margin: var(--space-4) calc(-1 * var(--space-5)) 0;
+  padding: var(--space-2) var(--space-5); background: var(--glass-strong); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-bottom: .5px solid var(--color-border); }
+.sheet__nav::-webkit-scrollbar { display: none; }
+.sheet__nav .chip { flex: none; min-height: 36px; font-size: 14px; }
+.sheet__sec { padding-top: var(--space-5); scroll-margin-top: 104px; }
+.sheet__h { font-size: 20px; font-weight: 700; letter-spacing: -.01em; margin-bottom: var(--space-2); }
+.sheet__sec .facts { margin-top: var(--space-2); }
+.sheet__recipes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-3); }
+.sheet__recipes .chip { display: inline-flex; align-items: center; gap: 6px; }
+.look-list { display: grid; gap: var(--space-3); margin-top: var(--space-3); }
+.look-pair { display: grid; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius); background: var(--color-muted); color: var(--color-foreground); text-decoration: none; }
+.look-pair__pics { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--space-2); }
+.look-pair__pic { display: grid; gap: 4px; font-size: 12px; font-weight: 600; line-height: 1.3; border-top: 3px solid var(--color-muted-foreground); padding-top: 4px; }
+.look-pair__pic--toxic { border-top-color: var(--color-destructive); color: var(--color-danger-text); }
+.look-pair__pic--caution { border-top-color: var(--color-accent); }
+.look-pair__pic img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; background: var(--color-card); }
+.look-pair__title { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--color-primary); }
+.look-pair__title .icon:last-child { margin-left: auto; }
+.src-type { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 6px; font-size: 11px; font-weight: 700; line-height: 1.7; background: var(--color-muted); color: var(--color-muted-foreground); white-space: nowrap; }
+.src-type--official, .src-type--academic { background: var(--color-primary-surface); color: var(--color-primary); }
+.src-type--editor { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.data-notes { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; gap: var(--space-2); font-size: 13px; line-height: 1.55; color: var(--color-muted-foreground); }
+.zoom { border: 0; padding: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; background: rgba(0, 0, 0, .94); color: #fff; }
+.zoom::backdrop { background: rgba(0, 0, 0, .8); }
+.zoom[open] { display: grid; grid-template-rows: 1fr auto; place-items: center; }
+.zoom__img { max-width: 100%; max-height: calc(100dvh - 96px); object-fit: contain; touch-action: pinch-zoom; cursor: zoom-out; }
+.zoom__cap { margin: 0; padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom)); font-size: 13px; line-height: 1.5; color: rgba(255, 255, 255, .82); text-align: center; max-width: 72ch; }
+.zoom__close { position: fixed; top: calc(var(--space-3) + env(safe-area-inset-top)); right: var(--space-3); background: rgba(255, 255, 255, .16); color: #fff; z-index: 1; }
+
+/* ---------- finder wizard ---------- */
+.wiz__progress { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-1); }
+.wiz__dot { width: 100%; min-height: 56px; display: grid; justify-items: center; align-content: center; gap: 0; padding: var(--space-1) 2px; border: 0; border-radius: 12px; background: var(--color-muted); cursor: pointer; line-height: 1.25; }
+.wiz__dot[aria-current="step"] { background: var(--color-foreground); color: var(--color-background); }
+.wiz__dot-n { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.wiz__dot-label { font-size: 12px; font-weight: 600; }
+.wiz__dot-val { font-size: 11px; opacity: .72; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz__dot.is-done:not([aria-current]) { background: var(--color-primary-surface); color: var(--color-primary); }
+.wiz__why { font-size: 14px; line-height: 1.55; margin: 0 0 var(--space-3); padding: var(--space-2) var(--space-3); border-radius: 10px; background: var(--color-muted); }
+.wiz__opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.wiz__opt { display: flex; align-items: center; gap: var(--space-2); min-height: 52px; padding: var(--space-2) var(--space-3); text-align: left; font-size: 14px; font-weight: 600; line-height: 1.35;
+  border: 1.5px solid transparent; border-radius: 12px; background: var(--color-card-solid); box-shadow: var(--shadow-card); cursor: pointer; transition: transform 260ms var(--spring); }
+.wiz__opt:active { transform: scale(.96); }
+.wiz__opt[aria-pressed="true"] { border-color: var(--color-primary); background: var(--color-primary-surface); }
+.wiz__opts--pics .wiz__opt { flex-direction: column; justify-content: center; text-align: center; min-height: 112px; }
+.wiz__ico { width: 48px; height: 48px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; color: var(--color-secondary); }
+.wiz__nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-4); }
+.wiz__nav .btn-text { margin-left: auto; }
+.btn:disabled { opacity: .4; cursor: default; }
+.res-sum { font-size: 14px; line-height: 1.6; margin-bottom: var(--space-3); color: var(--color-muted-foreground); }
+.res-sum b { color: var(--color-foreground); }
+#finder-results > .callout { margin-bottom: var(--space-3); }
+.res-open { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-bottom: var(--space-4); font-size: 14px; }
+.res-open__item { display: grid; text-align: left; gap: 0; min-height: var(--target); padding: 6px var(--space-3); border: 1px dashed var(--color-border); border-radius: 12px; background: transparent; cursor: pointer; font-weight: 600; font-size: 13px; line-height: 1.35; }
+.res-open__item span { font-weight: 400; font-size: 12px; color: var(--color-muted-foreground); }
+.res-item { align-items: flex-start; padding: var(--space-3); }
+.res-item > .icon { margin-top: 4px; }
+.res-item__img { width: 56px; height: 56px; flex: none; object-fit: cover; border-radius: 10px; background: var(--color-muted); }
+.res-item__ok, .res-item__open, .res-item__look { display: flex; gap: 4px; align-items: flex-start; font-size: 12px; line-height: 1.45; margin-top: 2px; }
+.res-item__ok { color: var(--color-muted-foreground); }
+.res-item__open { color: var(--color-muted-foreground); font-style: normal; }
+.res-item__look { color: var(--color-danger-text); }
+.res-item__look > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.res-item__why { display: flex; gap: 4px; align-items: flex-start; }
+.res-item .icon--sm { margin-top: 1px; }
+
 /* ---------- 3D mushroom model (finder) ---------- */
 .model { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-4) var(--space-3); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
 .model__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); }
@@ -878,6 +975,15 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
   <symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></symbol>
   <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+  <symbol id="i-o-gills" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="3"/><path d="M16 4v9M16 19v9M4 16h9M19 16h9M7.5 7.5l6.4 6.4M18.1 18.1l6.4 6.4M24.5 7.5l-6.4 6.4M13.9 18.1l-6.4 6.4"/></symbol>
+  <symbol id="i-o-pores" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="3"/><path d="M10 10h.01M16 8h.01M22 10h.01M8 16h.01M24 16h.01M10 22h.01M16 24h.01M22 22h.01M12.5 13h.01M19.5 13h.01M12.5 19h.01M19.5 19h.01" stroke-width="3"/></symbol>
+  <symbol id="i-o-spines" viewBox="0 0 32 32"><path d="M4 11c3-6 21-6 24 0Z"/><path d="M7 11v8M10 11v11M13 11v9M16 11v12M19 11v9M22 11v11M25 11v8"/></symbol>
+  <symbol id="i-o-ridges" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="3"/><path d="M16 13c0-3-1-5-3-9M16 13c0-3 1-5 3-9M19 16c3 0 5-1 9-3M19 16c3 0 5 1 9 3M16 19c0 3 1 5 3 9M16 19c0 3-1 5-3 9M13 16c-3 0-5 1-9 3M13 16c-3 0-5-1-9-3"/></symbol>
+  <symbol id="i-o-other" viewBox="0 0 32 32"><path d="M16 3c5 0 8 5 8 11s-3 9-8 9-8-3-8-9 3-11 8-11Z"/><path d="M12 8l4 3 4-3M10 14l6 2 6-2M12 19l4-3 4 3M16 23v6"/></symbol>
+  <symbol id="i-o-ground" viewBox="0 0 32 32"><path d="M3 25h26"/><path d="M8 25c0-6 4-8 8-8s8 2 8 8"/><path d="M16 17v-6M13 9c1-2 5-2 6 0"/></symbol>
+  <symbol id="i-o-grass" viewBox="0 0 32 32"><path d="M3 27h26"/><path d="M7 27c0-6 1-11 3-15M12 27c0-5-1-10-4-13M16 27c0-7 1-12 3-17M21 27c0-5 2-9 5-12M25 27c0-4-1-7-3-9"/></symbol>
+  <symbol id="i-o-wood" viewBox="0 0 32 32"><path d="M6 12h18M6 24h18"/><ellipse cx="24" cy="18" rx="4" ry="6"/><ellipse cx="24" cy="18" rx="1.5" ry="2.5"/><path d="M6 12c-2 0-3 3-3 6s1 6 3 6"/><path d="M10 9c0-2 2-3 4-3s4 1 4 3"/></symbol>
+  <symbol id="i-o-under" viewBox="0 0 32 32"><path d="M3 12h26"/><path d="M6 12l2 3M12 12l-1 4M20 12l1 3M26 12l-2 4"/><circle cx="16" cy="22" r="5"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15Z"/><path d="M5 19 13 11"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
@@ -1013,8 +1119,8 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
         <header class="view__head">
           <!--HERO:finder-->
           <span class="view__eyebrow">Identify by features</span>
-          <h1 class="view__title" id="h-finder">按特征查找</h1>
-          <p class="view__lead">手上有一朵不认识的菌？按看到的特征回答，列出可能的种类。<b>可能的毒菌会排在最前面。</b></p>
+          <h1 class="view__title" id="h-finder">特征识别</h1>
+          <p class="view__lead">手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道就跳过。<b>毒菌永远排在最前面。</b></p>
         </header>
         <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 <!--N_EDIBLE--> 种食用菌和 <!--N_TOXIC--> 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
         <section class="model" id="model" aria-labelledby="model-title">
@@ -1348,6 +1454,7 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-title"><div class="sheet__body" id="sheet-body"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="zoom" id="zoom" aria-label="放大的照片"><button class="icon-btn zoom__close" type="button" data-zoom-close aria-label="关闭放大的照片"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button><img class="zoom__img" id="zoom-img" alt=""><p class="zoom__cap" id="zoom-cap"></p></dialog>
 
 <script>
 const DATA = /*__DATA__*/null;
@@ -1433,9 +1540,19 @@ function photoLinks(latin) {
   return `<a class="btn btn--primary" href="https://www.inaturalist.org/taxa/search?q=${q}" target="_blank" rel="noopener">在 iNaturalist 看照片${icon("out", "icon--sm")}</a>
           <a class="btn" href="https://en.wikipedia.org/wiki/${latin.replace(/ /g, "_")}" target="_blank" rel="noopener">维基百科${icon("out", "icon--sm")}</a>`;
 }
-function sourcesHtml(src) {
-  if (!src) return "";
-  return `<div class="sources"><h3>资料来源</h3><ol>${src.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ol></div>`;
+// label each source by the kind of publisher, judged from its address (no guessing beyond that)
+const SRC_TYPES = [
+  [/\.gov\b|\.gc\.ca|gov\.bc\.ca|fs\.usda|hrsa|dpic\.org/, "official", "官方机构"],
+  [/doi\.org|ncbi\.nlm|pubmed|sciencedirect|springer|wiley|tandfonline|mycologia|journals?\./, "academic", "学术文献"],
+  [/beatymuseum|ubc\.ca|mykoweb|mushroomexpert|namyco|nama|fungi\.com|mushroomobserver|bcmyco|psms/, "reference", "专业参考"],
+  [/inaturalist/, "community", "社区观察"],
+  [/wikipedia/, "encyclopedia", "百科"],
+];
+function srcType(u) { const m = SRC_TYPES.find(([re]) => re.test(u)); return m ? [m[1], m[2]] : ["other", "其他"]; }
+function sourcesHtml(src, book) {
+  if (!src && !book) return "";
+  return `<div class="sources"><h3>资料来源</h3><ol>${book ? `<li><span class="src-type src-type--book">图书</span>描述改写自页面底部列出的图书</li>` : ""}${(src || []).map(([t, u]) => { const [k, label] = srcType(u);
+    return `<li><span class="src-type src-type--${k}">${label}</span><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`; }).join("")}</ol></div>`;
 }
 
 const bySlug = Object.fromEntries(DATA.species.map((s, i) => [s.slug, i]));
@@ -1456,47 +1573,107 @@ async function share(title, hash) {
 
 /* ---------- species sheet ---------- */
 let sheetPushed = false, closingFromRoute = false;
+const FEAT = {
+  hym: { gills: "菌褶（刀片状）", pores: "菌孔（海绵状）", spines: "菌刺（下垂的软刺）", ridges: "钝圆的棱脊或近光滑", other: "其他形态（蜂窝状、球状、胶质、花椰菜状等）" },
+  sub: { ground: "林地地面", grass: "草地、草坪", wood: "木头上", under: "埋在土里" },
+};
+const sheetNav = secs => `<nav class="sheet__nav" aria-label="跳到">${secs.map(([id, label]) => `<button type="button" class="chip" data-sheet-jump="${id}">${label}</button>`).join("")}</nav>`;
+// compact cards for every comparison this species appears in: photos of each mushroom, side by side
+function lookPairs(slug) {
+  return DATA.compare.filter(c => c.cols.some(col => col[2] === slug)).map(c => `<a class="look-pair" href="#cmp-${c.id}">
+      <span class="look-pair__pics">${c.cols.map(([name, kind, sl]) => {
+        const x = sl ? (bySlug[sl] !== undefined ? DATA.species[bySlug[sl]] : toxicAll.find(t => t.slug === sl)) : null;
+        return `<span class="look-pair__pic look-pair__pic--${kind}">${x && x.photo ? `<img src="photos/${x.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span>${esc(name)}</span></span>`;
+      }).join("")}</span>
+      <span class="look-pair__title">${icon("columns", "icon--sm")}${esc(c.title)}${icon("arrow", "icon--sm")}</span></a>`).join("");
+}
 function openSpecies(i) {
   const s = DATA.species[i], g = groupBy[s.group];
+  const rc = DATA.recipes.filter(r => r.sp.includes(s.slug));
+  const one = strip(s.feat).split(/[；。]/)[0];
+  const look = lookPairs(s.slug);
   $("#sheet-body").innerHTML = `
     <div class="sheet__bar"><span class="sheet__group">${esc(g.name)}${s.region ? " · " + esc(s.region) : ""}</span>
       <span class="sheet__actions">
         <button class="icon-btn" type="button" data-share aria-label="分享这一种的链接">${icon("share")}</button>
         <button class="icon-btn" type="button" data-close aria-label="关闭详情">${icon("x")}</button>
       </span></div>
+    ${photoFig(s)}
     <h2 class="sheet__title" id="sheet-title">${esc(s.zh)}</h2>
     <div class="sheet__latin latin">${esc(s.latin)}</div>
     ${s.latin2 ? `<div class="sheet__en">${esc(s.latin2)}</div>` : ""}
     <div class="sheet__en">${esc(s.en)}</div>
-    ${photoFig(s)}
-    <div class="sheet__months">${monthStrip(s.months)}</div>
-    ${badges(s.flags)}
-    <dl class="facts">
-      <div class="fact"><dt>识别</dt><dd>${s.feat}</dd></div>
-      <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
-      <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.seasonLocal ? "据西北太平洋观察记录，" : ""}因地区和海拔而异）</dd></div>
-      <div class="fact"><dt>孢子印</dt><dd>${s.spore}</dd></div>
-      <div class="fact"><dt>厨房</dt><dd>${s.kitchen}<br><a href="#recipes">看精选食谱</a></dd></div>
+    <p class="sheet__one">${esc(one)}</p>
+    <dl class="sheet__quick">
+      <div class="sheet__q"><dt>季节</dt><dd>${esc(s.season)}</dd></div>
+      <div class="sheet__q"><dt>长在</dt><dd>${s.sub.map(k => FEAT.sub[k]).join("、")}</dd></div>
+      <div class="sheet__q"><dt>西北太平洋记录</dt><dd>${s.obs ? s.pnw.toLocaleString("en") + " 条" : "无数据"}</dd></div>
     </dl>
-    ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>` : ""}
-    ${compareLinksFor(s.slug)}
-    <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a></div>
-    ${obsChart(s)}
-    ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
-    <p class="muted-note">${g.note}</p>
-    <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
-    ${sourcesHtml(s.sources)}`;
+    ${badges(s.flags)}
+    ${sheetNav([["sh-id", "快速鉴别"], ["sh-look", "易混毒菌"], ["sh-eco", "生态与季节"], ["sh-kitchen", "厨房"], ["sh-more", "资料来源"]])}
+    <section class="sheet__sec" id="sh-id"><h3 class="sheet__h">快速鉴别</h3>
+      <dl class="facts">
+        <div class="fact"><dt>菌盖下面</dt><dd>${FEAT.hym[s.hym]}</dd></div>
+        <div class="fact"><dt>孢子印</dt><dd>${s.spore}</dd></div>
+        <div class="fact"><dt>菌环</dt><dd>${s.ring ? "有（老了可能脱落）" : "没有或不明显"}</dd></div>
+        <div class="fact"><dt>菌托</dt><dd>${s.volva ? "<b>有</b>：柄基有袋状菌托" : "没有"}</dd></div>
+        <div class="fact"><dt>外形</dt><dd>${s.feat}</dd></div>
+      </dl>
+      <p class="muted-note">这些是典型特征。同一种菌会随年龄、天气和产地变化，任何一条都不足以单独确认身份。</p>
+    </section>
+    <section class="sheet__sec" id="sh-look"><h3 class="sheet__h">易混毒菌</h3>
+      ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><span class="sr-only">易混毒菌：</span>${s.warn}</div></div>`
+        : `<p class="muted-note">本站没有为它单独列出易混毒菌。<b>这不代表没有</b>：先对照<a href="#toxic">毒菌列表</a>，并请有经验的人当面确认。</p>`}
+      ${look ? `<div class="look-list">${look}</div>` : ""}
+    </section>
+    <section class="sheet__sec" id="sh-eco"><h3 class="sheet__h">生态与季节</h3>
+      <dl class="facts">
+        <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
+        <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.seasonLocal ? "据西北太平洋观察记录，" : ""}因地区和海拔而异）</dd></div>
+      </dl>
+      <div class="sheet__months">${monthStrip(s.months)}</div>
+      ${obsChart(s)}
+    </section>
+    <section class="sheet__sec" id="sh-kitchen"><h3 class="sheet__h">厨房</h3>
+      <p>${s.kitchen}</p>
+      ${rc.length ? `<div class="sheet__recipes">${rc.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}</div>` : ""}
+      <p class="muted-note">食谱只适用于已经由可靠的人或渠道确认身份的菌。烹饪不能去掉未知的毒素。</p>
+      <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a><a class="btn" href="#recipes">${icon("book", "icon--sm")}全部食谱</a></div>
+    </section>
+    <section class="sheet__sec" id="sh-more"><h3 class="sheet__h">深入资料</h3>
+      ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
+      <p class="muted-note">${g.note}</p>
+      <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
+      ${sourcesHtml(s.sources, !s.sources)}
+      ${dataNotes(s)}
+    </section>`;
   $("[data-share]", $("#sheet-body")).onclick = () => share(s.zh + " · 野菌速查", "sp-" + s.slug);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   $("#sheet-body").scrollTop = 0;
+  const bar = $("#sheet-body .sheet__bar");  // the section jumps stick right under the bar
+  $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
   $("[data-close]", d).focus();
 }
+// where each kind of content on a species page comes from
+function dataNotes(x) {
+  return `<ul class="data-notes">
+    <li><span class="src-type src-type--community">社区观察</span>季节和记录数：iNaturalist 研究级观察（BC、华盛顿、俄勒冈），取自 ${DATA.obsFetched}。反映的是人们什么时候拍照上传，不等于产量，也不是实时预测。</li>
+    ${x.photo ? `<li><span class="src-type src-type--community">示例照片</span>iNaturalist 用户 ${esc(x.photo.author)}，${esc(x.photo.lic)}。只是一个例子，不能只凭照片鉴定。</li>` : ""}
+    <li><span class="src-type src-type--editor">编者注</span>标有【编者注】的是本站补充的安全提示。</li>
+  </ul>`;
+}
+$("#sheet").addEventListener("click", e => {
+  const j = e.target.closest("[data-sheet-jump]"); if (!j) return;
+  const el = document.getElementById(j.dataset.sheetJump);
+  if (el) el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+});
 function photoFig(x, compact) {
   const p = x.photo; if (!p) return "";
   const other = p.taxon !== x.latin.split(" / ")[0] ? `（照片学名 <span class="latin">${esc(p.taxon)}</span>）` : "";
   return `<figure class="photo${compact ? " photo--compact" : ""}">
-    <img class="photo__img" src="photos/${p.file}"${srcset(p, "(min-width: 768px) 640px, 100vw")} width="${p.w}" height="${p.h}" loading="lazy" decoding="async" alt="${esc(x.zh)}的示例照片">
+    <button type="button" class="photo__zoom" data-zoom="${p.hd ? p.hd.file : p.file}" data-zoom-cap="${esc(x.zh)} · 示例照片 · ${esc(p.author)} · ${esc(p.lic)} · iNaturalist" aria-label="放大查看${esc(x.zh)}的照片">
+    <img class="photo__img" src="photos/${p.file}"${srcset(p, "(min-width: 768px) 640px, 100vw")} width="${p.w}" height="${p.h}" loading="lazy" decoding="async" alt="${esc(x.zh)}的示例照片">${icon("search", "photo__zoom-icon")}</button>
     <figcaption class="photo__cap">示例照片${other} · <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a> · <a href="${p.licUrl}" target="_blank" rel="noopener">${esc(p.lic)}</a> · iNaturalist<br>【编者注】照片只是一个例子。同一种菌的颜色和形状会随年龄、天气和产地变化很大，不能只凭照片鉴定。</figcaption>
   </figure>`;
 }
@@ -1527,11 +1704,6 @@ function obsReadout(plot, i) {
 }
 document.addEventListener("pointerover", e => { const c = e.target.closest(".obs-chart__col"); if (c) obsReadout(c.parentElement, +c.dataset.m); });
 document.addEventListener("pointerout", e => { const p = e.target.closest(".obs-chart__plot"); if (p && !p.contains(e.relatedTarget)) obsReadout(p, null); });
-function compareLinksFor(slug) {
-  const hits = DATA.compare.filter(c => c.cols.some(col => col[2] === slug));
-  if (!hits.length) return "";
-  return `<div class="link-row">${hits.map(c => `<a class="btn" href="#cmp-${c.id}">${icon("columns", "icon--sm")}对比：${esc(c.title)}</a>`).join("")}</div>`;
-}
 function closeSheet() { const d = $("#sheet"); if (d.open) { closingFromRoute = true; d.close(); closingFromRoute = false; } }
 $("#sheet").addEventListener("click", e => {
   const d = e.currentTarget;
@@ -1546,6 +1718,16 @@ $("#sheet").addEventListener("close", () => {
     try { history.replaceState(null, "", "#" + (v ? v.id.slice(2) : h.startsWith("tx-") ? "toxic" : "species")); } catch (_) {}
   }
 });
+
+/* ---------- photo zoom: the high-resolution copy, full screen (pinch to zoom further on phones) ---------- */
+document.addEventListener("click", e => {
+  const z = e.target.closest("[data-zoom]"); if (!z) return;
+  const d = $("#zoom");
+  $("#zoom-img").src = "photos/" + z.dataset.zoom; $("#zoom-img").alt = z.dataset.zoomCap || "";
+  $("#zoom-cap").textContent = (z.dataset.zoomCap || "") + "。照片只是例子，不能只凭照片鉴定。";
+  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+});
+$("#zoom").addEventListener("click", e => { if (e.target.closest("[data-zoom-close]") || e.target === e.currentTarget || e.target.id === "zoom-img") $("#zoom").close(); });
 
 /* ---------- toxic + compare ---------- */
 function toxCard(p) {
@@ -1568,37 +1750,76 @@ function openToxic(slug) {
         <button class="icon-btn" type="button" data-share aria-label="分享这一种的链接">${icon("share")}</button>
         <button class="icon-btn" type="button" data-close aria-label="关闭详情">${icon("x")}</button>
       </span></div>
+    ${photoFig(p)}
     <h2 class="sheet__title" id="sheet-title">${esc(p.zh)}</h2>
     <div class="sheet__latin latin">${esc(p.latin)}</div>
     <div class="sheet__en">${esc(p.en)}</div>
     <div class="badges" style="margin-top: var(--space-3)"><span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></div>
-    ${photoFig(p)}
     <div class="sheet__text">${p.feat}</div>
     ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
-    ${compareLinksFor(p.slug)}
-    <div class="link-row">${photoLinks(p.latin)}</div>
-    ${sourcesHtml(p.sources)}`;
+    ${lookPairs(p.slug) ? `<div class="look-list">${lookPairs(p.slug)}</div>` : ""}
+    <div class="link-row"><a class="btn" href="#emergency">${icon("phone", "icon--sm")}中毒急救</a>${photoLinks(p.latin)}</div>
+    ${sourcesHtml(p.sources, !p.sources)}
+    ${dataNotes(p).replace(/<li><span class="src-type src-type--community">社区观察<\/span>[^]*?<\/li>/, "")}`;
   $("[data-share]", $("#sheet-body")).onclick = () => share(p.zh + " · 野菌速查", "tx-" + p.slug);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   $("#sheet-body").scrollTop = 0;
   $("[data-close]", d).focus();
 }
-const KIND = { edible: "可食", caution: "谨慎", toxic: "有毒" };
-function cmpCard(c) {
-  const n = c.cols.length;
-  const colHtml = c.cols.map(([name, kind, slug]) => {
-    const href = slug ? (bySlug[slug] !== undefined ? "#sp-" + slug : "#tx-" + slug) : null;
-    return `<div class="cmp__col cmp__col--${kind}"><span class="cmp__kind">${KIND[kind]}</span>${href ? `<a href="${href}">${esc(name)}</a>` : esc(name)}</div>`;
-  }).join("");
+const KIND = { edible: "可食种", caution: "谨慎", toxic: "有毒" };
+const cmpState = {};  // comparison id -> { mode: "side" | "switch", k: column shown in "switch" mode }
+const cmpSpecies = sl => sl ? (bySlug[sl] !== undefined ? DATA.species[bySlug[sl]] : toxicAll.find(x => x.slug === sl)) : null;
+function cmpPic(name, sl) {
+  const x = cmpSpecies(sl), p = x && x.photo;
+  if (!p) return `<span class="cmp__pic cmp__pic--none">没有照片</span>`;
+  return `<button type="button" class="cmp__pic" data-zoom="${p.hd ? p.hd.file : p.file}" data-zoom-cap="${esc(name)} · 示例照片 · ${esc(p.author)} · ${esc(p.lic)} · iNaturalist" aria-label="放大查看${esc(name)}的照片">
+    <img src="photos/${p.file}" alt="" loading="lazy" decoding="async"></button>`;
+}
+function cmpLink(name, sl) {
+  return sl ? `<a href="${bySlug[sl] !== undefined ? "#sp-" + sl : "#tx-" + sl}">${esc(name)}</a>` : esc(name);
+}
+function cmpBody(c) {
+  const st = cmpState[c.id] || (cmpState[c.id] = { mode: c.cols.length >= 3 && matchMedia("(max-width: 767px)").matches ? "switch" : "side", k: 0 });
+  if (st.mode === "switch") {
+    const [name, kind, sl] = c.cols[st.k];
+    return `<div class="cmp__tabs" role="tablist" aria-label="选择要看的菌">${c.cols.map(([n, kd], k) =>
+        `<button type="button" role="tab" class="cmp__tab cmp__tab--${kd}" data-cmp="${c.id}" data-cmp-k="${k}" aria-selected="${k === st.k}">${esc(n)}</button>`).join("")}</div>
+      <div class="cmp__one cmp__col--${kind}" role="tabpanel">
+        <div class="cmp__one-head">${cmpPic(name, sl)}<div><span class="cmp__kind">${KIND[kind]}</span><div class="cmp__one-name">${cmpLink(name, sl)}</div></div></div>
+        <dl class="cmp__one-rows">${c.rows.map(([label, cells]) => `<div><dt>${esc(label)}</dt><dd>${cells[st.k]}</dd></div>`).join("")}</dl>
+      </div>`;
+  }
+  const colHtml = c.cols.map(([name, kind, sl]) => `<div class="cmp__col cmp__col--${kind}">${cmpPic(name, sl)}<span class="cmp__kind">${KIND[kind]}</span>${cmpLink(name, sl)}</div>`).join("");
   const rows = c.rows.map(([label, cells]) => `<div class="cmp__row-label">${esc(label)}</div><div class="cmp__cells">${cells.map(x => `<div class="cmp__cell">${x}</div>`).join("")}</div>`).join("");
-  const src = c.src && c.src.length ? `<div class="cmp__src">来源：${c.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join("；")}</div>` : "";
-  return `<article class="cmp" id="cmp-${c.id}" style="--n:${n}">
+  return `<div class="cmp__table"><div class="cmp__cols">${colHtml}</div>${rows}</div>`;
+}
+function cmpCard(c) {
+  const st = cmpBody(c) && cmpState[c.id];
+  const credits = c.cols.map(([n, , sl]) => { const x = cmpSpecies(sl); return x && x.photo ? `${esc(n)}：<a href="${x.photo.url}" target="_blank" rel="noopener">${esc(x.photo.author)}</a>（${esc(x.photo.lic)}）` : ""; }).filter(Boolean);
+  const src = c.src && c.src.length ? `来源：${c.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join("；")}<br>` : "";
+  return `<article class="cmp" id="cmp-${c.id}" style="--n:${c.cols.length}">
     <header class="cmp__head"><div><h3 class="cmp__title">${esc(c.title)}</h3><p class="cmp__lead">${esc(c.lead)}</p></div>
       <button class="icon-btn" type="button" data-share-cmp="${c.id}" data-title="${esc(c.title)}" aria-label="分享这组对比">${icon("share")}</button></header>
-    <div class="cmp__table"><div class="cmp__cols">${colHtml}</div>${rows}</div>${src}
+    <div class="cmp__modes" role="group" aria-label="显示方式">
+      <button type="button" class="chip" data-cmp="${c.id}" data-cmp-mode="side" aria-pressed="${st.mode === "side"}">${icon("columns", "icon--sm")}并排</button>
+      <button type="button" class="chip" data-cmp="${c.id}" data-cmp-mode="switch" aria-pressed="${st.mode === "switch"}">逐个看</button>
+    </div>
+    <div class="cmp__body">${cmpBody(c)}</div>
+    <p class="cmp__note">${icon("alert", "icon--sm")}任何一条区别都不足以单独确认可以吃：要几条特征同时对上，并请有经验的人当面确认。</p>
+    <div class="cmp__src">${src}${credits.length ? `示例照片（iNaturalist，点照片放大）：${credits.join("；")}` : ""}</div>
   </article>`;
 }
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-cmp]"); if (!b) return;
+  const c = DATA.compare.find(x => x.id === b.dataset.cmp), st = cmpState[c.id];
+  if (b.dataset.cmpMode) { st.mode = b.dataset.cmpMode; st.k = 0; }
+  if (b.dataset.cmpK) st.k = +b.dataset.cmpK;
+  const card = document.getElementById("cmp-" + c.id);
+  card.querySelector(".cmp__body").innerHTML = cmpBody(c);
+  card.querySelectorAll("[data-cmp-mode]").forEach(x => x.setAttribute("aria-pressed", x.dataset.cmpMode === st.mode));
+  const again = card.querySelector(b.dataset.cmpK ? `[data-cmp-k="${st.k}"]` : `[data-cmp-mode="${st.mode}"]`); if (again) again.focus();
+});
 function renderToxic() {
   $("#tox-grid").innerHTML = toxicAll.map(toxCard).join("");
   $("#tox-grid").onclick = e => { const c = e.target.closest("[data-tx]"); if (c) navigate("tx-" + c.dataset.tx); };
@@ -1609,15 +1830,25 @@ $("#v-toxic").addEventListener("click", e => {
   const b = e.target.closest("[data-share-cmp]"); if (b) return share(b.dataset.title + " · 野菌速查", "cmp-" + b.dataset.shareCmp);
 });
 
-/* ---------- finder ---------- */
+/* ---------- finder: a step-by-step guide that narrows candidates; it never scores, never says "edible" ---------- */
+// Only the five features every species is tagged with (data/tags.py) are asked: other features (cap shape, gill
+// attachment, odour...) have no checked data for every species, so asking them would only look precise.
 const STEPS = [
-  { key: "hym", part: "gills", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", opts: [["gills", "菌褶（刀片状）"], ["pores", "菌孔（海绵状）"], ["spines", "菌刺（下垂的软刺）"], ["ridges", "钝圆的棱脊或近光滑"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳"]] },
-  { key: "sub", part: "volva", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", opts: [["ground", "林地地面"], ["grass", "草地、草坪"], ["wood", "木头上（树干、树桩、倒木、木屑）"], ["under", "埋在土里（块菌）"]] },
-  { key: "spore", part: "gills", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", opts: [["white", "白 / 奶油", "#F8F6EE"], ["yellow", "黄 / 浅黄", "#E9D27A"], ["pink", "粉", "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", "#A8642E"], ["choc", "巧克力 / 紫褐", "#4E2E26"], ["olive", "橄榄褐", "#77703A"], ["black", "黑", "#151515"], ["green", "绿", "#7D9C6B"]] },
-  { key: "ring", part: "ring", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", opts: [["yes", "有"], ["no", "没有"]] },
-  { key: "volva", part: "volva", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
+  { key: "hym", part: "gills", short: "菌盖下面", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", why: "这是分大类的第一步：有褶菌、牛肝菌、鸡油菌、齿菌各有不同的危险近似种。",
+    opts: [["gills", "菌褶（刀片状）", "o-gills"], ["pores", "菌孔（海绵状）", "o-pores"], ["spines", "菌刺（下垂的软刺）", "o-spines"], ["ridges", "钝圆的棱脊或近光滑", "o-ridges"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳", "o-other"]] },
+  { key: "sub", part: "volva", short: "长在哪", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", why: "长在木头上还是地上能排除很多种。但埋在土里的树根和木屑也算木头，看不清就跳过。",
+    opts: [["ground", "林地地面", "o-ground"], ["grass", "草地、草坪", "o-grass"], ["wood", "木头上（树干、树桩、倒木、木屑）", "o-wood"], ["under", "埋在土里（块菌）", "o-under"]] },
+  { key: "spore", part: "gills", short: "孢子印", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", why: "孢子印颜色要做出来才看得准，不能凭菌褶颜色猜。致命的鹅膏是白色孢子印。",
+    opts: [["white", "白 / 奶油", null, "#F8F6EE"], ["yellow", "黄 / 浅黄", null, "#E9D27A"], ["pink", "粉", null, "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", null, "#A8642E"], ["choc", "巧克力 / 紫褐", null, "#4E2E26"], ["olive", "橄榄褐", null, "#77703A"], ["black", "黑", null, "#151515"], ["green", "绿", null, "#7D9C6B"]] },
+  { key: "ring", part: "ring", short: "菌环", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", why: "菌环会脱落，所以答“没有”时，有菌环的致命种仍会列出。",
+    opts: [["yes", "有"], ["no", "没有"]] },
+  { key: "volva", part: "volva", short: "菌托", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", why: "菌托是鹅膏的重要标志。只看地面以上的部分，很容易漏掉它。",
+    opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
 ];
+const F_TIP = { hym: "把菌翻过来看菌盖下面", sub: "看清它从什么上面长出来", spore: "做一张孢子印", ring: "看菌柄上部有没有一圈膜", volva: "把整个柄基连土挖出来，看有没有袋状菌托" };
 const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
+let fstep = 0;
+const fLabel = (k, v) => { const o = STEPS.find(s => s.key === k).opts.find(x => x[0] === v); return o ? o[1] : v; };
 function fmatch(s, lenient) {
   const why = [];
   if (fstate.hym && s.hym !== fstate.hym) return null;
@@ -1632,37 +1863,80 @@ function fmatch(s, lenient) {
   if (fstate.volva === "no" && s.volva) { if (!lenient) return null; why.push("菌托常埋在土里"); }
   return why;
 }
-function renderFinder() {
-  $("#finder-steps").innerHTML = STEPS.map((st, i) => `
-    <fieldset class="step"><legend><span class="step__num">${i + 1}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
-      <p class="step__hint">${esc(st.hint)}</p>
-      <div class="chip-list">
-        <button type="button" class="chip" data-f="${st.key}" data-v="" aria-pressed="${fstate[st.key] === null}">不确定</button>
-        ${st.opts.map(([v, label, sw]) => `<button type="button" class="chip" data-f="${st.key}" data-v="${v}" aria-pressed="${fstate[st.key] === v}">${sw ? `<span class="swatch" style="background:${sw}"></span>` : ""}${esc(label)}</button>`).join("")}
-      </div></fieldset>`).join("") + `<button class="btn" type="button" id="finder-reset">重新开始</button>`;
-  const answered = Object.values(fstate).some(v => v !== null);
-  const jump = $("#finder-jump");
-  if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答左边（手机上是上面）任意一个问题，这里会列出可能的种类。</div>`; return; }
-  const tox = toxicAll.map(p => [p, fmatch(p, true)]).filter(([, w]) => w);
-  const ed = DATA.species.map((s, i) => [s, i, fmatch(s, false)]).filter(([, , w]) => w);
-  const toxHtml = tox.length ? `<ul class="res-list">${tox.map(([p, why]) => `<li><a class="res-item res-item--toxic" href="#tx-${p.slug}">
-      <span class="res-item__main"><span class="res-item__name">${esc(p.zh)}</span><span class="res-item__sub">${esc(p.level)} · ${esc(p.latin)}</span>${why.length ? `<span class="res-item__why">仍列出：${why.join("；")}</span>` : ""}</span>
-      <span class="level ${p.level === "致命" ? "level--deadly" : "level--poison"}">${esc(p.level)}</span>${icon("arrow")}</a></li>`).join("")}</ul>`
-    : `<p class="muted-note" style="margin-top:0">本站收录的 ${DATA.poison.length} 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
-  const edHtml = ed.length ? `<ul class="res-list">${ed.map(([s]) => `<li><a class="res-item" href="#sp-${s.slug}">
-      <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span><span class="res-item__sub">${esc(groupBy[s.group].short)} · ${esc(s.season)} · ${esc(s.latin)}</span></span>${icon("arrow")}</a></li>`).join("")}</ul>`
-    : `<div class="res-empty">没有符合的食用菌。试着把不确定的问题改成“不确定”。</div>`;
-  jump.hidden = false;
-  jump.innerHTML = `查看结果：毒菌 ${tox.length} · 食用菌 ${ed.length}${icon("chevron", "icon--sm")}`;
-  $("#finder-results").innerHTML = `
-    <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>${toxHtml}</div>
-    <div class="res-block"><h2 class="res-block__title">${icon("mushroom")}可能的食用菌（${ed.length}）</h2>${edHtml}</div>`;
+// what matched, what was kept despite a contradicting answer, and what is still unchecked
+function fDetail(s) {
+  const ok = [], warn = [], open = [];
+  STEPS.forEach(({ key, short }) => {
+    const v = fstate[key];
+    if (v === null) { open.push(short); return; }
+    if (key === "hym") ok.push(fLabel(key, v).split("（")[0]);
+    if (key === "sub") { if (s.sub.includes(v)) ok.push(fLabel(key, v).split("（")[0]); else warn.push(`你答${fLabel(key, v)}，它多见于${s.sub.map(k => FEAT.sub[k]).join("、")}（林地和草地边缘常难分）`); }
+    if (key === "spore") { if (s.sporeTags.includes("unknown")) open.push("孢子印（本种不适用或不明）"); else ok.push(fLabel(key, v).split(" ")[0] + "色孢子印"); }
+    if (key === "ring") { if ((v === "yes") === !!s.ring) ok.push(v === "yes" ? "有菌环" : "无菌环"); else warn.push("你答没有菌环，它有：菌环可能已脱落"); }
+    if (key === "volva") { if ((v === "yes") === !!s.volva) ok.push(v === "yes" ? "有菌托" : "无菌托"); else warn.push("你答没有菌托，它有：菌托常埋在土里"); }
+  });
+  return { ok, warn, open };
 }
-$("#finder-steps").addEventListener("click", e => {
-  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); return renderFinder(); }
+function fItem(s, toxic) {
+  const { ok, warn, open } = fDetail(s), deadly = s.level === "致命";
+  return `<li><a class="res-item${toxic ? " res-item--toxic" : ""}" href="#${toxic ? "tx" : "sp"}-${s.slug}">
+      ${s.photo ? `<img class="res-item__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
+      <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span>
+        <span class="res-item__sub">${toxic ? esc(s.level) : esc(groupBy[s.group].short) + " · " + esc(s.season)} · <i>${esc(s.latin)}</i></span>
+        ${ok.length ? `<span class="res-item__ok">${icon("check", "icon--sm")}相符：${ok.map(esc).join("、")}</span>` : ""}
+        ${warn.map(w => `<span class="res-item__why">${icon("alert", "icon--sm")}仍列出：${esc(w)}</span>`).join("")}
+        ${open.length ? `<span class="res-item__open">未确认：${open.map(esc).join("、")}</span>` : ""}
+        ${!toxic && s.warn ? `<span class="res-item__look">${icon("alert", "icon--sm")}<span>易混：${strip(s.warn)}</span></span>` : ""}
+      </span>
+      ${toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : ""}${icon("arrow")}</a></li>`;
+}
+function renderFinder() {
+  const st = STEPS[fstep], answered = STEPS.filter(x => fstate[x.key] !== null).length;
+  $("#finder-steps").innerHTML = `
+    <ol class="wiz__progress" aria-label="问题进度">${STEPS.map((x, i) => `<li><button type="button" class="wiz__dot${fstate[x.key] !== null ? " is-done" : ""}" data-step="${i}"${i === fstep ? ' aria-current="step"' : ""}>
+      <span class="wiz__dot-n">${i + 1}</span><span class="wiz__dot-label">${x.short}</span><span class="wiz__dot-val">${fstate[x.key] !== null ? esc(fLabel(x.key, fstate[x.key]).split("（")[0]) : "未答"}</span></button></li>`).join("")}</ol>
+    <fieldset class="step wiz__q"><legend><span class="step__num">${fstep + 1} / ${STEPS.length}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
+      <p class="step__hint">${esc(st.hint)}</p>
+      <p class="wiz__why"><b>为什么看这个：</b>${esc(st.why)}</p>
+      <div class="wiz__opts${st.opts[0][2] ? " wiz__opts--pics" : ""}">${st.opts.map(([v, label, ico, sw]) => `<button type="button" class="wiz__opt" data-f="${st.key}" data-v="${v}" aria-pressed="${fstate[st.key] === v}">
+        ${ico ? `<svg class="wiz__ico" aria-hidden="true"><use href="#i-${ico}"/></svg>` : sw ? `<span class="swatch" style="background:${sw}"></span>` : ""}<span>${esc(label)}</span></button>`).join("")}</div>
+      <div class="wiz__nav">
+        <button type="button" class="btn" data-wiz="prev"${fstep === 0 ? " disabled" : ""}>上一题</button>
+        <button type="button" class="btn" data-f="${st.key}" data-v="">不知道，跳过</button>
+        <button type="button" class="btn-text" id="finder-reset">重新开始</button>
+      </div>
+    </fieldset>`;
+  const jump = $("#finder-jump");
+  if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答上面任意一个问题，这里会列出外形相符的候选种。不知道的问题直接跳过。</div>`; return; }
+  const tox = toxicAll.filter(p => fmatch(p, true));
+  const ed = DATA.species.filter(s => fmatch(s, false));
+  const deadly = tox.filter(p => p.level === "致命");
+  const open = STEPS.filter(x => fstate[x.key] === null);
+  jump.hidden = false;
+  jump.innerHTML = `查看候选：毒菌 ${tox.length} · 其他 ${ed.length}${icon("chevron", "icon--sm")}`;
+  $("#finder-results").innerHTML = `
+    <div class="res-sum"><b>已回答 ${answered} / ${STEPS.length} 题</b> · 相符的毒菌 ${tox.length} 种、其他种 ${ed.length} 种（本站共收录 ${toxicAll.length + DATA.species.length} 种）。
+      ${answered < 3 ? "回答的特征还少，候选会很多。" : ""}本站不计算匹配分数或概率：“相符”只说明没有矛盾，不说明就是它。</div>
+    ${fstate.volva === "yes" ? `<div class="callout callout--danger" role="alert">${icon("skull")}<div><b>你看到了菌托。</b>这是鹅膏的重要标志，西北太平洋最致命的毒菌多是鹅膏。<b>不要吃。</b></div></div>` : ""}
+    ${deadly.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>按目前的回答，仍可能是这些致命毒菌：</b>${deadly.map(p => `<a href="#tx-${p.slug}">${esc(p.zh)}</a>`).join("、")}。没有把它们一一排除之前，不要考虑食用。</div></div>` : ""}
+    ${open.length ? `<div class="res-open"><b>还没确认 ${open.length} 项：</b>${open.map(x => `<button type="button" class="res-open__item" data-step="${STEPS.indexOf(x)}">${esc(x.short)}<span>${esc(F_TIP[x.key])}</span></button>`).join("")}</div>` : ""}
+    <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>
+      ${tox.length ? `<ul class="res-list">${tox.map(p => fItem(p, true)).join("")}</ul>` : `<p class="muted-note" style="margin-top:0">本站收录的 ${toxicAll.length} 种毒菌里没有相符的。<b>这不代表它没毒</b>：本站只收录了少数毒菌。</p>`}</div>
+    <div class="res-block"><h2 class="res-block__title">${icon("mushroom")}外形相符的其他候选（${ed.length}）</h2>
+      <p class="muted-note" style="margin-top:0">这些在本站被列为可食种。外形相符不等于就是它，更不等于可以吃。</p>
+      ${ed.length ? `<ul class="res-list">${ed.map(s => fItem(s, false)).join("")}</ul>` : `<div class="res-empty">没有相符的。试着把拿不准的问题改成“不知道，跳过”。</div>`}</div>`;
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest("#v-finder")) return;
+  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); fstep = 0; return renderFinder(); }
+  const go = e.target.closest("[data-step]");
+  if (go) { fstep = +go.dataset.step; renderFinder(); $(".wiz__q legend").scrollIntoView({ block: "nearest" }); return; }
+  if (e.target.closest('[data-wiz="prev"]')) { fstep = Math.max(0, fstep - 1); return renderFinder(); }
   const b = e.target.closest("[data-f]"); if (!b) return;
-  const k = b.dataset.f, v = b.dataset.v || null;
-  fstate[k] = fstate[k] === v ? null : v; renderFinder();
+  fstate[b.dataset.f] = b.dataset.v || null;
+  if (fstep < STEPS.length - 1) fstep++;
+  renderFinder();
+  const first = $("#finder-steps .wiz__opt"); if (first && e.detail === 0) first.focus();  // keyboard users land on the next question
 });
 
 /* ---------- recipes ---------- */
