@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 78 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 79 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -99,7 +99,8 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   finder question has a "在模型上看" button. three.js (vendored, imported only when the model scrolls into view)
   renders it with soft light and shadows; a small 2D-canvas lathe renderer is the fallback when WebGL or the import
   fails. Part colours are the `--model-*` tokens. Both pause when off screen.
-- Species view opens with "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
+- Species view opens with "先认识这些毒菌" (every toxic species, in TOXIC_ORDER, each opening its toxic card), then
+  "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
   cards lead with a full-width photo. Desktop cards tilt toward the pointer; header photos move with parallax.
 - The page grid uses `minmax(0, 1fr)` and `main { min-width: 0 }` so a scrolling strip can never widen the page.
 - Type: the platform system font (SF Pro / PingFang SC on Apple, Noto Sans SC or YaHei elsewhere). No web fonts.
