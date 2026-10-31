@@ -701,6 +701,14 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
     transition: transform 120ms linear; box-shadow: var(--shadow-float); }
 }
 
+/* toxic cards share the species card; a coloured top edge marks them */
+.sp-card--toxic { border-top: 3px solid var(--color-destructive); }
+.sp-card--poison { border-top-color: var(--color-accent); }
+.sp-card--toxic .sp-card__meta { justify-content: flex-start; }
+.sheet__group--toxic { color: var(--color-danger-text); }
+.sheet__text { margin-top: var(--space-4); line-height: 1.7; }
+.sheet__text + .callout { margin-top: var(--space-4); }
+
 /* ---------- 3D mushroom model (finder) ---------- */
 .model { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-4) var(--space-3); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
 .model__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); }
@@ -870,7 +878,7 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
           <button class="chip" type="button" data-jump="cmp-head"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-columns"/></svg>易混对比</button>
           <a class="chip" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
         </div>
-        <div class="tox-grid" id="tox-grid"></div>
+        <div class="sp-grid" id="tox-grid"></div>
         <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 9 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
         <div class="cmp-list" id="cmp-list"></div>
         <div class="panel" style="margin-top: var(--space-6)">
@@ -1358,27 +1366,49 @@ $("#sheet").addEventListener("click", e => {
 });
 $("#sheet").addEventListener("close", () => {
   if (closingFromRoute) return;
-  if (currentHash().startsWith("sp-")) {
+  const h = currentHash();
+  if (h.startsWith("sp-") || h.startsWith("tx-")) {
     if (sheetPushed) { sheetPushed = false; try { history.back(); return; } catch (_) {} }
-    try { history.replaceState(null, "", "#species"); } catch (_) {}
+    try { history.replaceState(null, "", h.startsWith("tx-") ? "#toxic" : "#species"); } catch (_) {}
   }
 });
 
 /* ---------- toxic + compare ---------- */
 function toxCard(p) {
   const deadly = p.level === "致命";
-  return `<article class="tox-card${deadly ? "" : " tox-card--poison"}" id="tx-${p.slug}">
-    <h3 class="tox-card__name">${esc(p.zh)}<span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></h3>
-    <div class="tox-card__sub"><span class="latin">${esc(p.latin)}</span> · ${esc(p.en)}</div>
-    <div class="tox-card__body">
-      ${photoFig(p, true)}
-      <div>${p.feat}</div>
-      ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
-      ${compareLinksFor(p.slug)}
-      <div class="link-row" style="margin-top:0">${photoLinks(p.latin)}<button class="btn" type="button" data-share-tx="${p.slug}" data-title="${esc(p.zh)}">${icon("share", "icon--sm")}分享</button></div>
-      ${sourcesHtml(p.sources)}
-    </div>
-  </article>`;
+  return `<button class="sp-card sp-card--toxic${deadly ? "" : " sp-card--poison"}" type="button" id="tx-${p.slug}" data-tx="${p.slug}" aria-haspopup="dialog">
+      ${p.photo ? `<img class="sp-card__photo" src="photos/${p.photo.file}" width="${p.photo.w}" height="${p.photo.h}" loading="lazy" decoding="async" alt="">` : ""}
+      <span class="sp-card__meta"><span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></span>
+      <span class="sp-card__head"><span class="sp-card__title"><span class="sp-card__name">${esc(p.zh)}</span>
+        <span class="sp-card__latin latin">${esc(p.latin)}</span></span></span>
+      <span class="sp-card__feat">${esc(strip(p.feat.split("<br>")[0]))}</span>
+      ${p.conf && p.conf !== "—" ? `<span class="sp-card__warn">${icon("alert", "icon--sm")}<span><b>易误认为：</b>${p.conf}</span></span>` : ""}
+    </button>`;
+}
+function openToxic(slug) {
+  const p = toxicAll.find(x => x.slug === slug); if (!p) return;
+  const deadly = p.level === "致命";
+  $("#sheet-body").innerHTML = `
+    <div class="sheet__bar"><span class="sheet__group sheet__group--toxic">毒菌 · ${esc(p.level)}</span>
+      <span class="sheet__actions">
+        <button class="icon-btn" type="button" data-share aria-label="分享这一种的链接">${icon("share")}</button>
+        <button class="icon-btn" type="button" data-close aria-label="关闭详情">${icon("x")}</button>
+      </span></div>
+    <h2 class="sheet__title" id="sheet-title">${esc(p.zh)}</h2>
+    <div class="sheet__latin latin">${esc(p.latin)}</div>
+    <div class="sheet__en">${esc(p.en)}</div>
+    <div class="badges" style="margin-top: var(--space-3)"><span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></div>
+    ${photoFig(p)}
+    <div class="sheet__text">${p.feat}</div>
+    ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
+    ${compareLinksFor(p.slug)}
+    <div class="link-row">${photoLinks(p.latin)}</div>
+    ${sourcesHtml(p.sources)}`;
+  $("[data-share]", $("#sheet-body")).onclick = () => share(p.zh + " · 野菌速查", "tx-" + p.slug);
+  const d = $("#sheet");
+  if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
+  $("#sheet-body").scrollTop = 0;
+  $("[data-close]", d).focus();
 }
 const KIND = { edible: "可食", caution: "谨慎", toxic: "有毒" };
 function cmpCard(c) {
@@ -1397,6 +1427,7 @@ function cmpCard(c) {
 }
 function renderToxic() {
   $("#tox-grid").innerHTML = toxicAll.map(toxCard).join("");
+  $("#tox-grid").onclick = e => { const c = e.target.closest("[data-tx]"); if (c) navigate("tx-" + c.dataset.tx); };
   $("#cmp-list").innerHTML = DATA.compare.map(cmpCard).join("");
 }
 $("#v-toxic").addEventListener("click", e => {
@@ -1926,7 +1957,8 @@ const VIEWS = ["species", "finder", "toxic", "guide", "log", "recipes", "emergen
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
 function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
-  if (h.startsWith("tx-") || h.startsWith("cmp-")) return { view: "toxic", target: h };
+  if (h.startsWith("tx-") && toxicAll.some(p => "tx-" + p.slug === h)) return { view: "toxic", tx: h.slice(3) };
+  if (h.startsWith("cmp-")) return { view: "toxic", target: h };
   if (h === "guide-log") return { view: "log" };  // older links to the log when it lived in the guide view
   if (h.startsWith("guide-") && document.getElementById(h)) return { view: "guide", target: h };
   if (VIEWS.includes(h)) return { view: h };
@@ -1951,6 +1983,10 @@ function apply(h, opts = {}) {
     if (!$("#v-species").classList.contains("is-active")) show("species");
     openSpecies(r.sp); return;
   }
+  if (r.tx) {
+    if (!$("#v-toxic").classList.contains("is-active")) show("toxic");
+    openToxic(r.tx); return;
+  }
   closeSheet();
   show(r.view, { focus: opts.focus && !r.target, keepScroll: !!r.target });
   if (r.target) requestAnimationFrame(() => scrollToTarget(r.target));
@@ -1958,7 +1994,7 @@ function apply(h, opts = {}) {
 function navigate(h) {
   let pushed = false;
   if (h !== currentHash()) { try { history.pushState(null, "", "#" + h); pushed = true; } catch (_) {} }
-  if (h.startsWith("sp-")) sheetPushed = pushed;
+  if (h.startsWith("sp-") || h.startsWith("tx-")) sheetPushed = pushed;
   apply(h, { focus: true });
 }
 document.addEventListener("click", e => {

@@ -161,7 +161,17 @@ def run():
         check("card click sets #sp- hash", pg.evaluate("location.hash").startswith("#sp-"))
         pg.go_back(); pg.wait_for_timeout(250)
         check("back closes sheet", not pg.evaluate("document.getElementById('sheet').open"))
-        for target in ["tx-galerina-marginata", "cmp-matsutake"]:
+        pg.goto(url + "#tx-galerina-marginata"); pg.wait_for_timeout(800)
+        check("#tx- deep link opens that toxic species' sheet",
+              pg.evaluate("document.getElementById('sheet').open") and "纹缘盔孢伞" in pg.inner_text("#sheet-title")
+              and pg.evaluate("document.querySelector('.view.is-active').id") == "v-toxic")
+        pg.click("#sheet [data-close]"); pg.wait_for_timeout(300)
+        check("closing a toxic sheet returns to #toxic", pg.evaluate("location.hash") == "#toxic")
+        n_tx = pg.locator("#tox-grid .sp-card").count()
+        pg.click("#tox-grid .sp-card >> nth=0"); pg.wait_for_timeout(500)
+        check(f"toxic list uses the species card pattern ({n_tx} cards) and opens a sheet",
+              n_tx == 22 and pg.locator("#tox-grid .sp-card__photo").count() == n_tx and pg.evaluate("document.getElementById('sheet').open"))
+        for target in ["cmp-matsutake"]:
             pg.goto(url + "#" + target); pg.wait_for_timeout(1100)
             top = pg.evaluate(f"document.getElementById('{target}').getBoundingClientRect().top")
             check(f"#{target} scrolls just under header (top={round(top)})", 0 <= top < 200)
