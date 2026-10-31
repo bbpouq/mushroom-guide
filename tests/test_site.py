@@ -127,10 +127,10 @@ def run():
         n_now = pg.locator("#now-track .now__item").count()
         pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)
         check(f"'this month' strip lists species ({n_now}) and opens one", n_now > 0 and pg.evaluate("document.getElementById('sheet').open"))
-        pg.goto(url + "#species"); pg.wait_for_timeout(400)
-        pg.click('#v-species a[href="#guide-calendar"]'); pg.wait_for_timeout(1100)
+        pg.goto(url + "#guide"); pg.wait_for_timeout(400)
+        pg.click('#v-guide [data-jump="guide-calendar"]'); pg.wait_for_timeout(1100)
         rows = pg.locator("#cal tbody tr").count()
-        check(f"season calendar opens from species view with rows ({rows})",
+        check(f"season calendar opens from the guide view with rows ({rows})",
               pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and rows > 30
               and pg.locator("#cal tbody tr >> nth=0").locator("td").count() == 12)
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
