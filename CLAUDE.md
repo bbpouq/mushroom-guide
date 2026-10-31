@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 80 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 84 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -33,7 +33,8 @@ src/
   data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR, keyed by slug.
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
   data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
-                         and HEROES: the header photo behind each view's large title (none on the emergency view).
+                         and HEROES: the header photo behind each view's large title (none on the species view, whose
+                         "今日一菌" card leads with a photo, and none on the emergency view).
                          RECIPE_PHOTOS (dish photos, keyed by recipe id) is optional; without one a recipe shows its
                          main mushroom's example photo, captioned as such
                          Pin a better photo in fetch_photos.PINNED rather than editing this file
@@ -99,7 +100,9 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   finder question has a "在模型上看" button. three.js (vendored, imported only when the model scrolls into view)
   renders it with soft light and shadows; a small 2D-canvas lathe renderer is the fallback when WebGL or the import
   fails. Part colours are the `--model-*` tokens. Both pause when off screen.
-- Species view opens with "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
+- Species view opens with the "今日一菌" card (`#today`): one in-season, common (>= 300 PNW records) edible per day, never a
+  "高风险" one, picked by date; photo with the name over it, then 认识它, 怎么吃 (kitchen note plus recipes that use it), its
+  look-alike warning and "有任何疑问，就不要吃". Arrows step to other days. Below it, "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
   cards lead with a full-width photo. Toxic species use the same card (`sp-card sp-card--toxic`, red or amber top
   edge) in the same grid, and open the same sheet with the full description, notes, look-alikes and sources. Desktop cards tilt toward the pointer; header photos move with parallax.
 - The page grid uses `minmax(0, 1fr)` and `main { min-width: 0 }` so a scrolling strip can never widen the page.
@@ -125,7 +128,7 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` opens a toxic species sheet (same sheet, closing goes
   back to `#toxic`), `#cmp-<id>` scrolls to a comparison,
   `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist;
-  `#guide-calendar`, the season calendar built from `data/seasonality.py`). The old `#guide-log` link still opens `#log`.
+  `#guide-calendar`, the season calendar built from `data/seasonality.py`), `#rc-<id>` opens a recipe in the recipes view. The old `#guide-log` link still opens `#log`.
 - The finds log lives in `localStorage` under `mushroom-guide:finds:v1` (this device only, never uploaded).
   Every storage call is wrapped in try/catch; if storage is unavailable the log says so instead of failing.
 - Slugs come from the Latin name (`Boletus edulis` becomes `boletus-edulis`). Hash names stay plain ASCII.

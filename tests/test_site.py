@@ -90,7 +90,7 @@ def run():
                 sw = pg.evaluate("document.documentElement.scrollWidth")
                 check(f"{w}px {v}: no horizontal overflow ({sw})", sw <= w)
             check(f"{w}px no class collisions {sorted(coll)}", not coll)
-            pg.evaluate("show('species')"); pg.evaluate("window.scrollTo(0, 900)"); pg.wait_for_timeout(150)
+            pg.evaluate("show('species')"); pg.evaluate("window.scrollTo(0, document.getElementById('grid').getBoundingClientRect().top + scrollY + 300)"); pg.wait_for_timeout(150)
             ov = pg.evaluate(OVER_SEARCH)
             check(f"{w}px sticky search under header and unobscured {ov}", not ov["leaked"] and (w >= 1024 or ov["top"] == ov["header"]))
             pg.evaluate("window.scrollTo(0, 0)")
@@ -106,6 +106,23 @@ def run():
         # ---------- deep links, finder, share, offline (phone) ----------
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         pg = ctx.new_page()
+        pg.goto(url + "#species"); pg.wait_for_timeout(400)
+        name0 = pg.inner_text("#today-name")
+        txt = pg.inner_text("#today")
+        check(f"'today' card shows a species ({name0}) with how to eat it and the safety line",
+              bool(name0) and "怎么吃" in txt and "有任何疑问，就不要吃" in txt and "不能只凭照片鉴定" in txt
+              and pg.evaluate("document.querySelector('#today .today__img').naturalWidth > 0"))
+        pg.click('#today [data-today="1"]'); pg.wait_for_timeout(150)
+        name1 = pg.inner_text("#today-name"); kick1 = pg.inner_text("#today .today__kicker")
+        pg.click('#today [data-today="0"]'); pg.wait_for_timeout(150)
+        check(f"'today' card steps to the next day ({name1}) and back to today", "明天" in kick1 and pg.inner_text("#today-name") == name0
+              and "今日一菌" in pg.inner_text("#today .today__kicker"))
+        pg.click("#today .btn--primary"); pg.wait_for_timeout(500)
+        check("'today' card opens the full species sheet",
+              pg.evaluate("document.getElementById('sheet').open") and pg.inner_text("#sheet-title") == name0)
+        pg.goto(url + "#rc-bruschetta"); pg.wait_for_timeout(900)
+        check("recipe deep link opens the recipe", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes"
+              and pg.evaluate("document.querySelector('#rc-bruschetta details').open"))
         pg.goto(url + "#species"); pg.wait_for_timeout(400)
         n_now = pg.locator("#now-track .now__item").count()
         pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)

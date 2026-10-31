@@ -695,6 +695,34 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .now__name { padding: 0 var(--space-3); font-weight: 700; font-size: 15px; line-height: 1.3; }
 .now__meta { padding: 0 var(--space-3); font-size: 12px; color: var(--color-muted-foreground); }
 @media (min-width: 768px) { .now__track { margin: 0; padding-left: 0; padding-right: 0; } .now__item { flex-basis: 176px; } }
+/* "today" card: one mushroom a day, the first thing on the species view (App Store "Today" style) */
+.today { margin: 0 0 var(--space-6); border-radius: var(--radius-lg); overflow: hidden; background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
+.today__media { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 5 / 4; background: var(--color-muted); }
+.today__img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover;
+  animation: photo-in 600ms var(--ease) backwards, hero-drift 26s ease-in-out 600ms infinite alternate; transform-origin: 50% 40%; }
+.today__media::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, rgba(0, 0, 0, .72) 0%, rgba(0, 0, 0, .28) 42%, rgba(0, 0, 0, 0) 70%); }
+.today__over { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 2px; padding: var(--space-5) var(--space-5) var(--space-4); color: #fff; }
+.today__kicker { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, .88); }
+.today__name { margin: 0; font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; }
+.today__latin { font-size: 15px; color: rgba(255, 255, 255, .85); }
+.today__body { display: grid; gap: var(--space-4); padding: var(--space-3) var(--space-5) var(--space-5); }
+.today__credit { margin: 0; font-size: 11px; line-height: 1.5; color: var(--color-muted-foreground); }
+.today__credit a { color: inherit; }
+.today__sec { display: grid; gap: var(--space-1); }
+.today__h { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; font-weight: 600; color: var(--color-muted-foreground); }
+.today__text { margin: 0; font-size: 16px; line-height: 1.6; }
+.today__meta { margin: 0; font-size: 13px; line-height: 1.5; color: var(--color-muted-foreground); }
+.today__recipes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.today__recipes .chip { display: inline-flex; align-items: center; gap: 6px; }
+.today__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.today__nav { display: inline-flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+.today__prev .icon { transform: scaleX(-1); }
+@media (min-width: 768px) { .today__name { font-size: 40px; } .today__over { padding: var(--space-6) var(--space-6) var(--space-5); } .today__body { padding: var(--space-4) var(--space-6) var(--space-6); } }
+@media (min-width: 1024px) {
+  .today { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+  .today__media { aspect-ratio: auto; min-height: 460px; }
+  .today__body { align-content: start; padding-top: var(--space-6); }
+}
 .view__hero { translate: 0 var(--hero-shift, 0px); }
 @media (hover: hover) and (pointer: fine) {
   .sp-card.is-tilt, .rc-card.is-tilt, .now__item.is-tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px);
@@ -802,12 +830,12 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
       <!-- ================= SPECIES ================= -->
       <section class="view" id="v-species" aria-labelledby="h-species">
         <header class="view__head">
-          <img class="view__hero" src="photos/hero-species.webp" alt="" decoding="async"><span class="view__credit">照片：<a href="https://www.inaturalist.org/photos/168845865" target="_blank" rel="noopener">Alan Rockefeller</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY</a> · iNaturalist</span>
           <span class="view__eyebrow">Field guide</span>
           <h1 class="view__title" id="h-species">食用菌速查</h1>
           <p class="view__lead">64 种食用菌，按在西北太平洋的常见程度排列。<b>有任何疑问，就不要吃。</b></p>
           <div class="link-row"><a class="btn" href="#guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>西北太平洋产季日历</a></div>
         </header>
+        <article class="today" id="today" aria-labelledby="today-name"></article>
         <section class="now" aria-labelledby="now-title">
           <div class="now__head"><h2 class="now__title" id="now-title"></h2><button type="button" class="now__all" data-now-all>看全部</button></div>
           <p class="now__sub">西北太平洋这个月最常见的食用菌。点开看易混毒菌。</p>
@@ -1878,6 +1906,59 @@ const model = (() => {
   }
 })();
 
+/* ---------- species view: one mushroom a day ---------- */
+// Each day shows one common Pacific Northwest edible that is in season that month (never a "高风险" one, e.g. an amanita).
+let todayOff = 0;
+function todayPick(off) {
+  const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + off);
+  const ok = s => s.pnw >= 300 && !s.flags.includes("高风险") && s.photo;
+  let pool = DATA.species.filter(s => ok(s) && s.months.includes(d.getMonth() + 1));
+  if (!pool.length) pool = DATA.species.filter(ok);
+  const day = Math.floor((d.getTime() - d.getTimezoneOffset() * 6e4) / 864e5);
+  return { d, s: pool[day % pool.length] };
+}
+function renderToday() {
+  const { d, s } = todayPick(todayOff), p = s.photo, g = groupBy[s.group];
+  const date = `${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+  const when = todayOff === 0 ? "今日一菌" : todayOff === -1 ? "昨天" : todayOff === 1 ? "明天" : todayOff < 0 ? `${-todayOff} 天前` : `${todayOff} 天后`;
+  const recipes = DATA.recipes.filter(r => r.sp.includes(s.slug));
+  $("#today").innerHTML = `
+    <div class="today__media">
+      <img class="today__img" src="photos/${p.file}" width="${p.w}" height="${p.h}" decoding="async" alt="${esc(s.zh)}的示例照片">
+      <div class="today__over">
+        <span class="today__kicker">${icon("calendar", "icon--sm")}${when} · ${date}</span>
+        <h2 class="today__name" id="today-name">${esc(s.zh)}</h2>
+        <span class="today__latin latin">${esc(s.latin)}</span>
+      </div>
+    </div>
+    <div class="today__body">
+      <p class="today__credit">示例照片，不能只凭照片鉴定 · <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a> · <a href="${p.licUrl}" target="_blank" rel="noopener">${esc(p.lic)}</a> · iNaturalist</p>
+      ${badges(s.flags)}
+      <section class="today__sec"><h3 class="today__h">${icon("search", "icon--sm")}认识它</h3>
+        <p class="today__text">${s.feat}</p>
+        <p class="today__meta">${esc(g.name)} · ${s.hab} · ${esc(s.season)} · 孢子印${s.spore}</p></section>
+      <section class="today__sec"><h3 class="today__h">${icon("pan", "icon--sm")}怎么吃</h3>
+        <p class="today__text">${s.kitchen}</p>
+        <div class="today__recipes">${recipes.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}<a class="chip" href="#recipes">${recipes.length ? "更多食谱" : "看精选食谱"}</a></div></section>
+      ${s.warn ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易混毒菌：</b>${s.warn}</div></div>` : ""}
+      <div class="callout callout--info" role="note">${icon("shield")}<div><b>有任何疑问，就不要吃。</b>第一次吃一种菌，先请当地菌会或有经验的人当面确认，再对照<a href="#guide-check">吃之前检查清单</a>。</div></div>
+      <div class="today__actions">
+        <a class="btn btn--primary" href="#sp-${s.slug}">完整介绍和易混对比${icon("arrow", "icon--sm")}</a>
+        <span class="today__nav">
+          ${todayOff ? `<button class="btn-text" type="button" data-today="0">回到今天</button>` : ""}
+          <button class="icon-btn today__prev" type="button" data-today="-1" aria-label="前一天">${icon("arrow")}</button>
+          <button class="icon-btn" type="button" data-today="1" aria-label="后一天">${icon("arrow")}</button>
+        </span>
+      </div>
+    </div>`;
+}
+$("#today").addEventListener("click", e => {
+  const b = e.target.closest("[data-today]"); if (!b) return;
+  const k = +b.dataset.today; todayOff = k ? todayOff + k : 0;
+  renderToday();
+  const again = $(`[data-today="${k}"]`, $("#today")) || $('[data-today="1"]', $("#today")); if (again) again.focus();
+});
+
 /* ---------- species view: what to look for this month ---------- */
 function renderNow() {
   const list = DATA.species.map((s, i) => [s, i]).filter(([s]) => s.months.includes(MONTH) && s.pnw >= 300).slice(0, 12);
@@ -1959,6 +2040,7 @@ function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
   if (h.startsWith("tx-") && toxicAll.some(p => "tx-" + p.slug === h)) return { view: "toxic", tx: h.slice(3) };
   if (h.startsWith("cmp-")) return { view: "toxic", target: h };
+  if (h.startsWith("rc-") && DATA.recipes.some(r => "rc-" + r.id === h)) return { view: "recipes", target: h };
   if (h === "guide-log") return { view: "log" };  // older links to the log when it lived in the guide view
   if (h.startsWith("guide-") && document.getElementById(h)) return { view: "guide", target: h };
   if (VIEWS.includes(h)) return { view: h };
@@ -1988,6 +2070,10 @@ function apply(h, opts = {}) {
     openToxic(r.tx); return;
   }
   closeSheet();
+  if (r.target && r.target.startsWith("rc-")) {
+    if (!document.getElementById(r.target)) { rcStyle = "全部"; renderRecipes(); }
+    const more = $(`#${r.target} details`); if (more) more.open = true;
+  }
   show(r.view, { focus: opts.focus && !r.target, keepScroll: !!r.target });
   if (r.target) requestAnimationFrame(() => scrollToTarget(r.target));
 }
@@ -2003,7 +2089,7 @@ document.addEventListener("click", e => {
     const h = a.getAttribute("href").slice(1);
     if (h === "main") return;
     e.preventDefault();
-    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-")) navigate(h);
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("rc-")) navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
@@ -2070,7 +2156,7 @@ document.addEventListener("pointerover", e => {
   $("#cal-readout").textContent = `${c.dataset.name} · ${+c.dataset.m + 1} 月：${(+c.dataset.n).toLocaleString("en")} 条${c.hasAttribute("data-peak") ? "（高峰）" : ""}`;
 });
 
-sync(); renderNow(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); route();
+sync(); renderToday(); renderNow(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); route();
 </script>
 </body>
 </html>

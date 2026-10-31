@@ -188,7 +188,7 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
 for view, h in HEROES.items():
     assert (OUT.parent / "photos" / h["file"]).exists(), f"missing hero photo {h['file']}"
     html = html.replace(f"<!--HERO:{view}-->", (
-        f'<img class="view__hero" src="photos/{h["file"]}" alt="" decoding="async"{"" if view == "species" else " loading=\"lazy\""}>'
+        f'<img class="view__hero" src="photos/{h["file"]}" alt="" decoding="async" loading="lazy">'
         f'<span class="view__credit">照片：<a href="{h["photo_url"]}" target="_blank" rel="noopener">{h["author"]}</a>'
         f' · <a href="{LICENCE_URL[h["licence"]]}" target="_blank" rel="noopener">{LICENCE_NAME[h["licence"]]}</a> · iNaturalist</span>'))
 assert "<!--HERO:" not in html, "a view header has no hero photo in data/photos.HEROES"

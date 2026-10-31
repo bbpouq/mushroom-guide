@@ -43,8 +43,8 @@ PINNED = {}  # slug -> iNaturalist photo id, to override the automatic pick
 NAME_FIX = {"Agaricus silvicola": "Agaricus sylvicola"}  # spellings iNaturalist uses
 WIDTH = 480
 # Header photo for each view, shown behind the large title: (taxon, iNaturalist photo id from that taxon's photos).
-# The emergency view has none on purpose.
-HEROES = {"species": ("Cantharellus formosus", 168845865), "finder": ("Agaricus augustus", 22093962),
+# The species view (its "today" card leads with a photo) and the emergency view have none on purpose.
+HEROES = {"finder": ("Agaricus augustus", 22093962),
           "toxic": ("Amanita muscaria", 448681419), "guide": ("Aureoboletus mirabilis", 11502906),
           "log": ("Craterellus tubaeformis", 250397284), "recipes": ("Boletus edulis", 29239600)}
 HERO_WIDTH = 1024
