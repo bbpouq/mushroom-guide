@@ -25,7 +25,8 @@ Test setup, once: `pip install playwright pillow && python3 -m playwright instal
 ```
 src/
   data/book.py           European species, top-10 toxic, recipe index (rewritten from the book; page numbers = English original)
-  data/north_america.py  North American additions: NA_GROUP, NA_SPECIES, NA_TOXIC (each entry cites sources),
+  data/north_america.py  North American additions: NA_SPECIES, NA_TOXIC (each entry cites sources), NA_GROUP_OF (which
+                         group each joins), TOXIC_ORDER (toxic list order, most dangerous in the PNW first),
                          plus NA_SPECIES_NOTES / NA_POISON_NOTES: 【编者注】 added to book entries, keyed by Latin name
   data/tags.py           Feature-finder tags for every edible AND toxic species, keyed by Chinese name
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
@@ -64,6 +65,10 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   peer-reviewed papers. Do not state facts you cannot source.
 - Safety notes we added that are not in the book are labelled `【编者注】`.
 - Book text is our own Chinese rewrite. Keep rewriting, and never paste passages from the book or the web.
+- The site is written for North American (mostly Pacific Northwest) readers. Do not frame content as "European":
+  species are ordered by Pacific Northwest records, seasons come from local records where there are >= 30, and
+  species with < 30 local records carry a "西北太平洋少见" badge. Editor's notes may still name Europe when they
+  explain how a local species differs.
 - Site copy never says "原书" or cites book page numbers (readers have no context for them; the build fails on
   "原书"). The book is credited once, by full title, in the footer. Page numbers stay in `data/book.py` only.
 - Every species, edible or toxic, needs an entry in `data/tags.py`; the build fails otherwise.

@@ -223,6 +223,8 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .badge--cook { background: var(--color-warning-surface); color: var(--color-warning-text); }
 .badge--risk, .badge--small { background: var(--color-danger-surface); color: var(--color-danger-text); }
 .badge--new { background: var(--color-muted); color: var(--color-foreground); border: 1px solid var(--color-border); }
+.badge--local { background: var(--color-primary-surface); color: var(--color-primary); }
+.badge--rare { background: var(--color-muted); color: var(--color-muted-foreground); }
 .empty-state { grid-column: 1 / -1; text-align: center; padding: var(--space-7) var(--space-4); color: var(--color-muted-foreground); }
 
 /* ---------- detail sheet ---------- */
@@ -274,10 +276,8 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .danger-banner strong { display: block; font-family: var(--font-heading); font-size: 19px; }
 .tox-grid { display: grid; gap: var(--space-3); grid-template-columns: 1fr; }
 @media (min-width: 768px) { .tox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.tox-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-1) var(--space-4); background: var(--color-card); border: 1px solid var(--color-border); border-top: 4px solid var(--color-destructive); border-radius: var(--radius); padding: var(--space-4) var(--space-5) var(--space-5); }
+.tox-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1) var(--space-4); background: var(--color-card); border: 1px solid var(--color-border); border-top: 4px solid var(--color-destructive); border-radius: var(--radius); padding: var(--space-4) var(--space-5) var(--space-5); }
 .tox-card--poison { border-top-color: var(--color-accent); }
-.tox-card__num { grid-row: span 2; font-family: var(--font-heading); font-weight: 700; font-size: 40px; line-height: 1; color: var(--color-destructive); font-variant-numeric: tabular-nums; }
-.tox-card--poison .tox-card__num { color: var(--color-accent); }
 .tox-card__name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 .tox-card__sub { font-size: 14px; color: var(--color-muted-foreground); }
 .tox-card__body { grid-column: 1 / -1; display: grid; gap: var(--space-3); margin-top: var(--space-3); }
@@ -731,7 +731,7 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
           <!--HERO:species-->
           <span class="view__eyebrow">Field guide</span>
           <h1 class="view__title" id="h-species">食用菌速查</h1>
-          <p class="view__lead">收录 <!--N_BOOK--> 种欧洲常见食用菌，另有松茸等 <!--N_NA--> 种北美种类。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
+          <p class="view__lead">收录 <!--N_EDIBLE--> 种食用菌，按在西北太平洋的常见程度排列，季节尽量采用当地的观察记录。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
           <div class="link-row"><a class="btn" href="#guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>西北太平洋产季日历</a></div>
         </header>
         <div class="search-bar">
@@ -782,21 +782,18 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
           <!--HERO:toxic-->
           <span class="view__eyebrow">Toxic look-alikes</span>
           <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
-          <p class="view__lead">欧洲最常见的 10 种毒菌、北美采菌时最需要警惕的种类，以及 <!--N_COMPARE--> 组最常混淆的食用菌和毒菌对比。</p>
+          <p class="view__lead">西北太平洋采菌时最需要警惕的 <!--N_TOXIC--> 种毒菌，最危险的排在前面；以及 <!--N_COMPARE--> 组最常混淆的食用菌和毒菌对比。</p>
         </header>
         <div class="danger-banner" role="note">
           <svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg>
           <div><strong>少数毒菌可以致命，更多会造成严重肠胃不适。</strong>采到的东西只要有一点疑问，就扔掉。</div>
         </div>
         <div class="jump-row">
-          <button class="chip" type="button" data-jump="tox-grid">十大毒菌</button>
-          <button class="chip" type="button" data-jump="tox-extra-head">北美补充</button>
+          <button class="chip" type="button" data-jump="tox-grid">毒菌</button>
           <button class="chip" type="button" data-jump="cmp-head"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-columns"/></svg>易混对比</button>
           <a class="chip" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
         </div>
         <div class="tox-grid" id="tox-grid"></div>
-        <div class="subhead" id="tox-extra-head"><h2>补充：北美的危险种类</h2><p>在北美、尤其是西北太平洋采菌时最需要警惕的种类。</p></div>
-        <div class="tox-grid" id="tox-grid-extra"></div>
         <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 <!--N_COMPARE--> 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
         <div class="cmp-list" id="cmp-list"></div>
         <div class="panel" style="margin-top: var(--space-6)">
@@ -1078,8 +1075,8 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
       </section>
 
       <footer class="site-footer">
-        <p>欧洲物种、十种常见毒菌和部分食谱改写自 <i>The Edible Mushroom Book: A Guide to Foraging and Cooking</i>（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008），文字为本站的中文改写，不含该书图片。北美物种和其他补充内容的资料来源列在各条目详情里。</p>
-        <p>欧洲物种的季节以英国和欧洲为准。在北美、亚洲等地，同一种菌可能有不同的近似毒菌，请配合当地图鉴。标有【编者注】的是本站补充的安全提示。</p>
+        <p>部分物种描述、常见毒菌和 6 道食谱改写自 <i>The Edible Mushroom Book: A Guide to Foraging and Cooking</i>（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008），文字为本站的中文改写，不含该书图片。其他内容的资料来源列在各条目详情里。</p>
+        <p>季节和常见程度据 iNaturalist 上 BC、华盛顿、俄勒冈的观察记录，只供参考。不同地区同一种菌可能有不同的近似毒菌，请配合当地图鉴。标有【编者注】的是本站补充的安全提示。</p>
       </footer>
     </main>
   </div>
@@ -1120,7 +1117,7 @@ const SEASONS = [
   { key: "autumn", label: "秋", months: [9, 10, 11] },
   { key: "winter", label: "冬", months: [12, 1, 2] },
 ];
-const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "少量食用": "small" };
+const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "少量食用": "small", "西北太平洋常见": "local", "西北太平洋少见": "rare" };
 const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
 function monthStrip(ms) {
   // numbered circles: filled = in season, ringed = this month
@@ -1184,8 +1181,7 @@ function sourcesHtml(src) {
 }
 
 const bySlug = Object.fromEntries(DATA.species.map((s, i) => [s.slug, i]));
-const toxicAll = DATA.poison.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, "0") }))
-  .concat(DATA.poisonExtra.map((p, j) => ({ ...p, num: "+" + (j + 1) })));
+const toxicAll = DATA.poison;  // one list, most dangerous for Pacific Northwest foragers first
 
 /* ---------- share ---------- */
 let toastTimer;
@@ -1220,7 +1216,7 @@ function openSpecies(i) {
     <dl class="facts">
       <div class="fact"><dt>识别</dt><dd>${s.feat}</dd></div>
       <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
-      <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.page ? "以英国 / 欧洲为准" : "因地区而异"}）</dd></div>
+      <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.seasonLocal ? "据西北太平洋观察记录，" : ""}因地区和海拔而异）</dd></div>
       <div class="fact"><dt>孢子印</dt><dd>${s.spore}</dd></div>
       <div class="fact"><dt>厨房</dt><dd>${s.kitchen}<br><a href="#recipes">看精选食谱</a></dd></div>
     </dl>
@@ -1295,7 +1291,6 @@ $("#sheet").addEventListener("close", () => {
 function toxCard(p) {
   const deadly = p.level === "致命";
   return `<article class="tox-card${deadly ? "" : " tox-card--poison"}" id="tx-${p.slug}">
-    <div class="tox-card__num" aria-hidden="true">${p.num}</div>
     <h3 class="tox-card__name">${esc(p.zh)}<span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></h3>
     <div class="tox-card__sub"><span class="latin">${esc(p.latin)}</span> · ${esc(p.en)}</div>
     <div class="tox-card__body">
@@ -1324,8 +1319,7 @@ function cmpCard(c) {
   </article>`;
 }
 function renderToxic() {
-  $("#tox-grid").innerHTML = toxicAll.filter(p => !p.num.startsWith("+")).map(toxCard).join("");
-  $("#tox-grid-extra").innerHTML = toxicAll.filter(p => p.num.startsWith("+")).map(toxCard).join("");
+  $("#tox-grid").innerHTML = toxicAll.map(toxCard).join("");
   $("#cmp-list").innerHTML = DATA.compare.map(cmpCard).join("");
 }
 $("#v-toxic").addEventListener("click", e => {
@@ -1372,7 +1366,7 @@ function renderFinder() {
   const toxHtml = tox.length ? `<ul class="res-list">${tox.map(([p, why]) => `<li><a class="res-item res-item--toxic" href="#tx-${p.slug}">
       <span class="res-item__main"><span class="res-item__name">${esc(p.zh)}</span><span class="res-item__sub">${esc(p.level)} · ${esc(p.latin)}</span>${why.length ? `<span class="res-item__why">仍列出：${why.join("；")}</span>` : ""}</span>
       <span class="level ${p.level === "致命" ? "level--deadly" : "level--poison"}">${esc(p.level)}</span>${icon("arrow")}</a></li>`).join("")}</ul>`
-    : `<p class="muted-note" style="margin-top:0">本站收录的 ${DATA.poison.length + DATA.poisonExtra.length} 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
+    : `<p class="muted-note" style="margin-top:0">本站收录的 ${DATA.poison.length} 种毒菌里没有符合的。<b>这不代表它没毒</b>：本站只收录了少数几种毒菌。</p>`;
   const edHtml = ed.length ? `<ul class="res-list">${ed.map(([s]) => `<li><a class="res-item" href="#sp-${s.slug}">
       <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span><span class="res-item__sub">${esc(groupBy[s.group].short)} · ${esc(s.season)} · ${esc(s.latin)}</span></span>${icon("arrow")}</a></li>`).join("")}</ul>`
     : `<div class="res-empty">没有符合的食用菌。试着把不确定的问题改成“不确定”。</div>`;

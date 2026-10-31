@@ -16,7 +16,7 @@ from data.book import GROUPS, POISON  # noqa: E402
 from data.guide import COOK, FEATURES, GLOSS, HABITATS, KEEP, RECIPES6, RECIPES6_EXTRA, RECIPES_ORIG  # noqa: E402
 from data.photos import PHOTOS, HEROES, RECIPE_PHOTOS, LICENCE_NAME, LICENCE_URL  # noqa: E402
 from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
-from data.north_america import NA_GROUP, NA_SPECIES, NA_TOXIC, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
+from data.north_america import NA_GROUP_OF, NA_SPECIES, NA_TOXIC, TOXIC_ORDER, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
 from data.compare import COMPARE  # noqa: E402
 
@@ -68,9 +68,9 @@ for s in species:
             s["warn"] = (s["warn"] + "；" if s["warn"] else "") + n["warn"]
         s["sources"] = n["sources"]
 
-# ---- North American additions go first ----
-groups.insert(0, NA_GROUP)
-species[0:0] = [dict(s) for s in NA_SPECIES]
+# ---- North American species join the same groups as everything else ----
+assert set(NA_GROUP_OF) == {s["latin"] for s in NA_SPECIES}, "every North American species needs a group in NA_GROUP_OF"
+species += [dict(s, group=NA_GROUP_OF[s["latin"]]) for s in NA_SPECIES]
 poison = [dict(zh=zh, en=en, latin=latin, level=level, feat=feat, conf=conf) for zh, en, latin, level, feat, conf in POISON]
 poison_extra = [dict(p) for p in NA_TOXIC]
 for p in poison:
@@ -99,6 +99,39 @@ for s in species:
     if o:
         s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"])
 
+
+# ---- Pacific Northwest first: season from local records, how common it is, and list order ----
+def month_ranges(ms):
+    """[9, 10, 11, 12] -> "9–12 月"; wraps over the new year ([11, 12, 1] -> "11–1 月")."""
+    if len(ms) == 12:
+        return "全年"
+    runs, cur = [], [ms[0]]
+    for m in ms[1:]:
+        if m == cur[-1] + 1:
+            cur.append(m)
+        else:
+            runs.append(cur); cur = [m]
+    runs.append(cur)
+    if len(runs) > 1 and runs[0][0] == 1 and runs[-1][-1] == 12:
+        runs[0] = runs.pop() + runs[0]
+    return "、".join(f"{r[0]}–{r[-1]}" if len(r) > 1 else f"{r[0]}" for r in runs) + " 月"
+
+
+for s in species:
+    counts = s.get("obs", {}).get("counts", [])
+    total = sum(counts)
+    s["pnw"] = total
+    if total >= 30:  # enough local records: season comes from them (any month with >= 10% of the peak)
+        peak = max(counts)
+        s["months"] = [m + 1 for m, n in enumerate(counts) if n >= 0.1 * peak]
+        s["season"] = month_ranges(s["months"])
+        s["seasonLocal"] = True
+    if total >= 300:
+        s["flags"] = ["西北太平洋常见"] + [f for f in s["flags"] if f != "非原书"]
+    elif total < 30:
+        s["flags"] = s["flags"] + ["西北太平洋少见"]
+species.sort(key=lambda s: -s["pnw"])  # stable: equal counts keep their book/group order
+
 for item in species + poison + poison_extra:
     ph = PHOTOS.get(item["slug"])
     if ph:
@@ -122,6 +155,12 @@ for r in recipes:
         ph, sp = by_slug[r["sp"][0]]["photo"], by_slug[r["sp"][0]]
         r["photo"] = dict(file=ph["file"], dish=False, sp=sp["slug"], spName=sp["zh"], author=ph["author"],
                           lic=ph["lic"], licUrl=ph["licUrl"], url=ph["url"], site="iNaturalist")
+
+# ---- toxic species: one list in the editorial order of TOXIC_ORDER ----
+all_toxic = poison + poison_extra
+assert sorted(TOXIC_ORDER) == sorted(p["slug"] for p in all_toxic), "TOXIC_ORDER must list every toxic species once"
+poison = sorted(all_toxic, key=lambda p: TOXIC_ORDER.index(p["slug"]))
+poison_extra = []
 
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
             compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES)
