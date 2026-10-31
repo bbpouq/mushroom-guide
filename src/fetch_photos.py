@@ -5,6 +5,8 @@ WebP copy to public/photos/<slug>.webp and write the attribution to src/data/pho
 Run by hand (needs network and Pillow); the site build only reads the saved files:
     python3 src/fetch_photos.py            # fetch photos for species that do not have one yet
     python3 src/fetch_photos.py --all      # re-pick every photo
+Each photo is saved twice: <slug>.webp (480px wide, for small cards) and <slug>-hd.webp (up to 1024px, for large
+cards, the sheet and high-density screens); the page picks one with srcset.
 Pin a specific iNaturalist photo for a species in PINNED if the automatic pick is poor.
 """
 import io
@@ -42,6 +44,7 @@ LICENCE_URL = {"cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
 PINNED = {}  # slug -> iNaturalist photo id, to override the automatic pick
 NAME_FIX = {"Agaricus silvicola": "Agaricus sylvicola"}  # spellings iNaturalist uses
 WIDTH = 480
+HD_WIDTH = 1024
 # Header photo for each view, shown behind the large title: (taxon, iNaturalist photo id from that taxon's photos).
 # The species view (its "today" card leads with a photo) and the emergency view have none on purpose.
 HEROES = {"finder": ("Agaricus augustus", 22093962),
@@ -88,6 +91,33 @@ def pick(t, pinned=None):
         if p.get("license_code") in OK:
             return full, p
     return full, None
+
+
+def large(photo_id):
+    """The 1024px ("large") rendition of an iNaturalist photo. Openly licensed photos live in the open-data bucket;
+    the file extension is not stored with the photo, so try the usual ones."""
+    for host in ("https://inaturalist-open-data.s3.amazonaws.com", "https://static.inaturalist.org"):
+        for ext in ("jpg", "jpeg", "png", "JPG", "JPEG", ""):  # some older uploads end in a bare "large."
+            try:
+                return Image.open(io.BytesIO(get(f"{host}/photos/{photo_id}/large.{ext}"))).convert("RGB")
+            except Exception:
+                continue
+    return None
+
+
+def save_hd(sl, entry):
+    """Add a high-resolution copy (<slug>-hd.webp) of the photo already chosen for a species."""
+    img = large(entry["photo_url"].rsplit("/", 1)[1])
+    if img is None:
+        print(f"  no large rendition: {sl}")
+        return
+    if img.width > HD_WIDTH:
+        img = img.resize((HD_WIDTH, round(img.height * HD_WIDTH / img.width)), Image.LANCZOS)
+    if img.width < entry["w"] * 1.3:  # not meaningfully sharper than the small copy
+        return
+    img.save(OUT / f"{sl}-hd.webp", "WEBP", quality=70, method=6)
+    entry["hd"] = dict(file=f"{sl}-hd.webp", w=img.width, h=img.height)
+    print(f"  hd {sl}: {img.width}x{img.height}")
 
 
 def author(attribution):
@@ -137,6 +167,11 @@ def main():
         from data.photos import HEROES as old_heroes
     except ImportError:
         old_heroes = {}
+    for sl, entry in out.items():
+        if redo or not (entry.get("hd") and (OUT / entry["hd"]["file"]).exists()):
+            entry.pop("hd", None)
+            save_hd(sl, entry)
+            time.sleep(0.5)
     heroes = {}
     for view, (name, pid) in HEROES.items():
         if not redo and view in old_heroes and old_heroes[view]["id"] == pid and (OUT / old_heroes[view]["file"]).exists():

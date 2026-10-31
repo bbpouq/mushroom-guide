@@ -104,7 +104,7 @@ def run():
             ctx.close()
 
         # ---------- deep links, finder, share, offline (phone) ----------
-        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True, device_scale_factor=3)
         pg = ctx.new_page()
         pg.goto(url + "#species"); pg.wait_for_timeout(400)
         name0 = pg.inner_text("#today-name")
@@ -119,6 +119,8 @@ def run():
         check(f"'today' card keeps one size and its arrows stay put across days {sorted(set(map(tuple, size)))}",
               len(set(map(tuple, size))) == 1)
         pg.click('#today [data-today="0"]'); pg.wait_for_timeout(100)
+        hd = pg.evaluate("document.querySelector('#today .today__img').currentSrc")
+        check(f"'today' photo uses the high-resolution copy on a dense phone screen ({hd.rsplit('/', 1)[-1]})", hd.endswith("-hd.webp"))
         pg.click('#today [data-today="1"]'); pg.wait_for_timeout(150)
         name1 = pg.inner_text("#today-name"); kick1 = pg.inner_text("#today .today__kicker")
         pg.click('#today [data-today="0"]'); pg.wait_for_timeout(150)

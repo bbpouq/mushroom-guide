@@ -138,6 +138,9 @@ for item in species + poison + poison_extra:
         assert (OUT.parent / "photos" / ph["file"]).exists(), f"missing photo file {ph['file']}"
         item["photo"] = dict(file=ph["file"], w=ph["w"], h=ph["h"], taxon=ph["taxon"], author=ph["author"],
                              lic=LICENCE_NAME[ph["licence"]], licUrl=LICENCE_URL[ph["licence"]], url=ph["photo_url"])
+        if ph.get("hd"):
+            assert (OUT.parent / "photos" / ph["hd"]["file"]).exists(), f"missing photo file {ph['hd']['file']}"
+            item["photo"]["hd"] = ph["hd"]
 
 recipes = [dict(r, **x) for r, x in zip(RECIPES6, RECIPES6_EXTRA, strict=True)] + [dict(r) for r in RECIPES_ORIG]
 by_slug = {x["slug"]: x for x in species}
@@ -154,7 +157,7 @@ for r in recipes:
     elif by_slug[r["sp"][0]].get("photo"):  # otherwise the main mushroom's example photo
         ph, sp = by_slug[r["sp"][0]]["photo"], by_slug[r["sp"][0]]
         r["photo"] = dict(file=ph["file"], dish=False, sp=sp["slug"], spName=sp["zh"], author=ph["author"],
-                          lic=ph["lic"], licUrl=ph["licUrl"], url=ph["url"], site="iNaturalist")
+                          lic=ph["lic"], licUrl=ph["licUrl"], url=ph["url"], site="iNaturalist", w=ph["w"], hd=ph.get("hd"))
 
 # ---- toxic species: one list in the editorial order of TOXIC_ORDER ----
 all_toxic = poison + poison_extra

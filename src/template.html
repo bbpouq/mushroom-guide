@@ -1238,6 +1238,8 @@ const MONTH = new Date().getMonth() + 1;
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const strip = s => String(s).replace(/<[^>]+>/g, "");
+// the 480px copy for small thumbnails; large cards, the sheet and high-density screens pick the 1024px copy
+const srcset = (p, sizes) => p.hd && p.w ? ` srcset="photos/${p.file} ${p.w}w, photos/${p.hd.file} ${p.hd.w}w" sizes="${sizes}"` : "";
 const icon = (id, cls = "") => `<svg class="icon ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const groupBy = Object.fromEntries(DATA.groups.map(g => [g.key, g]));
 const state = { q: "", group: "all", season: "all" };
@@ -1294,7 +1296,7 @@ function renderGrid() {
   $("#group-note").innerHTML = g ? `<div class="group-note${g.key === "amanita" ? " group-note--risk" : ""}"><b>${esc(g.name)}</b>　${g.note}</div>` : "";
   $("#grid").innerHTML = list.length ? list.map(([s, i]) => `
     <button class="sp-card" type="button" data-i="${i}" aria-haspopup="dialog">
-      ${s.photo ? `<img class="sp-card__photo" src="photos/${s.photo.file}" width="${s.photo.w}" height="${s.photo.h}" loading="lazy" decoding="async" alt="">` : ""}
+      ${s.photo ? `<img class="sp-card__photo" src="photos/${s.photo.file}"${srcset(s.photo, "(min-width: 1280px) 30vw, (min-width: 640px) 50vw, 100vw")} width="${s.photo.w}" height="${s.photo.h}" loading="lazy" decoding="async" alt="">` : ""}
       <span class="sp-card__meta"><span>${esc(groupBy[s.group].short)}${s.region ? " · " + esc(s.region) : ""}</span><span class="sp-card__season">${esc(s.season)}</span></span>
       <span class="sp-card__head"><span class="sp-card__title"><span class="sp-card__name">${esc(s.zh)}</span>
         <span class="sp-card__latin latin">${esc(s.latin)}</span></span></span>
@@ -1377,7 +1379,7 @@ function photoFig(x, compact) {
   const p = x.photo; if (!p) return "";
   const other = p.taxon !== x.latin.split(" / ")[0] ? `（照片学名 <span class="latin">${esc(p.taxon)}</span>）` : "";
   return `<figure class="photo${compact ? " photo--compact" : ""}">
-    <img class="photo__img" src="photos/${p.file}" width="${p.w}" height="${p.h}" loading="lazy" decoding="async" alt="${esc(x.zh)}的示例照片">
+    <img class="photo__img" src="photos/${p.file}"${srcset(p, "(min-width: 768px) 640px, 100vw")} width="${p.w}" height="${p.h}" loading="lazy" decoding="async" alt="${esc(x.zh)}的示例照片">
     <figcaption class="photo__cap">示例照片${other} · <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a> · <a href="${p.licUrl}" target="_blank" rel="noopener">${esc(p.lic)}</a> · iNaturalist<br>【编者注】照片只是一个例子。同一种菌的颜色和形状会随年龄、天气和产地变化很大，不能只凭照片鉴定。</figcaption>
   </figure>`;
 }
@@ -1431,7 +1433,7 @@ $("#sheet").addEventListener("close", () => {
 function toxCard(p) {
   const deadly = p.level === "致命";
   return `<button class="sp-card sp-card--toxic${deadly ? "" : " sp-card--poison"}" type="button" id="tx-${p.slug}" data-tx="${p.slug}" aria-haspopup="dialog">
-      ${p.photo ? `<img class="sp-card__photo" src="photos/${p.photo.file}" width="${p.photo.w}" height="${p.photo.h}" loading="lazy" decoding="async" alt="">` : ""}
+      ${p.photo ? `<img class="sp-card__photo" src="photos/${p.photo.file}"${srcset(p.photo, "(min-width: 1280px) 30vw, (min-width: 640px) 50vw, 100vw")} width="${p.photo.w}" height="${p.photo.h}" loading="lazy" decoding="async" alt="">` : ""}
       <span class="sp-card__meta"><span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></span>
       <span class="sp-card__head"><span class="sp-card__title"><span class="sp-card__name">${esc(p.zh)}</span>
         <span class="sp-card__latin latin">${esc(p.latin)}</span></span></span>
@@ -1554,7 +1556,7 @@ function renderRecipes() {
   $("#rc-grid").innerHTML = DATA.recipes.map((r, ri) => {
     if (rcStyle !== "全部" && r.style !== rcStyle) return "";
     const ph = r.photo;
-    const fig = ph ? `<figure class="rc-card__fig"><img class="rc-card__img" src="photos/${ph.file}" alt="${esc(ph.dish ? r.zh : "主料" + ph.spName)}" loading="lazy" decoding="async">
+    const fig = ph ? `<figure class="rc-card__fig"><img class="rc-card__img" src="photos/${ph.file}"${srcset(ph, "(min-width: 1024px) 40vw, 100vw")} alt="${esc(ph.dish ? r.zh : "主料" + ph.spName)}" loading="lazy" decoding="async">
       <figcaption class="rc-card__cap">${ph.dish ? "菜品照片" : `主料示例：<a href="#sp-${ph.sp}">${esc(ph.spName)}</a>`} · <a href="${ph.url}" target="_blank" rel="noopener">${esc(ph.author)}</a> · <a href="${ph.licUrl}" target="_blank" rel="noopener">${esc(ph.lic)}</a> · ${esc(ph.site)}</figcaption></figure>` : "";
     return `<article class="rc-card" id="rc-${r.id}">
       ${fig}
@@ -1973,7 +1975,7 @@ function renderToday() {
   const when = todayOff === 0 ? "今日一菌" : todayOff === -1 ? "昨天" : todayOff === 1 ? "明天" : todayOff < 0 ? `${-todayOff} 天前` : `${todayOff} 天后`;
   $("#today").innerHTML = `
     <div class="today__media">
-      <img class="today__img" src="photos/${p.file}" width="${p.w}" height="${p.h}" decoding="async" alt="${esc(s.zh)}的示例照片">
+      <img class="today__img" src="photos/${p.file}"${srcset(p, "(min-width: 1024px) 50vw, 100vw")} width="${p.w}" height="${p.h}" decoding="async" alt="${esc(s.zh)}的示例照片">
       ${todayOff ? `<button class="today__back" type="button" data-today="0">${icon("calendar", "icon--sm")}回到今天</button>` : ""}
       <div class="today__over">
         <span class="today__kicker">${icon("calendar", "icon--sm")}${when} · ${date}</span>
