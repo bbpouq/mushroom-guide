@@ -46,8 +46,8 @@ NAME_FIX = {"Agaricus silvicola": "Agaricus sylvicola"}  # spellings iNaturalist
 WIDTH = 480
 HD_WIDTH = 1024
 # Header photo for each view, shown behind the large title: (taxon, iNaturalist photo id from that taxon's photos).
-# The species view (its "today" card leads with a photo) and the emergency view have none on purpose.
-HEROES = {"finder": ("Agaricus augustus", 22093962),
+# The home view's header sits behind the search box; the species view and the emergency view have none on purpose.
+HEROES = {"home": ("Cantharellus formosus", 168845865), "finder": ("Agaricus augustus", 22093962),
           "toxic": ("Amanita muscaria", 448681419), "guide": ("Aureoboletus mirabilis", 11502906),
           "log": ("Craterellus tubaeformis", 250397284), "recipes": ("Boletus edulis", 29239600)}
 HERO_WIDTH = 1024

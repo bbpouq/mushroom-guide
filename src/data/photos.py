@@ -93,6 +93,7 @@ PHOTOS = {
  'turbinellus-floccosus': {'file': 'turbinellus-floccosus.webp', 'w': 480, 'h': 480, 'taxon': 'Turbinellus floccosus', 'author': 'Ken-ichi Ueda', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/6822', 'hd': {'file': 'turbinellus-floccosus-hd.webp', 'w': 1024, 'h': 1024}},
 }
 HEROES = {
+ 'home': {'id': 168845865, 'file': 'hero-home.webp', 'author': 'Alan Rockefeller', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/168845865'},
  'finder': {'id': 22093962, 'file': 'hero-finder.webp', 'author': 'Christian Schwarz', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/22093962'},
  'toxic': {'id': 448681419, 'file': 'hero-toxic.webp', 'author': 'Borja Fierro-Leva', 'licence': 'cc-by', 'photo_url': 'https://www.inaturalist.org/photos/448681419'},
  'guide': {'id': 11502906, 'file': 'hero-guide.webp', 'author': 'Christian Schwarz', 'licence': 'cc-by-nc', 'photo_url': 'https://www.inaturalist.org/photos/11502906'},

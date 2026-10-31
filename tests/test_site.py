@@ -17,7 +17,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
-VIEWS = ["species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
+VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
 NAV = {375: ".botnav", 768: ".topnav", 1024: ".sidenav__list", 1440: ".sidenav__list"}
 failures = []
 
@@ -95,7 +95,7 @@ def run():
             check(f"{w}px sticky search under header and unobscured {ov}", not ov["leaked"] and (w >= 1024 or ov["top"] == ov["header"]))
             pg.evaluate("window.scrollTo(0, 0)")
             nav = NAV[w]
-            for v in ["finder", "toxic", "guide", "log", "species"]:
+            for v in ["finder", "toxic", "home", "log", "species"]:
                 pg.click(f'{nav} a[href="#{v}"]'); pg.wait_for_timeout(80)
             check(f"{w}px nav cycles", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species")
             pg.go_back(); pg.wait_for_timeout(150)
@@ -106,7 +106,24 @@ def run():
         # ---------- deep links, finder, share, offline (phone) ----------
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True, device_scale_factor=3)
         pg = ctx.new_page()
-        pg.goto(url + "#species"); pg.wait_for_timeout(400)
+        pg.goto(url); pg.wait_for_timeout(400)
+        check("the site opens on the home view", pg.evaluate("document.querySelector('.view.is-active').id") == "v-home")
+        pg.fill("#home-q", "amanita"); pg.wait_for_timeout(150)
+        first = pg.locator("#home-results .home-results__item >> nth=0")
+        check("home search lists toxic matches first", "home-results__item--toxic" in first.get_attribute("class")
+              and pg.locator("#home-results .home-results__item").count() >= 3)
+        first.click(); pg.wait_for_timeout(500)
+        check("a home search result opens its sheet over the home view", pg.evaluate("document.getElementById('sheet').open")
+              and pg.evaluate("document.querySelector('.view.is-active').id") == "v-home")
+        pg.click("#sheet [data-close]"); pg.wait_for_timeout(300)
+        pg.fill("#home-q", "zzzz"); pg.wait_for_timeout(150)
+        check("an empty home search says that not listed is not safe", "不代表它安全" in pg.inner_text("#home-results"))
+        pg.fill("#home-q", "")
+        check("home has four entry cards and a season section", pg.locator(".home-entry__item").count() == 4
+              and pg.locator("#season-cols .season__col").count() == 2)
+        pg.goto(url + "#guide-gloss"); pg.wait_for_timeout(900)
+        check("#guide-gloss opens the glossary", pg.evaluate("document.getElementById('guide-gloss').open"))
+        pg.goto(url + "#home"); pg.wait_for_timeout(400)
         name0 = pg.inner_text("#today-name")
         txt = pg.inner_text("#today")
         check(f"'today' card shows a species ({name0}) with how to eat it and the safety line",
@@ -132,7 +149,7 @@ def run():
         pg.goto(url + "#rc-bruschetta"); pg.wait_for_timeout(900)
         check("recipe deep link opens the recipe", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes"
               and pg.evaluate("document.querySelector('#rc-bruschetta details').open"))
-        pg.goto(url + "#species"); pg.wait_for_timeout(400)
+        pg.goto(url + "#home"); pg.wait_for_timeout(400)
         n_now = pg.locator("#now-track .now__item").count()
         pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)
         check(f"'this month' strip lists species ({n_now}) and opens one", n_now > 0 and pg.evaluate("document.getElementById('sheet').open"))
@@ -180,14 +197,14 @@ def run():
         armed = pg.locator("#finds-list .finds__item").count() == 1
         pg.click("#finds-list [data-del]"); pg.wait_for_timeout(200)
         check("deleting a find takes two taps", armed and pg.locator("#finds-list .finds__item").count() == 0)
-        pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
+        pg.goto(url + "#sp-tricholoma-matsutake"); pg.reload(); pg.wait_for_timeout(700)
         pg.click("[data-close]"); pg.wait_for_timeout(150)
         check("closing a directly opened sheet goes to #species", pg.evaluate("location.hash") == "#species")
         pg.click(".sp-card >> nth=3"); pg.wait_for_timeout(250)
         check("card click sets #sp- hash", pg.evaluate("location.hash").startswith("#sp-"))
         pg.go_back(); pg.wait_for_timeout(250)
         check("back closes sheet", not pg.evaluate("document.getElementById('sheet').open"))
-        pg.goto(url + "#tx-galerina-marginata"); pg.wait_for_timeout(800)
+        pg.goto(url + "#tx-galerina-marginata"); pg.reload(); pg.wait_for_timeout(800)
         check("#tx- deep link opens that toxic species' sheet",
               pg.evaluate("document.getElementById('sheet').open") and "纹缘盔孢伞" in pg.inner_text("#sheet-title")
               and pg.evaluate("document.querySelector('.view.is-active').id") == "v-toxic")
@@ -242,7 +259,7 @@ def run():
         host.eval_on_selector("#f", "(f, h) => f.srcdoc = h", html); host.wait_for_timeout(900)
         fr = host.frames[1]
         ok = []
-        for v in ["finder", "toxic", "guide", "log", "species"]:
+        for v in ["finder", "toxic", "home", "log", "species"]:
             fr.click(f'.botnav a[href="#{v}"]'); host.wait_for_timeout(80)
             ok.append(fr.evaluate("document.querySelector('.view.is-active').id") == f"v-{v}")
         fr.click(".sp-card >> nth=0"); host.wait_for_timeout(200)
