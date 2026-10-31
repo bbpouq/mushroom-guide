@@ -190,6 +190,8 @@ def run():
         pg.click('#sheet a[data-log-sp]'); pg.wait_for_timeout(1100)
         check("sheet 'log this find' opens the log with the species chosen",
               pg.evaluate("document.querySelector('.view.is-active').id") == "v-log" and pg.input_value("#finds-sp") == "tricholoma-matsutake")
+        check("picking a species makes a find a candidate, never confirmed",
+              pg.evaluate("document.querySelector('[name=finds-status]:checked').value") == "candidate")
         pg.fill("#finds-place", "测试步道"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(200)
         pg.reload(); pg.wait_for_timeout(700)
         check("a saved find survives a reload", "松茸" in pg.inner_text("#finds-list") and "测试步道" in pg.inner_text("#finds-list"))
@@ -217,7 +219,20 @@ def run():
         pg.click("#tox-grid .sp-card >> nth=0"); pg.wait_for_timeout(500)
         check(f"toxic list uses the species card pattern ({n_tx} cards) and opens a sheet",
               n_tx == 22 and pg.locator("#tox-grid .sp-card__photo").count() == n_tx and pg.evaluate("document.getElementById('sheet').open"))
+        pg.goto(url + "#guide-calendar"); pg.reload(); pg.wait_for_timeout(1000)
+        all_rows = pg.locator("#cal tbody tr").count()
+        pg.click('[data-cal-region="bc"]'); pg.wait_for_timeout(150)
+        bc_rows = pg.locator("#cal tbody tr").count()
+        pg.click('[data-cal-mode="month"]'); pg.wait_for_timeout(150)
+        month_txt = pg.inner_text("#cal")
+        pg.fill("#cal-q", "松茸"); pg.wait_for_timeout(150)
+        one = pg.locator("#cal .cal-month__list li").count()
+        check(f"season explorer: region ({all_rows} -> {bc_rows} rows), month view and search",
+              0 < bc_rows < all_rows and "高峰" in month_txt and "不是实时预测" in month_txt and one == 1)
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
+        check("the species sheet shows records by region and by year, with the upload caveat",
+              pg.locator("#sheet-body .obs-chart__regions span").count() == 3 and pg.locator("#sheet-body .obs-years__col").count() >= 3
+              and "不代表这种菌变多了" in pg.inner_text("#sheet-body"))
         body = pg.inner_text("#sheet-body")
         check("species sheet: photo first, quick facts, sections and typed sources",
               pg.evaluate("document.querySelector('#sheet-body .photo').compareDocumentPosition(document.getElementById('sheet-title')) & 4") > 0
@@ -325,6 +340,42 @@ def run():
                 errs.append("overflow in field mode: " + v)
         pg.click(".hdr [data-field-toggle]"); pg.wait_for_timeout(100)
         check(f"field mode turns off again, no overflow or errors {errs}", "field" not in pg.evaluate("Object.keys(document.documentElement.dataset)") and not errs)
+        ctx.close()
+
+        # ---------- finds journal: GPS, photo, edit, filters, map, backup (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True,
+                            geolocation={"latitude": 47.6062, "longitude": -122.3321, "accuracy": 12}, permissions=["geolocation"])
+        pg = ctx.new_page(); errs = []; pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#log"); pg.wait_for_timeout(600)
+        pg.select_option("#finds-sp", "cantharellus-formosus"); pg.fill("#finds-place", "地图测试林")
+        pg.click("#finds-gps"); pg.wait_for_timeout(600)
+        gps = pg.inner_text("#finds-gps-out")
+        png = __import__("base64").b64decode("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGP4z8DAwMDAxMDAwMDAAAANHQEDasKb6QAAAABJRU5ErkJggg==")
+        pg.set_input_files("#finds-photo", files=[{"name": "a.png", "mimeType": "image/png", "buffer": png}]); pg.wait_for_timeout(600)
+        thumbs = pg.locator("#finds-thumbs .finds__thumb img").count()
+        pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(500)
+        check(f"a find saves GPS ({gps}) and a photo ({thumbs})", "47.60620" in gps and thumbs == 1
+              and pg.locator("#finds-list img.finds__pic").count() == 1)
+        pg.select_option("#finds-sp", ""); pg.fill("#finds-other", "褐色小伞菌"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
+        pg.click('#finds-list [data-edit] >> nth=1'); pg.wait_for_timeout(300)
+        editing = pg.inner_text("#finds-title")
+        pg.fill("#finds-notes", "改过的备注"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
+        check("a find can be edited in place", editing == "编辑记录" and "改过的备注" in pg.inner_text("#finds-list")
+              and pg.locator("#finds-list .finds__item").count() == 2)
+        pg.select_option("#finds-fsp", "cantharellus-formosus"); pg.wait_for_timeout(200)
+        check("filtering by species narrows the timeline", pg.locator("#finds-list .finds__item").count() == 1)
+        pg.select_option("#finds-fsp", "")
+        pg.locator("#fmap").scroll_into_view_if_needed(); pg.wait_for_timeout(1500)
+        check("the map loads and shows the find with coordinates", pg.locator("#fmap path.leaflet-interactive").count() == 1)
+        with pg.expect_download() as dl:
+            pg.click("#finds-export-json")
+        backup = dl.value.path()
+        data = __import__("json").loads(open(backup, encoding="utf-8").read())
+        check("the JSON backup holds both finds and the photo", len(data["finds"]) == 2 and len(data["photos"]) == 1)
+        pg.evaluate("localStorage.removeItem('mushroom-guide:finds:v1')"); pg.reload(); pg.wait_for_timeout(600)
+        pg.set_input_files("#finds-import", backup); pg.wait_for_timeout(1000)
+        check(f"importing the backup restores the finds and photo {errs}", pg.locator("#finds-list .finds__item").count() == 2
+              and pg.locator("#finds-list img.finds__pic").count() == 1 and not errs)
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

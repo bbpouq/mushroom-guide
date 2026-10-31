@@ -97,7 +97,8 @@ for c in COMPARE:
 for s in species:
     o = SEASONALITY.get(s["slug"])
     if o:
-        s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"])
+        s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"],
+                        regions=o.get("regions"), years=o.get("years"))
 
 
 # ---- Pacific Northwest first: season from local records, how common it is, and list order ----

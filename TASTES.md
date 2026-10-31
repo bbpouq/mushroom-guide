@@ -19,6 +19,12 @@
 - Ensure every glass surface has an opaque fallback, and every animation stops under reduced motion.
 - Write Chinese copy that is plain, calm and short.
 
+- Layer surfaces 1-3% apart in lightness (four layers); never pure black, never dark frames.
+- Focus inputs with a deeper double ring, never an outline or border change.
+- Drop every font weight by 40 in dark mode; lock numbers to tabular figures; let body text wrap "pretty".
+- Fold with grid rows 0fr → 1fr; type titles in from a 6px blur (120ms, 30ms apart); drag on a 1200/80 spring, tap on 380/18.
+- Show a check for 2.5s after copying, then put the icon back.
+
 ## WHEN AMBIGUOUS
 - Choose what an iOS system app would do; a warning should still be the loudest thing on screen.
 - Orient toward: natural-history museum field guides and nature photography (print), iOS Settings and Weather (Apple).

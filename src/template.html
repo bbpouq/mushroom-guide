@@ -1037,7 +1037,86 @@ img.is-missing { visibility: hidden; }
   .hdr, .botnav, .sidenav, .sheet, .search-bar { background: var(--color-background); }
 }
 
+/* ---------- finds journal ---------- */
+.finds { max-width: 1040px; }
+.finds > .panel { margin-bottom: var(--space-5); }
+.finds__form { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .finds__form { grid-template-columns: repeat(2, minmax(0, 1fr)); } .finds__field--wide { grid-column: 1 / -1; } }
+fieldset.finds__field { border: 0; margin: 0; padding: 0; min-width: 0; }
+.finds__radio { position: relative; display: inline-flex; }
+.finds__radio input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.finds__radio span { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--color-muted); font-size: 14px; font-weight: var(--fw-500); }
+.finds__radio input:checked + span { background: var(--color-foreground); color: var(--color-background); }
+.finds__radio input:focus-visible + span { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--color-primary) 62%, transparent), 0 0 0 6px color-mix(in srgb, var(--color-primary) 16%, transparent); }
+.finds__hint { margin: var(--space-1) 0 0; font-size: 13px; line-height: 1.5; color: var(--color-muted-foreground); }
+.finds__gps-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.finds__gps-out { font-size: 14px; color: var(--color-muted-foreground); }
+.finds__pick { justify-self: start; cursor: pointer; }
+.finds__pick:focus-within { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--color-primary) 62%, transparent), 0 0 0 6px color-mix(in srgb, var(--color-primary) 16%, transparent); }
+.finds__thumbs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.finds__thumbs:empty { display: none; }
+.finds__thumb { position: relative; width: 84px; height: 84px; border-radius: 12px; overflow: hidden; background: var(--color-muted); }
+.finds__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.finds__thumb button { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border: 0; border-radius: 999px; display: grid; place-items: center; background: rgba(10, 14, 11, .55); color: #fff; cursor: pointer; }
+.finds__input { background: var(--surface-2); border: 0; border-radius: 12px; }
+.finds__h { font-size: 22px; font-weight: var(--fw-700); letter-spacing: -.01em; margin: var(--space-6) 0 var(--space-3); }
+.finds__filters { display: grid; gap: var(--space-2); grid-template-columns: minmax(0, 1fr); margin-bottom: var(--space-3); }
+@media (min-width: 640px) { .finds__filters { grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); } }
+.finds__month { margin: var(--space-5) 0 var(--space-2); font-size: 14px; font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.finds__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); border: 0; }
+.finds__item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); padding: var(--space-3); border: 0; border-radius: var(--radius-lg); background: var(--surface-1); box-shadow: var(--shadow-card); }
+.finds__pic { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; background: var(--color-muted); display: block; }
+.finds__pic--none { display: grid; place-items: center; color: var(--color-muted-foreground); }
+.finds__body { min-width: 0; display: grid; gap: 4px; }
+.finds__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px var(--space-2); }
+.finds__name { font-size: 17px; }
+.finds__badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: var(--fw-600); background: var(--color-muted); color: var(--color-muted-foreground); }
+.finds__badge--candidate { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.finds__badge--expert { background: var(--surface-3); color: var(--color-foreground); box-shadow: inset 0 0 0 1px var(--color-border); }
+.finds__meta { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-muted-foreground); overflow-wrap: anywhere; }
+.finds__ops { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
+.finds__ops .btn { min-height: 36px; padding: 0 var(--space-3); font-size: 13px; }
+.finds__stats { margin: 0 0 var(--space-3); font-size: 14px; color: var(--color-muted-foreground); }
+.finds__import { cursor: pointer; }
+.finds__check { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); font-weight: var(--fw-600); cursor: pointer; }
+.finds__check input { width: 20px; height: 20px; accent-color: var(--color-primary); }
+.fmap__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.fmap__count { font-size: 14px; color: var(--color-muted-foreground); }
+.fmap__stage { position: relative; height: 340px; border-radius: var(--radius); overflow: hidden; background: var(--surface-0); z-index: 0; }
+@media (min-width: 1024px) { .fmap__stage { height: 440px; } }
+.fmap__empty { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--space-5); text-align: center; font-size: 14px; color: var(--color-muted-foreground); }
+.fmap__bar { display: grid; gap: var(--space-1); margin-top: var(--space-3); }
+.fmap .leaflet-container { background: var(--surface-0); font: inherit; }
+.fmap .leaflet-popup-content-wrapper, .fmap .leaflet-popup-tip { background: var(--surface-2); color: var(--color-foreground); box-shadow: var(--shadow-float); }
+.fmap .leaflet-popup-content { margin: 12px 14px; font-size: 14px; line-height: 1.5; }
+.fmap__pop img { display: block; width: 160px; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 6px; }
+.fmap .leaflet-control-zoom a { background: var(--surface-2); color: var(--color-foreground); border-color: var(--color-border); }
+.fmap .leaflet-control-attribution { background: color-mix(in srgb, var(--surface-2) 85%, transparent); color: var(--color-muted-foreground); }
+.fmap .leaflet-control-attribution a { color: inherit; }
+
+/* ---------- season explorer ---------- */
+.cal-ctl { display: grid; gap: var(--space-3); margin: 0 0 var(--space-4); max-width: 960px; }
+.cal-ctl__row { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); align-items: center; }
+.cal-ctl__month { min-height: var(--target); min-width: 96px; padding: 0 var(--space-3); font: inherit; font-size: 16px; color: var(--color-foreground); background: var(--surface-2); border: 0; border-radius: 12px; }
+.cal-ctl__month[hidden] { display: none; }
+.cal-ctl__q { flex: 1 1 200px; min-width: 0; }
+.cal-month { margin: var(--space-4) 0; }
+.cal-month__h { display: flex; align-items: center; gap: var(--space-2); font-size: 16px; margin-bottom: var(--space-2); }
+.cal-month__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 var(--space-4); }
+@media (min-width: 768px) { .cal-month__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cal-month__list li { border-top: .5px solid var(--color-border); }
+.obs-chart__regions { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: var(--space-3) 0 0; font-size: 13px; color: var(--color-muted-foreground); }
+.obs-chart__regions b { color: var(--color-foreground); font-weight: var(--fw-600); }
+.obs-years { margin-top: var(--space-4); }
+.obs-years__title { font-size: 14px; font-weight: var(--fw-600); margin: 0 0 var(--space-2); }
+.obs-years__plot { display: flex; align-items: flex-end; gap: 4px; height: 72px; }
+.obs-years__col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; min-width: 0; }
+.obs-years__bar { width: 100%; max-width: 18px; background: var(--color-seq-2); border-radius: 3px 3px 0 0; }
+.obs-years__y { font-size: 11px; color: var(--color-muted-foreground); line-height: 1; }
+.obs-years__note { margin: var(--space-2) 0 0; font-size: 12px; color: var(--color-muted-foreground); }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
+[hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
 b, strong { font-weight: var(--fw-700); }
 .icon { vertical-align: -0.125em; }
@@ -1370,6 +1449,22 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           </details>
         </div>
         <div class="subhead" id="guide-calendar"><h2>西北太平洋产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
+        <div class="cal-ctl" id="cal-ctl">
+          <div class="chip-list" role="group" aria-label="地区">
+            <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
+            <button type="button" class="chip" data-cal-region="bc" aria-pressed="false">BC</button>
+            <button type="button" class="chip" data-cal-region="wa" aria-pressed="false">华盛顿</button>
+            <button type="button" class="chip" data-cal-region="or" aria-pressed="false">俄勒冈</button>
+          </div>
+          <div class="cal-ctl__row">
+            <div class="chip-list" role="group" aria-label="显示方式">
+              <button type="button" class="chip" data-cal-mode="cal" aria-pressed="true">全年日历</button>
+              <button type="button" class="chip" data-cal-mode="month" aria-pressed="false">按月份看</button>
+            </div>
+            <label class="sr-only" for="cal-month">月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
+            <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌"></div></div>
+          </div>
+        </div>
         <div class="cal" id="cal"></div>
         <div class="subhead" id="guide-check"><h2>吃之前：逐条检查</h2><p>每次下锅前都过一遍。全部打勾也不等于安全。</p></div>
         <section class="panel panel--wide" aria-labelledby="eat-check-title">
@@ -1501,17 +1596,70 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <p class="view__lead">记下在哪里、什么时候找到了什么，明年同一时间再去看看。</p>
         </header>
         <section class="finds" aria-labelledby="finds-title">
-          <h2 class="sr-only" id="finds-title">新增一条采集记录</h2>
-          <p class="finds__note">记录<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，可以随时导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
-          <form class="finds__form" id="finds-form" novalidate>
-            <div class="finds__field"><label class="finds__label" for="finds-sp">找到了什么</label><select class="finds__input" id="finds-sp"></select></div>
-            <div class="finds__field" id="finds-other-wrap" hidden><label class="finds__label" for="finds-other">名字或描述</label><input class="finds__input" id="finds-other" type="text" maxlength="60" autocomplete="off" placeholder="如：褐色小伞菌，没认出来"></div>
-            <div class="finds__field"><label class="finds__label" for="finds-date">日期</label><input class="finds__input" id="finds-date" type="date" required></div>
-            <div class="finds__field"><label class="finds__label" for="finds-place">地点</label><input class="finds__input" id="finds-place" type="text" maxlength="80" autocomplete="off" placeholder="如：某某步道，花旗松林下"></div>
-            <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="400" placeholder="数量、长在什么上、孢子印颜色、吃了没有、味道如何……"></textarea></div>
-            <div class="finds__actions finds__field--wide"><button class="btn btn--primary" type="submit"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>记下来</button></div>
-          </form>
-          <div id="finds-list" aria-live="polite"></div>
+          <p class="finds__note">记录、照片和位置<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，记得导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
+          <div class="jump-row">
+            <button class="chip" type="button" data-jump="finds-compose"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>新记录</button>
+            <button class="chip" type="button" data-jump="finds-map-sec"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-map"/></svg>我的地图</button>
+            <button class="chip" type="button" data-jump="finds-timeline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>时间线</button>
+          </div>
+          <section class="panel" id="finds-compose" aria-labelledby="finds-title">
+            <h2 class="panel__title" id="finds-title">新增一条记录</h2>
+            <form class="finds__form" id="finds-form" novalidate>
+              <div class="finds__field"><label class="finds__label" for="finds-sp">找到了什么</label><select class="finds__input" id="finds-sp"></select></div>
+              <div class="finds__field" id="finds-other-wrap" hidden><label class="finds__label" for="finds-other">名字或描述</label><input class="finds__input" id="finds-other" type="text" maxlength="60" autocomplete="off" placeholder="如：褐色小伞菌，没认出来"></div>
+              <fieldset class="finds__field finds__field--wide" id="finds-status">
+                <legend class="finds__label">鉴定状态</legend>
+                <div class="chip-list">
+                  <label class="finds__radio"><input type="radio" name="finds-status" value="none"><span>未鉴定</span></label>
+                  <label class="finds__radio"><input type="radio" name="finds-status" value="candidate"><span>候选（我自己判断）</span></label>
+                  <label class="finds__radio"><input type="radio" name="finds-status" value="expert"><span>专家当面确认</span></label>
+                </div>
+                <p class="finds__hint">选了菌名也只算“候选”。只有懂行的人当面看过实物，才选“专家当面确认”，并写下是谁。</p>
+              </fieldset>
+              <div class="finds__field finds__field--wide" id="finds-verifier-wrap" hidden><label class="finds__label" for="finds-verifier">谁确认的</label><input class="finds__input" id="finds-verifier" type="text" maxlength="60" autocomplete="off" placeholder="如：PSMS 鉴定日的志愿者，2026-10-12"></div>
+              <div class="finds__field"><label class="finds__label" for="finds-date">日期</label><input class="finds__input" id="finds-date" type="date" required></div>
+              <div class="finds__field"><label class="finds__label" for="finds-place">地点</label><input class="finds__input" id="finds-place" type="text" maxlength="80" autocomplete="off" placeholder="如：某某步道，花旗松林下"></div>
+              <div class="finds__field finds__field--wide finds__gps">
+                <span class="finds__label">位置（可选）</span>
+                <div class="finds__gps-row"><button class="btn" type="button" id="finds-gps"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-map"/></svg>记下当前位置</button><span class="finds__gps-out" id="finds-gps-out" aria-live="polite">没有记位置</span><button class="btn-text" type="button" id="finds-gps-clear" hidden>清除</button></div>
+                <p class="finds__hint">只在你点这个按钮时才会读取定位，位置只存在这台设备上；导出备份时会包含坐标，分享文件前想一想。</p>
+              </div>
+              <div class="finds__field"><label class="finds__label" for="finds-hab">生境</label><select class="finds__input" id="finds-hab"><option value="">不确定</option><option>林地地面</option><option>苔藓里</option><option>草地、草坪</option><option>木头上</option><option>木屑、园林覆盖物</option><option>其他</option></select></div>
+              <div class="finds__field"><label class="finds__label" for="finds-trees">附近的树</label><input class="finds__input" id="finds-trees" type="text" maxlength="80" autocomplete="off" placeholder="如：花旗松、西部铁杉"></div>
+              <div class="finds__field finds__field--wide">
+                <span class="finds__label">照片（可选，最多 3 张）</span>
+                <label class="btn finds__pick"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>添加照片<input class="sr-only" id="finds-photo" type="file" accept="image/*" multiple></label>
+                <div class="finds__thumbs" id="finds-thumbs"></div>
+              </div>
+              <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="600" placeholder="数量、孢子印颜色、气味、切开变色、吃了没有……"></textarea></div>
+              <div class="finds__actions finds__field--wide"><button class="btn btn--primary" type="submit" id="finds-save"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg><span>记下来</span></button><button class="btn" type="button" id="finds-cancel" hidden>取消编辑</button></div>
+            </form>
+          </section>
+
+          <section class="panel" id="finds-map-sec" aria-labelledby="fmap-title"><div class="fmap">
+            <div class="fmap__head"><h2 class="panel__title" id="fmap-title">我的地图</h2><span class="fmap__count" id="fmap-count"></span></div>
+            <div class="fmap__stage" id="fmap" role="region" aria-label="采集地点地图"></div>
+            <div class="fmap__bar">
+              <label class="finds__check"><input type="checkbox" id="fmap-tiles"><span>显示底图</span></label>
+              <span class="finds__hint" id="fmap-note">不开底图时只画出你记录的点，不联网。开底图会从 OpenStreetMap 下载地图图块，对方会知道你在看哪一片区域。</span>
+            </div>
+          </div></section>
+
+          <section class="finds__browse" id="finds-timeline" aria-labelledby="ftl-title">
+            <h2 class="finds__h" id="ftl-title">时间线</h2>
+            <div class="finds__filters">
+              <div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="finds-q">搜索记录</label><input id="finds-q" type="search" autocomplete="off" placeholder="搜菌名、地点、备注"></div>
+              <label class="sr-only" for="finds-fsp">按菌名筛选</label><select class="finds__input" id="finds-fsp"></select>
+              <label class="sr-only" for="finds-fyear">按年份筛选</label><select class="finds__input" id="finds-fyear"></select>
+              <label class="sr-only" for="finds-fmonth">按月份筛选</label><select class="finds__input" id="finds-fmonth"></select>
+            </div>
+            <div id="finds-list" aria-live="polite"></div>
+            <div class="finds__bar">
+              <button class="btn" type="button" id="finds-export-json"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出备份（含照片）</button>
+              <button class="btn" type="button" id="finds-export"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出 CSV 表格</button>
+              <label class="btn finds__import"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>导入备份<input type="file" id="finds-import" accept="application/json,.json" hidden></label>
+            </div>
+          </section>
         </section>
       </section>
 
@@ -1860,8 +2008,19 @@ function obsChart(s) {
     <div class="obs-chart__plot" aria-hidden="true" data-counts="${o.counts.join(",")}">${cols}</div>
     <div class="obs-chart__months" aria-hidden="true">${o.counts.map((_, i) => `<span>${i + 1}</span>`).join("")}</div>
     <table class="sr-only"><caption>每月观察记录数</caption><tr><th scope="col">月份</th><th scope="col">记录数</th></tr>${o.counts.map((n, i) => `<tr><td>${i + 1} 月</td><td>${n}</td></tr>`).join("")}</table>
+    ${o.regions ? `<p class="obs-chart__regions">${["bc", "wa", "or"].map(r => `<span>${REGION[r]} <b>${o.regions[r].reduce((a, b) => a + b, 0).toLocaleString("en")}</b></span>`).join("")}</p>` : ""}
+    ${obsYears(o)}
     <p class="obs-chart__note">数量反映的是人们什么时候出门拍照上传，不等于产量；具体时间因地区、海拔和当年天气而异。数据取自 ${DATA.obsFetched}。${link}</p>
   </section>`;
+}
+// records per year: uploads grow every year, so this is about people photographing, not about the mushroom
+function obsYears(o) {
+  const ys = Object.entries(o.years || {}).filter(([y]) => +y >= 2012); if (ys.length < 3) return "";
+  const max = Math.max(...ys.map(([, n]) => n)), cur = String(new Date().getFullYear());
+  return `<div class="obs-years"><h4 class="obs-years__title">历年记录</h4>
+    <div class="obs-years__plot" aria-hidden="true">${ys.map(([y, n]) => `<span class="obs-years__col" title="${y} 年 ${n} 条"><span class="obs-years__bar" style="height:${Math.max(3, Math.round(n / max * 100))}%"></span><span class="obs-years__y">${y.slice(2)}</span></span>`).join("")}</div>
+    <table class="sr-only"><caption>每年观察记录数</caption>${ys.map(([y, n]) => `<tr><td>${y} 年</td><td>${n}</td></tr>`).join("")}</table>
+    <p class="obs-years__note">iNaturalist 的用户逐年增加，记录变多主要是因为拍照上传的人变多，不代表这种菌变多了。${ys.some(([y]) => y === cur) ? `${cur} 年还没过完。` : ""}</p></div>`;
 }
 function obsReadout(plot, i) {
   const counts = plot.dataset.counts.split(",").map(Number), out = plot.parentElement.querySelector(".obs-chart__readout");
@@ -2145,49 +2304,178 @@ function eatCount() { const b = [...eatBoxes()]; $("#eat-check-count").textConte
 $("#eat-check").addEventListener("change", eatCount);
 $("#eat-check-reset").addEventListener("click", () => { eatBoxes().forEach(x => { x.checked = false; }); eatCount(); });
 
-/* ---------- personal finds log (localStorage, this device only) ---------- */
-const FINDS_KEY = "mushroom-guide:finds:v1";
+/* ---------- personal finds journal (this device only: records in localStorage, photos in IndexedDB) ---------- */
+const FINDS_KEY = "mushroom-guide:finds:v1";  // same key as the first version; old records simply lack the newer fields
+const STATUS = { none: "未鉴定", candidate: "候选", expert: "专家当面确认" };
 function findsLoad() { try { const v = localStorage.getItem(FINDS_KEY); const a = v ? JSON.parse(v) : []; return Array.isArray(a) ? a : []; } catch (_) { return null; } }
 function findsSave(list) { try { localStorage.setItem(FINDS_KEY, JSON.stringify(list)); return true; } catch (_) { return false; } }
 function todayISO() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
 function findsName(f) { const i = bySlug[f.sp]; return i !== undefined ? DATA.species[i].zh : (f.other || "未命名"); }
-function renderFinds() {
-  const list = findsLoad();
-  if (list === null) { $("#finds-list").innerHTML = `<p class="finds__empty">这个浏览器不允许保存数据（例如无痕模式或预览窗口），记录功能用不了。</p>`; return; }
-  if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。</p>`; return; }
-  const items = [...list].sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id).map(f => {
-    const i = bySlug[f.sp], name = i !== undefined ? `<a href="#sp-${f.sp}">${esc(DATA.species[i].zh)}</a>` : esc(f.other || "未命名");
-    const meta = [f.place, f.notes].filter(Boolean).map(esc).join(" · ");
-    return `<li class="finds__item"><div class="finds__head"><span class="finds__date">${esc(f.date || "")}</span><span class="finds__name">${name}</span></div>
-      ${meta ? `<p class="finds__meta">${meta}</p>` : ""}
-      <button class="btn finds__del" type="button" data-del="${f.id}" aria-label="删除 ${esc(f.date || "")} ${esc(findsName(f))} 这条记录">${icon("trash", "icon--sm")}<span>删除</span></button></li>`;
-  }).join("");
-  $("#finds-list").innerHTML = `<ul class="finds__list">${items}</ul>
-    <div class="finds__bar"><span class="finds__count">共 ${list.length} 条</span><button class="btn" type="button" id="finds-export">${icon("download", "icon--sm")}导出 CSV 备份</button></div>`;
+const findStatus = f => f.status || (f.sp ? "candidate" : "none");
+
+// photos: one IndexedDB store, key -> Blob. Every call fails soft (private windows, previews).
+const photoDB = (() => {
+  let db = null;
+  const open = () => db || (db = new Promise((res, rej) => {
+    try { const r = indexedDB.open("mushroom-guide", 1); r.onupgradeneeded = () => r.result.createObjectStore("photos"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }
+    catch (e) { rej(e); }
+  }));
+  const tx = (mode, fn) => open().then(d => new Promise((res, rej) => { const s = d.transaction("photos", mode).objectStore("photos"); const q = fn(s); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }));
+  return { get: k => tx("readonly", s => s.get(k)).catch(() => null), put: (k, v) => tx("readwrite", s => s.put(v, k)), del: k => tx("readwrite", s => s.delete(k)).catch(() => null) };
+})();
+const photoURLs = new Map();
+async function photoURL(key) {
+  if (photoURLs.has(key)) return photoURLs.get(key);
+  const blob = await photoDB.get(key); if (!blob) return "";
+  const u = URL.createObjectURL(blob); photoURLs.set(key, u); return u;
 }
-function findsInit() {
-  const opts = [...DATA.species].map((s, i) => [s.zh, s.slug]).sort((a, b) => a[0].localeCompare(b[0], "zh-Hans-CN"));
-  $("#finds-sp").innerHTML = `<option value="">其他 / 没认出来</option>` + opts.map(([zh, sl]) => `<option value="${sl}">${esc(zh)}</option>`).join("");
-  $("#finds-date").value = todayISO();
-  $("#finds-other-wrap").hidden = false;
-  renderFinds();
+// shrink a camera photo to at most 1280px before storing it
+function shrink(file, max = 1280) {
+  return new Promise((res, rej) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+      c.toBlob(b => b ? res(b) : rej(new Error("encode")), "image/jpeg", 0.82);
+    };
+    img.onerror = () => { URL.revokeObjectURL(u); rej(new Error("decode")); };
+    img.src = u;
+  });
 }
-$("#finds-sp").addEventListener("change", e => { $("#finds-other-wrap").hidden = !!e.target.value; });
+
+// ----- the form (new or edit) -----
+const draft = { id: null, photos: [], lat: null, lon: null, alt: null, acc: null };
+function setStatus(v) { document.querySelectorAll('[name="finds-status"]').forEach(r => r.checked = r.value === v); $("#finds-verifier-wrap").hidden = v !== "expert"; }
+function gpsText() {
+  const o = $("#finds-gps-out"), has = draft.lat !== null;
+  o.textContent = has ? `${draft.lat.toFixed(5)}, ${draft.lon.toFixed(5)}${draft.acc ? `（±${Math.round(draft.acc)} 米）` : ""}${draft.alt !== null && draft.alt !== undefined ? ` · 海拔约 ${Math.round(draft.alt)} 米` : ""}` : "没有记位置";
+  $("#finds-gps-clear").hidden = !has;
+}
+async function drawThumbs() {
+  const urls = await Promise.all(draft.photos.map(photoURL));
+  $("#finds-thumbs").innerHTML = draft.photos.map((k, i) => `<div class="finds__thumb">${urls[i] ? `<img src="${urls[i]}" alt="已添加的照片 ${i + 1}">` : ""}<button type="button" data-unphoto="${esc(k)}" aria-label="移除照片 ${i + 1}">${icon("x", "icon--sm")}</button></div>`).join("");
+}
+function formReset() {
+  Object.assign(draft, { id: null, photos: [], lat: null, lon: null, alt: null, acc: null });
+  $("#finds-form").reset(); $("#finds-sp").value = ""; $("#finds-other-wrap").hidden = false;
+  $("#finds-date").value = todayISO(); setStatus("none"); gpsText(); drawThumbs();
+  $("#finds-title").textContent = "新增一条记录"; $("#finds-save span").textContent = "记下来"; $("#finds-cancel").hidden = true;
+}
+function formEdit(f) {
+  formReset();
+  Object.assign(draft, { id: f.id, photos: [...(f.photos || [])], lat: f.lat ?? null, lon: f.lon ?? null, alt: f.alt ?? null, acc: f.acc ?? null });
+  $("#finds-sp").value = f.sp || ""; $("#finds-other").value = f.other || ""; $("#finds-other-wrap").hidden = !!f.sp;
+  $("#finds-date").value = f.date || todayISO(); $("#finds-place").value = f.place || ""; $("#finds-notes").value = f.notes || "";
+  $("#finds-hab").value = f.hab || ""; $("#finds-trees").value = f.trees || ""; $("#finds-verifier").value = f.verifier || "";
+  setStatus(findStatus(f)); gpsText(); drawThumbs();
+  $("#finds-title").textContent = "编辑记录"; $("#finds-save span").textContent = "保存修改"; $("#finds-cancel").hidden = false;
+  scrollToTarget("finds-compose");
+}
+$("#finds-sp").addEventListener("change", e => {
+  $("#finds-other-wrap").hidden = !!e.target.value;
+  const cur = document.querySelector('[name="finds-status"]:checked');
+  if (e.target.value && (!cur || cur.value === "none")) setStatus("candidate");   // picking a name makes it a candidate, never "confirmed"
+});
+document.querySelectorAll('[name="finds-status"]').forEach(r => r.addEventListener("change", () => setStatus(r.value)));
+$("#finds-cancel").addEventListener("click", formReset);
+$("#finds-gps").addEventListener("click", () => {
+  if (!navigator.geolocation) { toast("这个浏览器不能定位"); return; }
+  $("#finds-gps-out").textContent = "正在定位…";
+  navigator.geolocation.getCurrentPosition(p => {
+    Object.assign(draft, { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy, alt: p.coords.altitude });
+    gpsText();
+  }, err => { gpsText(); toast(err.code === 1 ? "没有定位权限：可以在浏览器设置里允许，或者只写地点名" : "定位失败，可以稍后再试，或者只写地点名"); },
+  { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 });
+});
+$("#finds-gps-clear").addEventListener("click", () => { Object.assign(draft, { lat: null, lon: null, alt: null, acc: null }); gpsText(); });
+$("#finds-photo").addEventListener("change", async e => {
+  const files = [...e.target.files].slice(0, 3 - draft.photos.length); e.target.value = "";
+  if (!files.length) { toast("最多 3 张照片"); return; }
+  for (const f of files) {
+    try { const b = await shrink(f), k = "p" + Date.now() + Math.random().toString(36).slice(2, 7); await photoDB.put(k, b); draft.photos.push(k); }
+    catch (_) { toast("这张照片存不下来（浏览器不允许或空间不够）"); }
+  }
+  drawThumbs();
+});
+$("#finds-thumbs").addEventListener("click", e => {
+  const b = e.target.closest("[data-unphoto]"); if (!b) return;
+  draft.photos = draft.photos.filter(k => k !== b.dataset.unphoto); drawThumbs();   // removed from the blob store when the record is saved
+});
 $("#finds-form").addEventListener("submit", e => {
   e.preventDefault();
   const list = findsLoad();
   if (list === null) { toast("这个浏览器不能保存记录"); return; }
   const sp = $("#finds-sp").value, other = $("#finds-other").value.trim();
   if (!sp && !other) { toast("先选一种菌，或者写下名字"); $("#finds-other").focus(); return; }
-  list.push({ id: Date.now(), sp, other: sp ? "" : other, date: $("#finds-date").value || todayISO(),
-              place: $("#finds-place").value.trim(), notes: $("#finds-notes").value.trim() });
-  if (!findsSave(list)) { toast("保存失败：浏览器存储已满或不可用"); return; }
-  $("#finds-other").value = ""; $("#finds-notes").value = "";
-  renderFinds(); toast("已记下");
+  const status = (document.querySelector('[name="finds-status"]:checked') || {}).value || (sp ? "candidate" : "none");
+  if (status === "expert" && !$("#finds-verifier").value.trim()) { toast("写下是谁当面确认的"); $("#finds-verifier").focus(); return; }
+  const old = draft.id ? list.find(f => f.id === draft.id) : null;
+  const rec = { id: draft.id || Date.now(), sp, other: sp ? "" : other, date: $("#finds-date").value || todayISO(),
+    place: $("#finds-place").value.trim(), notes: $("#finds-notes").value.trim(), status,
+    verifier: status === "expert" ? $("#finds-verifier").value.trim() : "", hab: $("#finds-hab").value, trees: $("#finds-trees").value.trim(),
+    lat: draft.lat, lon: draft.lon, alt: draft.alt, acc: draft.acc, photos: [...draft.photos] };
+  const next = old ? list.map(f => f.id === rec.id ? rec : f) : list.concat(rec);
+  if (!findsSave(next)) { toast("保存失败：浏览器存储已满或不可用"); return; }
+  if (old) (old.photos || []).filter(k => !rec.photos.includes(k)).forEach(k => photoDB.del(k));
+  toast(old ? "已保存修改" : "已记下"); formReset(); renderFinds();
 });
+
+// ----- browsing: filters, timeline, stats -----
+function findsFiltered(list) {
+  const q = $("#finds-q").value.trim().toLowerCase(), sp = $("#finds-fsp").value, y = $("#finds-fyear").value, m = $("#finds-fmonth").value;
+  return list.filter(f => (!sp || f.sp === sp || (sp === "_other" && !f.sp)) && (!y || (f.date || "").startsWith(y)) && (!m || +(f.date || "").slice(5, 7) === +m)
+    && (!q || [findsName(f), f.place, f.notes, f.trees, f.hab].filter(Boolean).join(" ").toLowerCase().includes(q)));
+}
+function findsFilterOptions(list) {
+  const keep = (id, html) => { const el = $(id), v = el.value; el.innerHTML = html; if ([...el.options].some(o => o.value === v)) el.value = v; };
+  const sps = [...new Set(list.filter(f => f.sp).map(f => f.sp))].sort((a, b) => findsName({ sp: a }).localeCompare(findsName({ sp: b }), "zh-Hans-CN"));
+  keep("#finds-fsp", `<option value="">全部种类</option>${sps.map(s => `<option value="${s}">${esc(findsName({ sp: s }))}</option>`).join("")}${list.some(f => !f.sp) ? `<option value="_other">没认出来的</option>` : ""}`);
+  const ys = [...new Set(list.map(f => (f.date || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+  keep("#finds-fyear", `<option value="">全部年份</option>${ys.map(y => `<option value="${y}">${y} 年</option>`).join("")}`);
+  keep("#finds-fmonth", `<option value="">全部月份</option>${Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1} 月</option>`).join("")}`);
+}
+async function renderFinds() {
+  const list = findsLoad();
+  if (list === null) { $("#finds-list").innerHTML = `<p class="finds__empty">这个浏览器不允许保存数据（例如无痕模式或预览窗口），记录功能用不了。</p>`; fmapDraw([]); return; }
+  findsFilterOptions(list);
+  const shown = findsFiltered(list).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id);
+  fmapDraw(shown);
+  if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。</p>`; return; }
+  const kinds = new Set(shown.map(f => f.sp || "_" + f.other)).size, withGps = shown.filter(f => f.lat !== null && f.lat !== undefined).length;
+  const urls = await Promise.all(shown.map(f => f.photos && f.photos[0] ? photoURL(f.photos[0]) : ""));
+  let month = "";
+  const items = shown.map((f, n) => {
+    const i = bySlug[f.sp], st = findStatus(f);
+    const name = i !== undefined ? `<a href="#sp-${f.sp}">${esc(DATA.species[i].zh)}</a>` : esc(f.other || "未命名");
+    const ym = (f.date || "").slice(0, 7), head = ym !== month ? `</ul><h3 class="finds__month">${ym ? `${+ym.slice(0, 4)} 年 ${+ym.slice(5, 7)} 月` : "没有日期"}</h3><ul class="finds__list">` : "";
+    month = ym;
+    const meta = [f.place, f.hab, f.trees ? "附近：" + f.trees : "", f.lat !== null && f.lat !== undefined ? "有坐标" : ""].filter(Boolean).map(esc).join(" · ");
+    return `${head}<li class="finds__item">
+      ${urls[n] ? `<img class="finds__pic" src="${urls[n]}" alt="">` : `<span class="finds__pic finds__pic--none">${icon("mushroom")}</span>`}
+      <div class="finds__body">
+        <div class="finds__head"><span class="finds__name">${name}</span><span class="finds__badge finds__badge--${st}">${st === "expert" ? icon("check", "icon--sm") : ""}${STATUS[st]}</span></div>
+        <span class="finds__date">${esc(f.date || "")}${f.photos && f.photos.length > 1 ? ` · ${f.photos.length} 张照片` : ""}</span>
+        ${meta ? `<p class="finds__meta">${meta}</p>` : ""}
+        ${f.notes ? `<p class="finds__meta">${esc(f.notes)}</p>` : ""}
+        ${st === "expert" && f.verifier ? `<p class="finds__meta">确认人：${esc(f.verifier)}</p>` : ""}
+        <div class="finds__ops"><button class="btn" type="button" data-edit="${f.id}">编辑</button>
+          <button class="btn finds__del" type="button" data-del="${f.id}" aria-label="删除 ${esc(f.date || "")} ${esc(findsName(f))} 这条记录">${icon("trash", "icon--sm")}<span>删除</span></button></div>
+      </div></li>`;
+  }).join("");
+  $("#finds-list").innerHTML = `<p class="finds__stats">共 ${list.length} 条${shown.length !== list.length ? `，筛选出 ${shown.length} 条` : ""} · ${kinds} 种 · ${withGps} 条有坐标</p>
+    ${shown.length ? `<ul class="finds__list">${items}</ul>` : `<p class="finds__empty">没有符合筛选的记录。</p>`}`.replace("<ul class=\"finds__list\"></ul>", "");
+}
+["#finds-q", "#finds-fsp", "#finds-fyear", "#finds-fmonth"].forEach(id => $(id).addEventListener(id === "#finds-q" ? "input" : "change", renderFinds));
+function findsInit() {
+  const opts = [...DATA.species].map(s => [s.zh, s.slug]).sort((a, b) => a[0].localeCompare(b[0], "zh-Hans-CN"));
+  $("#finds-sp").innerHTML = `<option value="">其他 / 没认出来</option>` + opts.map(([zh, sl]) => `<option value="${sl}">${esc(zh)}</option>`).join("");
+  formReset(); renderFinds();
+}
 let delArmed = null, delTimer;
 $("#finds-list").addEventListener("click", e => {
-  if (e.target.closest("#finds-export")) return findsExport();
+  const ed = e.target.closest("[data-edit]");
+  if (ed) { const f = (findsLoad() || []).find(x => String(x.id) === ed.dataset.edit); if (f) formEdit(f); return; }
   const b = e.target.closest("[data-del]"); if (!b) return;
   if (delArmed !== b) {
     if (delArmed) { delArmed.classList.remove("is-confirm"); delArmed.querySelector("span").textContent = "删除"; }
@@ -2197,26 +2485,112 @@ $("#finds-list").addEventListener("click", e => {
   }
   delArmed = null; clearTimeout(delTimer);
   const list = findsLoad(); if (list === null) return;
-  findsSave(list.filter(f => String(f.id) !== b.dataset.del)); renderFinds(); toast("已删除");
+  const gone = list.find(f => String(f.id) === b.dataset.del);
+  findsSave(list.filter(f => f !== gone)); (gone && gone.photos || []).forEach(k => photoDB.del(k));
+  if (draft.id && gone && draft.id === gone.id) formReset();
+  renderFinds(); toast("已删除");
 });
-function findsExport() {
-  const list = findsLoad() || [];
-  const q = v => `"${String(v || "").replace(/"/g, '""')}"`;
-  const rows = [["日期", "菌名", "学名", "地点", "备注"]].concat(list.map(f => {
-    const i = bySlug[f.sp]; return [f.date, findsName(f), i !== undefined ? DATA.species[i].latin : "", f.place, f.notes];
-  }));
-  const csv = "\ufeff" + rows.map(r => r.map(q).join(",")).join("\r\n");
+
+// ----- backup: JSON with photos, CSV for spreadsheets, import merges by id -----
+function saveFile(name, blob) {
   try {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-    a.download = `采集记录-${todayISO()}.csv`; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   } catch (_) { toast("这个窗口不能下载文件，请在浏览器中打开网站再导出"); }
 }
+const blobToData = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(""); r.readAsDataURL(b); });
+$("#finds-export-json").addEventListener("click", async () => {
+  const list = findsLoad() || [], photos = {};
+  for (const f of list) for (const k of f.photos || []) { const b = await photoDB.get(k); if (b) photos[k] = await blobToData(b); }
+  saveFile(`采集记录-${todayISO()}.json`, new Blob([JSON.stringify({ app: "mushroom-guide", version: 2, exported: new Date().toISOString(), finds: list, photos })], { type: "application/json" }));
+});
+$("#finds-export").addEventListener("click", () => {
+  const list = findsLoad() || [];
+  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const rows = [["日期", "菌名", "学名", "鉴定状态", "确认人", "地点", "纬度", "经度", "海拔(米)", "生境", "附近的树", "备注"]].concat(list.map(f => {
+    const i = bySlug[f.sp]; return [f.date, findsName(f), i !== undefined ? DATA.species[i].latin : "", STATUS[findStatus(f)], f.verifier, f.place, f.lat, f.lon, f.alt !== null && f.alt !== undefined ? Math.round(f.alt) : "", f.hab, f.trees, f.notes];
+  }));
+  saveFile(`采集记录-${todayISO()}.csv`, new Blob(["﻿" + rows.map(r => r.map(q).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }));
+});
+$("#finds-import").addEventListener("change", async e => {
+  const file = e.target.files[0]; e.target.value = ""; if (!file) return;
+  try {
+    const data = JSON.parse(await file.text()), list = findsLoad();
+    if (list === null) { toast("这个浏览器不能保存记录"); return; }
+    const incoming = Array.isArray(data) ? data : data.finds;
+    if (!Array.isArray(incoming)) throw new Error("format");
+    const have = new Set(list.map(f => String(f.id))); let added = 0;
+    for (const f of incoming) {
+      if (!f || typeof f !== "object" || have.has(String(f.id))) continue;
+      const rec = { ...f, id: f.id || Date.now() + added, photos: [] };
+      for (const k of f.photos || []) { const d = data.photos && data.photos[k]; if (d) { try { await photoDB.put(k, await (await fetch(d)).blob()); rec.photos.push(k); } catch (_) {} } }
+      list.push(rec); added++;
+    }
+    if (!findsSave(list)) { toast("导入失败：浏览器存储已满"); return; }
+    renderFinds(); toast(added ? `导入了 ${added} 条记录` : "没有新的记录（已经都有了）");
+  } catch (_) { toast("这个文件不是本站导出的备份"); }
+});
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-log-sp]"); if (!a) return;
-  $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; $("#finds-date").value = todayISO();
+  formReset(); $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; setStatus("candidate");
 });
+
+// ----- my map: Leaflet, loaded the first time the map scrolls into view; no basemap unless asked -----
+let fmap = null, fmapLayer = null, fmapTiles = null, fmapPending = [], fmapLoading = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve(window.L);
+  return fmapLoading || (fmapLoading = new Promise((res, rej) => {
+    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "vendor/leaflet-1.9.4.css"; document.head.appendChild(css);
+    const s = document.createElement("script"); s.src = "vendor/leaflet-1.9.4.js"; s.onload = () => res(window.L); s.onerror = rej; document.head.appendChild(s);
+  }));
+}
+function fmapDraw(list) {
+  fmapPending = list.filter(f => typeof f.lat === "number" && typeof f.lon === "number");
+  $("#fmap-count").textContent = fmapPending.length ? `${fmapPending.length} 个地点` : "";
+  if (fmap) fmapRender();
+}
+function fmapRender() {
+  const L = window.L; fmapLayer.clearLayers();
+  const stage = $("#fmap"), empty = stage.querySelector(".fmap__empty");
+  if (!fmapPending.length) {
+    if (!empty) stage.insertAdjacentHTML("beforeend", `<p class="fmap__empty">还没有带坐标的记录。记录时点“记下当前位置”，就会出现在这里。</p>`);
+    return;
+  }
+  if (empty) empty.remove();
+  const cs = getComputedStyle(document.documentElement);
+  fmapPending.forEach(f => {
+    const st = findStatus(f);
+    L.circleMarker([f.lat, f.lon], { radius: 8, weight: 2, color: cs.getPropertyValue("--surface-2").trim(), fillColor: cs.getPropertyValue(st === "none" ? "--color-muted-foreground" : "--color-primary").trim(), fillOpacity: .95 })
+      .addTo(fmapLayer)
+      .bindPopup(() => {
+        const box = document.createElement("div"); box.className = "fmap__pop";
+        box.innerHTML = `<b>${esc(findsName(f))}</b><br>${esc(f.date || "")} · ${STATUS[st]}${f.place ? "<br>" + esc(f.place) : ""}`;
+        if (f.photos && f.photos[0]) photoURL(f.photos[0]).then(u => { if (u) box.insertAdjacentHTML("afterbegin", `<img src="${u}" alt="">`); });
+        return box;
+      });
+  });
+  fmap.fitBounds(L.latLngBounds(fmapPending.map(f => [f.lat, f.lon])).pad(0.3), { maxZoom: 14 });
+}
+async function fmapInit() {
+  try {
+    const L = await loadLeaflet();
+    fmap = L.map("fmap", { zoomControl: true, attributionControl: true, worldCopyJump: true }).setView([47.5, -122.3], 6);
+    fmap.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+    fmapLayer = L.layerGroup().addTo(fmap);
+    fmapRender();
+  } catch (_) { $("#fmap").innerHTML = `<p class="fmap__empty">地图组件没能加载（离线且还没存下来）。联网时打开一次这一页就会存下。</p>`; }
+}
+$("#fmap-tiles").addEventListener("change", e => {
+  if (!fmap) return;
+  if (e.target.checked) {
+    if (navigator.onLine === false) { e.target.checked = false; toast("离线时没有底图"); return; }
+    fmapTiles = window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(fmap);
+  } else if (fmapTiles) { fmap.removeLayer(fmapTiles); fmapTiles = null; }
+});
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); fmapInit(); } }, { rootMargin: "200px" });
+  io.observe($("#fmap"));
+}
 
 /* ---------- 3D mushroom model: a tiny lathe renderer on a 2D canvas (no library, works offline) ---------- */
 const MODEL_PARTS = [
@@ -2899,29 +3273,58 @@ function setOffline(text, ready) { const el = $("#offline-status"); if (el) { el
 /* ---------- season calendar ---------- */
 const CAL_LEVELS = ["几乎没有", "偶见", "较多", "高峰"];
 function calLevel(n, max) { const r = n / max; return r < 0.05 ? 0 : r < 0.25 ? 1 : r < 0.6 ? 2 : 3; }
+const REGION = { all: "BC、华盛顿、俄勒冈", bc: "BC", wa: "华盛顿", or: "俄勒冈" };
+const calState = { region: "all", mode: "cal", month: MONTH, q: "" };
+const obsCounts = (s, r) => !s.obs ? null : r === "all" ? s.obs.counts : (s.obs.regions || {})[r] || null;
 function renderCalendar() {
+  const { region, mode, month } = calState, q = calState.q.trim().toLowerCase();
   const rows = [], rest = [];
   DATA.species.forEach(s => {
-    if (!s.obs) return;
-    const total = s.obs.counts.reduce((a, b) => a + b, 0);
+    const c = obsCounts(s, region); if (!c) return;
+    if (q && ![s.zh, s.en, s.latin].some(v => String(v || "").toLowerCase().includes(q))) return;
+    const total = c.reduce((a, b) => a + b, 0);
     if (total < 30) { rest.push(s); return; }
-    const max = Math.max(...s.obs.counts);
-    rows.push({ s, max, peak: s.obs.counts.indexOf(max) });
+    const max = Math.max(...c);
+    rows.push({ s, c, max, peak: c.indexOf(max), total });
   });
+  const where = REGION[region], note = `数据来自 iNaturalist 研究级观察（${where}），取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量，也不是实时预测。具体时间因地区、海拔和当年天气而异。`;
+  const restHtml = `<p class="cal__rest">${where}记录太少（少于 30 条）、没有列入的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。</p>`;
+  $("#cal-month").hidden = mode !== "month";
+  if (mode === "month") {
+    const lv = r => calLevel(r.c[month - 1], r.max);
+    const groups = [3, 2, 1].map(l => [l, rows.filter(r => lv(r) === l).sort((a, b) => b.c[month - 1] / b.max - a.c[month - 1] / a.max)]);
+    $("#cal").innerHTML = `<p class="cal__lead">${month} 月，按每种菌和它自己全年最多的月份相比。${note}</p>
+      ${groups.map(([l, list]) => `<section class="cal-month"><h3 class="cal-month__h"><span class="cal__swatch cal__swatch--${l}"></span>${CAL_LEVELS[l]}（${list.length}）</h3>
+        ${list.length ? `<ul class="cal-month__list">${list.map(({ s, c }) => `<li><a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)} · ${month} 月 ${c[month - 1].toLocaleString("en")} 条</span></span></a></li>`).join("")}</ul>` : `<p class="season__empty">没有。</p>`}</section>`).join("")}
+      ${restHtml}`;
+    return;
+  }
   rows.sort((a, b) => a.peak - b.peak || b.max - a.max);
   const now = new Date().getMonth();
   const head = `<tr><th scope="col"><span class="sr-only">菌名</span></th>${Array.from({ length: 12 }, (_, m) => `<th scope="col"${m === now ? ' class="is-now" aria-current="date"' : ""}>${m + 1}<span class="sr-only"> 月</span></th>`).join("")}</tr>`;
-  const body = rows.map(({ s, max }) => `<tr><th scope="row" class="cal__name"><a href="#sp-${s.slug}">${esc(s.zh)}</a></th>${s.obs.counts.map((n, m) => {
+  const body = rows.map(({ s, c, max }) => `<tr><th scope="row" class="cal__name"><a href="#sp-${s.slug}">${esc(s.zh)}</a></th>${c.map((n, m) => {
     const lv = calLevel(n, max);
     return `<td class="cal__cell${lv ? " cal__cell--" + lv : ""}" data-n="${n}" data-m="${m}" data-name="${esc(s.zh)}"${n === max ? ' data-peak=""' : ""}><span class="sr-only">${CAL_LEVELS[lv]}</span></td>`;
   }).join("")}</tr>`).join("");
   $("#cal").innerHTML = `
-    <p class="cal__lead">颜色越深，这个月的记录越多（与这种菌自己全年最多的月份相比）。数据来自 iNaturalist 研究级观察，取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量，具体时间因地区、海拔和当年天气而异。</p>
-    <ul class="cal__key" aria-hidden="true">${CAL_LEVELS.map((t, i) => `<li><span class="cal__swatch cal__swatch--${i}"></span>${t}</li>`).join("")}</ul>
+    <p class="cal__lead">颜色越深，这个月的记录越多（与这种菌自己全年最多的月份相比）。${note}</p>
+    <ul class="cal__key" aria-hidden="true">${CAL_LEVELS.map((x, i) => `<li><span class="cal__swatch cal__swatch--${i}"></span>${x}</li>`).join("")}</ul>
     <p class="cal__readout" id="cal-readout" aria-hidden="true">${now + 1} 月是本月。把手指或鼠标放在格子上看记录数。</p>
-    <table class="cal__table"><caption class="sr-only">西北太平洋每月记录多少，按高峰月份排列</caption><colgroup><col class="cal__namecol">${"<col>".repeat(12)}</colgroup><thead>${head}</thead><tbody>${body}</tbody></table>
-    <p class="cal__rest">西北太平洋记录太少（少于 30 条）、没有列入日历的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。另有 ${DATA.species.length - rows.length - rest.length} 种在 iNaturalist 上找不到对应的记录。</p>`;
+    ${rows.length ? `<table class="cal__table"><caption class="sr-only">${where}每月记录多少，按高峰月份排列</caption><colgroup><col class="cal__namecol">${"<col>".repeat(12)}</colgroup><thead>${head}</thead><tbody>${body}</tbody></table>` : `<p class="season__empty">没有找到。</p>`}
+    ${restHtml}`;
 }
+$("#cal-month").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}"${i + 1 === MONTH ? " selected" : ""}>${i + 1} 月</option>`).join("");
+$("#cal-ctl").addEventListener("click", e => {
+  const r = e.target.closest("[data-cal-region]"), m = e.target.closest("[data-cal-mode]");
+  if (r) calState.region = r.dataset.calRegion;
+  if (m) calState.mode = m.dataset.calMode;
+  if (!r && !m) return;
+  $("#cal-ctl").querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
+  $("#cal-ctl").querySelectorAll("[data-cal-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calMode === calState.mode));
+  renderCalendar();
+});
+$("#cal-month").addEventListener("change", e => { calState.month = +e.target.value; renderCalendar(); });
+$("#cal-q").addEventListener("input", e => { calState.q = e.target.value; renderCalendar(); });
 let calActive = null;
 document.addEventListener("pointerover", e => {
   const c = e.target.closest(".cal__cell[data-n]"); if (!c) return;
