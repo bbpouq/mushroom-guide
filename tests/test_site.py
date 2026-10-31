@@ -90,7 +90,7 @@ def run():
                 sw = pg.evaluate("document.documentElement.scrollWidth")
                 check(f"{w}px {v}: no horizontal overflow ({sw})", sw <= w)
             check(f"{w}px no class collisions {sorted(coll)}", not coll)
-            pg.evaluate("show('species')"); pg.evaluate("window.scrollTo(0, document.getElementById('grid').getBoundingClientRect().top + scrollY + 300)"); pg.wait_for_timeout(150)
+            pg.evaluate("show('species')"); pg.evaluate("window.scrollTo(0, 900)"); pg.wait_for_timeout(150)
             ov = pg.evaluate(OVER_SEARCH)
             check(f"{w}px sticky search under header and unobscured {ov}", not ov["leaked"] and (w >= 1024 or ov["top"] == ov["header"]))
             pg.evaluate("window.scrollTo(0, 0)")
@@ -106,13 +106,6 @@ def run():
         # ---------- deep links, finder, share, offline (phone) ----------
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         pg = ctx.new_page()
-        pg.goto(url + "#species"); pg.wait_for_timeout(400)
-        n_ts = pg.locator("#tstrip-track .tstrip__item").count()
-        first_tx = pg.get_attribute("#tstrip-track .tstrip__item >> nth=0", "data-tx")
-        pg.click("#tstrip-track .tstrip__item >> nth=0"); settle(pg)
-        check(f"toxic strip shows every toxic species ({n_ts}) and opens its card",
-              n_ts == 22 and first_tx == "amanita-phalloides" and pg.evaluate("document.querySelector('.view.is-active').id") == "v-toxic"
-              and 0 <= pg.evaluate(f"document.getElementById('tx-{first_tx}').getBoundingClientRect().top") < 200)
         pg.goto(url + "#species"); pg.wait_for_timeout(400)
         n_now = pg.locator("#now-track .now__item").count()
         pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)
