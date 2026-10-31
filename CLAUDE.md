@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 77 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 78 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -42,7 +42,8 @@ src/
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels
   build_site.py          Assembles public/index.html; validates tags, slugs and comparison links
   make_icons.py          App icons
-public/                  Deployed as-is: index.html (generated, do not hand-edit), sw.js, manifest, icons
+public/                  Deployed as-is: index.html (generated, do not hand-edit), sw.js, manifest, icons,
+                         vendor/three-0.160.0.module.min.js (MIT, licence beside it; loaded lazily for the 3D model)
 tests/test_site.py       Playwright checks (starts its own server)
 .github/workflows/pages.yml  Pages deploy on push to main; fails if public/index.html is stale (rebuild before committing)
 ```
@@ -94,9 +95,13 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   (IntersectionObserver adds `is-reveal` / `is-shown`, skipped under reduced motion); controls shrink on press;
   header photos drift slowly; the phone species sheet can be dragged down to close. Never animate warnings.
   Animate `.view` with opacity only: a transform on it moves the sticky search bar inside.
-- The finder has a small interactive 3D mushroom (`#model`, a lathe renderer on a 2D canvas, no library): drag to
-  rotate, tap a part for its explanation; each finder question has a "在模型上看" button. Part colours are the
-  `--model-*` tokens. It pauses when off screen.
+- The finder has an interactive 3D mushroom (`#model`): drag to rotate, tap a part for its explanation; each
+  finder question has a "在模型上看" button. three.js (vendored, imported only when the model scrolls into view)
+  renders it with soft light and shadows; a small 2D-canvas lathe renderer is the fallback when WebGL or the import
+  fails. Part colours are the `--model-*` tokens. Both pause when off screen.
+- Species view opens with "N 月可以找": a swipeable strip of the month's common Pacific Northwest edibles. Species
+  cards lead with a full-width photo. Desktop cards tilt toward the pointer; header photos move with parallax.
+- The page grid uses `minmax(0, 1fr)` and `main { min-width: 0 }` so a scrolling strip can never widen the page.
 - Type: the platform system font (SF Pro / PingFang SC on Apple, Noto Sans SC or YaHei elsewhere). No web fonts.
 - Layering: use only the z-index scale `--z-sticky 10`, `--z-header 20`, `--z-nav 30`, `--z-toast 40`
   (dialogs use the top layer).

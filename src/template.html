@@ -114,7 +114,8 @@ button, a, label, summary, .chip, input[type="checkbox"] { touch-action: manipul
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; } }
 
 /* ---------- shell ---------- */
-.app { min-height: 100%; display: grid; grid-template-columns: 1fr; }
+.app { min-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr); }
+.app > main { min-width: 0; }  /* a wide child (e.g. a scrolling carousel) must not widen the page */
 .sidenav { display: none; }
 .hdr { position: sticky; top: 0; z-index: var(--z-header); background: var(--color-background); border-bottom: 1px solid var(--color-border); padding-top: env(safe-area-inset-top); }
 .hdr__row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); max-width: 1200px; margin: 0 auto; }
@@ -675,6 +676,31 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .chip[aria-pressed="true"] { animation: chip-pick 360ms var(--spring); }
 @keyframes chip-pick { 0% { transform: scale(.9); } 100% { transform: none; } }
 
+/* ---------- species card photo, "this month" carousel, hero parallax, card tilt ---------- */
+.sp-card__photo { display: block; width: calc(100% + 2 * var(--space-4)); max-width: none; height: auto; aspect-ratio: 16 / 10; object-fit: cover;
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) var(--space-1); border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: var(--color-muted); }
+.now { margin: 0 0 var(--space-4); }
+.now__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.now__title { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.now__all { border: 0; background: none; color: var(--color-primary); font-weight: 600; font-size: 15px; min-height: var(--target); padding: 0 var(--space-1); cursor: pointer; }
+.now__sub { margin: 0 0 var(--space-3); font-size: 13px; color: var(--color-muted-foreground); }
+.now__track { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  margin: 0 calc(-1 * var(--space-4)); padding: 2px var(--space-4) var(--space-3); scroll-padding-left: var(--space-4); }
+.now__track::-webkit-scrollbar { display: none; }
+.now__item { flex: 0 0 148px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 2px; padding: 0 0 var(--space-3); border: .5px solid var(--glass-edge);
+  border-radius: var(--radius-lg); overflow: hidden; background: var(--color-card); box-shadow: var(--shadow-card); text-align: left; color: var(--color-foreground); cursor: pointer;
+  transition: transform 260ms var(--spring); }
+.now__item:active { transform: scale(.95); }
+.now__img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--color-muted); margin-bottom: var(--space-2); }
+.now__name { padding: 0 var(--space-3); font-weight: 700; font-size: 15px; line-height: 1.3; }
+.now__meta { padding: 0 var(--space-3); font-size: 12px; color: var(--color-muted-foreground); }
+@media (min-width: 768px) { .now__track { margin: 0; padding-left: 0; padding-right: 0; } .now__item { flex-basis: 176px; } }
+.view__hero { translate: 0 var(--hero-shift, 0px); }
+@media (hover: hover) and (pointer: fine) {
+  .sp-card.is-tilt, .rc-card.is-tilt, .now__item.is-tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px);
+    transition: transform 120ms linear; box-shadow: var(--shadow-float); }
+}
+
 /* ---------- 3D mushroom model (finder) ---------- */
 .model { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-4) var(--space-3); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
 .model__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); }
@@ -771,9 +797,14 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
           <!--HERO:species-->
           <span class="view__eyebrow">Field guide</span>
           <h1 class="view__title" id="h-species">食用菌速查</h1>
-          <p class="view__lead">收录 <!--N_EDIBLE--> 种食用菌，按在西北太平洋的常见程度排列，季节尽量采用当地的观察记录。点开卡片看完整特征和易混毒菌，详情里可以分享这一种的链接。<b>有任何疑问，就不要吃。</b></p>
+          <p class="view__lead"><!--N_EDIBLE--> 种食用菌，按在西北太平洋的常见程度排列。<b>有任何疑问，就不要吃。</b></p>
           <div class="link-row"><a class="btn" href="#guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>西北太平洋产季日历</a></div>
         </header>
+        <section class="now" aria-labelledby="now-title">
+          <div class="now__head"><h2 class="now__title" id="now-title"></h2><button type="button" class="now__all" data-now-all>看全部</button></div>
+          <p class="now__sub">西北太平洋这个月最常见的食用菌。点开看易混毒菌。</p>
+          <div class="now__track" id="now-track"></div>
+        </section>
         <div class="search-bar">
           <label class="search-bar__label" for="q">搜索菌名</label>
           <div class="search-field">
@@ -1201,10 +1232,10 @@ function renderGrid() {
   $("#group-note").innerHTML = g ? `<div class="group-note${g.key === "amanita" ? " group-note--risk" : ""}"><b>${esc(g.name)}</b>　${g.note}</div>` : "";
   $("#grid").innerHTML = list.length ? list.map(([s, i]) => `
     <button class="sp-card" type="button" data-i="${i}" aria-haspopup="dialog">
+      ${s.photo ? `<img class="sp-card__photo" src="photos/${s.photo.file}" width="${s.photo.w}" height="${s.photo.h}" loading="lazy" decoding="async" alt="">` : ""}
       <span class="sp-card__meta"><span>${esc(groupBy[s.group].short)}${s.region ? " · " + esc(s.region) : ""}</span><span class="sp-card__season">${esc(s.season)}</span></span>
       <span class="sp-card__head"><span class="sp-card__title"><span class="sp-card__name">${esc(s.zh)}</span>
-        <span class="sp-card__latin latin">${esc(s.latin)}</span></span>
-        ${s.photo ? `<img class="sp-card__img" src="photos/${s.photo.file}" width="72" height="72" loading="lazy" decoding="async" alt="">` : ""}</span>
+        <span class="sp-card__latin latin">${esc(s.latin)}</span></span></span>
       ${monthStrip(s.months)}
       <span class="sp-card__feat">${s.feat}</span>
       ${badges(s.flags)}
@@ -1644,10 +1675,12 @@ const model = (() => {
     const d = MODEL_PARTS.find(([k]) => k === sel);
     $("#model-desc").innerHTML = d ? `<b>${d[1]}：</b>${d[2]}` : "点一个部位看它是什么、为什么要看。";
   };
+  const listeners = [];
   const select = part => {
     sel = sel === part ? null : part;
     if (sel) { const [y, pt] = MODEL_VIEW[sel]; tYaw = yaw + ((y - yaw) % (Math.PI * 2)); tPitch = pt; }
     idleUntil = performance.now() + 4000; describe(); kick();
+    listeners.forEach(fn => fn(sel));
   };
   // pointer: drag to rotate, tap to pick the part under the finger
   let sx = 0, sy0 = 0, moved = false;
@@ -1685,13 +1718,174 @@ const model = (() => {
   addEventListener("resize", () => { W = 0; kick(); });
   const mq = matchMedia("(prefers-color-scheme: dark)"); (mq.addEventListener ? mq.addEventListener("change", () => { readColors(); kick(); }) : 0);
   readColors(); describe(); kick();
-  return { select, draw: () => { W = 0; draw(); } };
+  return { select, onSelect: fn => listeners.push(fn), get selected() { return sel; }, draw: () => { W = 0; draw(); } };
+})();
+
+/* ---------- WebGL upgrade of the model (three.js, loaded only when the model scrolls into view) ----------
+   The 2D canvas above stays as the fallback: no WebGL, an old browser or a failed load all keep it. */
+(() => {
+  const stage = $(".model__stage"), cv2d = $("#model-canvas");
+  if (!model || !stage || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); start(); } }, { rootMargin: "200px" });
+  io.observe(stage);
+  async function start() {
+    let THREE;
+    try { THREE = await import("./vendor/three-0.160.0.module.min.js"); } catch (_) { return; }
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (_) { return; }
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cs = getComputedStyle(document.documentElement);
+    const tok = n => new THREE.Color(cs.getPropertyValue(n).trim().replace(/rgba?\(([^)]+)\)/, (m, a) => `rgb(${a.split(",").slice(0, 3).join(",")})`));
+    renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const el = renderer.domElement; el.className = "model__canvas"; el.setAttribute("role", "img");
+    el.setAttribute("aria-label", cv2d.getAttribute("aria-label"));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
+    scene.add(new THREE.HemisphereLight(0xfff4e2, 0x3b2a1a, 1.1));
+    const sun = new THREE.DirectionalLight(0xffe7c4, 2.4); sun.position.set(3, 6, 4); sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024); sun.shadow.radius = 6; sun.shadow.bias = -0.0005;
+    Object.assign(sun.shadow.camera, { left: -2.5, right: 2.5, top: 2.5, bottom: -2.5, near: 1, far: 15 });
+    scene.add(sun);
+    const rim = new THREE.DirectionalLight(0xbfe3ff, 0.9); rim.position.set(-4, 3, -3); scene.add(rim);
+
+    const parts = {}, meshes = [];
+    const mat = (name, extra = {}) => { const m = new THREE.MeshStandardMaterial({ color: tok("--model-" + name), roughness: 0.72, metalness: 0, transparent: true, ...extra }); m.userData.base = m.color.clone(); return m; };
+    const add = (part, geo, material) => {
+      const m = new THREE.Mesh(geo, material); m.castShadow = m.receiveShadow = true; m.userData.part = part;
+      scene.add(m); (parts[part] = parts[part] || []).push(m); meshes.push(m); return m;
+    };
+    const V = (x, y) => new THREE.Vector2(x, y);
+    // cap: smooth dome over a slightly concave underside
+    // profile from the centre of the underside, out to the rim, then up over a rounded dome to the top
+    const capPts = [V(1e-3, 1.54), V(0.2, 1.535), V(0.6, 1.5), V(0.98, 1.43), V(1.06, 1.4), V(1.1, 1.44)];
+    for (let i = 1; i <= 28; i++) { const t = i / 28; capPts.push(V(1.1 * Math.cos(t * Math.PI / 2) + 1e-3, 1.44 + 0.5 * Math.pow(Math.sin(t * Math.PI / 2), 0.8))); }
+    add("cap", new THREE.LatheGeometry(capPts, 120), mat("cap", { roughness: 0.5, side: THREE.DoubleSide }));
+    // gills: thin radial plates
+    const gShape = new THREE.Shape(); gShape.moveTo(0.2, 1.53);
+    const gTop = r => 1.535 - (r - 0.2) * 0.12;
+    for (let i = 0; i <= 12; i++) { const r = 0.2 + 0.76 * i / 12; gShape.lineTo(r, gTop(r)); }
+    for (let i = 12; i >= 0; i--) { const r = 0.2 + 0.76 * i / 12; gShape.lineTo(r, gTop(r) - 0.15 * Math.sin(Math.PI * i / 12)); }
+    const gGeo = new THREE.ShapeGeometry(gShape), gMat = mat("gill", { side: THREE.DoubleSide, roughness: 0.85 });
+    for (let k = 0; k < 56; k++) { const g = add("gills", gGeo, gMat); g.rotation.y = k / 56 * Math.PI * 2; g.castShadow = false; }
+    add("stem", new THREE.LatheGeometry([V(1e-3, 0.05), V(0.24, 0.05), V(0.27, 0.22), V(0.21, 0.55), V(0.18, 1.1), V(0.17, 1.53), V(1e-3, 1.53)], 64), mat("stem", { roughness: 0.8 }));
+    // ring: a thin skirt that sags and ripples at the hem
+    const ringGeo = new THREE.LatheGeometry([V(0.18, 1.25), V(0.2, 1.22), V(0.25, 1.15), V(0.31, 1.06), V(0.355, 0.99), V(0.37, 0.95)], 96);
+    const rp = ringGeo.attributes.position;
+    for (let i = 0; i < rp.count; i++) {
+      const x = rp.getX(i), y = rp.getY(i), z = rp.getZ(i), a = Math.atan2(z, x), sag = Math.max(0, (1.15 - y) / 0.2);
+      rp.setY(i, y + 0.025 * sag * Math.sin(a * 9)); const k = 1 + 0.04 * sag * Math.sin(a * 9 + 1); rp.setX(i, x * k); rp.setZ(i, z * k);
+    }
+    ringGeo.computeVertexNormals();
+    add("ring", ringGeo, mat("ring", { side: THREE.DoubleSide, roughness: 0.9 }));
+    add("volva", new THREE.LatheGeometry([V(1e-3, -0.07), V(0.18, -0.05), V(0.32, 0.05), V(0.37, 0.22), V(0.37, 0.44), V(0.34, 0.47)], 64), mat("volva", { side: THREE.DoubleSide, roughness: 0.9 }));
+    const soil = new THREE.Mesh(new THREE.CircleGeometry(1.25, 72), new THREE.MeshStandardMaterial({ color: tok("--model-ground"), roughness: 1, transparent: true, opacity: 0.62 }));
+    soil.rotation.x = -Math.PI / 2; soil.position.y = 0.2; soil.receiveShadow = true; scene.add(soil);
+
+    // swap the canvases; keep the 2D one for the fallback but stop it drawing
+    cv2d.replaceWith(el); cv2d.style.display = "none";
+    const size = () => { const w = el.clientWidth, h = el.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+    new ResizeObserver(() => { size(); kick(); }).observe(el); size();
+
+    let yaw = 0.7, pitch = 0.18, tYaw = yaw, tPitch = pitch, sel = model.selected, visible = true, dragging = false, idleUntil = 0, raf = 0, last = 0;
+    const hi = tok("--color-primary"), black = new THREE.Color(0), hiTint = hi.clone().lerp(new THREE.Color(1, 1, 1), 0.35);
+    const VIEW = { cap: [0.6, 0.55], gills: [0.6, -0.42], ring: [0.9, 0.05], stem: [0.9, 0.1], volva: [0.6, 0.32] };
+    model.onSelect(part => {
+      sel = part; idleUntil = performance.now() + 4000;
+      if (sel) { const [y, p] = VIEW[sel]; tYaw = yaw + ((y - yaw) % (Math.PI * 2)); tPitch = p; }
+      kick();
+    });
+    const frame = now => {
+      raf = 0; if (!visible) return;
+      const dt = Math.min(50, now - (last || now)); last = now;
+      if (!dragging && !reduce && now > idleUntil && !sel) tYaw += dt * 0.00035;
+      yaw += (tYaw - yaw) * 0.1; pitch += (tPitch - pitch) * 0.1;
+      const R = 5.4, cy = 0.95;
+      camera.position.set(R * Math.cos(pitch) * Math.sin(yaw), cy + R * Math.sin(pitch), R * Math.cos(pitch) * Math.cos(yaw));
+      camera.lookAt(0, cy, 0);
+      let settling = false;
+      for (const m of meshes) {
+        const on = sel && m.userData.part === sel, target = sel && !on ? 0.28 : 1;
+        m.material.opacity += (target - m.material.opacity) * 0.15;
+        m.material.color.lerp(on ? hiTint : m.material.userData.base, 0.15);
+        m.material.emissive.lerp(on ? hi : black, 0.15); m.material.emissiveIntensity = 0.45;
+        if (Math.abs(m.material.opacity - target) > 0.01) settling = true;
+      }
+      renderer.render(scene, camera);
+      if (dragging || settling || Math.abs(tYaw - yaw) > 1e-3 || Math.abs(tPitch - pitch) > 1e-3 || (!reduce && !sel)) raf = requestAnimationFrame(frame);
+    };
+    const kick = () => { if (!raf) { last = 0; raf = requestAnimationFrame(frame); } };
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }).observe(el);
+
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+    let sx = 0, sy = 0, moved = false;
+    el.addEventListener("pointerdown", e => { dragging = true; moved = false; sx = e.clientX; sy = e.clientY; el.setPointerCapture(e.pointerId); kick(); });
+    el.addEventListener("pointermove", e => {
+      if (!dragging) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      tYaw -= dx * 0.012; yaw = tYaw; tPitch = Math.max(-0.6, Math.min(0.85, tPitch + dy * 0.008)); pitch = tPitch;
+      sx = e.clientX; sy = e.clientY; kick();
+    });
+    const end = e => {
+      if (!dragging) return; dragging = false; idleUntil = performance.now() + 3000;
+      if (moved) return;
+      const r = el.getBoundingClientRect();
+      ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      const hit = ray.intersectObjects(meshes.filter(m => m.material.opacity > 0.5), false)[0];
+      if (hit) model.select(hit.object.userData.part);
+    };
+    el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+    stage.classList.add("is-webgl");
+    kick();
+  }
+})();
+
+/* ---------- species view: what to look for this month ---------- */
+function renderNow() {
+  const list = DATA.species.map((s, i) => [s, i]).filter(([s]) => s.months.includes(MONTH) && s.pnw >= 300).slice(0, 12);
+  $("#now-title").textContent = `${MONTH} 月可以找`;
+  $("#now-track").innerHTML = list.map(([s, i]) => `<button type="button" class="now__item" data-i="${i}">
+    ${s.photo ? `<img class="now__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
+    <span class="now__name">${esc(s.zh)}</span><span class="now__meta">${esc(s.season)}</span></button>`).join("");
+  $(".now").hidden = !list.length;
+}
+$("#now-track").addEventListener("click", e => { const b = e.target.closest(".now__item"); if (b) navigate("sp-" + DATA.species[+b.dataset.i].slug); });
+$("[data-now-all]").addEventListener("click", () => { const c = $('[data-season="now"]'); if (c) { c.click(); scrollToTarget("grid"); } });
+
+/* ---------- header photos drift up a little slower than the page (parallax) ---------- */
+(() => {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let ticking = false;
+  addEventListener("scroll", () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const head = $(".view.is-active > .view__head"); if (!head) return;
+      const r = head.getBoundingClientRect(); if (r.bottom < 0) return;
+      head.style.setProperty("--hero-shift", Math.round(Math.max(0, -r.top) * 0.35) + "px");
+    });
+  }, { passive: true });
+})();
+
+/* ---------- desktop: cards tilt toward the pointer ---------- */
+(() => {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const SEL = ".sp-card, .rc-card, .now__item";
+  document.addEventListener("pointermove", e => {
+    const c = e.target.closest(SEL); if (!c) return;
+    const r = c.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+    c.classList.add("is-tilt"); c.style.setProperty("--ry", (px * 6).toFixed(2) + "deg"); c.style.setProperty("--rx", (-py * 6).toFixed(2) + "deg");
+  });
+  document.addEventListener("pointerout", e => { const c = e.target.closest(SEL); if (c && !c.contains(e.relatedTarget)) { c.classList.remove("is-tilt"); } });
 })();
 
 /* ---------- cards ease in as they scroll into view (skipped when motion is reduced) ---------- */
 (() => {
   if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const SEL = ".sp-card, .tox-card, .rc-card, .cmp, .panel, .res-item, .model";
+  const SEL = ".sp-card, .tox-card, .rc-card, .cmp, .panel, .res-item, .model, .now__item";
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("is-shown"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
   const scan = root => {
     let n = 0;
@@ -1836,7 +2030,7 @@ document.addEventListener("pointerover", e => {
   $("#cal-readout").textContent = `${c.dataset.name} · ${+c.dataset.m + 1} 月：${(+c.dataset.n).toLocaleString("en")} 条${c.hasAttribute("data-peak") ? "（高峰）" : ""}`;
 });
 
-sync(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); route();
+sync(); renderNow(); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); route();
 </script>
 </body>
 </html>

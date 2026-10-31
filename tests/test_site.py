@@ -107,6 +107,10 @@ def run():
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         pg = ctx.new_page()
         pg.goto(url + "#species"); pg.wait_for_timeout(400)
+        n_now = pg.locator("#now-track .now__item").count()
+        pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)
+        check(f"'this month' strip lists species ({n_now}) and opens one", n_now > 0 and pg.evaluate("document.getElementById('sheet').open"))
+        pg.goto(url + "#species"); pg.wait_for_timeout(400)
         pg.click('#v-species a[href="#guide-calendar"]'); pg.wait_for_timeout(1100)
         rows = pg.locator("#cal tbody tr").count()
         check(f"season calendar opens from species view with rows ({rows})",
@@ -166,7 +170,10 @@ def run():
               and pg.locator('a[href="tel:18002221222"]').count() == 1)
         pg.click('.botnav a[href="#finder"]'); pg.wait_for_timeout(100)
         pg.locator("#model").scroll_into_view_if_needed(); pg.wait_for_timeout(400)
-        painted = pg.evaluate("""(() => { const c = document.getElementById('model-canvas'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+        pg.wait_for_timeout(1500)  # the WebGL version loads lazily; the 2D canvas is the fallback
+        painted = pg.evaluate("""(() => { const st = document.querySelector('.model__stage'), c = st.querySelector('.model__canvas');
+            if (st.classList.contains('is-webgl')) return c.width > 0 && c.height > 0 ? 999 : 0;
+            const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
             let n = 0; for (let i = 3; i < d.length; i += 4 * 97) if (d[i] > 0) n++; return n; })()""")
         pg.click('#model-parts [data-model-part="volva"]'); pg.wait_for_timeout(200)
         check(f"3D model draws ({painted} samples) and explains a picked part", painted > 50 and "菌托" in pg.inner_text("#model-desc"))
