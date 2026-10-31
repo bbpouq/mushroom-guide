@@ -210,9 +210,11 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .sp-card__warn { display: flex; gap: var(--space-2); align-items: flex-start; margin-top: auto; padding-top: var(--space-2); border-top: 1px dashed var(--color-border); font-size: 13px; color: var(--color-danger-text); }
 .sp-card__warn .icon { margin-top: 2px; }
 .sp-card__warn span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.month-strip { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
-.month-strip__cell { height: 6px; border-radius: 2px; background: var(--color-muted); }
-.month-strip__cell.is-in { background: var(--color-primary); }
+.month-strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; justify-items: center; }
+.month-strip__cell { display: grid; place-items: center; width: 100%; max-width: 26px; aspect-ratio: 1; border-radius: 50%; background: var(--color-muted);
+  color: var(--color-muted-foreground); font-size: 11px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.month-strip__cell.is-in { background: var(--color-primary); color: var(--color-on-primary); }
+.sheet__months .month-strip__cell { max-width: 32px; font-size: 13px; }
 .month-strip__cell.is-now { outline: 2px solid var(--color-accent); outline-offset: 1px; }
 .month-labels { display: grid; grid-template-columns: repeat(12, 1fr); font-size: 11px; color: var(--color-muted-foreground); text-align: center; margin-top: 4px; font-variant-numeric: tabular-nums; }
 .badges { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1120,10 +1122,10 @@ const SEASONS = [
 ];
 const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "少量食用": "small" };
 const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
-function monthStrip(ms, labels) {
-  const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}"></span>`).join("");
-  const lab = labels ? `<span class="month-labels" aria-hidden="true">${Array.from({ length: 12 }, (_, i) => `<span>${i + 1}</span>`).join("")}</span>` : "";
-  return `<span class="month-strip" role="img" aria-label="出菇月份：${ms.join("、")} 月">${cells}</span>${lab}`;
+function monthStrip(ms) {
+  // numbered circles: filled = in season, ringed = this month
+  const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}" aria-hidden="true">${i + 1}</span>`).join("");
+  return `<span class="month-strip" role="img" aria-label="出菇月份：${ms.join("、")} 月">${cells}</span>`;
 }
 
 function matches(s) {
@@ -1213,7 +1215,7 @@ function openSpecies(i) {
     ${s.latin2 ? `<div class="sheet__en">${esc(s.latin2)}</div>` : ""}
     <div class="sheet__en">${esc(s.en)}</div>
     ${photoFig(s)}
-    <div class="sheet__months">${monthStrip(s.months, true)}</div>
+    <div class="sheet__months">${monthStrip(s.months)}</div>
     ${badges(s.flags)}
     <dl class="facts">
       <div class="fact"><dt>识别</dt><dd>${s.feat}</dd></div>
