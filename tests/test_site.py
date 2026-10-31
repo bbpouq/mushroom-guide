@@ -210,6 +210,9 @@ def run():
               and pg.evaluate("document.querySelector('.view.is-active').id") == "v-toxic")
         pg.click("#sheet [data-close]"); pg.wait_for_timeout(300)
         check("closing a toxic sheet returns to #toxic", pg.evaluate("location.hash") == "#toxic")
+        clip = pg.evaluate("""[...document.querySelectorAll('#tox-grid .sp-card, #grid .sp-card')].slice(0, 6).every(c =>
+            getComputedStyle(c).overflow === 'hidden' && getComputedStyle(c).borderRadius !== '0px')""")
+        check("card photos are clipped to the card's rounded corners", clip)
         n_tx = pg.locator("#tox-grid .sp-card").count()
         pg.click("#tox-grid .sp-card >> nth=0"); pg.wait_for_timeout(500)
         check(f"toxic list uses the species card pattern ({n_tx} cards) and opens a sheet",

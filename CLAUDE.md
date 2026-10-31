@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 110 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 111 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -124,8 +124,8 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   官方机构 / 学术文献 / 专业参考 / 社区观察 / 百科 / 图书, plus where the season data and photo come from).
 - Comparisons show each mushroom's photo (tap to zoom) and switch between 并排 and 逐个看 (default on phones for 3+ columns),
   and say that no single difference is enough to eat. SpeciesSpecies
-  cards lead with a full-width photo. Toxic species use the same card (`sp-card sp-card--toxic`, red or amber top
-  edge) in the same grid, and open the same sheet with the full description, notes, look-alikes and sources. Desktop cards tilt toward the pointer; header photos move with parallax.
+  cards lead with a full-width photo, clipped by the card (`.sp-card { overflow: hidden }`, never round the photo itself).
+  Toxic species use the same card (`sp-card sp-card--toxic`, a red or amber band drawn inside the clip by `::before`) in the same grid, and open the same sheet with the full description, notes, look-alikes and sources. Desktop cards tilt toward the pointer; header photos move with parallax.
 - The page grid uses `minmax(0, 1fr)` and `main { min-width: 0 }` so a scrolling strip can never widen the page.
 - Type: the platform system font (SF Pro / PingFang SC on Apple, Noto Sans SC or YaHei elsewhere). No web fonts.
 - Layering: use only the z-index scale `--z-sticky 10`, `--z-header 20`, `--z-nav 30`, `--z-toast 40`

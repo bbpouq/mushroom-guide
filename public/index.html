@@ -780,8 +780,9 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 }
 
 /* toxic cards share the species card; a coloured top edge marks them */
-.sp-card--toxic { border-top: 3px solid var(--color-destructive); }
-.sp-card--poison { border-top-color: var(--color-accent); }
+/* toxic cards: a red (deadly) or amber (poisonous) band across the top, drawn inside the card's clip */
+.sp-card--toxic::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; z-index: 1; background: var(--color-destructive); }
+.sp-card--poison::before { background: var(--color-accent); }
 .sp-card--toxic .sp-card__meta { justify-content: flex-start; }
 .sheet__group--toxic { color: var(--color-danger-text); }
 .sheet__text { margin-top: var(--space-4); line-height: 1.7; }
@@ -994,6 +995,15 @@ img.is-missing { visibility: hidden; }
 [data-field="on"] .callout { font-size: 17px; }
 [data-field="on"] .sheet__title { font-size: 34px; }
 [data-field="on"] .fact dd, [data-field="on"] .sheet__one { font-size: 18px; }
+
+/* ---------- pixel fixes: photos clipped to the card's corners, focus rings kept inside their container ---------- */
+.sp-card { position: relative; overflow: hidden; }
+.sp-card__photo { border-radius: 0; }
+.today { border: 0; }
+.sheet__actions .icon-btn:focus-visible, .cmp__head .icon-btn:focus-visible, .hdr__tools .icon-btn:focus-visible, .today__nav .icon-btn:focus-visible { outline-offset: -3px; }
+.sheet, .sheet__bar, .sheet__nav { background: var(--color-card-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.now__item, .home-entry__item, .season__col, .look-pair, .home-results { overflow: hidden; }
+@media (max-width: 359px) { .cal__table { border-spacing: 1px; font-size: 12px; } .cal__table col.cal__namecol { width: 6.5em; } }
 
 /* ---------- 3D mushroom model (finder) ---------- */
 .model { margin: 0 0 var(--space-5); padding: var(--space-4) var(--space-4) var(--space-3); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
@@ -1704,7 +1714,7 @@ function openSpecies(i) {
     <dl class="sheet__quick">
       <div class="sheet__q"><dt>季节</dt><dd>${esc(s.season)}</dd></div>
       <div class="sheet__q"><dt>长在</dt><dd>${s.sub.map(k => FEAT.sub[k]).join("、")}</dd></div>
-      <div class="sheet__q"><dt>西北太平洋记录</dt><dd>${s.obs ? s.pnw.toLocaleString("en") + " 条" : "无数据"}</dd></div>
+      <div class="sheet__q"><dt>本地观察记录</dt><dd>${s.obs ? s.pnw.toLocaleString("en") + " 条" : "无数据"}</dd></div>
     </dl>
     ${badges(s.flags)}
     ${sheetNav([["sh-id", "快速鉴别"], ["sh-look", "易混毒菌"], ["sh-eco", "生态与季节"], ["sh-kitchen", "厨房"], ["sh-more", "资料来源"]])}
@@ -1750,7 +1760,7 @@ function openSpecies(i) {
   $("#sheet-body").scrollTop = 0;
   const bar = $("#sheet-body .sheet__bar");  // the section jumps stick right under the bar
   $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
-  $("[data-close]", d).focus();
+  $("[data-close]", d).focus({ focusVisible: false });
 }
 // where each kind of content on a species page comes from
 function dataNotes(x) {
@@ -1862,7 +1872,7 @@ function openToxic(slug) {
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   $("#sheet-body").scrollTop = 0;
-  $("[data-close]", d).focus();
+  $("[data-close]", d).focus({ focusVisible: false });
 }
 const KIND = { edible: "可食种", caution: "谨慎", toxic: "有毒" };
 const cmpState = {};  // comparison id -> { mode: "side" | "switch", k: column shown in "switch" mode }
