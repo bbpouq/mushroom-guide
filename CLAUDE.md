@@ -11,7 +11,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 104 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 110 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate app icons (Pillow)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -51,6 +51,9 @@ tests/test_site.py       Playwright checks (starts its own server)
 
 Never hand-edit `public/index.html`; edit `src/` and rebuild. When shipping a user-visible change,
 bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones refresh promptly.
+Photos and the 3D library live in a separate cache, `MEDIA` in `sw.js` (`mushroom-guide-media-1`), that survives
+releases so photos downloaded for a trip are kept. Bump it only when existing photo files are replaced by different
+pictures (e.g. after `fetch_photos.py --all`). The build copies the name into the page; both must match.
 
 ## Content rules (safety and copyright come first)
 
@@ -131,7 +134,14 @@ bump `CACHE` in `public/sw.js` (e.g. `mushroom-guide-v4`) so installed phones re
   element a class that another component uses as its root. A badge once had the class `top`, inherited the
   sticky header's positioning and floated over the search bar. The test suite checks for this.
 - Composable building blocks that may be combined with a component class: `btn`, `chip`, `icon`, `icon-btn`, `latin`.
-- Touch targets at least 44px on coarse pointers; SVG icons only (no emoji); visible labels on inputs;
+- Field mode (户外模式, `html[data-field="on"]`, remembered in `localStorage` `mushroom-guide:field`, set before first
+  paint by an inline script): toggled by the sun button in the header, the sidebar and the guide's offline section.
+  Bigger type (18px body) and targets (52px), stronger contrast, solid surfaces, no blur, no animation, no header photos,
+  and the home view keeps only search, entries and safety (today card, season, learning links, 3D model and footer hidden).
+- Offline: the guide's 离线使用 section reports what is on this device (network, text, photos small/HD counts, 3D library,
+  external links need network) and downloads every photo on request (small, or small + HD) into the `MEDIA` cache.
+  When offline, the header shows a 离线 pill and external links get "（需联网）"; uncached images show as grey frames.
+- Touch targets at least 44px on coarse pointers (chips keep a 34px look with a 44px hit area via `::after`); SVG icons only (no emoji); visible labels on inputs;
   respect `prefers-reduced-motion`; no horizontal overflow at 375px (wide tables must reflow on phones).
 - Phone: sticky header plus bottom nav (at most 5 tabs: 首页 / 识别 / 图鉴 / 毒菌 / 记录; 指南 and 食谱 are reached from the home
   view, the guide view's jump row and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 7 views.

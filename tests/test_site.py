@@ -283,8 +283,45 @@ def run():
         check("share copies deep link", pg.evaluate("navigator.clipboard.readText()").endswith("#sp-boletus-edulis"))
         pg.goto(url + "#guide"); pg.wait_for_timeout(2500)
         check("service worker ready", "已可离线" in pg.inner_text("#offline-status"))
+        pg.locator("#off-photos").scroll_into_view_if_needed()
+        pg.click('[data-dl="small"]')
+        for _ in range(60):
+            pg.wait_for_timeout(250)
+            if "小图 " in pg.inner_text("#off-photos") and pg.locator("#off-bar").is_hidden():
+                break
+        n_small = pg.evaluate("photoSets.small.length")
+        check(f"'download every photo' stores all {n_small} small photos", f"小图 {n_small} / {n_small}" in pg.inner_text("#off-photos"))
+        sw = (PUBLIC / "sw.js").read_text(encoding="utf-8")
+        check("the page and the service worker use the same photo cache",
+              pg.evaluate("MEDIA_CACHE") in sw and pg.evaluate("MEDIA_CACHE").startswith("mushroom-guide-media"))
         ctx.set_offline(True); pg.reload(); pg.wait_for_timeout(1000)
         check("loads offline", pg.locator(".sp-card").count() > 50)
+        check("offline: the header says so and external links are marked",
+              pg.locator(".hdr [data-net-pill]").is_visible() and pg.evaluate("document.documentElement.classList.contains('is-offline')"))
+        pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(600)
+        check("offline: a species photo still shows (downloaded before)",
+              pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return i.complete && i.naturalWidth > 0; })()"))
+        ctx.set_offline(False)
+        ctx.close()
+
+        # ---------- field mode (phone) ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []; pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url); pg.wait_for_timeout(500)
+        pg.click(".hdr [data-field-toggle]"); pg.wait_for_timeout(200)
+        pg.reload(); pg.wait_for_timeout(500)
+        nav_h = pg.evaluate("document.querySelector('.botnav__link').getBoundingClientRect().height")
+        check(f"field mode is remembered, enlarges the tab bar ({nav_h}) and hides decoration",
+              pg.evaluate("document.documentElement.dataset.field") == "on" and nav_h >= 64
+              and pg.locator("#today").is_hidden() and pg.locator(".view__hero >> nth=0").is_hidden()
+              and pg.get_attribute(".hdr [data-field-toggle]", "aria-pressed") == "true"
+              and pg.evaluate("parseFloat(getComputedStyle(document.body).fontSize)") >= 18)
+        for v in VIEWS:
+            pg.evaluate(f"show('{v}')")
+            if pg.evaluate("document.documentElement.scrollWidth") > 375:
+                errs.append("overflow in field mode: " + v)
+        pg.click(".hdr [data-field-toggle]"); pg.wait_for_timeout(100)
+        check(f"field mode turns off again, no overflow or errors {errs}", "field" not in pg.evaluate("Object.keys(document.documentElement.dataset)") and not errs)
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

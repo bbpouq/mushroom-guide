@@ -165,8 +165,15 @@ assert sorted(TOXIC_ORDER) == sorted(p["slug"] for p in all_toxic), "TOXIC_ORDER
 poison = sorted(all_toxic, key=lambda p: TOXIC_ORDER.index(p["slug"]))
 poison_extra = []
 
+# download sizes for the "download every photo before a trip" buttons
+_ph = {x["photo"]["file"]: x["photo"] for x in species + poison if x.get("photo")}
+photo_bytes = dict(small=sum((OUT.parent / "photos" / f).stat().st_size for f in _ph)
+                   + sum((OUT.parent / "photos" / h["file"]).stat().st_size for h in HEROES.values()),
+                   hd=sum((OUT.parent / "photos" / p["hd"]["file"]).stat().st_size for p in _ph.values() if p.get("hd")))
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
-            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES)
+            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES, photoBytes=photo_bytes)
+# the page and the service worker must agree on the name of the photo cache
+MEDIA = re.search(r'const MEDIA = "([^"]+)"', (OUT.parent / "sw.js").read_text(encoding="utf-8")).group(1)
 
 
 def kv(items):
@@ -177,6 +184,7 @@ def kv(items):
 
 html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("/*__DATA__*/null", json.dumps(DATA, ensure_ascii=False))
+        .replace("/*__MEDIA__*/", MEDIA)
         .replace("<!--HABITATS-->", kv(HABITATS))
         .replace("<!--FEATURES-->", kv(FEATURES))
         .replace("<!--COOK-->", kv(COOK))
