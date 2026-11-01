@@ -337,7 +337,8 @@ def run():
         check("the page and the service worker use the same photo cache",
               pg.evaluate("MEDIA_CACHE") in sw and pg.evaluate("MEDIA_CACHE").startswith("mushroom-guide-media"))
         ctx.set_offline(True); pg.reload(); pg.wait_for_timeout(1000)
-        check("loads offline", pg.locator(".sp-card").count() > 50)
+        pg.evaluate("navigate('species')"); pg.wait_for_timeout(300)
+        check("loads offline, and the catalog opens offline", pg.locator("#grid .sp-card").count() > 50)
         check("offline: the header says so and external links are marked",
               pg.locator(".hdr [data-net-pill]").is_visible() and pg.evaluate("document.documentElement.classList.contains('is-offline')"))
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(600)
@@ -373,6 +374,29 @@ def run():
         check("a term card flips and can be marked as known", "1" in pg.inner_text("#learn-progress .year__stat >> nth=1"))
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(500); pg.click("#sheet [data-close]"); pg.goto(url + "#learn"); pg.wait_for_timeout(400)
         check(f"opening a species counts as seen in the progress {errs}", pg.inner_text("#learn-progress .year__stat >> nth=0").startswith("1") and not errs)
+        ctx.close()
+
+        # ---------- performance and keyboard (round 6) ----------
+        ctx = b.new_context(viewport={"width": 1440, "height": 900})
+        pg = ctx.new_page(); errs = []; pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.add_init_script("window.__cls = 0; new PerformanceObserver(l => l.getEntries().forEach(e => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({type: 'layout-shift', buffered: true});")
+        pg.goto(url); pg.wait_for_timeout(1500)
+        cls = pg.evaluate("window.__cls")
+        check(f"first load: no layout shift ({cls:.3f}), off-screen views not built yet, data read as JSON",
+              cls < 0.05 and pg.locator("#grid .sp-card").count() == 0 and pg.locator("#tox-grid .sp-card").count() == 0
+              and pg.locator('script#data[type="application/json"]').count() == 1)
+        pg.click('.subnav a[href="#species"]'); pg.wait_for_timeout(300)
+        check("a view is built the first time it opens", pg.locator("#grid .sp-card").count() > 50)
+        pg.focus("#grid .sp-card >> nth=0"); pg.keyboard.press("Enter"); pg.wait_for_timeout(400)
+        on_close = pg.evaluate("document.activeElement.getAttribute('aria-label')")
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(300)
+        check(f"keyboard: Enter opens a sheet with focus on close ({on_close}), Escape closes it and focus returns to the card {errs}",
+              on_close == "关闭详情" and not pg.evaluate("document.getElementById('sheet').open")
+              and "sp-card" in pg.evaluate("document.activeElement.className") and not errs)
+        pg.goto(url + "#home"); pg.reload(); pg.wait_for_timeout(400); pg.keyboard.press("Tab")
+        check("the first Tab reaches the skip link", "skip-link" in pg.evaluate("document.activeElement.className"))
+        hero = pg.get_attribute("#v-home .view__hero", "srcset") or ""
+        check("header photos offer a 640px copy for phones", "-640.webp 640w" in hero and (PUBLIC / "photos" / "hero-home-porcini-640.webp").exists())
         ctx.close()
 
         # ---------- field mode (phone) ----------

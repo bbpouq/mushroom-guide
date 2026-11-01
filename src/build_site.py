@@ -185,7 +185,7 @@ def kv(items):
 
 
 html = ((SRC / "template.html").read_text(encoding="utf-8")
-        .replace("/*__DATA__*/null", json.dumps(DATA, ensure_ascii=False))
+        .replace("/*__DATA__*/null", json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/"))
         .replace("/*__MEDIA__*/", MEDIA)
         .replace("<!--HABITATS-->", kv(HABITATS))
         .replace("<!--FEATURES-->", kv(FEATURES))
@@ -198,10 +198,22 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("<!--N_RECIPES-->", str(len(recipes)))
         .replace("<!--N_BOOK-->", str(sum(1 for x in species if x.get("page"))))
         .replace("<!--N_NA-->", str(sum(1 for x in species if not x.get("page")))))
+def hero_small(name):
+    """A 640px copy of a header photo for phones (made from the 1024px file; the build never fetches)."""
+    from PIL import Image
+    src, dst = OUT.parent / "photos" / name, OUT.parent / "photos" / name.replace(".webp", "-640.webp")
+    if not dst.exists() or dst.stat().st_mtime < src.stat().st_mtime:
+        im = Image.open(src).convert("RGB")
+        im.resize((640, round(im.height * 640 / im.width)), Image.LANCZOS).save(dst, "WEBP", quality=66, method=6)
+    return dst.name
+
+
 for view, h in HEROES.items():
     assert (OUT.parent / "photos" / h["file"]).exists(), f"missing hero photo {h['file']}"
+    small = hero_small(h["file"])
     html = html.replace(f"<!--HERO:{view}-->", (
-        f'<img class="view__hero" src="photos/{h["file"]}" alt="" decoding="async"{"" if view.startswith("home") else " loading=\"lazy\""}>'
+        f'<img class="view__hero" src="photos/{h["file"]}" srcset="photos/{small} 640w, photos/{h["file"]} 1024w" '
+        f'sizes="(min-width: 1024px) 760px, calc(100vw - 32px)" alt="" decoding="async"{" fetchpriority=\"high\"" if view.startswith("home") else " loading=\"lazy\""}>'
         f'<span class="view__credit">照片：<a href="{h["photo_url"]}" target="_blank" rel="noopener">{h["author"]}</a>'
         f' · <a href="{LICENCE_URL[h["licence"]]}" target="_blank" rel="noopener">{LICENCE_NAME[h["licence"]]}</a> · iNaturalist</span>'))
 assert "<!--HERO:" not in html, "a view header has no hero photo in data/photos.HEROES"

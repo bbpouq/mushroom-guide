@@ -30,7 +30,8 @@
 <meta name="twitter:description" content="Explore the forest. Know your fungi. 拾自然之菌，记森林之迹。">
 <meta name="twitter:image" content="https://bbpouq.github.io/mushroom-guide/og.png">
 <title>拾菌记 MycoTrail — Pacific Northwest 野菌探索指南</title>
-<script>try { if (localStorage.getItem("mushroom-guide:field") === "on") document.documentElement.dataset.field = "on"; } catch (_) {}</script>
+<script>try { if (localStorage.getItem("mushroom-guide:field") === "on") document.documentElement.dataset.field = "on"; } catch (_) {}
+try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /^(explore|guide-(calendar|field|offline))/.test(h) ? "ex" : /^(log|guide-log)$/.test(h) ? "jr" : h === "emergency" ? "" : "id"; } catch (_) { document.documentElement.dataset.tab = "id"; }</script>
 <style>
 /* Design system: iOS-style translucent materials ("glass") over a soft grouped background.
    Bars, sheet and toast use backdrop blur; cards are translucent without blur (cheap on phones).
@@ -496,7 +497,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .step { border: 1px solid var(--color-border); background: var(--color-card); border-radius: var(--radius); padding: var(--space-4); margin: 0 0 var(--space-3); }
 .step legend { padding: 0 var(--space-1); font-family: var(--font-heading); font-weight: var(--fw-700); font-size: 17px; }
 .step__hint { font-size: 13px; color: var(--color-muted-foreground); margin: 0 0 var(--space-3); }
-.step__num { color: var(--color-accent); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.step__num { color: var(--color-warning-text); margin-right: 6px; font-variant-numeric: tabular-nums; }
 .swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent); flex: none; }
 .finder__note { display: flex; gap: var(--space-2); font-size: 14px; background: var(--color-warning-surface); color: var(--color-warning-text); border-radius: var(--radius); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
 .finder__note .icon { margin-top: 2px; }
@@ -702,9 +703,10 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 
 /* ---------- motion: physical, state-confirming, never on warnings ---------- */
 /* whole view: opacity only, so sticky bars inside it never move; the header gets the lift */
-.view.is-active { animation: view-in 320ms var(--ease) backwards; }
+html.is-ready .view.is-active { animation: view-in 320ms var(--ease) backwards; }
+html:not(.is-ready) .site-footer { display: none; }  /* an early paint before any view is shown must not put the footer at the top */  /* not on first paint: the first page shows at once */
 @keyframes view-in { from { opacity: 0; } }
-.view.is-active > .view__head { animation: head-in 520ms var(--spring) backwards; }
+html.is-ready .view.is-active > .view__head { animation: head-in 520ms var(--spring) backwards; }
 @keyframes head-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
 .is-reveal { opacity: 0; transform: translateY(16px) scale(.985); transition: opacity 420ms var(--ease), transform 560ms var(--spring); transition-delay: var(--reveal-delay, 0ms); }
 .is-reveal.is-shown { opacity: 1; transform: none; }
@@ -923,7 +925,7 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .wiz__dot[aria-current="step"] { background: var(--color-foreground); color: var(--color-background); }
 .wiz__dot-n { font-size: 12px; font-weight: var(--fw-700); font-variant-numeric: tabular-nums; }
 .wiz__dot-label { font-size: 12px; font-weight: var(--fw-600); }
-.wiz__dot-val { font-size: 11px; opacity: .72; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz__dot-val { font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wiz__dot.is-done:not([aria-current]) { background: var(--color-primary-surface); color: var(--color-primary); }
 .wiz__why { font-size: 14px; line-height: 1.55; margin: 0 0 var(--space-3); padding: var(--space-2) var(--space-3); border-radius: 10px; background: var(--color-muted); }
 .wiz__opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
@@ -1023,6 +1025,7 @@ img.is-missing { visibility: hidden; }
 
 /* ---------- pixel fixes: photos clipped to the card's corners, focus rings kept inside their container ---------- */
 .sp-card { position: relative; overflow: hidden; }
+#grid > .sp-card, #tox-grid > .sp-card, .rc-grid > .rc-card { content-visibility: auto; contain-intrinsic-size: auto 420px; }
 .sp-card__photo { border-radius: 0; }
 .today { border: 0; }
 .sheet__actions .icon-btn:focus-visible, .cmp__head .icon-btn:focus-visible, .hdr__tools .icon-btn:focus-visible, .today__nav .icon-btn:focus-visible { outline-offset: -3px; }
@@ -1396,7 +1399,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <span class="home-start__text"><b>开始识别</b><span>手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道的就跳过。</span></span>
           <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
         </a>
-        <nav class="home-entry" aria-label="识菌栏目">
+        <nav class="home-entry" aria-label="识菌入口">
           <a class="home-entry__item" href="#species"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg></span><span class="home-entry__text"><span class="home-entry__title">食用菌图鉴</span><span class="home-entry__desc"><!--N_EDIBLE--> 种，按西北太平洋常见程度排列</span></span></a>
           <a class="home-entry__item home-entry__item--toxic" href="#toxic"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg></span><span class="home-entry__text"><span class="home-entry__title">毒菌与近似种</span><span class="home-entry__desc"><!--N_TOXIC--> 种毒菌，<!--N_COMPARE--> 组并排对比</span></span></a>
           <a class="home-entry__item" href="#learn"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg></span><span class="home-entry__text"><span class="home-entry__title">学习与测验</span><span class="home-entry__desc">练眼力、记术语、复习错题</span></span></a>
@@ -1825,7 +1828,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <h1 class="view__title" id="h-log">菌记</h1>
           <p class="view__lead">你自己的蘑菇探索档案：在哪里、什么时候、找到了什么，明年同一时间再去看看。</p>
         </header>
-        <section class="finds" aria-labelledby="finds-title">
+        <section class="finds" aria-label="菌记内容">
           <p class="finds__note">记录、照片和位置<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，记得导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
           <div class="jump-row">
             <button class="chip" type="button" data-jump="finds-compose"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>新记录</button>
@@ -1923,6 +1926,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         </header>
         <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>食谱只适用于已经由有经验的人当面确认过身份的菌，并要彻底煮熟。</b>烹饪不能让有毒的菌变安全。下锅前留一两朵生的样本放冰箱。每道菜也都可以用超市的栽培菌来做。</div></div>
         <div class="rc-filter" id="rc-filter" role="group" aria-label="按菜系筛选"></div>
+        <h2 class="sr-only">食谱列表</h2>
         <div class="rc-grid" id="rc-grid"></div>
       </section>
 
@@ -1990,7 +1994,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   </div>
 </div>
 
-<nav class="botnav" aria-label="主导航">
+<nav class="botnav" aria-label="底部导航">
   <a class="botnav__link" href="#home" data-tab="id"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-book-open"/></svg>识菌</a>
   <a class="botnav__link" href="#explore" data-tab="ex"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-compass"/></svg>拾菌</a>
   <a class="botnav__link" href="#log" data-tab="jr"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook-pen"/></svg>菌记</a>
@@ -2000,8 +2004,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog class="zoom" id="zoom" aria-label="放大的照片"><button class="icon-btn zoom__close" type="button" data-zoom-close aria-label="关闭放大的照片"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button><img class="zoom__img" id="zoom-img" alt=""><p class="zoom__cap" id="zoom-cap"></p></dialog>
 
+<script type="application/json" id="data">/*__DATA__*/null</script>
 <script>
-const DATA = /*__DATA__*/null;
+const DATA = JSON.parse(document.getElementById("data").textContent);  // JSON parses faster than a JS object literal
 const MONTH = new Date().getMonth() + 1;
 
 /* ---------- springs as CSS linear() easings: drag 1200/80 (settles without bouncing), taps 380/18 (a small bounce) ---------- */
@@ -2839,6 +2844,7 @@ $("#finds-import").addEventListener("change", async e => {
 });
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-log-sp]"); if (!a) return;
+  ensure("log");
   formReset(); $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; setStatus("candidate");
 });
 
@@ -3271,14 +3277,30 @@ function fitToday() {
   const body = $("#today .today__body"), w = body ? body.offsetWidth : 0;
   if (!w || todayFit === w) return;
   todayFit = w;
-  const probe = document.createElement("div");
-  probe.className = "today__body"; probe.setAttribute("aria-hidden", "true");
-  probe.style.cssText = `position:absolute;left:-10000px;top:0;visibility:hidden;width:${w}px;min-height:0`;
-  $("#today").appendChild(probe);
-  let max = 0;
-  for (const s of DATA.species.filter(todayOk)) { probe.innerHTML = todayBody(s); max = Math.max(max, probe.offsetHeight); }
-  probe.remove();
-  $("#today").style.setProperty("--today-body-h", max + "px");
+  const key = `mushroom-guide:today-h:${DATA.built}:${w}:${document.documentElement.dataset.field || ""}`;
+  let cached = 0; try { cached = +localStorage.getItem(key) || 0; } catch (_) {}
+  const set = h => { if (h > (parseFloat($("#today").style.getPropertyValue("--today-body-h")) || 0)) $("#today").style.setProperty("--today-body-h", h + "px"); };
+  // every candidate body side by side in one hidden box: one layout, then read all heights
+  const measure = list => {
+    const probe = document.createElement("div");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = `position:absolute;left:-10000px;top:0;visibility:hidden;width:${w}px;contain:layout style`;
+    probe.innerHTML = list.map(s => `<div class="today__body" style="min-height:0">${todayBody(s)}</div>`).join("");
+    $("#today").appendChild(probe);
+    const max = Math.max(0, ...[...probe.children].map(c => c.offsetHeight));
+    probe.remove(); return max;
+  };
+  $("#today").style.removeProperty("--today-body-h");
+  if (cached) { set(cached); return; }
+  // first visit at this width: measure the likely tallest few now, the rest when the phone is idle
+  const all = DATA.species.filter(todayOk), weight = s => strip(s.kitchen).length + (s.warn ? 120 : 0) + DATA.recipes.filter(r => r.sp.includes(s.slug)).length * 40;
+  const ranked = [...all].sort((x, y) => weight(y) - weight(x));
+  set(measure(ranked.slice(0, 6)));
+  (window.requestIdleCallback || (f => setTimeout(f, 800)))(() => {
+    if (todayFit !== w) return;
+    const h = measure(ranked.slice(6)); set(h);
+    try { localStorage.setItem(key, String(Math.max(h, parseFloat($("#today").style.getPropertyValue("--today-body-h")) || 0))); } catch (_) {}
+  });
 }
 if (window.ResizeObserver) new ResizeObserver(() => fitToday()).observe($("#today"));
 $("#today").addEventListener("click", e => {
@@ -3593,7 +3615,13 @@ function parse(h) {
   if (VIEWS.includes(h)) return { view: h };
   return { view: "home" };
 }
+// views that are not on screen at load are built the first time they open (keeps first paint quick on phones)
+const LAZY = { species: () => sync(), finder: () => renderFinder(), log: () => { findsInit(); foldify($("#v-log")); }, learn: () => { learnRender(); quizRender(); },
+  toxic: () => renderToxic(), recipes: () => { renderRecipes(); foldify($("#rc-grid")); }, explore: () => renderCalendar() };
+const built = new Set();
+function ensure(v) { if (LAZY[v] && !built.has(v)) { built.add(v); LAZY[v](); } }
 function show(v, opts = {}) {
+  ensure(v);
   // back/forward onto the view that is already showing (a sheet closed over it): keep the reader's place
   if (!opts.focus && $("#v-" + v).classList.contains("is-active")) opts = Object.assign({}, opts, { keepScroll: true });
   VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
@@ -3614,6 +3642,7 @@ function scrollToTarget(id) {
 }
 function apply(h, opts = {}) {
   const r = parse(h);
+  ensure(r.view);
   if (r.sp !== undefined) {
     if (!document.querySelector(".view.is-active")) show("species");  // otherwise the sheet opens over the current view
     openSpecies(r.sp); return;
@@ -3823,7 +3852,8 @@ document.addEventListener("pointerover", e => {
 
 try { const r = localStorage.getItem("mushroom-guide:region"); if (r && REGION[r]) calState.region = r; } catch (_) {}
 document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
-sync(); renderToday(); renderNow(); renderSeason(); renderDeadly(); renderRecent(); learnRender(); quizRender(); typeIn($("#h-home")); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); foldify(); route();
+renderToday(); renderNow(); renderSeason(); renderDeadly(); renderRecent(); typeIn($("#h-home")); foldify(); route();
+requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add("is-ready")));
 </script>
 </body>
 </html>

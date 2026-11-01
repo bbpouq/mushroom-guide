@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 148 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 153 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -230,6 +230,22 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 - In-page jumps use `<button data-jump="id">`, not anchors.
 - Scroll offsets come from `html { scroll-padding-top }` (header height is measured into `--header-h`).
   Do not also add `scroll-margin` to targets; the two add up.
+
+## Performance and accessibility (round 6, 2026-11)
+
+- Only the first view is built at load; every other view is built the first time it opens (`LAZY` / `ensure(v)` in the
+  script; `apply()` and `show()` call `ensure`). A new view with heavy rendering goes into `LAZY`, and code that touches a
+  view's DOM before navigating there calls `ensure` first (see the `data-log-sp` handler).
+- Views fade in only after first paint (`html.is-ready`); the first page shows at once. The tab (`data-tab`) is set by an
+  inline script before paint so the 识菌 sub-nav never pops in and shifts the page.
+- The today card measures the likely tallest bodies at once and the rest when idle, all in one hidden box (one layout),
+  and caches the height per width in `localStorage` (`mushroom-guide:today-h:*`). Never measure in a loop.
+- `DATA` ships as `<script type="application/json" id="data">` (escaped `</`) and is read with `JSON.parse`.
+- Header photos get a 640px copy (`hero-*-640.webp`, made by the build from the 1024px file) via `srcset`; the home photo
+  loads with `fetchpriority="high"`. Long card lists use `content-visibility: auto`.
+- Baseline (Lighthouse 13, gzip as on GitHub Pages): desktop 99–100 performance; mobile (simulated slow 4G, 4× CPU) ~77;
+  accessibility, best practices and SEO 100. axe-core reports no WCAG 2.2 AA violations on any view, sheet or dialog in
+  light and dark at 375px and 1440px. Landmarks need unique labels; headings must not skip levels (add an sr-only h2).
 
 ## Before you finish a change
 
