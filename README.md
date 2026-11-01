@@ -1,4 +1,7 @@
-# 野菌速查手册
+# 拾菌记 MycoTrail
+
+拾自然之菌，记森林之迹。Explore the forest. Know your fungi.
+Pacific Northwest Mushroom Field Guide & Explorer（原名“野菌速查手册”）。
 
 一个中文野生菌速查网站：食用菌识别、易混毒菌对比、按特征反查、中毒急救、采集与烹饪。可以装到手机桌面离线使用。
 

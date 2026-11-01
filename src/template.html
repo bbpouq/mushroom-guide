@@ -4,14 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#2D5A3D">
-<meta name="description" content="野生食用菌中文速查：识别特征、易混毒菌对比、按特征反查、中毒急救、采集与烹饪。">
+<meta name="theme-color" content="#1E3B2A">
+<meta name="description" content="拾菌记 MycoTrail：Pacific Northwest（BC、华盛顿、俄勒冈）野菌探索指南。识菌：按特征认识野生蘑菇和危险近似种；拾菌：产季与野外指南；菌记：本机保存的采集记录。野菌速查手册升级版，可离线使用。">
+<meta name="keywords" content="拾菌记,MycoTrail,野菌速查手册,野生蘑菇,蘑菇图鉴,毒蘑菇,Pacific Northwest,西北太平洋,BC,华盛顿,俄勒冈">
+<meta name="application-name" content="拾菌记">
+<link rel="canonical" href="https://bbpouq.github.io/mushroom-guide/">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="野菌速查">
-<title>野菌速查手册</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="拾菌记">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="拾菌记 MycoTrail">
+<meta property="og:title" content="拾菌记 MycoTrail — Pacific Northwest 野菌探索指南">
+<meta property="og:description" content="拾自然之菌，记森林之迹。识菌、拾菌、菌记：认识蘑菇，探索森林，记录发现。">
+<meta property="og:url" content="https://bbpouq.github.io/mushroom-guide/">
+<meta property="og:image" content="https://bbpouq.github.io/mushroom-guide/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="拾菌记 MycoTrail — Pacific Northwest 野菌探索指南">
+<meta name="twitter:description" content="Explore the forest. Know your fungi. 拾自然之菌，记森林之迹。">
+<meta name="twitter:image" content="https://bbpouq.github.io/mushroom-guide/og.png">
+<title>拾菌记 MycoTrail — Pacific Northwest 野菌探索指南</title>
 <script>try { if (localStorage.getItem("mushroom-guide:field") === "on") document.documentElement.dataset.field = "on"; } catch (_) {}</script>
 <style>
 /* Design system: iOS-style translucent materials ("glass") over a soft grouped background.
@@ -135,7 +153,7 @@ button, a, label, summary, .chip, input[type="checkbox"] { touch-action: manipul
 .brand__sub { font-size: 12px; color: var(--color-muted-foreground); display: block; line-height: 1.3; }
 .safety-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: var(--fw-600); color: var(--color-danger-text); background: var(--color-danger-surface); padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
 .topnav { display: none; }
-.botnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-nav); display: grid; grid-template-columns: repeat(5, 1fr); background: var(--color-card); border-top: 1px solid var(--color-border); padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.botnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-nav); display: grid; grid-template-columns: repeat(3, 1fr); background: var(--color-card); border-top: 1px solid var(--color-border); padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
 .botnav__link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; font-size: 12px; color: var(--color-muted-foreground); text-decoration: none; border-radius: var(--radius); transition: color var(--dur-fast), background-color var(--dur-fast); }
 .botnav__link:active { background: var(--color-muted); }
 .botnav__link[aria-current="page"] { color: var(--color-primary); font-weight: var(--fw-700); }
@@ -146,15 +164,14 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
   html { scroll-padding-bottom: 0; }
   .botnav { display: none; }
   .hdr__row { padding: var(--space-3) var(--space-6); }
-  .topnav { display: flex; gap: var(--space-1); max-width: 1200px; min-width: 0; margin: 0 auto; padding: 0 var(--space-4) var(--space-2); overflow-x: auto; }
+  .topnav { display: flex; gap: var(--space-1); min-width: 0; margin: 0 0 0 var(--space-4); padding: 0; }
   .topnav__link { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target); padding: 0 var(--space-3); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: var(--fw-500); white-space: nowrap; transition: color var(--dur-fast), background-color var(--dur-fast); }
   .topnav__link:hover { background: var(--color-muted); color: var(--color-foreground); }
   .topnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); }
   main { padding: var(--space-6) var(--space-6) var(--space-7); }
 }
 @media (min-width: 1024px) {
-  .app { grid-template-columns: 264px minmax(0, 1fr); }
-  .hdr { display: none; }
+  .sidenav { display: none !important; }
   .sidenav { display: flex; flex-direction: column; gap: var(--space-5); position: sticky; top: 0; height: 100vh; padding: var(--space-5) var(--space-4); background: var(--color-card); border-right: 1px solid var(--color-border); }
   .sidenav__list { display: flex; flex-direction: column; gap: var(--space-1); }
   .sidenav__link { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target); padding: 0 var(--space-3); border-radius: var(--radius); color: var(--color-muted-foreground); text-decoration: none; font-weight: var(--fw-500); transition: color var(--dur-fast), background-color var(--dur-fast); }
@@ -951,7 +968,7 @@ a.chip { color: var(--color-foreground); text-decoration: none; }
 .hdr__field[aria-pressed="true"] { background: var(--color-accent); color: var(--color-on-accent); }
 .net-pill { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: var(--fw-600); background: var(--color-foreground); color: var(--color-background); white-space: nowrap; }
 .net-pill[hidden] { display: none; }
-@media (max-width: 400px) { .brand__sub { display: none; } }
+
 @media (max-width: 359px) { .brand > span:last-child { display: none; } }
 .sidenav__tools { display: grid; gap: var(--space-2); }
 .sidenav__field { justify-content: center; }
@@ -1061,7 +1078,8 @@ fieldset.finds__field { border: 0; margin: 0; padding: 0; min-width: 0; }
 .finds__input { background: var(--surface-2); border: 0; border-radius: 12px; }
 .finds__h { font-size: 22px; font-weight: var(--fw-700); letter-spacing: -.01em; margin: var(--space-6) 0 var(--space-3); }
 .finds__filters { display: grid; gap: var(--space-2); grid-template-columns: minmax(0, 1fr); margin-bottom: var(--space-3); }
-@media (min-width: 640px) { .finds__filters { grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 640px) { .finds__filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .finds__filters > .search-field { grid-column: 1 / -1; } }
+@media (min-width: 1024px) { .finds__filters { grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr)); } .finds__filters > .search-field { grid-column: auto; } }
 .finds__month { margin: var(--space-5) 0 var(--space-2); font-size: 14px; font-weight: var(--fw-600); color: var(--color-muted-foreground); }
 .finds__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); border: 0; }
 .finds__item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); padding: var(--space-3); border: 0; border-radius: var(--radius-lg); background: var(--surface-1); box-shadow: var(--shadow-card); }
@@ -1116,6 +1134,68 @@ fieldset.finds__field { border: 0; margin: 0; padding: 0; min-width: 0; }
 .obs-years__note { margin: var(--space-2) 0 0; font-size: 12px; color: var(--color-muted-foreground); }
 
 .sos-dont { margin: var(--space-2) 0 0; padding-left: 1.2em; font-size: 15px; line-height: 1.6; color: var(--color-danger-text); }
+
+/* ---------- 拾菌记 shell: brand, three tabs (识菌 / 拾菌 / 菌记), 识菌 sub-nav ---------- */
+img.brand__mark { width: 36px; height: 36px; border-radius: 9px; background: none; display: block; flex: none; }
+.brand__name { letter-spacing: .02em; }
+.brand__sub { font-size: 12px; font-weight: var(--fw-600); letter-spacing: .06em; color: var(--color-muted-foreground); }
+.topnav__link { font-size: 16px; }
+.topnav__link[aria-current="page"] { background: var(--color-primary-surface); color: var(--color-primary); font-weight: var(--fw-700); }
+.hdr__search { flex: none; }
+.subnav { display: none; gap: var(--space-2); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-4) var(--space-2); overflow-x: auto; scrollbar-width: none; }
+.subnav::-webkit-scrollbar { display: none; }
+html[data-tab="id"] .subnav { display: flex; }
+.subnav__link { flex: none; display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: var(--fw-500);
+  color: var(--color-muted-foreground); text-decoration: none; position: relative; }
+.subnav__link::after { content: ""; position: absolute; inset: -4px 0; }
+.subnav__link:hover { color: var(--color-foreground); background: var(--color-muted); }
+.subnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); font-weight: var(--fw-600); }
+@media (min-width: 768px) { .subnav { padding: 0 var(--space-6) var(--space-2); } }
+@media (min-width: 1024px) { .hdr__row { max-width: 1200px; padding: var(--space-3) var(--space-7); } .subnav { padding: 0 var(--space-7) var(--space-3); } }
+.botnav__link { min-height: 58px; font-size: 12px; }
+@media (max-width: 400px) { .hdr__search { display: none; } }
+/* 识菌 overview */
+.home-hero .view__lead { font-size: 18px; }
+.home-hero__en { margin: 0; font-size: 13px; font-weight: var(--fw-600); letter-spacing: .06em; color: rgba(255, 255, 255, .78); }
+[data-field="on"] .home-hero__en { color: var(--color-muted-foreground); }
+.home-start { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-5) 0 var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg);
+  background: var(--color-primary); color: var(--color-on-primary); text-decoration: none; box-shadow: var(--shadow-card); transition: transform 260ms var(--spring); }
+.home-start:active { transform: scale(.98); }
+.home-start__icon { display: grid; place-items: center; width: 52px; height: 52px; flex: none; border-radius: 14px; background: color-mix(in srgb, var(--color-on-primary) 16%, transparent); }
+.home-start__text { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.home-start__text b { font-size: 20px; }
+.home-start__text span { font-size: 14px; line-height: 1.5; opacity: .9; }
+.home-entry { margin-top: 0; }
+.deadly, .recent { margin: var(--space-6) 0; }
+.deadly .now__item { border-top: 3px solid var(--color-destructive); text-decoration: none; }
+.recent .now__item { text-decoration: none; }
+.recent__toxic { color: var(--color-danger-text); font-weight: var(--fw-600); }
+.explore-region { margin: 0 0 var(--space-4); }
+.explore-region__title { font-size: 15px; font-weight: var(--fw-600); color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
+
+/* ---------- 菌记 additions: photo parts, verification details, export precision, year report ---------- */
+.finds__grid { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .finds__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.finds__shot { display: grid; gap: 4px; width: 104px; }
+.finds__shot .finds__thumb { width: 104px; height: 104px; }
+.finds__part { width: 100%; min-height: 36px; font: inherit; font-size: 13px; color: var(--color-foreground); background: var(--surface-2); border: 0; border-radius: 8px; padding: 0 6px; }
+.finds__export-gps { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 14px; color: var(--color-muted-foreground); }
+.finds__export-gps .finds__input { width: auto; min-height: 40px; }
+.year { margin: 0 0 var(--space-5); }
+.year__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.year__pick { min-width: 110px; min-height: var(--target); padding: 0 var(--space-3); font: inherit; font-size: 16px; color: var(--color-foreground); background: var(--surface-2); border: 0; border-radius: 12px; }
+.year__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); margin: var(--space-3) 0; }
+.year__stat { display: grid; justify-items: center; padding: var(--space-3) var(--space-2); border-radius: var(--radius); background: var(--surface-1); box-shadow: var(--shadow-card); }
+.year__stat b { font-size: 26px; font-weight: var(--fw-700); line-height: 1.2; }
+.year__stat span { font-size: 13px; color: var(--color-muted-foreground); }
+.year__top { grid-column: 1 / -1; margin: var(--space-1) 0 0; font-size: 14px; color: var(--color-muted-foreground); }
+.year__months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; height: 72px; align-items: end; margin-bottom: var(--space-4); }
+.year__m { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; height: 100%; font-size: 11px; color: var(--color-muted-foreground); }
+.year__bar { width: 100%; max-width: 20px; background: var(--color-seq-2); border-radius: 3px 3px 0 0; }
+.year__wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 4px; }
+.year__wall > p { grid-column: 1 / -1; }
+.year__shot { padding: 0; border: 0; background: var(--color-muted); aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: zoom-in; }
+.year__shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
@@ -1179,6 +1259,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <symbol id="i-o-under" viewBox="0 0 32 32"><path d="M3 12h26"/><path d="M6 12l2 3M12 12l-1 4M20 12l1 3M26 12l-2 4"/><circle cx="16" cy="22" r="5"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-offline" viewBox="0 0 24 24"><path d="M2 2l20 20"/><path d="M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 5.2-2.8M19 12.9a10 10 0 0 0-2.2-1.7M2 8.8a15 15 0 0 1 4.2-2.7M22 8.8A15 15 0 0 0 10.7 5M12 20h.01"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3Z"/></symbol>
+  <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.4 5.6a2 2 0 0 0-2.9-2.9l-6.6 6.6-1 3.9 3.9-1Z"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15Z"/><path d="M5 19 13 11"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
@@ -1186,48 +1269,33 @@ details.is-open > .fold { grid-template-rows: 1fr; }
 </svg>
 
 <div class="app">
-  <aside class="sidenav" aria-label="侧边导航">
-    <a class="brand" href="#home">
-      <span class="brand__mark"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg></span>
-      <span><span class="brand__name">野菌速查</span><span class="brand__sub">识别 · 避毒 · 下厨</span></span>
-    </a>
-    <nav class="sidenav__list" aria-label="主导航">
-      <a class="sidenav__link" href="#home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>首页</a>
-      <a class="sidenav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征识别</a>
-      <a class="sidenav__link" href="#species"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg>食用菌图鉴</a>
-      <a class="sidenav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
-      <a class="sidenav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>采集与厨房</a>
-      <a class="sidenav__link" href="#log"><svg class="icon" aria-hidden="true"><use href="#i-notebook"/></svg>采集记录</a>
-      <a class="sidenav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
-    </nav>
-    <div class="sidenav__tools">
-      <button class="btn sidenav__field" type="button" data-field-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg>户外模式</button>
-      <span class="net-pill" data-net-pill hidden><svg class="icon icon--sm" aria-hidden="true"><use href="#i-offline"/></svg>离线：已存资料可用</span>
-    </div>
-    <div class="sidenav__note"><strong>有任何疑问，就不要吃。</strong>本手册只是速查摘要，不能代替实物鉴定，也不能代替有经验的人或当地真菌协会。<br><a class="sidenav__sos" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a></div>
-  </aside>
 
   <div>
     <header class="hdr" id="hdr">
       <div class="hdr__row">
-        <a class="brand" href="#home">
-          <span class="brand__mark"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg></span>
-          <span><span class="brand__name">野菌速查</span><span class="brand__sub">识别 · 避毒 · 下厨</span></span>
+        <a class="brand" href="#home" aria-label="拾菌记 MycoTrail 首页">
+          <img class="brand__mark" src="icon.svg" width="36" height="36" alt="">
+          <span><span class="brand__name">拾菌记</span><span class="brand__sub">MycoTrail</span></span>
         </a>
+        <nav class="topnav" aria-label="主导航">
+          <a class="topnav__link" href="#home" data-tab="id"><svg class="icon" aria-hidden="true"><use href="#i-book-open"/></svg>识菌</a>
+          <a class="topnav__link" href="#explore" data-tab="ex"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg>拾菌</a>
+          <a class="topnav__link" href="#log" data-tab="jr"><svg class="icon" aria-hidden="true"><use href="#i-notebook-pen"/></svg>菌记</a>
+        </nav>
         <span class="hdr__tools">
+          <button class="icon-btn hdr__search" type="button" data-go-search aria-label="搜索菌名" title="搜索"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
           <span class="net-pill" data-net-pill hidden><svg class="icon icon--sm" aria-hidden="true"><use href="#i-offline"/></svg>离线</span>
           <button class="icon-btn hdr__field" type="button" data-field-toggle aria-pressed="false" aria-label="户外模式：字更大、按钮更大、关闭动画" title="户外模式"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></button>
           <a class="sos-pill" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
         </span>
       </div>
-      <nav class="topnav" aria-label="主导航">
-        <a class="topnav__link" href="#home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>首页</a>
-        <a class="topnav__link" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>特征识别</a>
-        <a class="topnav__link" href="#species"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg>图鉴</a>
-        <a class="topnav__link" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg>毒菌与对比</a>
-        <a class="topnav__link" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>指南</a>
-        <a class="topnav__link" href="#log"><svg class="icon" aria-hidden="true"><use href="#i-notebook"/></svg>记录</a>
-        <a class="topnav__link" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+      <nav class="subnav" aria-label="识菌栏目">
+        <a class="subnav__link" href="#home">概览</a>
+        <a class="subnav__link" href="#finder">特征识别</a>
+        <a class="subnav__link" href="#species">食用菌图鉴</a>
+        <a class="subnav__link" href="#toxic">毒菌与对比</a>
+        <a class="subnav__link" href="#guide">厨房指南</a>
+        <a class="subnav__link" href="#recipes">食谱</a>
       </nav>
     </header>
 
@@ -1236,9 +1304,10 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-home" aria-labelledby="h-home">
         <header class="view__head home-hero">
           <!--HERO:home-->
-          <span class="view__eyebrow">Home</span>
-          <h1 class="view__title" id="h-home">走进野菌的世界</h1>
-          <p class="view__lead">西北太平洋野生蘑菇野外手册：看懂特征，认识毒菌，负责任地采集。</p>
+          <span class="view__eyebrow">Identify</span>
+          <h1 class="view__title" id="h-home">拾菌记</h1>
+          <p class="view__lead">拾自然之菌，记森林之迹。</p>
+          <p class="home-hero__en">MycoTrail · Pacific Northwest Mushroom Field Guide</p>
           <div class="home-search" role="search">
             <label class="sr-only" for="home-q">搜索菌名</label>
             <div class="search-field home-search__field">
@@ -1248,11 +1317,16 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           </div>
         </header>
         <div class="home-results" id="home-results" aria-live="polite" hidden></div>
-        <nav class="home-entry" aria-label="主要功能">
-          <a class="home-entry__item" href="#finder"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg></span><span class="home-entry__text"><span class="home-entry__title">识别一朵菌</span><span class="home-entry__desc">按看到的特征一步步缩小范围</span></span></a>
+        <a class="home-start" href="#finder">
+          <span class="home-start__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-filter"/></svg></span>
+          <span class="home-start__text"><b>开始识别</b><span>手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道的就跳过。</span></span>
+          <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </a>
+        <nav class="home-entry" aria-label="识菌栏目">
           <a class="home-entry__item" href="#species"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg></span><span class="home-entry__text"><span class="home-entry__title">食用菌图鉴</span><span class="home-entry__desc"><!--N_EDIBLE--> 种，按西北太平洋常见程度排列</span></span></a>
           <a class="home-entry__item home-entry__item--toxic" href="#toxic"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg></span><span class="home-entry__text"><span class="home-entry__title">毒菌与近似种</span><span class="home-entry__desc"><!--N_TOXIC--> 种毒菌，<!--N_COMPARE--> 组并排对比</span></span></a>
-          <a class="home-entry__item" href="#log"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-notebook"/></svg></span><span class="home-entry__text"><span class="home-entry__title">我的采集记录</span><span class="home-entry__desc">只存在这台设备上</span></span></a>
+          <a class="home-entry__item" href="#learn-features"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg></span><span class="home-entry__text"><span class="home-entry__title">3D 结构与术语</span><span class="home-entry__desc">菌褶、菌环、菌托，看图学</span></span></a>
+          <a class="home-entry__item" href="#guide"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-pan"/></svg></span><span class="home-entry__text"><span class="home-entry__title">厨房指南</span><span class="home-entry__desc">清理、烹饪、保存和 <!--N_RECIPES--> 道食谱</span></span></a>
         </nav>
         <section class="home-safety" aria-labelledby="home-safety-title">
           <svg class="icon icon--lg" aria-hidden="true"><use href="#i-shield"/></svg>
@@ -1262,10 +1336,54 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <div class="link-row"><a class="btn" href="#guide-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查清单</a><a class="btn home-safety__sos" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>我可能吃了不确定的菌</a></div>
           </div>
         </section>
+        <section class="deadly" aria-labelledby="deadly-title">
+          <div class="now__head"><h2 class="now__title" id="deadly-title">先认识这几种致命毒菌</h2><a class="now__all" href="#toxic">全部毒菌</a></div>
+          <p class="now__sub">它们都有外形相像的可食种。采菌前先记住它们的样子。</p>
+          <div class="now__track" id="deadly-track"></div>
+        </section>
+        <section class="recent" id="recent" aria-labelledby="recent-title" hidden>
+          <div class="now__head"><h2 class="now__title" id="recent-title">最近看过</h2><button type="button" class="now__all" data-recent-clear>清除</button></div>
+          <div class="now__track" id="recent-track"></div>
+        </section>
         <article class="today" id="today" aria-labelledby="today-name"></article>
+        <section class="home-learn" aria-labelledby="home-learn-title">
+          <h2 class="home-learn__title" id="home-learn-title">继续探索</h2>
+          <div class="home-learn__list">
+            <a class="home-learn__item" href="#explore"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg><span><b>拾菌：这个月常见什么</b><span>BC、华盛顿、俄勒冈的产季和野外指南</span></span></a>
+            <a class="home-learn__item" href="#guide-calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span><b>产季日历</b><span>据历年 iNaturalist 观察记录</span></span></a>
+            <a class="home-learn__item" href="#log"><svg class="icon" aria-hidden="true"><use href="#i-notebook-pen"/></svg><span><b>菌记：我的采集记录</b><span>只存在这台设备上</span></span></a>
+            <a class="home-learn__item" href="#guide-gloss"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg><span><b>术语小词典</b><span>菌褶、菌托、孢子印……</span></span></a>
+          </div>
+        </section>
+      </section>
+
+      <!-- ================= EXPLORE (拾菌) ================= -->
+      <section class="view" id="v-explore" aria-labelledby="h-explore">
+        <header class="view__head">
+          <!--HERO:guide-->
+          <span class="view__eyebrow">Explore</span>
+          <h1 class="view__title" id="h-explore">拾菌</h1>
+          <p class="view__lead">探索 Pacific Northwest 的森林：这个月常见什么、各地的产季、出门前和林子里该知道的事。季节信息来自历年观察记录，<b>不是实时出菇预测</b>。</p>
+        </header>
+        <section class="explore-region" aria-labelledby="explore-region-title">
+          <h2 class="explore-region__title" id="explore-region-title"><span id="explore-month"></span> · 选择地区</h2>
+          <div class="chip-list" role="group" aria-label="地区" id="region-chips">
+            <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
+            <button type="button" class="chip" data-cal-region="bc" aria-pressed="false">BC</button>
+            <button type="button" class="chip" data-cal-region="wa" aria-pressed="false">华盛顿</button>
+            <button type="button" class="chip" data-cal-region="or" aria-pressed="false">俄勒冈</button>
+          </div>
+        </section>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="now-title">本月常见</button>
+          <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
+          <button class="chip" type="button" data-jump="guide-field">野外指南</button>
+          <button class="chip" type="button" data-jump="lost-title"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"/></svg>迷路或受伤</button>
+          <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
+        </div>
         <section class="now" aria-labelledby="now-title">
           <div class="now__head"><h2 class="now__title" id="now-title"></h2><button type="button" class="now__all" data-now-all>看全部</button></div>
-          <p class="now__sub">西北太平洋这个月记录最多的食用菌。点开看易混毒菌。</p>
+          <p class="now__sub">这个月记录多的食用菌（与它自己全年最多的月份相比，据历年 iNaturalist 观察）。点开看易混毒菌。</p>
           <div class="now__track" id="now-track"></div>
         </section>
         <section class="season" aria-labelledby="season-title">
@@ -1273,122 +1391,19 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <p class="season__sub" id="season-sub"></p>
           <div class="season__cols" id="season-cols"></div>
         </section>
-        <section class="home-learn" aria-labelledby="home-learn-title">
-          <h2 class="home-learn__title" id="home-learn-title">学习与准备</h2>
-          <div class="home-learn__list">
-            <a class="home-learn__item" href="#guide"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg><span><b>采集与厨房指南</b><span>出门前、采集时、回家后</span></span></a>
-            <a class="home-learn__item" href="#guide-calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span><b>西北太平洋产季日历</b><span>据历年 iNaturalist 观察记录</span></span></a>
-            <a class="home-learn__item" href="#recipes"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span><b>精选食谱</b><span><!--N_RECIPES--> 道，只用于已确认身份的菌</span></span></a>
-            <a class="home-learn__item" href="#guide-gloss"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg><span><b>术语小词典</b><span>菌褶、菌托、孢子印……</span></span></a>
-          </div>
-        </section>
-      </section>
-
-      <!-- ================= SPECIES ================= -->
-      <section class="view" id="v-species" aria-labelledby="h-species">
-        <header class="view__head">
-          <span class="view__eyebrow">Field guide</span>
-          <h1 class="view__title" id="h-species">食用菌图鉴</h1>
-          <p class="view__lead"><!--N_EDIBLE--> 种食用菌，按在西北太平洋的常见程度排列。图鉴帮你认识它们，不能替代当面鉴定。<b>有任何疑问，就不要吃。</b></p>
-        </header>
-        <div class="search-bar">
-          <label class="search-bar__label" for="q">搜索菌名</label>
-          <div class="search-field">
-            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-            <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="中文名、英文名或学名，如 鸡油菌 / porcini">
-            <button class="search-field__clear" id="q-clear" type="button" aria-label="清除搜索"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        <div class="subhead" id="guide-calendar"><h2>产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
+        <div class="cal-ctl" id="cal-ctl">
+          <div class="cal-ctl__row">
+            <div class="chip-list" role="group" aria-label="显示方式">
+              <button type="button" class="chip" data-cal-mode="cal" aria-pressed="true">全年日历</button>
+              <button type="button" class="chip" data-cal-mode="month" aria-pressed="false">按月份看</button>
+            </div>
+            <label class="sr-only" for="cal-month">月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
+            <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌"></div></div>
           </div>
         </div>
-        <div class="filters">
-          <div class="filter-group" role="group" aria-labelledby="lbl-season">
-            <span class="filter-group__label" id="lbl-season">季节</span>
-            <div class="chip-list" id="season-chips"></div>
-          </div>
-          <div class="filter-group" role="group" aria-labelledby="lbl-group">
-            <span class="filter-group__label" id="lbl-group">形态</span>
-            <div class="chip-list" id="group-chips"></div>
-          </div>
-        </div>
-        <div class="result-bar">
-          <span class="result-bar__count" id="count" role="status" aria-live="polite"></span>
-          <button class="btn-text" id="reset-all" type="button" hidden>清除筛选</button>
-        </div>
-        <div id="group-note"></div>
-        <div class="sp-grid" id="grid"></div>
-      </section>
-
-      <!-- ================= FINDER ================= -->
-      <section class="view" id="v-finder" aria-labelledby="h-finder">
-        <header class="view__head">
-          <!--HERO:finder-->
-          <span class="view__eyebrow">Identify by features</span>
-          <h1 class="view__title" id="h-finder">特征识别</h1>
-          <p class="view__lead">手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道就跳过。<b>毒菌永远排在最前面。</b></p>
-        </header>
-        <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 <!--N_EDIBLE--> 种食用菌和 <!--N_TOXIC--> 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
-        <section class="model" id="model" aria-labelledby="model-title">
-          <div class="model__head"><h2 class="model__title" id="model-title">认识一朵菌</h2><p class="model__hint">拖动可以旋转；点部位名称或模型看说明。</p></div>
-          <div class="model__stage"><canvas class="model__canvas" id="model-canvas" role="img" aria-label="一朵伞菌的三维模型：菌盖、菌褶、菌环、菌柄和埋在土里的菌托"></canvas></div>
-          <div class="model__parts" id="model-parts" role="group" aria-label="选择部位"></div>
-          <p class="model__desc" id="model-desc" aria-live="polite"></p>
-        </section>
-        <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
-        <div class="finder">
-          <div class="finder__steps" id="finder-steps"></div>
-          <div class="finder__results" id="finder-results" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <!-- ================= TOXIC ================= -->
-      <section class="view" id="v-toxic" aria-labelledby="h-toxic">
-        <header class="view__head">
-          <!--HERO:toxic-->
-          <span class="view__eyebrow">Toxic look-alikes</span>
-          <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
-          <p class="view__lead">西北太平洋采菌时最需要警惕的 <!--N_TOXIC--> 种毒菌，最危险的排在前面；以及 <!--N_COMPARE--> 组最常混淆的食用菌和毒菌对比。</p>
-        </header>
-        <div class="danger-banner" role="note">
-          <svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg>
-          <div><strong>少数毒菌可以致命，更多会造成严重肠胃不适。</strong>采到的东西只要有一点疑问，就扔掉。</div>
-        </div>
-        <div class="jump-row">
-          <button class="chip" type="button" data-jump="tox-grid">毒菌</button>
-          <button class="chip" type="button" data-jump="cmp-head"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-columns"/></svg>易混对比</button>
-          <a class="chip" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
-        </div>
-        <div class="sp-grid" id="tox-grid"></div>
-        <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 <!--N_COMPARE--> 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
-        <div class="cmp-list" id="cmp-list"></div>
-        <div class="panel" style="margin-top: var(--space-6)">
-          <h2 class="panel__title">几条可以带走的规律</h2>
-          <ul>
-            <li>可食的蘑菇属也是白色带环的菌：<b>白色孢子印 + 基部有菌托</b>就要高度警惕鹅膏。采白色有褶菌时一定挖出完整柄基。</li>
-            <li>羊肚菌是<b>凹坑</b>，鹿花菌是<b>脑回状褶</b>。</li>
-            <li>鸡油菌是钝圆的<b>棱脊</b>，不是刀片状的真菌褶；长在木头上、密集成簇的橙色菌要想到发光类脐菇。</li>
-            <li>墨水味，或柄基切开立即变铬黄：黄斑蘑菇。</li>
-            <li>大环柄菇类做孢子印：<b>绿色</b>就是有毒的大青褶伞。</li>
-            <li>长在木头上的小褐菇，孢子印锈褐色：可能是致命的纹缘盔孢伞。</li>
-            <li>【编者注】丝膜菌、史密斯鹅膏中毒症状可能数天后才出现。吃过野菌后身体不适，请尽早就医，并带上剩余菌样。</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- ================= GUIDE ================= -->
-      <section class="view" id="v-guide" aria-labelledby="h-guide">
-        <header class="view__head">
-          <!--HERO:guide-->
-          <span class="view__eyebrow">Field &amp; kitchen</span>
-          <h1 class="view__title" id="h-guide">采集与厨房</h1>
-          <p class="view__lead">出门前读一遍：守则、装备、时间、地点、怎么鉴定；采回家后怎么清理、烹饪和保存。</p>
-        </header>
-        <div class="jump-row">
-          <button class="chip" type="button" data-jump="guide-field">采集</button>
-          <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
-          <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
-          <button class="chip" type="button" data-jump="guide-kitchen">厨房</button>
-          <a class="chip" href="#recipes"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-book"/></svg>精选食谱</a>
-          <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
-        </div>
+        <div class="cal" id="cal"></div>
+        <div class="subhead"><h2>野外指南</h2><p>守则、装备、时间、地点、采摘和做孢子印。</p></div>
         <div class="panel-grid" id="guide-field">
           <section class="panel panel--wide">
             <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
@@ -1454,6 +1469,98 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             </ol>
             <p class="muted-note">同属内孢子颜色差别很小：鹅膏属白色，蘑菇属巧克力色，丝盖伞属、丝膜菌属和盔孢伞属褐色，粉褶菌属粉色。</p>
           </section>
+        </div>
+        <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册；出门前把照片也下载好。</p></div>
+        <div class="panel-grid">
+          <section class="panel panel--wide offline" aria-labelledby="offline-title">
+            <h2 class="panel__title" id="offline-title">这台设备上存了什么</h2>
+            <ul class="offline__list">
+              <li><span class="offline__k">网络</span><span class="offline__v" id="off-net">检查中…</span></li>
+              <li><span class="offline__k">文字资料</span><span class="offline__v"><span class="offline-status" id="offline-status">检查中…</span><span class="offline__note">全部物种、对比、急救、指南、食谱和你的记录</span></span></li>
+              <li><span class="offline__k">示例照片</span><span class="offline__v" id="off-photos">检查中…</span></li>
+              <li><span class="offline__k">3D 模型</span><span class="offline__v" id="off-model">检查中…</span></li>
+              <li><span class="offline__k">外部链接</span><span class="offline__v"><span>iNaturalist 和资料来源网页<b>需要联网</b>；离线时这些链接后面会标“需联网”。</span></span></li>
+            </ul>
+            <div class="offline__actions" id="off-actions">
+              <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>出门前下载全部照片<span class="offline__size" data-size="small"></span></button>
+              <button class="btn" type="button" data-dl="all">连高清版一起下载<span class="offline__size" data-size="all"></span></button>
+              <button class="btn-text" type="button" data-dl-stop hidden>停止</button>
+            </div>
+            <progress class="offline__bar" id="off-bar" max="1" value="0" hidden></progress>
+            <p class="muted-note" id="off-msg">照片平时只在看到时才存下来。进山前在有网的地方点一下上面的按钮，没信号时所有照片也能看。照片只存在这台设备上；手机空间紧张时浏览器可能会清掉，出门前再看一眼这里。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title">户外模式</h2>
+            <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。更省电。</p>
+            <button class="btn btn--primary" type="button" data-field-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span data-field-label>打开户外模式</span></button>
+            <p class="muted-note" style="margin-top: var(--space-3)">也可以随时点页面顶部的太阳图标切换。只在这台设备上记住。</p>
+          </section>
+          <section class="panel">
+            <h2 class="panel__title">装到手机桌面</h2>
+            <ul>
+              <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
+              <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
+              <li>装好后从桌面图标打开，会像独立的 App 一样全屏显示。</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+
+      <!-- ================= SPECIES ================= -->
+      <section class="view" id="v-species" aria-labelledby="h-species">
+        <header class="view__head">
+          <span class="view__eyebrow">Field guide</span>
+          <h1 class="view__title" id="h-species">食用菌图鉴</h1>
+          <p class="view__lead"><!--N_EDIBLE--> 种食用菌，按在西北太平洋的常见程度排列。图鉴帮你认识它们，不能替代当面鉴定。<b>有任何疑问，就不要吃。</b></p>
+        </header>
+        <div class="search-bar">
+          <label class="search-bar__label" for="q">搜索菌名</label>
+          <div class="search-field">
+            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="中文名、英文名或学名，如 鸡油菌 / porcini">
+            <button class="search-field__clear" id="q-clear" type="button" aria-label="清除搜索"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="filter-group" role="group" aria-labelledby="lbl-season">
+            <span class="filter-group__label" id="lbl-season">季节</span>
+            <div class="chip-list" id="season-chips"></div>
+          </div>
+          <div class="filter-group" role="group" aria-labelledby="lbl-group">
+            <span class="filter-group__label" id="lbl-group">形态</span>
+            <div class="chip-list" id="group-chips"></div>
+          </div>
+        </div>
+        <div class="result-bar">
+          <span class="result-bar__count" id="count" role="status" aria-live="polite"></span>
+          <button class="btn-text" id="reset-all" type="button" hidden>清除筛选</button>
+        </div>
+        <div id="group-note"></div>
+        <div class="sp-grid" id="grid"></div>
+      </section>
+
+      <!-- ================= FINDER ================= -->
+      <section class="view" id="v-finder" aria-labelledby="h-finder">
+        <header class="view__head">
+          <!--HERO:finder-->
+          <span class="view__eyebrow">Identify by features</span>
+          <h1 class="view__title" id="h-finder">特征识别</h1>
+          <p class="view__lead">手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道就跳过。<b>毒菌永远排在最前面。</b></p>
+        </header>
+        <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 <!--N_EDIBLE--> 种食用菌和 <!--N_TOXIC--> 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
+        <section class="model" id="model" aria-labelledby="model-title">
+          <div class="model__head"><h2 class="model__title" id="model-title">认识一朵菌</h2><p class="model__hint">拖动可以旋转；点部位名称或模型看说明。</p></div>
+          <div class="model__stage"><canvas class="model__canvas" id="model-canvas" role="img" aria-label="一朵伞菌的三维模型：菌盖、菌褶、菌环、菌柄和埋在土里的菌托"></canvas></div>
+          <div class="model__parts" id="model-parts" role="group" aria-label="选择部位"></div>
+          <p class="model__desc" id="model-desc" aria-live="polite"></p>
+        </section>
+        <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
+        <div class="finder">
+          <div class="finder__steps" id="finder-steps"></div>
+          <div class="finder__results" id="finder-results" aria-live="polite"></div>
+        </div>
+        <div class="subhead" id="learn-features"><h2>认识特征与术语</h2><p>鉴定一朵菌要看哪些地方，以及图鉴里常见的词是什么意思。</p></div>
+        <div class="panel-grid">
           <section class="panel panel--wide">
             <h2 class="panel__title"><span class="panel__num">07</span>看哪些特征</h2>
             <!--FEATURES-->
@@ -1463,24 +1570,54 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <!--GLOSS-->
           </details>
         </div>
-        <div class="subhead" id="guide-calendar"><h2>西北太平洋产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
-        <div class="cal-ctl" id="cal-ctl">
-          <div class="chip-list" role="group" aria-label="地区">
-            <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
-            <button type="button" class="chip" data-cal-region="bc" aria-pressed="false">BC</button>
-            <button type="button" class="chip" data-cal-region="wa" aria-pressed="false">华盛顿</button>
-            <button type="button" class="chip" data-cal-region="or" aria-pressed="false">俄勒冈</button>
-          </div>
-          <div class="cal-ctl__row">
-            <div class="chip-list" role="group" aria-label="显示方式">
-              <button type="button" class="chip" data-cal-mode="cal" aria-pressed="true">全年日历</button>
-              <button type="button" class="chip" data-cal-mode="month" aria-pressed="false">按月份看</button>
-            </div>
-            <label class="sr-only" for="cal-month">月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
-            <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌"></div></div>
-          </div>
+      </section>
+
+      <!-- ================= TOXIC ================= -->
+      <section class="view" id="v-toxic" aria-labelledby="h-toxic">
+        <header class="view__head">
+          <!--HERO:toxic-->
+          <span class="view__eyebrow">Toxic look-alikes</span>
+          <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
+          <p class="view__lead">西北太平洋采菌时最需要警惕的 <!--N_TOXIC--> 种毒菌，最危险的排在前面；以及 <!--N_COMPARE--> 组最常混淆的食用菌和毒菌对比。</p>
+        </header>
+        <div class="danger-banner" role="note">
+          <svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><strong>少数毒菌可以致命，更多会造成严重肠胃不适。</strong>采到的东西只要有一点疑问，就扔掉。</div>
         </div>
-        <div class="cal" id="cal"></div>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="tox-grid">毒菌</button>
+          <button class="chip" type="button" data-jump="cmp-head"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-columns"/></svg>易混对比</button>
+          <a class="chip" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
+        </div>
+        <div class="sp-grid" id="tox-grid"></div>
+        <div class="subhead" id="cmp-head"><h2>易混对比</h2><p>最常见的 <!--N_COMPARE--> 组误采。每组并排比较，加粗的是最关键的区别。</p></div>
+        <div class="cmp-list" id="cmp-list"></div>
+        <div class="panel" style="margin-top: var(--space-6)">
+          <h2 class="panel__title">几条可以带走的规律</h2>
+          <ul>
+            <li>可食的蘑菇属也是白色带环的菌：<b>白色孢子印 + 基部有菌托</b>就要高度警惕鹅膏。采白色有褶菌时一定挖出完整柄基。</li>
+            <li>羊肚菌是<b>凹坑</b>，鹿花菌是<b>脑回状褶</b>。</li>
+            <li>鸡油菌是钝圆的<b>棱脊</b>，不是刀片状的真菌褶；长在木头上、密集成簇的橙色菌要想到发光类脐菇。</li>
+            <li>墨水味，或柄基切开立即变铬黄：黄斑蘑菇。</li>
+            <li>大环柄菇类做孢子印：<b>绿色</b>就是有毒的大青褶伞。</li>
+            <li>长在木头上的小褐菇，孢子印锈褐色：可能是致命的纹缘盔孢伞。</li>
+            <li>【编者注】丝膜菌、史密斯鹅膏中毒症状可能数天后才出现。吃过野菌后身体不适，请尽早就医，并带上剩余菌样。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= GUIDE ================= -->
+      <section class="view" id="v-guide" aria-labelledby="h-guide">
+        <header class="view__head">
+          <span class="view__eyebrow">Kitchen guide</span>
+          <h1 class="view__title" id="h-guide">厨房指南</h1>
+          <p class="view__lead">只适用于已经由有经验的人当面确认过身份的菌：下锅前检查、清理、切分、烹饪和保存，以及具体物种的处理要求。<b>烹饪不能让有毒的菌变安全。</b></p>
+        </header>
+        <div class="jump-row">
+          <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
+          <button class="chip" type="button" data-jump="guide-kitchen">清理、烹饪、保存</button>
+          <a class="chip" href="#recipes"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
+        </div>
         <div class="subhead" id="guide-check"><h2>吃之前：逐条检查</h2><p>每次下锅前都过一遍。全部打勾也不等于安全。</p></div>
         <section class="panel panel--wide" aria-labelledby="eat-check-title">
           <h2 class="sr-only" id="eat-check-title">吃之前检查清单</h2>
@@ -1568,40 +1705,6 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <!--KEEP-->
           </section>
         </div>
-        <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册；出门前把照片也下载好。</p></div>
-        <div class="panel-grid">
-          <section class="panel panel--wide offline" aria-labelledby="offline-title">
-            <h2 class="panel__title" id="offline-title">这台设备上存了什么</h2>
-            <ul class="offline__list">
-              <li><span class="offline__k">网络</span><span class="offline__v" id="off-net">检查中…</span></li>
-              <li><span class="offline__k">文字资料</span><span class="offline__v"><span class="offline-status" id="offline-status">检查中…</span><span class="offline__note">全部物种、对比、急救、指南、食谱和你的记录</span></span></li>
-              <li><span class="offline__k">示例照片</span><span class="offline__v" id="off-photos">检查中…</span></li>
-              <li><span class="offline__k">3D 模型</span><span class="offline__v" id="off-model">检查中…</span></li>
-              <li><span class="offline__k">外部链接</span><span class="offline__v"><span>iNaturalist 和资料来源网页<b>需要联网</b>；离线时这些链接后面会标“需联网”。</span></span></li>
-            </ul>
-            <div class="offline__actions" id="off-actions">
-              <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>出门前下载全部照片<span class="offline__size" data-size="small"></span></button>
-              <button class="btn" type="button" data-dl="all">连高清版一起下载<span class="offline__size" data-size="all"></span></button>
-              <button class="btn-text" type="button" data-dl-stop hidden>停止</button>
-            </div>
-            <progress class="offline__bar" id="off-bar" max="1" value="0" hidden></progress>
-            <p class="muted-note" id="off-msg">照片平时只在看到时才存下来。进山前在有网的地方点一下上面的按钮，没信号时所有照片也能看。照片只存在这台设备上；手机空间紧张时浏览器可能会清掉，出门前再看一眼这里。</p>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title">户外模式</h2>
-            <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。更省电。</p>
-            <button class="btn btn--primary" type="button" data-field-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span data-field-label>打开户外模式</span></button>
-            <p class="muted-note" style="margin-top: var(--space-3)">也可以随时点页面顶部的太阳图标切换。只在这台设备上记住。</p>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title">装到手机桌面</h2>
-            <ul>
-              <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
-              <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
-              <li>装好后从桌面图标打开，会像独立的 App 一样全屏显示。</li>
-            </ul>
-          </section>
-        </div>
       </section>
 
       <!-- ================= RECIPES ================= -->
@@ -1609,14 +1712,15 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         <header class="view__head">
           <!--HERO:log-->
           <span class="view__eyebrow">Field log</span>
-          <h1 class="view__title" id="h-log">采集记录</h1>
-          <p class="view__lead">记下在哪里、什么时候找到了什么，明年同一时间再去看看。</p>
+          <h1 class="view__title" id="h-log">菌记</h1>
+          <p class="view__lead">你自己的蘑菇探索档案：在哪里、什么时候、找到了什么，明年同一时间再去看看。</p>
         </header>
         <section class="finds" aria-labelledby="finds-title">
           <p class="finds__note">记录、照片和位置<b>只保存在这台设备的浏览器里</b>，不会上传，换手机或清除浏览器数据就会丢失，记得导出备份。记下来不等于鉴定过：<b>有任何疑问，就不要吃。</b></p>
           <div class="jump-row">
             <button class="chip" type="button" data-jump="finds-compose"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>新记录</button>
             <button class="chip" type="button" data-jump="finds-map-sec"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-map"/></svg>我的地图</button>
+            <button class="chip" type="button" data-jump="finds-year">年度报告</button>
             <button class="chip" type="button" data-jump="finds-timeline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>时间线</button>
           </div>
           <section class="panel" id="finds-compose" aria-labelledby="finds-title">
@@ -1633,18 +1737,28 @@ details.is-open > .fold { grid-template-rows: 1fr; }
                 </div>
                 <p class="finds__hint">选了菌名也只算“候选”。只有懂行的人当面看过实物，才选“专家当面确认”，并写下是谁。</p>
               </fieldset>
-              <div class="finds__field finds__field--wide" id="finds-verifier-wrap" hidden><label class="finds__label" for="finds-verifier">谁确认的</label><input class="finds__input" id="finds-verifier" type="text" maxlength="60" autocomplete="off" placeholder="如：PSMS 鉴定日的志愿者，2026-10-12"></div>
+              <fieldset class="finds__field finds__field--wide finds__verify" id="finds-verifier-wrap" hidden>
+                <legend class="finds__label">谁、在哪、怎么确认的（你自己的记录，网站无法核实）</legend>
+                <div class="finds__grid">
+                  <div class="finds__field"><label class="finds__label" for="finds-verifier">确认人</label><input class="finds__input" id="finds-verifier" type="text" maxlength="60" autocomplete="off" placeholder="姓名或称呼"></div>
+                  <div class="finds__field"><label class="finds__label" for="finds-vorg">机构 / 菌会（可选）</label><input class="finds__input" id="finds-vorg" type="text" maxlength="60" autocomplete="off" placeholder="如：PSMS、Vancouver Mycological Society"></div>
+                  <div class="finds__field"><label class="finds__label" for="finds-vdate">确认日期</label><input class="finds__input" id="finds-vdate" type="date"></div>
+                  <div class="finds__field"><label class="finds__label" for="finds-vmethod">确认方式</label><select class="finds__input" id="finds-vmethod"><option>当面看了实物</option><option>菌会鉴定日 / 展台</option><option>其他当面方式</option></select></div>
+                </div>
+                <p class="finds__hint">只看照片、视频或网上回复的，不算当面确认，请选“候选”。</p>
+              </fieldset>
               <div class="finds__field"><label class="finds__label" for="finds-date">日期</label><input class="finds__input" id="finds-date" type="date" required></div>
               <div class="finds__field"><label class="finds__label" for="finds-place">地点</label><input class="finds__input" id="finds-place" type="text" maxlength="80" autocomplete="off" placeholder="如：某某步道，花旗松林下"></div>
               <div class="finds__field finds__field--wide finds__gps">
                 <span class="finds__label">位置（可选）</span>
                 <div class="finds__gps-row"><button class="btn" type="button" id="finds-gps"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-map"/></svg>记下当前位置</button><span class="finds__gps-out" id="finds-gps-out" aria-live="polite">没有记位置</span><button class="btn-text" type="button" id="finds-gps-clear" hidden>清除</button></div>
-                <p class="finds__hint">只在你点这个按钮时才会读取定位，位置只存在这台设备上；导出备份时会包含坐标，分享文件前想一想。</p>
+                <label class="finds__check"><input type="checkbox" id="finds-fuzzy"><span>只记大概位置（约 1 公里）</span></label>
+                <p class="finds__hint">只在你点这个按钮时才会读取定位，位置只存在这台设备上。打开“只记大概位置”后，保存时坐标会被截到约 1 公里，精确位置不会存下来。</p>
               </div>
               <div class="finds__field"><label class="finds__label" for="finds-hab">生境</label><select class="finds__input" id="finds-hab"><option value="">不确定</option><option>林地地面</option><option>苔藓里</option><option>草地、草坪</option><option>木头上</option><option>木屑、园林覆盖物</option><option>其他</option></select></div>
               <div class="finds__field"><label class="finds__label" for="finds-trees">附近的树</label><input class="finds__input" id="finds-trees" type="text" maxlength="80" autocomplete="off" placeholder="如：花旗松、西部铁杉"></div>
               <div class="finds__field finds__field--wide">
-                <span class="finds__label">照片（可选，最多 3 张）</span>
+                <span class="finds__label">照片（可选，最多 8 张；可以标注拍的是哪个部位）</span>
                 <label class="btn finds__pick"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>添加照片<input class="sr-only" id="finds-photo" type="file" accept="image/*" multiple></label>
                 <div class="finds__thumbs" id="finds-thumbs"></div>
               </div>
@@ -1662,6 +1776,13 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             </div>
           </div></section>
 
+          <section class="year" id="finds-year" aria-labelledby="year-title" hidden>
+            <div class="year__head"><h2 class="finds__h" id="year-title">年度探索报告</h2><label class="sr-only" for="year-pick">年份</label><select class="year__pick" id="year-pick"></select></div>
+            <div class="year__stats" id="year-stats"></div>
+            <div class="year__months" id="year-months" aria-hidden="true"></div>
+            <div class="year__wall" id="year-wall"></div>
+          </section>
+
           <section class="finds__browse" id="finds-timeline" aria-labelledby="ftl-title">
             <h2 class="finds__h" id="ftl-title">时间线</h2>
             <div class="finds__filters">
@@ -1669,11 +1790,14 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <label class="sr-only" for="finds-fsp">按菌名筛选</label><select class="finds__input" id="finds-fsp"></select>
               <label class="sr-only" for="finds-fyear">按年份筛选</label><select class="finds__input" id="finds-fyear"></select>
               <label class="sr-only" for="finds-fmonth">按月份筛选</label><select class="finds__input" id="finds-fmonth"></select>
+              <label class="sr-only" for="finds-fregion">按地区筛选</label><select class="finds__input" id="finds-fregion"><option value="">全部地区</option><option value="bc">BC</option><option value="wa">华盛顿</option><option value="or">俄勒冈</option><option value="other">其他地方</option><option value="none">没有坐标</option></select>
             </div>
             <div id="finds-list" aria-live="polite"></div>
+            <p class="finds__hint" id="finds-export-note">备份文件只在你自己的设备之间搬运时用“精确”。要分享给别人，请选“约 1 公里”或“不包含坐标”。</p>
             <div class="finds__bar">
               <button class="btn" type="button" id="finds-export-json"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出备份（含照片）</button>
               <button class="btn" type="button" id="finds-export"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出 CSV 表格</button>
+              <label class="finds__export-gps"><span>导出的坐标</span><select class="finds__input" id="finds-export-gps"><option value="exact">精确（完整备份）</option><option value="approx">约 1 公里</option><option value="none">不包含坐标</option></select></label>
               <label class="btn finds__import"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>导入备份<input type="file" id="finds-import" accept="application/json,.json" hidden></label>
             </div>
           </section>
@@ -1757,11 +1881,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
 </div>
 
 <nav class="botnav" aria-label="主导航">
-  <a class="botnav__link" href="#home"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-home"/></svg>首页</a>
-  <a class="botnav__link" href="#finder"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-filter"/></svg>识别</a>
-  <a class="botnav__link" href="#species"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-mushroom"/></svg>图鉴</a>
-  <a class="botnav__link" href="#toxic"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-skull"/></svg>毒菌</a>
-  <a class="botnav__link" href="#log"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook"/></svg>记录</a>
+  <a class="botnav__link" href="#home" data-tab="id"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-book-open"/></svg>识菌</a>
+  <a class="botnav__link" href="#explore" data-tab="ex"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-compass"/></svg>拾菌</a>
+  <a class="botnav__link" href="#log" data-tab="jr"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook-pen"/></svg>菌记</a>
 </nav>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-title"><div class="sheet__body" id="sheet-body"></div></dialog>
@@ -1928,6 +2050,7 @@ function lookPairs(slug) {
 }
 function openSpecies(i) {
   const s = DATA.species[i], g = groupBy[s.group];
+  recentAdd("sp:" + s.slug);
   const rc = DATA.recipes.filter(r => r.sp.includes(s.slug));
   const one = strip(s.feat).split(/[；。]/)[0];
   const look = lookPairs(s.slug);
@@ -1986,7 +2109,7 @@ function openSpecies(i) {
       ${sourcesHtml(s.sources, !s.sources)}
       ${dataNotes(s)}
     </section>`;
-  $("[data-share]", $("#sheet-body")).onclick = e => share(s.zh + " · 野菌速查", "sp-" + s.slug, e.currentTarget);
+  $("[data-share]", $("#sheet-body")).onclick = e => share(s.zh + " · 拾菌记", "sp-" + s.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   $("#sheet-body").scrollTop = 0;
@@ -2074,8 +2197,8 @@ $("#sheet").addEventListener("close", () => {
 document.addEventListener("click", e => {
   const z = e.target.closest("[data-zoom]"); if (!z) return;
   const d = $("#zoom");
-  $("#zoom-img").src = "photos/" + z.dataset.zoom; $("#zoom-img").alt = z.dataset.zoomCap || "";
-  $("#zoom-cap").textContent = (z.dataset.zoomCap || "") + "。照片只是例子，不能只凭照片鉴定。";
+  $("#zoom-img").src = z.dataset.zoomSrc || "photos/" + z.dataset.zoom; $("#zoom-img").alt = z.dataset.zoomCap || "";
+  $("#zoom-cap").textContent = (z.dataset.zoomCap || "") + (z.dataset.zoomSrc ? "" : "。照片只是例子，不能只凭照片鉴定。");
   if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
 });
 $("#zoom").addEventListener("click", e => { if (e.target.closest("[data-zoom-close]") || e.target === e.currentTarget || e.target.id === "zoom-img") $("#zoom").close(); });
@@ -2094,6 +2217,7 @@ function toxCard(p) {
 }
 function openToxic(slug) {
   const p = toxicAll.find(x => x.slug === slug); if (!p) return;
+  recentAdd("tx:" + slug);
   const deadly = p.level === "致命";
   $("#sheet-body").innerHTML = `
     <div class="sheet__bar"><span class="sheet__group sheet__group--toxic">毒菌 · ${esc(p.level)}</span>
@@ -2112,7 +2236,7 @@ function openToxic(slug) {
     <div class="link-row"><a class="btn" href="#emergency">${icon("phone", "icon--sm")}中毒急救</a>${photoLinks(p.latin)}</div>
     ${sourcesHtml(p.sources, !p.sources)}
     ${dataNotes(p).replace(/<li><span class="src-type src-type--community">社区观察<\/span>[^]*?<\/li>/, "")}`;
-  $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 野菌速查", "tx-" + p.slug, e.currentTarget);
+  $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 拾菌记", "tx-" + p.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   $("#sheet-body").scrollTop = 0;
@@ -2177,8 +2301,8 @@ function renderToxic() {
   $("#cmp-list").innerHTML = DATA.compare.map(cmpCard).join("");
 }
 $("#v-toxic").addEventListener("click", e => {
-  const a = e.target.closest("[data-share-tx]"); if (a) return share(a.dataset.title + " · 野菌速查", "tx-" + a.dataset.shareTx, a);
-  const b = e.target.closest("[data-share-cmp]"); if (b) return share(b.dataset.title + " · 野菌速查", "cmp-" + b.dataset.shareCmp, b);
+  const a = e.target.closest("[data-share-tx]"); if (a) return share(a.dataset.title + " · 拾菌记", "tx-" + a.dataset.shareTx, a);
+  const b = e.target.closest("[data-share-cmp]"); if (b) return share(b.dataset.title + " · 拾菌记", "cmp-" + b.dataset.shareCmp, b);
 });
 
 /* ---------- finder: a step-by-step guide that narrows candidates; it never scores, never says "edible" ---------- */
@@ -2332,7 +2456,19 @@ $("#eat-check-reset").addEventListener("click", () => { eatBoxes().forEach(x => 
 
 /* ---------- personal finds journal (this device only: records in localStorage, photos in IndexedDB) ---------- */
 const FINDS_KEY = "mushroom-guide:finds:v1";  // same key as the first version; old records simply lack the newer fields
-const STATUS = { none: "未鉴定", candidate: "候选", expert: "专家当面确认" };
+const STATUS = { none: "未鉴定", candidate: "候选（个人判断）", expert: "专家当面确认（自记）" };
+const PARTS = ["整体", "菌盖", "菌褶 / 菌孔", "菌柄", "柄基", "孢子印", "切面", "生境", "其他"];
+const MAX_PHOTOS = 8;
+// rough state / province from coordinates (good enough for a filter; says "大致")
+function regionOf(f) {
+  if (typeof f.lat !== "number") return "none";
+  const { lat, lon } = f;
+  if (lon >= -139.1 && lon <= -114 && (lat >= 49 && lat <= 60 || lat >= 48.3 && lon >= -124.4 && lon <= -123.2)) return "bc";  // incl. southern Vancouver Island
+  if (lat >= 45.55 && lat < 49 && lon >= -124.9 && lon <= -116.9) return "wa";
+  if (lat >= 41.99 && lat < 46.3 && lon >= -124.7 && lon <= -116.4) return "or";
+  return "other";
+}
+const fuzz = v => Math.round(v * 100) / 100;   // 0.01° ≈ 1.1 km
 function findsLoad() { try { const v = localStorage.getItem(FINDS_KEY); const a = v ? JSON.parse(v) : []; return Array.isArray(a) ? a : []; } catch (_) { return null; } }
 function findsSave(list) { try { localStorage.setItem(FINDS_KEY, JSON.stringify(list)); return true; } catch (_) { return false; } }
 function todayISO() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
@@ -2371,7 +2507,7 @@ function shrink(file, max = 1280) {
 }
 
 // ----- the form (new or edit) -----
-const draft = { id: null, photos: [], lat: null, lon: null, alt: null, acc: null };
+const draft = { id: null, photos: [], parts: {}, lat: null, lon: null, alt: null, acc: null };
 function setStatus(v) { document.querySelectorAll('[name="finds-status"]').forEach(r => r.checked = r.value === v); $("#finds-verifier-wrap").hidden = v !== "expert"; }
 function gpsText() {
   const o = $("#finds-gps-out"), has = draft.lat !== null;
@@ -2380,17 +2516,19 @@ function gpsText() {
 }
 async function drawThumbs() {
   const urls = await Promise.all(draft.photos.map(photoURL));
-  $("#finds-thumbs").innerHTML = draft.photos.map((k, i) => `<div class="finds__thumb">${urls[i] ? `<img src="${urls[i]}" alt="已添加的照片 ${i + 1}">` : ""}<button type="button" data-unphoto="${esc(k)}" aria-label="移除照片 ${i + 1}">${icon("x", "icon--sm")}</button></div>`).join("");
+  $("#finds-thumbs").innerHTML = draft.photos.map((k, i) => `<div class="finds__shot"><div class="finds__thumb">${urls[i] ? `<img src="${urls[i]}" alt="已添加的照片 ${i + 1}">` : ""}<button type="button" data-unphoto="${esc(k)}" aria-label="移除照片 ${i + 1}">${icon("x", "icon--sm")}</button></div>
+    <label class="sr-only" for="part-${i}">照片 ${i + 1} 拍的部位</label><select class="finds__part" id="part-${i}" data-part="${esc(k)}">${PARTS.map(p => `<option${draft.parts[k] === p ? " selected" : ""}>${p}</option>`).join("")}</select></div>`).join("");
 }
 function formReset() {
-  Object.assign(draft, { id: null, photos: [], lat: null, lon: null, alt: null, acc: null });
+  Object.assign(draft, { id: null, photos: [], parts: {}, lat: null, lon: null, alt: null, acc: null });
   $("#finds-form").reset(); $("#finds-sp").value = ""; $("#finds-other-wrap").hidden = false;
   $("#finds-date").value = todayISO(); setStatus("none"); gpsText(); drawThumbs();
   $("#finds-title").textContent = "新增一条记录"; $("#finds-save span").textContent = "记下来"; $("#finds-cancel").hidden = true;
 }
 function formEdit(f) {
   formReset();
-  Object.assign(draft, { id: f.id, photos: [...(f.photos || [])], lat: f.lat ?? null, lon: f.lon ?? null, alt: f.alt ?? null, acc: f.acc ?? null });
+  Object.assign(draft, { id: f.id, photos: [...(f.photos || [])], parts: { ...(f.parts || {}) }, lat: f.lat ?? null, lon: f.lon ?? null, alt: f.alt ?? null, acc: f.acc ?? null });
+  $("#finds-fuzzy").checked = !!f.fuzzy; $("#finds-vorg").value = f.vorg || ""; $("#finds-vdate").value = f.vdate || ""; if (f.vmethod) $("#finds-vmethod").value = f.vmethod;
   $("#finds-sp").value = f.sp || ""; $("#finds-other").value = f.other || ""; $("#finds-other-wrap").hidden = !!f.sp;
   $("#finds-date").value = f.date || todayISO(); $("#finds-place").value = f.place || ""; $("#finds-notes").value = f.notes || "";
   $("#finds-hab").value = f.hab || ""; $("#finds-trees").value = f.trees || ""; $("#finds-verifier").value = f.verifier || "";
@@ -2416,14 +2554,15 @@ $("#finds-gps").addEventListener("click", () => {
 });
 $("#finds-gps-clear").addEventListener("click", () => { Object.assign(draft, { lat: null, lon: null, alt: null, acc: null }); gpsText(); });
 $("#finds-photo").addEventListener("change", async e => {
-  const files = [...e.target.files].slice(0, 3 - draft.photos.length); e.target.value = "";
-  if (!files.length) { toast("最多 3 张照片"); return; }
+  const files = [...e.target.files].slice(0, MAX_PHOTOS - draft.photos.length); e.target.value = "";
+  if (!files.length) { toast(`最多 ${MAX_PHOTOS} 张照片`); return; }
   for (const f of files) {
-    try { const b = await shrink(f), k = "p" + Date.now() + Math.random().toString(36).slice(2, 7); await photoDB.put(k, b); draft.photos.push(k); }
+    try { const b = await shrink(f), k = "p" + Date.now() + Math.random().toString(36).slice(2, 7); await photoDB.put(k, b); draft.photos.push(k); draft.parts[k] = draft.photos.length === 1 ? "整体" : "其他"; }
     catch (_) { toast("这张照片存不下来（浏览器不允许或空间不够）"); }
   }
   drawThumbs();
 });
+$("#finds-thumbs").addEventListener("change", e => { const s = e.target.closest("[data-part]"); if (s) draft.parts[s.dataset.part] = s.value; });
 $("#finds-thumbs").addEventListener("click", e => {
   const b = e.target.closest("[data-unphoto]"); if (!b) return;
   draft.photos = draft.photos.filter(k => k !== b.dataset.unphoto); drawThumbs();   // removed from the blob store when the record is saved
@@ -2436,11 +2575,16 @@ $("#finds-form").addEventListener("submit", e => {
   if (!sp && !other) { toast("先选一种菌，或者写下名字"); $("#finds-other").focus(); return; }
   const status = (document.querySelector('[name="finds-status"]:checked') || {}).value || (sp ? "candidate" : "none");
   if (status === "expert" && !$("#finds-verifier").value.trim()) { toast("写下是谁当面确认的"); $("#finds-verifier").focus(); return; }
+  const fuzzy = $("#finds-fuzzy").checked, hasLoc = draft.lat !== null && draft.lat !== undefined;
   const old = draft.id ? list.find(f => f.id === draft.id) : null;
   const rec = { id: draft.id || Date.now(), sp, other: sp ? "" : other, date: $("#finds-date").value || todayISO(),
     place: $("#finds-place").value.trim(), notes: $("#finds-notes").value.trim(), status,
     verifier: status === "expert" ? $("#finds-verifier").value.trim() : "", hab: $("#finds-hab").value, trees: $("#finds-trees").value.trim(),
-    lat: draft.lat, lon: draft.lon, alt: draft.alt, acc: draft.acc, photos: [...draft.photos] };
+    vorg: status === "expert" ? $("#finds-vorg").value.trim() : "", vdate: status === "expert" ? $("#finds-vdate").value : "",
+    vmethod: status === "expert" ? $("#finds-vmethod").value : "",
+    lat: hasLoc ? (fuzzy ? fuzz(draft.lat) : draft.lat) : null, lon: hasLoc ? (fuzzy ? fuzz(draft.lon) : draft.lon) : null,
+    alt: hasLoc && !fuzzy ? draft.alt : null, acc: hasLoc ? (fuzzy ? Math.max(1100, draft.acc || 0) : draft.acc) : null, fuzzy: hasLoc && fuzzy,
+    photos: [...draft.photos], parts: Object.fromEntries(draft.photos.map(k => [k, draft.parts[k] || "其他"])) };
   const next = old ? list.map(f => f.id === rec.id ? rec : f) : list.concat(rec);
   if (!findsSave(next)) { toast("保存失败：浏览器存储已满或不可用"); return; }
   if (old) (old.photos || []).filter(k => !rec.photos.includes(k)).forEach(k => photoDB.del(k));
@@ -2449,8 +2593,8 @@ $("#finds-form").addEventListener("submit", e => {
 
 // ----- browsing: filters, timeline, stats -----
 function findsFiltered(list) {
-  const q = $("#finds-q").value.trim().toLowerCase(), sp = $("#finds-fsp").value, y = $("#finds-fyear").value, m = $("#finds-fmonth").value;
-  return list.filter(f => (!sp || f.sp === sp || (sp === "_other" && !f.sp)) && (!y || (f.date || "").startsWith(y)) && (!m || +(f.date || "").slice(5, 7) === +m)
+  const q = $("#finds-q").value.trim().toLowerCase(), sp = $("#finds-fsp").value, y = $("#finds-fyear").value, m = $("#finds-fmonth").value, rg = $("#finds-fregion").value;
+  return list.filter(f => (!rg || regionOf(f) === rg) && (!sp || f.sp === sp || (sp === "_other" && !f.sp)) && (!y || (f.date || "").startsWith(y)) && (!m || +(f.date || "").slice(5, 7) === +m)
     && (!q || [findsName(f), f.place, f.notes, f.trees, f.hab].filter(Boolean).join(" ").toLowerCase().includes(q)));
 }
 function findsFilterOptions(list) {
@@ -2466,7 +2610,7 @@ async function renderFinds() {
   if (list === null) { $("#finds-list").innerHTML = `<p class="finds__empty">这个浏览器不允许保存数据（例如无痕模式或预览窗口），记录功能用不了。</p>`; fmapDraw([]); return; }
   findsFilterOptions(list);
   const shown = findsFiltered(list).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id);
-  fmapDraw(shown);
+  fmapDraw(shown); renderYear(list);
   if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。</p>`; return; }
   const kinds = new Set(shown.map(f => f.sp || "_" + f.other)).size, withGps = shown.filter(f => f.lat !== null && f.lat !== undefined).length;
   const urls = await Promise.all(shown.map(f => f.photos && f.photos[0] ? photoURL(f.photos[0]) : ""));
@@ -2476,7 +2620,7 @@ async function renderFinds() {
     const name = i !== undefined ? `<a href="#sp-${f.sp}">${esc(DATA.species[i].zh)}</a>` : esc(f.other || "未命名");
     const ym = (f.date || "").slice(0, 7), head = ym !== month ? `</ul><h3 class="finds__month">${ym ? `${+ym.slice(0, 4)} 年 ${+ym.slice(5, 7)} 月` : "没有日期"}</h3><ul class="finds__list">` : "";
     month = ym;
-    const meta = [f.place, f.hab, f.trees ? "附近：" + f.trees : "", f.lat !== null && f.lat !== undefined ? "有坐标" : ""].filter(Boolean).map(esc).join(" · ");
+    const meta = [f.place, f.hab, f.trees ? "附近：" + f.trees : "", f.lat !== null && f.lat !== undefined ? (f.fuzzy ? "大概位置" : "有坐标") : ""].filter(Boolean).map(esc).join(" · ");
     return `${head}<li class="finds__item">
       ${urls[n] ? `<img class="finds__pic" src="${urls[n]}" alt="">` : `<span class="finds__pic finds__pic--none">${icon("mushroom")}</span>`}
       <div class="finds__body">
@@ -2484,7 +2628,7 @@ async function renderFinds() {
         <span class="finds__date">${esc(f.date || "")}${f.photos && f.photos.length > 1 ? ` · ${f.photos.length} 张照片` : ""}</span>
         ${meta ? `<p class="finds__meta">${meta}</p>` : ""}
         ${f.notes ? `<p class="finds__meta">${esc(f.notes)}</p>` : ""}
-        ${st === "expert" && f.verifier ? `<p class="finds__meta">确认人：${esc(f.verifier)}</p>` : ""}
+        ${st === "expert" && f.verifier ? `<p class="finds__meta">确认：${[f.verifier, f.vorg, f.vdate, f.vmethod].filter(Boolean).map(esc).join(" · ")}（自记，网站无法核实）</p>` : ""}
         <div class="finds__ops"><button class="btn" type="button" data-edit="${f.id}">编辑</button>
           <button class="btn finds__del" type="button" data-del="${f.id}" aria-label="删除 ${esc(f.date || "")} ${esc(findsName(f))} 这条记录">${icon("trash", "icon--sm")}<span>删除</span></button></div>
       </div></li>`;
@@ -2492,7 +2636,27 @@ async function renderFinds() {
   $("#finds-list").innerHTML = `<p class="finds__stats">共 ${list.length} 条${shown.length !== list.length ? `，筛选出 ${shown.length} 条` : ""} · ${kinds} 种 · ${withGps} 条有坐标</p>
     ${shown.length ? `<ul class="finds__list">${items}</ul>` : `<p class="finds__empty">没有符合筛选的记录。</p>`}`.replace("<ul class=\"finds__list\"></ul>", "");
 }
-["#finds-q", "#finds-fsp", "#finds-fyear", "#finds-fmonth"].forEach(id => $(id).addEventListener(id === "#finds-q" ? "input" : "change", renderFinds));
+// ----- 年度探索报告: counts, months, most-found species and a wall of the year's photos -----
+async function renderYear(list) {
+  const years = [...new Set(list.map(f => (f.date || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+  $("#finds-year").hidden = !years.length; if (!years.length) return;
+  const pick = $("#year-pick"), cur = years.includes(pick.value) ? pick.value : years[0];
+  pick.innerHTML = years.map(y => `<option value="${y}"${y === cur ? " selected" : ""}>${y} 年</option>`).join("");
+  const fs = list.filter(f => (f.date || "").startsWith(cur));
+  const by = {}; fs.forEach(f => { const n = findsName(f); by[n] = (by[n] || 0) + 1; });
+  const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const months = Array.from({ length: 12 }, (_, m) => fs.filter(f => +(f.date || "").slice(5, 7) === m + 1).length), mx = Math.max(1, ...months);
+  $("#year-stats").innerHTML = [["记录", fs.length], ["种类", Object.keys(by).length], ["当面确认", fs.filter(f => findStatus(f) === "expert").length], ["有坐标", fs.filter(f => typeof f.lat === "number").length]]
+    .map(([k, v]) => `<div class="year__stat"><b>${v}</b><span>${k}</span></div>`).join("")
+    + (top.length ? `<p class="year__top">最常记下：${top.map(([n, c]) => `${esc(n)}（${c}）`).join("、")}</p>` : "");
+  $("#year-months").innerHTML = months.map((n, m) => `<span class="year__m"><span class="year__bar" style="height:${n ? Math.max(8, n / mx * 100) : 0}%"></span><span>${m + 1}</span></span>`).join("");
+  const shots = fs.flatMap(f => (f.photos || []).map(k => [k, f])).slice(0, 24);
+  const urls = await Promise.all(shots.map(([k]) => photoURL(k)));
+  $("#year-wall").innerHTML = shots.map(([k, f], i) => urls[i] ? `<button type="button" class="year__shot" data-zoom="${esc(k)}" data-zoom-src="${urls[i]}" data-zoom-cap="${esc(findsName(f))} · ${esc(f.date || "")} · ${esc((f.parts || {})[k] || "")}" aria-label="放大 ${esc(findsName(f))} 的照片"><img src="${urls[i]}" alt=""></button>` : "").join("")
+    || `<p class="finds__hint">这一年还没有照片。</p>`;
+}
+$("#year-pick").addEventListener("change", () => renderYear(findsLoad() || []));
+["#finds-q", "#finds-fsp", "#finds-fyear", "#finds-fmonth", "#finds-fregion"].forEach(id => $(id).addEventListener(id === "#finds-q" ? "input" : "change", renderFinds));
 function findsInit() {
   const opts = [...DATA.species].map(s => [s.zh, s.slug]).sort((a, b) => a[0].localeCompare(b[0], "zh-Hans-CN"));
   $("#finds-sp").innerHTML = `<option value="">其他 / 没认出来</option>` + opts.map(([zh, sl]) => `<option value="${sl}">${esc(zh)}</option>`).join("");
@@ -2525,18 +2689,25 @@ function saveFile(name, blob) {
   } catch (_) { toast("这个窗口不能下载文件，请在浏览器中打开网站再导出"); }
 }
 const blobToData = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(""); r.readAsDataURL(b); });
+function exportCoords(list) {
+  const mode = $("#finds-export-gps").value;
+  return list.map(f => typeof f.lat !== "number" || mode === "exact" ? f
+    : mode === "approx" ? { ...f, lat: fuzz(f.lat), lon: fuzz(f.lon), alt: null, acc: Math.max(1100, f.acc || 0), fuzzy: true }
+    : { ...f, lat: null, lon: null, alt: null, acc: null, fuzzy: false });
+}
+function exportWarn(list) { if ($("#finds-export-gps").value === "exact" && list.some(f => typeof f.lat === "number")) toast("导出的文件含精确坐标：不要直接分享给别人"); }
 $("#finds-export-json").addEventListener("click", async () => {
-  const list = findsLoad() || [], photos = {};
+  const list = exportCoords(findsLoad() || []), photos = {}; exportWarn(list);
   for (const f of list) for (const k of f.photos || []) { const b = await photoDB.get(k); if (b) photos[k] = await blobToData(b); }
-  saveFile(`采集记录-${todayISO()}.json`, new Blob([JSON.stringify({ app: "mushroom-guide", version: 2, exported: new Date().toISOString(), finds: list, photos })], { type: "application/json" }));
+  saveFile(`拾菌记-菌记备份-${todayISO()}.json`, new Blob([JSON.stringify({ app: "mushroom-guide", brand: "拾菌记 MycoTrail", version: 3, exported: new Date().toISOString(), coords: $("#finds-export-gps").value, finds: list, photos })], { type: "application/json" }));
 });
 $("#finds-export").addEventListener("click", () => {
-  const list = findsLoad() || [];
+  const list = exportCoords(findsLoad() || []); exportWarn(list);
   const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  const rows = [["日期", "菌名", "学名", "鉴定状态", "确认人", "地点", "纬度", "经度", "海拔(米)", "生境", "附近的树", "备注"]].concat(list.map(f => {
-    const i = bySlug[f.sp]; return [f.date, findsName(f), i !== undefined ? DATA.species[i].latin : "", STATUS[findStatus(f)], f.verifier, f.place, f.lat, f.lon, f.alt !== null && f.alt !== undefined ? Math.round(f.alt) : "", f.hab, f.trees, f.notes];
+  const rows = [["日期", "菌名", "学名", "鉴定状态", "确认人", "确认机构", "确认日期", "确认方式", "地点", "纬度", "经度", "大概位置", "海拔(米)", "生境", "附近的树", "照片数", "备注"]].concat(list.map(f => {
+    const i = bySlug[f.sp]; return [f.date, findsName(f), i !== undefined ? DATA.species[i].latin : "", STATUS[findStatus(f)], f.verifier, f.vorg, f.vdate, f.vmethod, f.place, f.lat, f.lon, f.fuzzy ? "是" : "", f.alt !== null && f.alt !== undefined ? Math.round(f.alt) : "", f.hab, f.trees, (f.photos || []).length, f.notes];
   }));
-  saveFile(`采集记录-${todayISO()}.csv`, new Blob(["﻿" + rows.map(r => r.map(q).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }));
+  saveFile(`拾菌记-菌记-${todayISO()}.csv`, new Blob(["﻿" + rows.map(r => r.map(q).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }));
 });
 $("#finds-import").addEventListener("change", async e => {
   const file = e.target.files[0]; e.target.value = ""; if (!file) return;
@@ -2590,7 +2761,7 @@ function fmapRender() {
       .addTo(fmapLayer)
       .bindPopup(() => {
         const box = document.createElement("div"); box.className = "fmap__pop";
-        box.innerHTML = `<b>${esc(findsName(f))}</b><br>${esc(f.date || "")} · ${STATUS[st]}${f.place ? "<br>" + esc(f.place) : ""}`;
+        box.innerHTML = `<b>${esc(findsName(f))}</b><br>${esc(f.date || "")} · ${STATUS[st]}${f.place ? "<br>" + esc(f.place) : ""}${f.fuzzy ? "<br>大概位置（约 1 公里）" : ""}<br><button type="button" class="btn-text" data-edit="${f.id}">查看 / 编辑</button>`;
         if (f.photos && f.photos[0]) photoURL(f.photos[0]).then(u => { if (u) box.insertAdjacentHTML("afterbegin", `<img src="${u}" alt="">`); });
         return box;
       });
@@ -2606,6 +2777,7 @@ async function fmapInit() {
     fmapRender();
   } catch (_) { $("#fmap").innerHTML = `<p class="fmap__empty">地图组件没能加载（离线且还没存下来）。联网时打开一次这一页就会存下。</p>`; }
 }
+$("#fmap").addEventListener("click", e => { const b = e.target.closest("[data-edit]"); if (!b) return; const f = (findsLoad() || []).find(x => String(x.id) === b.dataset.edit); if (f) formEdit(f); });
 $("#fmap-tiles").addEventListener("change", e => {
   if (!fmap) return;
   if (e.target.checked) {
@@ -3008,8 +3180,11 @@ $("#today").addEventListener("click", e => {
 
 /* ---------- species view: what to look for this month ---------- */
 function renderNow() {
-  const list = DATA.species.map((s, i) => [s, i]).filter(([s]) => s.months.includes(MONTH) && s.pnw >= 300).slice(0, 12);
-  $("#now-title").textContent = `${MONTH} 月可以找`;
+  const r = calState.region, min = r === "all" ? 300 : 100;
+  const list = DATA.species.map((s, i) => [s, i, obsCounts(s, r)]).filter(([, , c]) => c && c.reduce((a, b) => a + b, 0) >= min && calLevel(c[MONTH - 1], Math.max(...c)) >= 2)
+    .sort((a, b) => b[2][MONTH - 1] - a[2][MONTH - 1]).slice(0, 12);
+  $("#now-title").textContent = `${MONTH} 月在${REGION[r] === REGION.all ? "西北太平洋" : REGION[r]}常见`;
+  $("#explore-month").textContent = `${MONTH} 月`;
   $("#now-track").innerHTML = list.map(([s, i]) => `<button type="button" class="now__item" data-i="${i}">
     ${s.photo ? `<img class="now__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
     <span class="now__name">${esc(s.zh)}</span><span class="now__meta">${esc(s.season)}</span></button>`).join("");
@@ -3021,19 +3196,48 @@ $("[data-now-all]").addEventListener("click", () => {
   requestAnimationFrame(() => scrollToTarget("grid"));
 });
 
+
+/* ---------- 识菌 overview: the deadliest look-alikes, and species this device opened recently ---------- */
+function miniCard(x, href, meta) {
+  return `<a class="now__item" href="${href}">${x.photo ? `<img class="now__img" src="photos/${x.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
+    <span class="now__name">${esc(x.zh)}</span><span class="now__meta">${meta}</span></a>`;
+}
+function renderDeadly() {
+  $("#deadly-track").innerHTML = toxicAll.filter(p => p.level === "致命").slice(0, 8)
+    .map(p => miniCard(p, "#tx-" + p.slug, esc(p.conf && p.conf !== "—" ? "易误认为：" + strip(p.conf).split(/[、，；（(]/)[0] : p.latin))).join("");
+}
+const RECENT_KEY = "mushroom-guide:recent";
+function recentLoad() { try { const a = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (_) { return []; } }
+function recentAdd(id) { try { localStorage.setItem(RECENT_KEY, JSON.stringify([id, ...recentLoad().filter(x => x !== id)].slice(0, 10))); } catch (_) {} renderRecent(); }
+function renderRecent() {
+  const items = recentLoad().map(id => {
+    const [k, slug] = id.split(":");
+    const x = k === "tx" ? toxicAll.find(p => p.slug === slug) : DATA.species[bySlug[slug]];
+    return x ? miniCard(x, `#${k}-${slug}`, k === "tx" ? `<span class="recent__toxic">毒菌</span>` : esc(x.season)) : "";
+  }).filter(Boolean);
+  $("#recent").hidden = !items.length;
+  $("#recent-track").innerHTML = items.join("");
+}
+$("[data-recent-clear]").addEventListener("click", () => { try { localStorage.removeItem(RECENT_KEY); } catch (_) {} renderRecent(); });
+document.addEventListener("click", e => {
+  if (!e.target.closest("[data-go-search]")) return;
+  navigate("home"); requestAnimationFrame(() => { const q = $("#home-q"); q.scrollIntoView({ block: "center" }); q.focus(); });
+});
+
 /* ---------- home: season changes (historical records, not a live forecast) ---------- */
 function renderSeason() {
   const next = MONTH % 12 + 1, rising = [], falling = [];
+  const r = calState.region, min = r === "all" ? 300 : 100;
   DATA.species.forEach(s => {
-    if (s.pnw < 300 || !s.obs) return;
-    const c = s.obs.counts, max = Math.max(...c), cur = c[MONTH - 1], nx = c[next - 1];
+    const c = obsCounts(s, r); if (!c || c.reduce((a, b) => a + b, 0) < min) return;
+    const max = Math.max(...c), cur = c[MONTH - 1], nx = c[next - 1];
     if (nx >= max * 0.5 && nx > cur * 1.3) rising.push([s, nx / max]);
     else if (cur >= max * 0.5 && nx < cur * 0.6) falling.push([s, cur / max]);
   });
   const list = (arr, empty) => arr.length ? `<ul class="season__list">${arr.sort((a, b) => b[1] - a[1]).slice(0, 6).map(([s]) =>
     `<li><a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)}</span></span></a></li>`).join("")}</ul>`
     : `<p class="season__empty">${empty}</p>`;
-  $("#season-sub").textContent = `比较 ${MONTH} 月和 ${next} 月在 iNaturalist 上的历年研究级观察记录（BC、华盛顿、俄勒冈，取自 ${DATA.obsFetched}）。这是过去的记录规律，不是实时出菇预测；具体时间因地区、海拔和当年天气而异。`;
+  $("#season-sub").textContent = `比较 ${MONTH} 月和 ${next} 月在 iNaturalist 上的历年研究级观察记录（${REGION[calState.region]}，取自 ${DATA.obsFetched}）。这是过去的记录规律，不是实时出菇预测；具体时间因地区、海拔和当年天气而异。`;
   $("#season-cols").innerHTML = `
     <div class="season__col"><h3 class="season__h">${icon("arrow", "icon--sm")}${next} 月记录明显增多</h3>${list(rising, "没有明显增多的常见种。")}</div>
     <div class="season__col"><h3 class="season__h">${icon("arrow", "icon--sm season__down")}${next} 月记录明显减少</h3>${list(falling, "没有明显减少的常见种。")}</div>`;
@@ -3123,7 +3327,9 @@ $("#home-q").addEventListener("input", renderHomeSearch);
 })();
 
 /* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
-const VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency"];
+const VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency", "explore"];
+// the three tabs: 识菌 (identify), 拾菌 (explore), 菌记 (journal); the emergency page belongs to none
+const TAB = { home: "id", finder: "id", species: "id", toxic: "id", guide: "id", recipes: "id", explore: "ex", log: "jr", emergency: "" };
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
 function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
@@ -3131,7 +3337,8 @@ function parse(h) {
   if (h.startsWith("cmp-")) return { view: "toxic", target: h };
   if (h.startsWith("rc-") && DATA.recipes.some(r => "rc-" + r.id === h)) return { view: "recipes", target: h };
   if (h === "guide-log") return { view: "log" };  // older links to the log when it lived in the guide view
-  if (h.startsWith("guide-") && document.getElementById(h)) return { view: "guide", target: h };
+  // sections keep their old ids wherever they now live (e.g. #guide-calendar moved to 拾菌): open the view that holds them
+  if (/^(guide|learn)-/.test(h) && document.getElementById(h)) return { view: document.getElementById(h).closest(".view").id.slice(2), target: h };
   if (VIEWS.includes(h)) return { view: h };
   return { view: "home" };
 }
@@ -3139,8 +3346,10 @@ function show(v, opts = {}) {
   // back/forward onto the view that is already showing (a sheet closed over it): keep the reader's place
   if (!opts.focus && $("#v-" + v).classList.contains("is-active")) opts = Object.assign({}, opts, { keepScroll: true });
   VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
+  document.documentElement.dataset.tab = TAB[v] || "";
   document.querySelectorAll("nav a").forEach(a => {
-    if (a.getAttribute("href") === "#" + v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    const on = a.dataset.tab ? a.dataset.tab === TAB[v] : a.getAttribute("href") === "#" + v;
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   if (!opts.keepScroll) { try { window.scrollTo(0, 0); } catch (_) {} }
   if (opts.focus) { const h = $("#h-" + v); h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
@@ -3181,7 +3390,7 @@ document.addEventListener("click", e => {
     const h = a.getAttribute("href").slice(1);
     if (h === "main") return;
     e.preventDefault();
-    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("rc-")) navigate(h);
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-")) navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
@@ -3340,14 +3549,15 @@ function renderCalendar() {
     ${restHtml}`;
 }
 $("#cal-month").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}"${i + 1 === MONTH ? " selected" : ""}>${i + 1} 月</option>`).join("");
-$("#cal-ctl").addEventListener("click", e => {
+document.addEventListener("click", e => {
   const r = e.target.closest("[data-cal-region]"), m = e.target.closest("[data-cal-mode]");
   if (r) calState.region = r.dataset.calRegion;
   if (m) calState.mode = m.dataset.calMode;
   if (!r && !m) return;
-  $("#cal-ctl").querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
-  $("#cal-ctl").querySelectorAll("[data-cal-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calMode === calState.mode));
+  document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
+  document.querySelectorAll("[data-cal-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calMode === calState.mode));
   renderCalendar();
+  if (r) { renderNow(); renderSeason(); try { localStorage.setItem("mushroom-guide:region", calState.region); } catch (_) {} }
 });
 $("#cal-month").addEventListener("change", e => { calState.month = +e.target.value; renderCalendar(); });
 $("#cal-q").addEventListener("input", e => { calState.q = e.target.value; renderCalendar(); });
@@ -3359,7 +3569,9 @@ document.addEventListener("pointerover", e => {
   $("#cal-readout").textContent = `${c.dataset.name} · ${+c.dataset.m + 1} 月：${(+c.dataset.n).toLocaleString("en")} 条${c.hasAttribute("data-peak") ? "（高峰）" : ""}`;
 });
 
-sync(); renderToday(); renderNow(); renderSeason(); typeIn($("#h-home")); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); foldify(); route();
+try { const r = localStorage.getItem("mushroom-guide:region"); if (r && REGION[r]) calState.region = r; } catch (_) {}
+document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
+sync(); renderToday(); renderNow(); renderSeason(); renderDeadly(); renderRecent(); typeIn($("#h-home")); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); foldify(); route();
 </script>
 </body>
 </html>

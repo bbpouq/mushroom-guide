@@ -1,13 +1,19 @@
 {
- "name": "野菌速查手册",
- "short_name": "野菌速查",
- "description": "野生食用菌中文速查：识别、避毒、下厨",
+ "name": "拾菌记 MycoTrail",
+ "short_name": "拾菌记",
+ "description": "拾自然之菌，记森林之迹。Pacific Northwest Mushroom Field Guide & Explorer：识菌、拾菌、菌记。",
  "lang": "zh-CN",
+ "id": "./",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
  "background_color": "#F5F2EA",
- "theme_color": "#2D5A3D",
+ "theme_color": "#1E3B2A",
+ "categories": [
+  "education",
+  "reference",
+  "travel"
+ ],
  "icons": [
   {
    "src": "icon-192.png",
@@ -24,6 +30,29 @@
    "sizes": "512x512",
    "type": "image/png",
    "purpose": "maskable"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "识菌",
+   "url": "./#home"
+  },
+  {
+   "name": "拾菌",
+   "url": "./#explore"
+  },
+  {
+   "name": "菌记",
+   "url": "./#log"
+  },
+  {
+   "name": "中毒急救",
+   "url": "./#emergency"
   }
  ]
 }

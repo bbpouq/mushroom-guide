@@ -1,9 +1,9 @@
-/* 野菌速查 service worker: cache the app shell for offline use */
-const CACHE = "mushroom-guide-v36";
+/* 拾菌记 MycoTrail service worker: cache the app shell for offline use */
+const CACHE = "mushroom-guide-v37";
 // Photos and the 3D library live in their own cache that survives releases, so photos downloaded for offline use are
 // not lost on every update. Bump the number only when existing photo files are replaced by different pictures.
 const MEDIA = "mushroom-guide-media-1";
-const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
+const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./favicon-32.png", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== MEDIA).map(k => caches.delete(k)))).then(() => self.clients.claim()));

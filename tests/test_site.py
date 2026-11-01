@@ -17,8 +17,8 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
-VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
-NAV = {375: ".botnav", 768: ".topnav", 1024: ".sidenav__list", 1440: ".sidenav__list"}
+VIEWS = ["home", "explore", "species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
+NAV = {375: ".botnav", 768: ".topnav", 1024: ".topnav", 1440: ".topnav"}
 failures = []
 
 
@@ -95,17 +95,32 @@ def run():
             check(f"{w}px sticky search under header and unobscured {ov}", not ov["leaked"] and (w >= 1024 or ov["top"] == ov["header"]))
             pg.evaluate("window.scrollTo(0, 0)")
             nav = NAV[w]
-            for v in ["finder", "toxic", "home", "log", "species"]:
+            tabs = pg.eval_on_selector_all(f"{nav} a", "els => els.map(e => e.textContent.trim())")
+            for v in ["explore", "log", "home"]:
                 pg.click(f'{nav} a[href="#{v}"]'); pg.wait_for_timeout(80)
-            check(f"{w}px nav cycles", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species")
+            pg.click('.subnav a[href="#species"]'); pg.wait_for_timeout(80)
+            cur = pg.eval_on_selector_all(f"{nav} a[aria-current]", "els => els.map(e => e.textContent.trim())")
+            check(f"{w}px three tabs {tabs}, sub-nav reaches the catalog and 识菌 stays current {cur}",
+                  tabs == ["识菌", "拾菌", "菌记"] and pg.evaluate("document.querySelector('.view.is-active').id") == "v-species" and cur == ["识菌"])
             pg.go_back(); pg.wait_for_timeout(150)
-            check(f"{w}px back button", pg.evaluate("document.querySelector('.view.is-active').id") == "v-log")
+            check(f"{w}px back button", pg.evaluate("document.querySelector('.view.is-active').id") == "v-home")
             check(f"{w}px no JS errors {errs}", not errs)
             ctx.close()
 
         # ---------- deep links, finder, share, offline (phone) ----------
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True, device_scale_factor=3)
         pg = ctx.new_page()
+        man = __import__("json").loads((PUBLIC / "manifest.webmanifest").read_text(encoding="utf-8"))
+        check("brand: title, manifest, share preview and header say 拾菌记 MycoTrail, with no old name on show",
+              "<title>拾菌记 MycoTrail" in html and man["short_name"] == "拾菌记" and 'property="og:image"' in html
+              and "野菌速查" not in html.split("<title>")[1].split("</title>")[0] and (PUBLIC / "og.png").exists() and (PUBLIC / "icon.svg").exists())
+        pg.goto(url); pg.wait_for_timeout(400)
+        check("header shows the brand", pg.inner_text(".hdr .brand__name") == "拾菌记" and "MycoTrail" in pg.inner_text(".hdr .brand__sub"))
+        pg.goto(url + "#guide-calendar"); pg.wait_for_timeout(800)
+        check("old #guide- links still work after the move (calendar now under 拾菌)", pg.evaluate("document.querySelector('.view.is-active').id") == "v-explore")
+        pg.goto(url + "#guide-kitchen"); pg.wait_for_timeout(800)
+        check("the kitchen guide sits under 识菌", pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide"
+              and pg.evaluate("document.documentElement.dataset.tab") == "id" and pg.locator('.subnav a[aria-current]').inner_text() == "厨房指南")
         pg.goto(url); pg.wait_for_timeout(400)
         check("the site opens on the home view", pg.evaluate("document.querySelector('.view.is-active').id") == "v-home")
         pg.fill("#home-q", "amanita"); pg.wait_for_timeout(150)
@@ -149,15 +164,15 @@ def run():
         pg.goto(url + "#rc-bruschetta"); pg.wait_for_timeout(900)
         check("recipe deep link opens the recipe", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes"
               and pg.evaluate("document.querySelector('#rc-bruschetta details').open"))
-        pg.goto(url + "#home"); pg.wait_for_timeout(400)
+        pg.goto(url + "#explore"); pg.wait_for_timeout(400)
         n_now = pg.locator("#now-track .now__item").count()
         pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)
         check(f"'this month' strip lists species ({n_now}) and opens one", n_now > 0 and pg.evaluate("document.getElementById('sheet').open"))
-        pg.goto(url + "#guide"); pg.wait_for_timeout(400)
-        pg.click('#v-guide [data-jump="guide-calendar"]'); pg.wait_for_timeout(1100)
+        pg.goto(url + "#explore"); pg.wait_for_timeout(400)
+        pg.click('#v-explore [data-jump="guide-calendar"]'); pg.wait_for_timeout(1100)
         rows = pg.locator("#cal tbody tr").count()
         check(f"season calendar opens from the guide view with rows ({rows})",
-              pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and rows > 30
+              pg.evaluate("document.querySelector('.view.is-active').id") == "v-explore" and rows > 30
               and pg.locator("#cal tbody tr >> nth=0").locator("td").count() == 12)
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         check("deep link opens species sheet", pg.evaluate("document.getElementById('sheet').open") and "松茸" in pg.inner_text("#sheet-title"))
@@ -267,7 +282,7 @@ def run():
         pg.click(".sos-pill"); pg.wait_for_timeout(150)
         check("SOS -> emergency view with tel link", pg.evaluate("document.querySelector('.view.is-active').id") == "v-emergency"
               and pg.locator('a[href="tel:18002221222"]').count() == 1)
-        pg.click('.botnav a[href="#finder"]'); pg.wait_for_timeout(100)
+        pg.click('.botnav a[href="#home"]'); pg.click('.subnav a[href="#finder"]'); pg.wait_for_timeout(100)
         pg.locator("#model").scroll_into_view_if_needed(); pg.wait_for_timeout(400)
         pg.wait_for_timeout(1500)  # the WebGL version loads lazily; the 2D canvas is the fallback
         painted = pg.evaluate("""(() => { const st = document.querySelector('.model__stage'), c = st.querySelector('.model__canvas');
@@ -308,7 +323,7 @@ def run():
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(500)
         pg.evaluate("navigator.share = undefined"); pg.click("[data-share]"); pg.wait_for_timeout(250)
         check("share copies deep link", pg.evaluate("navigator.clipboard.readText()").endswith("#sp-boletus-edulis"))
-        pg.goto(url + "#guide"); pg.wait_for_timeout(2500)
+        pg.goto(url + "#explore"); pg.wait_for_timeout(2500)
         check("service worker ready", "已可离线" in pg.inner_text("#offline-status"))
         pg.locator("#off-photos").scroll_into_view_if_needed()
         pg.click('[data-dl="small"]')
@@ -365,7 +380,21 @@ def run():
         pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(500)
         check(f"a find saves GPS ({gps}) and a photo ({thumbs})", "47.60620" in gps and thumbs == 1
               and pg.locator("#finds-list img.finds__pic").count() == 1)
-        pg.select_option("#finds-sp", ""); pg.fill("#finds-other", "褐色小伞菌"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
+        pg.select_option("#finds-sp", ""); pg.fill("#finds-other", "褐色小伞菌")
+        pg.click("#finds-gps"); pg.wait_for_timeout(500); pg.check("#finds-fuzzy")
+        pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
+        saved = pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1'))")
+        fz = [f for f in saved if f.get("other") == "褐色小伞菌"][0]
+        check(f"'only a rough location' stores coordinates cut to ~1 km ({fz['lat']}, {fz['lon']})",
+              fz["fuzzy"] and fz["lat"] == 47.61 and fz["lon"] == -122.33 and fz["alt"] is None)
+        first = [f for f in saved if f.get("sp") == "cantharellus-formosus"][0]
+        check("the first photo is labelled 整体", list(first["parts"].values()) == ["整体"])
+        pg.select_option("#finds-fregion", "wa"); pg.wait_for_timeout(200)
+        n_wa = pg.locator("#finds-list .finds__item").count()
+        pg.select_option("#finds-fregion", "bc"); pg.wait_for_timeout(200)
+        check(f"filtering by region uses the coordinates ({n_wa} in WA)", n_wa == 2 and pg.locator("#finds-list .finds__item").count() == 0)
+        pg.select_option("#finds-fregion", "")
+        check("the year report counts the year's finds", not pg.locator("#finds-year").is_hidden() and "2" in pg.inner_text("#year-stats"))
         pg.click('#finds-list [data-edit] >> nth=1'); pg.wait_for_timeout(300)
         editing = pg.inner_text("#finds-title")
         pg.fill("#finds-notes", "改过的备注"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
@@ -375,7 +404,13 @@ def run():
         check("filtering by species narrows the timeline", pg.locator("#finds-list .finds__item").count() == 1)
         pg.select_option("#finds-fsp", "")
         pg.locator("#fmap").scroll_into_view_if_needed(); pg.wait_for_timeout(1500)
-        check("the map loads and shows the find with coordinates", pg.locator("#fmap path.leaflet-interactive").count() == 1)
+        check("the map loads and shows both finds with coordinates", pg.locator("#fmap path.leaflet-interactive").count() == 2)
+        pg.select_option("#finds-export-gps", "none")
+        with pg.expect_download() as dl0:
+            pg.click("#finds-export-json")
+        shared = __import__("json").loads(open(dl0.value.path(), encoding="utf-8").read())
+        check("exporting 'without coordinates' drops them", all(f.get("lat") is None for f in shared["finds"]))
+        pg.select_option("#finds-export-gps", "exact")
         with pg.expect_download() as dl:
             pg.click("#finds-export-json")
         backup = dl.value.path()
@@ -393,8 +428,9 @@ def run():
         host.eval_on_selector("#f", "(f, h) => f.srcdoc = h", html); host.wait_for_timeout(900)
         fr = host.frames[1]
         ok = []
-        for v in ["finder", "toxic", "home", "log", "species"]:
-            fr.click(f'.botnav a[href="#{v}"]'); host.wait_for_timeout(80)
+        for sel, v in [('.botnav a[href="#explore"]', "explore"), ('.botnav a[href="#log"]', "log"), ('.botnav a[href="#home"]', "home"),
+                       ('.subnav a[href="#finder"]', "finder"), ('.subnav a[href="#species"]', "species")]:
+            fr.click(sel); host.wait_for_timeout(80)
             ok.append(fr.evaluate("document.querySelector('.view.is-active').id") == f"v-{v}")
         fr.click(".sp-card >> nth=0"); host.wait_for_timeout(200)
         opened = fr.evaluate("document.getElementById('sheet').open")

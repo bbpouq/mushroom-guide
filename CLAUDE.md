@@ -1,4 +1,9 @@
-# 野菌速查手册 (Wild Mushroom Field Guide)
+# 拾菌记 MycoTrail (Pacific Northwest Mushroom Field Guide & Explorer)
+
+Brand (since 2026-11, formerly 野菌速查手册): 中文名 **拾菌记**, English **MycoTrail**, slogan 「拾自然之菌，记森林之迹。」 /
+"Explore the forest. Know your fungi." Title: `拾菌记 MycoTrail — Pacific Northwest 野菌探索指南`; PWA name 拾菌记 MycoTrail,
+short_name 拾菌记. 野菌速查手册 may appear only as a description or SEO keyword, never as the brand. The mark is one golden
+chanterelle on forest green (`src/brand/mark.svg`, original artwork); never a toxic mushroom or a skull.
 
 A Simplified-Chinese, mobile-first field guide to wild mushrooms, shared with friends who forage
 (many in the Pacific Northwest). It is a single static page with a feature finder, toxic
@@ -11,9 +16,9 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 124 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 137 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
-python3 src/make_icons.py            # regenerate app icons (Pillow)
+python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
 python3 src/fetch_photos.py          # pick example photos for species that lack one (--all to re-pick); needs network + Pillow
 ```
@@ -43,8 +48,10 @@ src/
                          (our own; every recipe names its mushrooms in `sp` and carries a safety tip)
   template.html          All CSS + markup + JS; build_site.py injects DATA JSON and the guide panels
   build_site.py          Assembles public/index.html; validates tags, slugs and comparison links
-  make_icons.py          App icons
-public/                  Deployed as-is: index.html (generated, do not hand-edit), sw.js, manifest, icons,
+  brand/mark.svg         Master brand mark (golden chanterelle); make_icons.py renders everything else from it
+  make_icons.py          App icons, favicon (icon.svg, favicon-32.png), apple-touch-icon, og.png share image, public/brand/ logos
+public/                  Deployed as-is: index.html (generated, do not hand-edit), sw.js, manifest, icons, og.png,
+                         brand/ (logos: zh/en lockups light/dark, one-colour marks, app icon SVG),
                          vendor/three-0.160.0.module.min.js (MIT, licence beside it; loaded lazily for the 3D model),
                          vendor/leaflet-1.9.4.js + .css (BSD-2, licence beside it; loaded when the finds map scrolls into view)
 tests/test_site.py       Playwright checks (starts its own server)
@@ -171,8 +178,17 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   When offline, the header shows a 离线 pill and external links get "（需联网）"; uncached images show as grey frames.
 - Touch targets at least 44px on coarse pointers (chips keep a 34px look with a 44px hit area via `::after`); SVG icons only (no emoji); visible labels on inputs;
   respect `prefers-reduced-motion`; no horizontal overflow at 375px (wide tables must reflow on phones).
-- Phone: sticky header plus bottom nav (at most 5 tabs: 首页 / 识别 / 图鉴 / 毒菌 / 记录; 指南 and 食谱 are reached from the home
-  view, the guide view's jump row and every species sheet). Tablet: top nav. Desktop (1024px and up): sidebar. Tablet and desktop show all 7 views.
+- Information architecture (since 2026-11): three tabs, the journey 认识蘑菇 → 探索森林 → 记录发现.
+  **识菌** (identify) = views home (overview: search, 开始识别, entries, safety, deadly look-alikes strip, 最近看过, today card),
+  finder (+ 3D model, 看哪些特征, glossary `#guide-gloss`, `#learn-features`), species, toxic, guide (now 厨房指南: checklist
+  `#guide-check`, kitchen `#guide-kitchen`) and recipes. **拾菌** (explore) = view explore: region chips (remembered in
+  `mushroom-guide:region`, they drive the month strip, 季节变化 and the calendar), "N 月在…常见", 季节变化, calendar
+  (`#guide-calendar`), field guide (`#guide-field`, lost panel) and offline (`#guide-offline`). **菌记** (journal) = view log.
+  The emergency page belongs to no tab and stays one tap away (header SOS). `TAB` in the script maps views to tabs.
+  Never add a fourth tab; 食谱 and 厨房 stay inside 识菌.
+- Nav: one sticky header for every size (brand left, the three tabs as `.topnav` from 768px, search / field mode / SOS
+  right) and a `.subnav` row of 识菌 pages shown only while a 识菌 view is open (`html[data-tab="id"]`). Phones also get a
+  3-tab bottom bar. Tab icons are Lucide-style strokes (book-open, compass, notebook-pen). No sidebar.
 
 ## Routing (keep it script-driven)
 
@@ -180,7 +196,8 @@ The page is often opened inside sandboxed previews (chat apps, file viewers) whe
 navigates the frame away and blanks the page. All in-page links are intercepted in JS. History is
 updated with `pushState` inside try/catch, so it works where allowed and fails silently elsewhere.
 
-- Views: `#home` (default), `#species`, `#finder`, `#toxic`, `#guide`, `#log` (personal finds log), `#recipes`, `#emergency`
+- Views: `#home` (default, 识菌 overview), `#explore` (拾菌), `#log` (菌记), `#species`, `#finder`, `#toxic`, `#guide` (厨房指南), `#recipes`, `#emergency`.
+  `#guide-*` and `#learn-*` links open whichever view now holds that id (sections moved between views keep their ids).
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` opens a toxic species sheet (same sheet, closing goes
   back to `#toxic`), `#cmp-<id>` scrolls to a comparison,
   `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist;
@@ -189,7 +206,11 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
 - The finds journal (`#log`) keeps records in `localStorage` under `mushroom-guide:finds:v1` (same key as the first version;
   newer fields: status none/candidate/expert, verifier, lat/lon/alt/acc, hab, trees, photos) and photos as resized JPEG blobs in
   IndexedDB (`mushroom-guide` / `photos`). This device only, never uploaded. Choosing a species makes a find a "候选"; only the
-  person marks "专家当面确认", and must name who confirmed it. GPS is read only when the person taps "记下当前位置".
+  person marks "专家当面确认（自记）", naming who confirmed it (plus organisation, date and method; photo-only opinions do not
+  count). GPS is read only when the person taps "记下当前位置"; "只记大概位置" stores coordinates cut to 0.01° (~1 km) and no
+  altitude. Up to 8 photos, each labelled with the part it shows (`parts`). Filters add region (rough BC / WA / OR from
+  coordinates). Export chooses coordinate precision (exact / ~1 km / none) and warns when exact coordinates leave the
+  device. A 年度探索报告 shows the year's counts, months and a photo wall.
   Records can be edited, filtered (text, species, year, month), shown on a timeline grouped by month, exported as JSON
   (with photos) or CSV, and imported (merged by id). Every storage call fails soft.
 - The finds map uses Leaflet with only the person's points; the OpenStreetMap basemap loads only after "显示底图" is ticked

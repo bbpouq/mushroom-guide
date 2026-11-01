@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 160" width="560" height="160"><g transform="translate(16 16) scale(0.25)"><rect width="512" height="512" rx="112" fill="#1E3B2A"/><path fill="#F2B23C" d="M92 196 C96 160 132 140 168 150 C190 128 232 124 258 140 C286 118 334 122 356 146 C392 138 424 160 420 192 C414 222 378 240 338 262 C306 280 292 304 290 336 C289 360 294 380 302 398 C274 412 236 412 210 398 C218 378 222 358 220 334 C218 304 204 282 172 262 C130 238 90 226 92 196 Z"/>
+  <path fill="#D9962A" d="M120 194 C168 214 344 216 394 192 C378 168 348 160 322 168 C300 152 266 150 248 164 C222 150 186 156 168 172 C146 166 126 176 120 194 Z"/>
+  <path fill="#F7C863" d="M120 194 C168 214 344 216 394 192 C380 206 344 214 300 218 C250 222 168 216 120 194 Z"/>
+  <g fill="none" stroke="#B87818" stroke-width="10" stroke-linecap="round">
+    <path d="M160 232 C196 254 222 286 236 336"/>
+    <path d="M214 236 C232 264 244 296 250 340"/>
+    <path d="M300 238 C284 266 272 298 266 340"/>
+    <path d="M356 230 C318 254 292 286 280 336"/>
+    <path d="M188 236 C204 250 214 262 222 276"/>
+    <path d="M330 236 C312 250 302 262 294 276"/>
+  </g></g><text x="176" y="92" font-family='-apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif' font-size="64" font-weight="700" fill="#F5F2EA">拾菌记</text><text x="178" y="130" font-family='-apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif' font-size="22" fill="#C9D3C7" letter-spacing="0">拾自然之菌，记森林之迹。</text></svg>
