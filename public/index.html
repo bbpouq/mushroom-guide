@@ -632,7 +632,7 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
 .hdr, .botnav, .search-bar, .toast, .cal__readout, .cal__table thead th, .sheet__bar { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
 .hdr { background: var(--glass); border-bottom: .5px solid var(--color-border); }
 .botnav { background: var(--glass); border-top: .5px solid var(--color-border); }
-.botnav__link { font-size: var(--fs-caption-sm); font-weight: var(--fw-500); }
+.botnav__link { font-size: var(--fs-caption-sm); font-weight: var(--fw-500); color: var(--color-foreground); }  /* over photos behind the glass bar the muted grey fell below 4.5:1 (320px) */
 .botnav__link:active { background: transparent; opacity: .6; }
 .botnav__link[aria-current="page"] { font-weight: var(--fw-600); }
 .search-bar { background: var(--glass); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); padding-left: var(--space-4); padding-right: var(--space-4); border-bottom: .5px solid var(--color-border); }
@@ -1960,8 +1960,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
                 <li><span class="offline__k">外部链接</span><span class="offline__v"><span>iNaturalist 和资料来源网页<b>需要联网</b>；离线时这些链接后面会标“需联网”。</span></span></li>
               </ul>
               <div class="offline__actions" id="off-actions">
-                <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>下载全部缩略图<span class="offline__size" data-size="small"></span></button>
-                <button class="btn" type="button" data-dl="all">连高清图一起下载<span class="offline__size" data-size="all"></span></button>
+                <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>下载缩略图<span class="offline__size" data-size="small"></span></button>
+                <button class="btn" type="button" data-dl="all">连高清图下载<span class="offline__size" data-size="all"></span></button>
                 <button class="btn-text" type="button" data-dl-stop hidden>停止下载</button>
               </div>
               <progress class="offline__bar" id="off-bar" max="1" value="0" hidden aria-label="下载进度"></progress>
@@ -1984,8 +1984,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <h2 class="panel__title" id="xfield-title">户外模式</h2>
               <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。</p>
               <div class="xp-switch"><label class="toggle"><input type="checkbox" role="switch" id="xp-field-switch" data-field-switch><span class="toggle__track" aria-hidden="true"></span><span><b>户外模式</b> <span class="xp-switch__state" data-field-state>已关闭</span></span></label></div>
-              <p class="muted-note">和深浅色主题互相独立：深色加户外模式也可以。只在这台设备上记住；页面顶部的太阳按钮也能切换。</p>
-              <div class="link-row"><button type="button" class="btn" data-open-settings><svg class="icon icon--sm" aria-hidden="true"><use href="#i-settings"/></svg>外观（跟随系统、浅色、深色）在设置里</button></div>
+              <p class="muted-note">和深浅色主题互相独立：深色加户外模式也可以；外观（跟随系统、浅色、深色）在设置里改。只在这台设备上记住；页面顶部的太阳按钮也能切换。</p>
+              <div class="link-row"><button type="button" class="btn" data-open-settings><svg class="icon icon--sm" aria-hidden="true"><use href="#i-settings"/></svg>外观设置</button></div>
             </section>
           </div>
         </section>
@@ -4385,7 +4385,8 @@ function renderNow() {
   const r = calState.region, min = r === "all" ? 300 : 100;
   const list = DATA.species.map((s, i) => [s, i, obsCounts(s, r)]).filter(([s, , c]) => recommendable(s) && c && c.reduce((a, b) => a + b, 0) >= min && calLevel(c[MONTH - 1], Math.max(...c)) >= 2)
     .sort((a, b) => b[2][MONTH - 1] - a[2][MONTH - 1]).slice(0, 12);
-  $("#now-title").textContent = `${MONTH} 月在${r === "all" ? "整个 PNW" : REGION[r]}常见`;
+  const where = r === "all" ? "整个 PNW" : REGION[r], sp = /[A-Za-z]/.test(where) ? " " : "";  // a space around Latin words
+  $("#now-title").textContent = `${MONTH} 月在${sp}${where}${sp}常见`;
   $("[data-now-all-label]").textContent = `在图鉴里看 ${MONTH} 月的全部种类`;
   $("#now-track").innerHTML = list.map(([s, i]) => `<button type="button" class="now__item" data-i="${i}">
     ${s.photo ? `<img class="now__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}

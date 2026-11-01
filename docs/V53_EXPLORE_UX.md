@@ -21,6 +21,9 @@ mode, the offline caches and the journal data model are unchanged. Service worke
 - The navigation is not sticky. The current category is a raised segment and the current sub-page has an underline
   and a bold label, so the state is shown by shape and weight, not by colour alone.
 - `#explore` still opens 找菌 › 本月探索.
+- The three category buttons are now a full 44 px tall (`.xnav__cats .seg__btn`). Before, they were 36 px with a 44 px hit area.
+- The phone tab bar's inactive labels now use the foreground colour. At 320 px the muted grey over a photo behind the
+  glass bar measured 3.53:1 in axe. That already happened in v52; it is fixed here.
 
 ## P1-B: 找菌
 
