@@ -172,7 +172,7 @@ photo_bytes = dict(small=sum((OUT.parent / "photos" / f).stat().st_size for f in
                    + sum((OUT.parent / "photos" / h["file"]).stat().st_size for h in HEROES.values()),
                    hd=sum((OUT.parent / "photos" / p["hd"]["file"]).stat().st_size for p in _ph.values() if p.get("hd")))
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
-            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES, photoBytes=photo_bytes,
+            compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES, photoBytes=photo_bytes, gloss=[[k, v] for k, _s, v in GLOSS],
             built=__import__("datetime").date.today().isoformat())
 # the page and the service worker must agree on the name of the photo cache
 MEDIA = re.search(r'const MEDIA = "([^"]+)"', (OUT.parent / "sw.js").read_text(encoding="utf-8")).group(1)

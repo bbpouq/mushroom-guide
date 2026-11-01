@@ -1220,6 +1220,56 @@ html[data-tab="id"] .subnav { display: flex; }
 .year__shot { padding: 0; border: 0; background: var(--color-muted); aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: zoom-in; }
 .year__shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+/* ---------- 学习: progress, quiz, term cards ---------- */
+.learn-progress { margin: 0 0 var(--space-5); }
+.learn-progress__hist, .learn-progress__note { margin: var(--space-2) 0 0; font-size: 13px; color: var(--color-muted-foreground); }
+.quiz, .cards { margin: 0 0 var(--space-6); }
+.quiz__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.quiz__title { font-size: 22px; font-weight: var(--fw-700); letter-spacing: -.01em; }
+.quiz__modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); margin-bottom: var(--space-3); }
+@media (min-width: 1024px) { .quiz__modes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.quiz__mode { display: grid; gap: 2px; text-align: left; min-height: 64px; padding: var(--space-3); border: 1.5px solid transparent; border-radius: var(--radius); background: var(--surface-1); box-shadow: var(--shadow-card); cursor: pointer; }
+.quiz__mode b { font-size: 16px; }
+.quiz__mode span { font-size: 13px; line-height: 1.45; color: var(--color-muted-foreground); }
+.quiz__mode[aria-pressed="true"] { border-color: var(--color-primary); background: var(--color-primary-surface); }
+.quiz__card { padding: var(--space-4) var(--space-5) var(--space-5); border-radius: var(--radius-lg); background: var(--surface-1); box-shadow: var(--shadow-card); }
+.quiz__empty { margin: 0; color: var(--color-muted-foreground); }
+.quiz__meta { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; justify-content: space-between; font-size: 13px; color: var(--color-muted-foreground); }
+.quiz__kind { padding: 1px 10px; border-radius: 999px; background: var(--color-muted); color: var(--color-foreground); font-weight: var(--fw-600); }
+.quiz__sub { margin: var(--space-2) 0 0; font-size: 13px; color: var(--color-muted-foreground); }
+.quiz__q { margin: var(--space-2) 0 var(--space-3); font-size: 19px; line-height: 1.45; }
+.quiz__photo { margin: 0 0 var(--space-3); }
+.quiz__photo img { display: block; width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius); background: var(--color-muted); }
+.quiz__photo figcaption { margin-top: 4px; font-size: 12px; color: var(--color-muted-foreground); }
+.quiz__opts { display: grid; gap: var(--space-2); }
+@media (min-width: 640px) { .quiz__opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.quiz__opt { min-height: 52px; padding: var(--space-2) var(--space-4); text-align: left; font-size: 16px; font-weight: var(--fw-500); border: 1.5px solid transparent; border-radius: 12px; background: var(--surface-2); cursor: pointer; transition: transform 260ms var(--spring); }
+.quiz__opt:active { transform: scale(.97); }
+.quiz__opt:disabled { cursor: default; opacity: .72; }
+.quiz__opt.is-right { opacity: 1; border-color: var(--color-primary); background: var(--color-primary-surface); }
+.quiz__opt.is-wrong { opacity: 1; border-color: var(--color-accent); background: var(--color-warning-surface); }
+.quiz__why { margin-top: var(--space-4); padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-primary-surface); }
+.quiz__why--wrong { background: var(--color-warning-surface); }
+.quiz__why b { display: inline-flex; align-items: center; gap: 6px; }
+.quiz__why p { margin: var(--space-1) 0 0; }
+.quiz__src { font-size: 13px; color: var(--color-muted-foreground); }
+.quiz__next { margin-top: var(--space-3); }
+.quiz__done { display: grid; gap: var(--space-2); justify-items: start; }
+.quiz__done > b { font-size: 40px; font-weight: var(--fw-800); line-height: 1; }
+.cards__grid { display: grid; gap: var(--space-2); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 768px) { .cards__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .cards__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.card { display: grid; border-radius: var(--radius); background: var(--surface-1); box-shadow: var(--shadow-card); overflow: hidden; }
+.card.is-known { box-shadow: inset 0 0 0 1.5px var(--color-primary), var(--shadow-card); }
+.card__face { display: grid; align-content: start; gap: var(--space-1); min-height: 112px; padding: var(--space-3); text-align: left; border: 0; background: none; cursor: pointer; }
+.card__face b { font-size: 17px; }
+.card__def { display: none; font-size: 14px; line-height: 1.5; }
+.card__hint { font-size: 12px; color: var(--color-muted-foreground); }
+.card.is-flipped .card__def { display: block; }
+.card.is-flipped .card__hint { display: none; }
+.card__ops { display: flex; justify-content: space-between; border-top: .5px solid var(--color-border); padding: 0 var(--space-2); }
+.card__ops .btn-text { font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1315,6 +1365,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <nav class="subnav" aria-label="识菌栏目">
         <a class="subnav__link" href="#home">概览</a>
         <a class="subnav__link" href="#finder">特征识别</a>
+        <a class="subnav__link" href="#learn">学习</a>
         <a class="subnav__link" href="#species">食用菌图鉴</a>
         <a class="subnav__link" href="#toxic">毒菌与对比</a>
         <a class="subnav__link" href="#guide">厨房指南</a>
@@ -1348,7 +1399,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         <nav class="home-entry" aria-label="识菌栏目">
           <a class="home-entry__item" href="#species"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg></span><span class="home-entry__text"><span class="home-entry__title">食用菌图鉴</span><span class="home-entry__desc"><!--N_EDIBLE--> 种，按西北太平洋常见程度排列</span></span></a>
           <a class="home-entry__item home-entry__item--toxic" href="#toxic"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg></span><span class="home-entry__text"><span class="home-entry__title">毒菌与近似种</span><span class="home-entry__desc"><!--N_TOXIC--> 种毒菌，<!--N_COMPARE--> 组并排对比</span></span></a>
-          <a class="home-entry__item" href="#learn-features"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg></span><span class="home-entry__text"><span class="home-entry__title">3D 结构与术语</span><span class="home-entry__desc">菌褶、菌环、菌托，看图学</span></span></a>
+          <a class="home-entry__item" href="#learn"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg></span><span class="home-entry__text"><span class="home-entry__title">学习与测验</span><span class="home-entry__desc">练眼力、记术语、复习错题</span></span></a>
           <a class="home-entry__item" href="#guide"><span class="home-entry__icon"><svg class="icon" aria-hidden="true"><use href="#i-pan"/></svg></span><span class="home-entry__text"><span class="home-entry__title">厨房指南</span><span class="home-entry__desc">清理、烹饪、保存和 <!--N_RECIPES--> 道食谱</span></span></a>
         </nav>
         <section class="home-safety" aria-labelledby="home-safety-title">
@@ -1527,6 +1578,40 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             </ul>
           </section>
         </div>
+      </section>
+
+      <!-- ================= LEARN (识菌 › 学习) ================= -->
+      <section class="view" id="v-learn" aria-labelledby="h-learn">
+        <header class="view__head">
+          <span class="view__eyebrow">Learn</span>
+          <h1 class="view__title" id="h-learn">学习</h1>
+          <p class="view__lead">用测验和术语卡片练眼力、记特征、复习近似种。<b>答对再多题，也不等于会鉴定，更不能作为能不能吃的依据。</b></p>
+        </header>
+        <section class="learn-progress" id="learn-progress" aria-labelledby="learn-progress-title"></section>
+        <section class="quiz" aria-labelledby="quiz-title">
+          <div class="quiz__head"><h2 class="quiz__title" id="quiz-title">测验</h2></div>
+          <div class="quiz__modes" role="group" aria-label="选择练习">
+            <button type="button" class="quiz__mode" data-quiz="daily"><b>今日 5 题</b><span>每天一组，同一天大家的题目一样</span></button>
+            <button type="button" class="quiz__mode" data-quiz="mix"><b>随机 10 题</b><span>结构、近似种、照片、术语混合</span></button>
+            <button type="button" class="quiz__mode" data-quiz="safety"><b>安全常识</b><span>烹饪、急救、迷路：最该记住的几条</span></button>
+            <button type="button" class="quiz__mode" data-quiz="wrong"><b>错题本</b><span id="quiz-wrong-n">答错的题会放在这里</span></button>
+          </div>
+          <div class="quiz__card" id="quiz-card" aria-live="polite"></div>
+        </section>
+        <section class="cards" aria-labelledby="cards-title">
+          <div class="quiz__head"><h2 class="quiz__title" id="cards-title">术语卡片</h2><a class="now__all" href="#guide-gloss">词典</a></div>
+          <p class="now__sub">点卡片翻面看解释；记住了就标一下。</p>
+          <div class="cards__grid" id="cards-grid"></div>
+        </section>
+        <section class="home-learn" aria-labelledby="learn-more-title">
+          <h2 class="home-learn__title" id="learn-more-title">接着学</h2>
+          <div class="home-learn__list">
+            <a class="home-learn__item" href="#home"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span><b>今日一菌</b><span>每天认识一种当季的菌</span></span></a>
+            <a class="home-learn__item" href="#learn-features"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg><span><b>3D 结构与看哪些特征</b><span>菌褶、菌环、菌托在哪里</span></span></a>
+            <a class="home-learn__item" href="#toxic"><svg class="icon" aria-hidden="true"><use href="#i-skull"/></svg><span><b>毒菌与近似种对比</b><span>测验里的对比题都出自这里</span></span></a>
+            <a class="home-learn__item" href="#finder"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg><span><b>特征识别</b><span>拿一朵真的菌，一题一题对照</span></span></a>
+          </div>
+        </section>
       </section>
 
       <!-- ================= SPECIES ================= -->
@@ -3222,6 +3307,147 @@ $("[data-now-all]").addEventListener("click", () => {
 });
 
 
+
+/* ---------- 学习: quizzes built only from the site's own data and sourced safety lines; progress stays on this device ---------- */
+const LEARN_KEY = "mushroom-guide:learn:v1";
+function learnLoad() {
+  const d = { seen: [], terms: {}, answered: 0, correct: 0, wrong: [], days: [], history: [] };
+  try { return Object.assign(d, JSON.parse(localStorage.getItem(LEARN_KEY) || "{}")); } catch (_) { return d; }
+}
+function learnSave(s) { try { localStorage.setItem(LEARN_KEY, JSON.stringify(s)); } catch (_) {} }
+function learnSeen(id) { const s = learnLoad(); if (!s.seen.includes(id)) { s.seen.push(id); learnSave(s); } }
+// seeded shuffle, so "今日 5 题" is the same for everyone on the same day
+function rng(seed) { let x = seed >>> 0 || 1; return () => ((x ^= x << 13, x ^= x >>> 17, x ^= x << 5) >>> 0) / 4294967296; }
+function shuffled(a, r = Math.random) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const SAFETY_Q = [
+  ["把有毒的菌焯水、煮透、腌渍或晒干，就能吃了。", false, "烹饪、焯水、腌渍、冷冻、干燥都不能去掉蘑菇毒素。有毒的菌怎么做都有毒。", "https://www.kansashealthsystem.com/medical-services/poison-control/common-poisons/mushrooms", "KU Health System Poison Control"],
+  ["怀疑吃了毒菌，但现在没有症状，可以先观察一下再说。", false, "不要等症状：马上打毒物中心电话（美国 1-800-222-1222）。最危险的毒菌往往 6 小时以后才发作。", "https://calpoison.org/node/1706", "California Poison Control System"],
+  ["吃了可疑的菌，应该先自己催吐。", false, "不要自己催吐，除非毒物中心让你这么做。先打电话。", "https://calpoison.org/node/1706", "California Poison Control System"],
+  ["菌柄上没有菌环，就说明它不是鹅膏。", false, "菌环老了会脱落；鹅膏要看柄基有没有菌托，而菌托常埋在土里。", "https://explore.beatymuseum.ubc.ca/mushroomsup/A_phalloides.html", "UBC Mushrooms Up!"],
+  ["采白色有菌褶的菌时，要把整个柄基连土挖出来看。", true, "鹅膏的袋状菌托常埋在土里，只掐地面以上的部分会漏掉它。", "https://explore.beatymuseum.ubc.ca/mushroomsup/A_phalloides.html", "UBC Mushrooms Up!"],
+  ["特征识别的结果里没有毒菌，就说明手上这朵没毒。", false, "本站只收录了少数毒菌。没有列出，只说明不在这份名单里，不说明安全。", "", ""],
+  ["在林子里迷路了，应该继续往前走，尽快找到路。", false, "停下来（S.T.O.P.）：原地等待，保暖，有信号就打 911，用哨子每组三声求救。", "https://www.bcsara.com/public-safety/", "BC Search and Rescue Association"],
+  ["第一次吃一种野生菌，要先请有经验的人当面确认。", true, "自己对照图鉴认出来的不算数。确认过也要彻底煮熟。", "", ""],
+  ["吃了野生菌的剩菜和没吃完的菌，出事后应该马上扔掉。", false, "留下剩余的菌和剩菜，多拍几张照片：医生和鉴定人员要靠它们判断是哪一种。", "https://calpoison.org/node/1706", "California Poison Control System"],
+];
+let BANK = null;
+function buildBank() {
+  const qs = [], hymShort = Object.fromEntries(Object.entries(FEAT.hym).map(([k, v]) => [k, v.split("（")[0].split("：")[0]]));
+  DATA.species.filter(s => s.hym !== "other").forEach(s => qs.push({ id: "hym:" + s.slug, kind: "结构", photo: s.photo, q: `${s.zh}的菌盖下面是什么样？`,
+    opts: Object.keys(FEAT.hym).map(k => [k, hymShort[k]]), ans: s.hym, explain: `${s.zh}：${FEAT.hym[s.hym]}。`, link: "#sp-" + s.slug }));
+  const toxicNames = [...new Set(DATA.compare.flatMap(c => c.cols.filter(x => x[1] === "toxic").map(x => x[0])))];
+  DATA.compare.forEach(c => {
+    const here = c.cols.map(x => x[0]);
+    c.cols.filter(x => x[1] === "edible").forEach(e => c.cols.filter(x => x[1] === "toxic").forEach(tx => {
+      const alsoRight = DATA.compare.filter(c2 => c2.cols.some(x => x[0] === e[0])).flatMap(c2 => c2.cols.map(x => x[0]));  // never offer a second right answer
+      const others = toxicNames.filter(n => !here.includes(n) && !alsoRight.includes(n));
+      qs.push({ id: `look:${c.id}:${tx[0]}`, kind: "近似种", q: `下面哪一种有毒的菌，最容易被误认为${e[0]}？`, opts: [tx[0], ...others].map(n => [n, n]), pick: 4,
+        ans: tx[0], explain: c.lead, link: "#cmp-" + c.id });
+    }));
+    c.rows.forEach(([label, cells]) => {
+      if (label === "结论") return;   // which one is edible is not a quiz question
+      cells.forEach((cell, i) => {
+        const txt = strip(cell);
+        if (txt === "—" || txt.length > 60 || cells.filter(x => strip(x) === txt).length > 1) return;
+        qs.push({ id: `row:${c.id}:${label}:${i}`, kind: "对比", q: `「${label}」：${txt}。说的是哪一种？`, sub: c.title,
+          opts: c.cols.map(x => [x[0], x[0]]), ans: c.cols[i][0], explain: c.lead, link: "#cmp-" + c.id });
+      });
+    });
+  });
+  const all = DATA.species.map(s => [s, "sp"]).concat(toxicAll.map(p => [p, "tx"]));
+  all.filter(([x]) => x.photo).forEach(([x, k]) => {
+    const pool = shuffled(all.filter(([y, kk]) => y !== x && (k === "tx" ? true : y.group === x.group)).map(([y]) => y.zh));
+    qs.push({ id: `photo:${k}:${x.slug}`, kind: "照片", photo: x.photo, q: "这张示例照片拍的是哪一种？", note: "只练眼力：真实鉴定不能只看照片。",
+      opts: [x.zh, ...pool].map(n => [n, n]), pick: 4, ans: x.zh, explain: `${x.zh}（${x.latin}）：${strip(x.feat).split(/[；。]/)[0]}。`, link: `#${k}-${x.slug}` });
+  });
+  DATA.gloss.forEach(([term, def]) => qs.push({ id: "term:" + term, kind: "术语", q: `「${strip(def)}」——这是哪个术语？`,
+    opts: [term, ...DATA.gloss.map(g => g[0]).filter(x => x !== term)].map(n => [n, n]), pick: 4, ans: term, explain: `${term}：${strip(def)}`, link: "#guide-gloss" }));
+  MODEL_PARTS.forEach(([key, name, desc]) => qs.push({ id: "part:" + key, kind: "结构", q: `「${strip(desc).split("。")[0]}」——这是蘑菇的哪个部位？`,
+    opts: MODEL_PARTS.map(p => [p[1], p[1]]), ans: name, explain: `${name}：${strip(desc)}`, link: "#learn-features" }));
+  SAFETY_Q.forEach(([q, yes, why, url, src], i) => qs.push({ id: "safe:" + i, kind: "安全", q, opts: [["true", "对"], ["false", "不对"]], fixed: true,
+    ans: String(yes), explain: why, src: url ? [url, src] : null }));
+  return qs;
+}
+const quiz = { mode: "", list: [], i: 0, score: 0, picked: null };
+function quizOptions(q, r) {
+  if (q.fixed) return q.opts;
+  const right = q.opts.find(o => o[0] === q.ans), rest = shuffled(q.opts.filter(o => o[0] !== q.ans), r).slice(0, (q.pick || q.opts.length) - 1);
+  return shuffled([right, ...rest], r);
+}
+function quizStart(mode) {
+  BANK = BANK || buildBank();
+  const s = learnLoad(), today = todayISO(), seed = +today.replace(/-/g, "");
+  let list;
+  if (mode === "daily") { const r = rng(seed); list = shuffled(BANK.filter(q => q.kind !== "安全"), r).slice(0, 4).concat(shuffled(BANK.filter(q => q.kind === "安全"), r).slice(0, 1)); }
+  else if (mode === "mix") list = shuffled(BANK).slice(0, 10);
+  else if (mode === "safety") list = shuffled(BANK.filter(q => q.kind === "安全"));
+  else list = BANK.filter(q => s.wrong.includes(q.id));
+  if (!list.length) { toast(mode === "wrong" ? "错题本是空的" : "没有题目"); return; }
+  const r = mode === "daily" ? rng(seed + 7) : Math.random;
+  Object.assign(quiz, { mode, list: list.map(q => ({ ...q, shown: quizOptions(q, r) })), i: 0, score: 0, picked: null });
+  document.querySelectorAll("[data-quiz]").forEach(b => b.setAttribute("aria-pressed", b.dataset.quiz === mode));
+  quizRender(); $("#quiz-card").scrollIntoView({ block: "nearest" });
+}
+function quizRender() {
+  const box = $("#quiz-card");
+  if (!quiz.mode) { box.innerHTML = `<p class="quiz__empty">选一种练习开始。每题答完都有解释和出处链接。</p>`; return; }
+  if (quiz.i >= quiz.list.length) {
+    box.innerHTML = `<div class="quiz__done"><b>${quiz.score} / ${quiz.list.length}</b><span>${quiz.score === quiz.list.length ? "全对。" : "答错的题已经放进错题本。"}答对再多，也不等于会鉴定。</span>
+      <div class="link-row"><button class="btn btn--primary" type="button" data-quiz="${quiz.mode === "daily" ? "mix" : quiz.mode}">${quiz.mode === "daily" ? "再来 10 题" : "再练一组"}</button><button class="btn" type="button" data-quiz="wrong">复习错题</button></div></div>`;
+    return;
+  }
+  const q = quiz.list[quiz.i], done = quiz.picked !== null, right = done && quiz.picked === q.ans;
+  box.innerHTML = `<div class="quiz__meta"><span class="quiz__kind">${esc(q.kind)}</span><span>第 ${quiz.i + 1} / ${quiz.list.length} 题 · 答对 ${quiz.score}</span></div>
+    ${q.sub ? `<p class="quiz__sub">${esc(q.sub)}</p>` : ""}
+    <h3 class="quiz__q">${esc(q.q)}</h3>
+    ${q.photo ? `<figure class="quiz__photo"><img src="photos/${q.photo.file}" alt="题目照片"><figcaption>${q.note ? esc(q.note) + " · " : ""}示例照片 · ${esc(q.photo.author)} · ${esc(q.photo.lic)} · iNaturalist</figcaption></figure>` : ""}
+    <div class="quiz__opts">${q.shown.map(([v, label]) => `<button type="button" class="quiz__opt${done && v === q.ans ? " is-right" : ""}${done && v === quiz.picked && !right ? " is-wrong" : ""}" data-answer="${esc(v)}"${done ? " disabled" : ""}>${esc(label)}</button>`).join("")}</div>
+    ${done ? `<div class="quiz__why${right ? "" : " quiz__why--wrong"}" role="status"><b>${right ? icon("check", "icon--sm") + "答对了" : icon("x", "icon--sm") + "答错了"}</b><p>${esc(q.explain)}</p>
+      <p class="quiz__src">${q.link ? `<a href="${q.link}">看详情</a>` : ""}${q.src ? `${q.link ? " · " : ""}出处：<a href="${q.src[0]}" target="_blank" rel="noopener">${esc(q.src[1])}</a>` : ""}</p>
+      <button type="button" class="btn btn--primary quiz__next" data-quiz-next>${quiz.i + 1 < quiz.list.length ? "下一题" : "看结果"}</button></div>` : ""}`;
+  if (done) $(".quiz__next", box).focus({ preventScroll: true });
+}
+function learnRender() {
+  const s = learnLoad(), total = DATA.species.length + toxicAll.length;
+  const seen = s.seen.filter(id => { const [k, sl] = id.split(":"); return k === "tx" ? toxicAll.some(p => p.slug === sl) : bySlug[sl] !== undefined; }).length;
+  const known = DATA.gloss.filter(([term]) => s.terms[term] === "known").length;
+  $("#learn-progress").innerHTML = `<h2 class="sr-only" id="learn-progress-title">学习进度</h2>
+    <div class="year__stats">
+      <div class="year__stat"><b>${seen}</b><span>看过的物种 / ${total}</span></div>
+      <div class="year__stat"><b>${known}</b><span>记住的术语 / ${DATA.gloss.length}</span></div>
+      <div class="year__stat"><b>${s.answered ? Math.round(s.correct / s.answered * 100) + "%" : "—"}</b><span>答对率（${s.answered} 题）</span></div>
+      <div class="year__stat"><b>${s.days.length}</b><span>练习天数</span></div>
+    </div>
+    ${s.history.length ? `<p class="learn-progress__hist">最近：${s.history.slice(-5).reverse().map(h => `${h.d.slice(5)} ${esc(h.m)} ${h.s}/${h.n}`).join(" · ")}</p>` : ""}
+    <p class="learn-progress__note">进度只存在这台设备上。不排名、不打卡，也不代表会鉴定。<button type="button" class="btn-text" data-learn-reset>清除学习记录</button></p>`;
+  $("#quiz-wrong-n").textContent = s.wrong.length ? `${s.wrong.length} 道题待复习` : "答错的题会放在这里";
+  $("#cards-grid").innerHTML = DATA.gloss.map(([term, def]) => `<div class="card${s.terms[term] === "known" ? " is-known" : ""}">
+      <button type="button" class="card__face" data-flip aria-expanded="false"><b>${esc(term)}</b><span class="card__def">${esc(strip(def))}</span><span class="card__hint">点一下看解释</span></button>
+      <div class="card__ops"><button type="button" class="btn-text" data-term="${esc(term)}" data-term-v="learning">还不熟</button><button type="button" class="btn-text" data-term="${esc(term)}" data-term-v="known">${s.terms[term] === "known" ? icon("check", "icon--sm") + "记住了" : "记住了"}</button></div></div>`).join("");
+}
+const QUIZ_NAMES = { daily: "今日", mix: "随机", safety: "安全", wrong: "错题" };
+document.addEventListener("click", e => {
+  if (!e.target.closest("#v-learn")) return;
+  const m = e.target.closest("[data-quiz]"); if (m) return quizStart(m.dataset.quiz);
+  const a = e.target.closest("[data-answer]");
+  if (a && quiz.picked === null) {
+    const q = quiz.list[quiz.i], ok = a.dataset.answer === q.ans, s = learnLoad();
+    quiz.picked = a.dataset.answer; if (ok) quiz.score++;
+    s.answered++; if (ok) s.correct++;
+    s.wrong = ok ? s.wrong.filter(id => id !== q.id) : [...new Set([...s.wrong, q.id])];
+    if (!s.days.includes(todayISO())) s.days.push(todayISO());
+    learnSave(s); quizRender(); learnRender(); return;
+  }
+  if (e.target.closest("[data-quiz-next]")) {
+    quiz.i++; quiz.picked = null;
+    if (quiz.i >= quiz.list.length) { const s = learnLoad(); s.history.push({ d: todayISO(), m: QUIZ_NAMES[quiz.mode], s: quiz.score, n: quiz.list.length }); s.history = s.history.slice(-30); learnSave(s); learnRender(); }
+    quizRender(); return;
+  }
+  const f = e.target.closest("[data-flip]"); if (f) { const c = f.closest(".card"); c.classList.toggle("is-flipped"); f.setAttribute("aria-expanded", c.classList.contains("is-flipped")); return; }
+  const tm = e.target.closest("[data-term]"); if (tm) { const s = learnLoad(); s.terms[tm.dataset.term] = tm.dataset.termV; learnSave(s); learnRender(); return; }
+  if (e.target.closest("[data-learn-reset]")) { try { localStorage.removeItem(LEARN_KEY); } catch (_) {} learnRender(); toast("学习记录已清除"); }
+});
+
 /* ---------- 识菌 overview: the deadliest look-alikes, and species this device opened recently ---------- */
 function miniCard(x, href, meta) {
   return `<a class="now__item" href="${href}">${x.photo ? `<img class="now__img" src="photos/${x.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
@@ -3233,7 +3459,7 @@ function renderDeadly() {
 }
 const RECENT_KEY = "mushroom-guide:recent";
 function recentLoad() { try { const a = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (_) { return []; } }
-function recentAdd(id) { try { localStorage.setItem(RECENT_KEY, JSON.stringify([id, ...recentLoad().filter(x => x !== id)].slice(0, 10))); } catch (_) {} renderRecent(); }
+function recentAdd(id) { learnSeen(id); try { localStorage.setItem(RECENT_KEY, JSON.stringify([id, ...recentLoad().filter(x => x !== id)].slice(0, 10))); } catch (_) {} renderRecent(); }
 function renderRecent() {
   const items = recentLoad().map(id => {
     const [k, slug] = id.split(":");
@@ -3352,9 +3578,9 @@ $("#home-q").addEventListener("input", renderHomeSearch);
 })();
 
 /* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
-const VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency", "explore"];
+const VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency", "explore", "learn"];
 // the three tabs: 识菌 (identify), 拾菌 (explore), 菌记 (journal); the emergency page belongs to none
-const TAB = { home: "id", finder: "id", species: "id", toxic: "id", guide: "id", recipes: "id", explore: "ex", log: "jr", emergency: "" };
+const TAB = { home: "id", finder: "id", learn: "id", species: "id", toxic: "id", guide: "id", recipes: "id", explore: "ex", log: "jr", emergency: "" };
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
 function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
@@ -3372,6 +3598,7 @@ function show(v, opts = {}) {
   if (!opts.focus && $("#v-" + v).classList.contains("is-active")) opts = Object.assign({}, opts, { keepScroll: true });
   VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
   document.documentElement.dataset.tab = TAB[v] || "";
+  if (v === "learn" && typeof learnRender === "function") learnRender();
   document.querySelectorAll("nav a").forEach(a => {
     const on = a.dataset.tab ? a.dataset.tab === TAB[v] : a.getAttribute("href") === "#" + v;
     if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
@@ -3596,7 +3823,7 @@ document.addEventListener("pointerover", e => {
 
 try { const r = localStorage.getItem("mushroom-guide:region"); if (r && REGION[r]) calState.region = r; } catch (_) {}
 document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
-sync(); renderToday(); renderNow(); renderSeason(); renderDeadly(); renderRecent(); typeIn($("#h-home")); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); foldify(); route();
+sync(); renderToday(); renderNow(); renderSeason(); renderDeadly(); renderRecent(); learnRender(); quizRender(); typeIn($("#h-home")); renderFinder(); renderToxic(); renderRecipes(); renderCalendar(); findsInit(); foldify(); route();
 </script>
 </body>
 </html>

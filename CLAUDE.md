@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 137 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 148 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -105,6 +105,13 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
 - Species pages state their review status honestly: compiled by the editor from the listed sources, not reviewed by a
   mycologist, with the build date (`DATA.built`). Never invent reviewers, review dates or expert sign-off.
 
+- **学习 (`#learn`)**: quizzes are generated only from the site's own data (species structure tags, comparison rows and
+  look-alike pairs, example photos, glossary, 3D part notes) plus a short list of sourced safety true/false lines (`SAFETY_Q`,
+  each with its source). Never ask "is it edible", never treat the 结论 row of a comparison as a question, never offer two right
+  answers. 今日 5 题 is seeded by the date; wrong answers go to the 错题本 and leave it when answered right. Progress (species
+  seen, terms known, answers, days) lives in `localStorage` `mushroom-guide:learn:v1`, this device only; no ranking, no
+  streaks, and the page says that a score is not identification skill or permission to eat.
+
 ## House UI rules (2026-11, apply to every change)
 
 1. No pure black and no dark frames: depth comes from four surface layers 1-3% apart in lightness
@@ -183,7 +190,7 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
 - Information architecture (since 2026-11): three tabs, the journey 认识蘑菇 → 探索森林 → 记录发现.
   **识菌** (identify) = views home (overview: search, 开始识别, entries, safety, deadly look-alikes strip, 最近看过, today card),
   finder (+ 3D model, 看哪些特征, glossary `#guide-gloss`, `#learn-features`), species, toxic, guide (now 厨房指南: checklist
-  `#guide-check`, kitchen `#guide-kitchen`) and recipes. **拾菌** (explore) = view explore: region chips (remembered in
+  `#guide-check`, kitchen `#guide-kitchen`), recipes and learn (学习, `#learn`). **拾菌** (explore) = view explore: region chips (remembered in
   `mushroom-guide:region`, they drive the month strip, 季节变化 and the calendar), "N 月在…常见", 季节变化, calendar
   (`#guide-calendar`), field guide (`#guide-field`, lost panel) and offline (`#guide-offline`). **菌记** (journal) = view log.
   The emergency page belongs to no tab and stays one tap away (header SOS). `TAB` in the script maps views to tabs.
@@ -198,7 +205,7 @@ The page is often opened inside sandboxed previews (chat apps, file viewers) whe
 navigates the frame away and blanks the page. All in-page links are intercepted in JS. History is
 updated with `pushState` inside try/catch, so it works where allowed and fails silently elsewhere.
 
-- Views: `#home` (default, 识菌 overview), `#explore` (拾菌), `#log` (菌记), `#species`, `#finder`, `#toxic`, `#guide` (厨房指南), `#recipes`, `#emergency`.
+- Views: `#home` (default, 识菌 overview), `#explore` (拾菌), `#log` (菌记), `#learn` (识菌 › 学习), `#species`, `#finder`, `#toxic`, `#guide` (厨房指南), `#recipes`, `#emergency`.
   `#guide-*` and `#learn-*` links open whichever view now holds that id (sections moved between views keep their ids).
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` opens a toxic species sheet (same sheet, closing goes
   back to `#toxic`), `#cmp-<id>` scrolls to a comparison,

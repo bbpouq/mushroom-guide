@@ -17,7 +17,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
-VIEWS = ["home", "explore", "species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
+VIEWS = ["home", "explore", "learn", "species", "finder", "toxic", "guide", "log", "recipes", "emergency"]
 NAV = {375: ".botnav", 768: ".topnav", 1024: ".topnav", 1440: ".topnav"}
 failures = []
 
@@ -344,6 +344,35 @@ def run():
         check("offline: a species photo still shows (downloaded before)",
               pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return i.complete && i.naturalWidth > 0; })()"))
         ctx.set_offline(False)
+        ctx.close()
+
+        # ---------- 学习: quiz, wrong answers, term cards, progress (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []; pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#home"); pg.wait_for_timeout(400)
+        pg.click('.subnav a[href="#learn"]'); pg.wait_for_timeout(300)
+        bank = pg.evaluate("(() => { const B = buildBank(); return { n: B.length, bad: B.filter(q => !q.opts.some(o => o[0] === q.ans) || new Set(q.opts.map(o => o[0])).size !== q.opts.length).length, edible: B.filter(q => q.kind !== '安全' && /能吃|可食/.test(q.q)).length }; })()")
+        check(f"学习 sits under 识菌 and the quiz bank is sound ({bank})", pg.evaluate("document.querySelector('.view.is-active').id") == "v-learn"
+              and bank["n"] > 150 and bank["bad"] == 0 and bank["edible"] == 0)
+        pg.click('[data-quiz="daily"]'); pg.wait_for_timeout(150)
+        first = pg.inner_text(".quiz__q")
+        pg.click('[data-quiz="daily"]'); pg.wait_for_timeout(150)
+        check("today's quiz is the same each time it starts", pg.inner_text(".quiz__q") == first and "第 1 / 5 题" in pg.inner_text(".quiz__meta"))
+        wrong_opt = pg.evaluate("(() => { const q = quiz.list[0]; return q.shown.find(o => o[0] !== q.ans)[0]; })()")
+        pg.click(f'.quiz__opt[data-answer="{wrong_opt}"]'); pg.wait_for_timeout(150)
+        check("a wrong answer explains why and goes into the wrong-answer book",
+              "答错了" in pg.inner_text(".quiz__why") and pg.locator(".quiz__opt.is-right").count() == 1
+              and "1 道题待复习" in pg.inner_text("#quiz-wrong-n"))
+        pg.click('[data-quiz="wrong"]'); pg.wait_for_timeout(150)
+        right_opt = pg.evaluate("quiz.list[0].ans")
+        pg.click(f'.quiz__opt[data-answer="{right_opt}"]'); pg.wait_for_timeout(150)
+        check("answering it right in the wrong-answer book clears it", "答对了" in pg.inner_text(".quiz__why") and "答错的题会放在这里" in pg.inner_text("#quiz-wrong-n"))
+        pg.click('[data-quiz="safety"]'); pg.wait_for_timeout(150)
+        check("safety questions are true/false with sources where the site has one", pg.locator(".quiz__opt").count() == 2)
+        pg.click(".card >> nth=0 >> .card__face"); pg.click('.card >> nth=0 >> [data-term-v="known"]'); pg.wait_for_timeout(150)
+        check("a term card flips and can be marked as known", "1" in pg.inner_text("#learn-progress .year__stat >> nth=1"))
+        pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(500); pg.click("#sheet [data-close]"); pg.goto(url + "#learn"); pg.wait_for_timeout(400)
+        check(f"opening a species counts as seen in the progress {errs}", pg.inner_text("#learn-progress .year__stat >> nth=0").startswith("1") and not errs)
         ctx.close()
 
         # ---------- field mode (phone) ----------
