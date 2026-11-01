@@ -326,3 +326,51 @@ print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len
 _sw = (OUT.parent / "sw.js").read_text(encoding="utf-8")
 for _f in re.findall(r'"\./([^"]+)"', re.search(r"const SHELL = \[(.*?)\];", _sw).group(1)):
     assert (OUT.parent / _f).exists(), f"sw.js pre-caches a missing file: {_f}"
+
+# ---- design system showcase (public/design-system.html): the site's own CSS and icons, so it can never drift ----
+def design_page():
+    tpl = (SRC / "template.html").read_text(encoding="utf-8")
+    css = tpl[tpl.index("<style>"):tpl.index("</style>") + 8]
+    s0 = tpl.index("<symbol id=")
+    sprite = tpl[tpl.rindex("<svg", 0, s0):tpl.index("</svg>", s0) + 6]
+    sw = lambda name, var, note="": f'<div class="ds-sw"><span style="background:var({var})"></span><b>{name}</b><code>{var}</code><small>{note}</small></div>'
+    colors = "".join(sw(*c) for c in [
+        ("Forest 900", "--forest-900", "品牌深绿"), ("Forest 700", "--color-primary", "交互色（选中、主按钮）"), ("Moss 500", "--color-secondary", "次要装饰，不作文字"),
+        ("Moss 100", "--color-primary-surface", "浅绿底"), ("Cream 50", "--surface-0", "页面背景"), ("Surface 1", "--surface-1", "卡片"),
+        ("Surface 2", "--surface-2", "弹层、输入框"), ("Paper 100", "--color-muted", "次级背景"), ("Bark 500", "--bark-500", "自然棕，只作装饰"),
+        ("Amber 500", "--color-accent", "填充，文字用深色"), ("Text", "--color-foreground", "正文 11.8:1"), ("Text secondary", "--color-muted-foreground", "次级文字 5.5:1"),
+        ("Border", "--color-border", "分隔线"), ("Danger", "--color-destructive", "只用于毒性和急救"), ("Danger text", "--color-danger-text", "危险文字 6.1:1")])
+    types = "".join(f'<p style="font-size:var({v});{ff}margin:.2em 0">{n} · <code>{v}</code> 认识蘑菇，探索森林</p>' for n, v, ff in [
+        ("Display", "--fs-display", "font-family:var(--font-display);font-weight:var(--fw-700);"), ("H1", "--fs-h1", "font-family:var(--font-display);font-weight:var(--fw-700);"),
+        ("H2", "--fs-h2", "font-weight:var(--fw-700);"), ("H3", "--fs-h3", "font-weight:var(--fw-700);"), ("Body", "--fs-body", ""), ("Secondary", "--fs-secondary", ""), ("Caption", "--fs-caption", "")])
+    space = "".join(f'<div class="ds-sp"><span style="width:var(--space-{i})"></span><code>--space-{i} · {px}px</code></div>'
+                    for i, px in [(1, 4), (2, 8), (3, 12), (4, 16), (5, 24), (6, 32), (8, 40), (7, 48), (9, 64)])
+    body = f"""<main class="ds">
+<header class="ds-head"><h1 class="view__title">拾菌记 设计系统</h1><p>Nature Editorial × Modern Field App · 组件直接使用网站的 CSS 和图标。色块显示当前主题下的实际颜色。</p>
+<div class="link-row"><button class="btn" type="button" onclick="document.documentElement.dataset.theme='light'">浅色</button><button class="btn" type="button" onclick="document.documentElement.dataset.theme='dark'">深色</button><a class="btn" href="./">回到拾菌记</a></div></header>
+<section><h2>颜色</h2><div class="ds-grid">{colors}</div></section>
+<section><h2>字体层级</h2>{types}</section>
+<section><h2>间距（4px 基础）</h2>{space}</section>
+<section><h2>按钮</h2><div class="link-row"><button class="btn btn--primary" type="button">主按钮</button><button class="btn" type="button">次按钮</button><button class="btn btn--danger" type="button">危险操作</button><button class="btn" type="button" disabled>不可用</button><button class="icon-btn" type="button" aria-label="搜索"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button></div></section>
+<section><h2>筛选 Chip / 分段</h2><div class="chip-list"><button class="chip" type="button" aria-pressed="true">三地合计</button><button class="chip" type="button" aria-pressed="false">BC</button><button class="chip" type="button" aria-pressed="false">华盛顿</button></div>
+<ol class="jsteps" style="margin-top:16px"><li><button type="button" class="jsteps__btn" aria-current="step">照片与物种</button></li><li><button type="button" class="jsteps__btn">地点与环境</button></li><li><button type="button" class="jsteps__btn">备注与保存</button></li></ol></section>
+<section><h2>输入</h2><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="ds-q">搜索</label><input id="ds-q" type="search" placeholder="搜中文名、英文名、学名或术语"></div>
+<p><label class="finds__label" for="ds-s">选择</label><select class="finds__input" id="ds-s"><option>林地地面</option></select></p>
+<label class="finds__check"><input type="checkbox" checked><span>只记大概位置（约 1 公里）</span></label></section>
+<section><h2>标签</h2><div class="badges"><span class="badge badge--choice">上品</span><span class="badge badge--cook">须煮熟</span><span class="badge badge--risk">高风险</span><span class="badge badge--local">西北太平洋常见</span><span class="sp-card__review">待核实</span></div>
+<p><span class="level level--deadly"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-skull"/></svg>致命</span> <span class="level level--poison">有毒</span></p></section>
+<section><h2>安全提示（最醒目，不加动画）</h2><div class="callout callout--danger" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>有任何疑问，就不要吃。</b>烹饪不能使有毒蘑菇变得安全。</div></div>
+<div class="callout callout--info" role="note"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><div>普通说明使用中性底色。</div></div></section>
+<section><h2>卡片</h2><div class="jcard__list"><a class="jcard" href="#"><span class="jcard__pic"><svg class="icon" aria-hidden="true"><use href="#i-mushroom"/></svg></span><span class="jcard__text"><b>美味齿菌（羊蹄菇）</b><span>2026-10-03</span><span class="jcard__st jcard__st--candidate">候选（个人判断）</span></span></a></div>
+<div class="home-act" style="margin-top:16px"><a class="home-act__item home-act__item--id" href="#"><span class="home-act__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-filter"/></svg></span><span class="home-act__text"><b>识别一朵菌</b><span>主行动卡片</span></span></a><a class="home-act__item home-act__item--ex" href="#"><span class="home-act__icon"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-compass"/></svg></span><span class="home-act__text"><b>探索森林</b><span>次行动卡片</span></span></a></div></section>
+<section><h2>空状态</h2><div class="empty-state empty-state--left"><p>还没有记录。空状态总要给出下一步。</p><a class="btn btn--primary" href="#"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>记下第一次发现</a></div></section>
+</main>"""
+    extra = """<style>.ds{max-width:960px;margin:0 auto;padding:24px 16px 64px}.ds section{margin-top:40px}.ds h2{font-size:var(--fs-h2)}
+.ds-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}.ds-sw{display:grid;gap:2px;padding:8px;border-radius:14px;background:var(--surface-1)}
+.ds-sw span{height:48px;border-radius:10px;border:.5px solid var(--color-border)}.ds-sw small,.ds-sw code{font-size:12px;color:var(--color-muted-foreground)}
+.ds-sp{display:flex;align-items:center;gap:12px;margin:4px 0}.ds-sp span{height:12px;background:var(--color-primary);border-radius:3px}</style>"""
+    return (f'<!doctype html><html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+            f'<meta name="robots" content="noindex"><title>拾菌记 设计系统</title>{css}{extra}</head><body>{sprite}{body}</body></html>')
+
+
+(OUT.parent / "design-system.html").write_text(design_page(), encoding="utf-8")

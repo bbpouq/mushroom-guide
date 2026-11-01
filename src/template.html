@@ -578,7 +578,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .call-card h2 { color: var(--color-danger-text); font-size: 22px; }
 .call-btn { display: flex; align-items: center; gap: var(--space-3); min-height: 64px; padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-destructive); color: #fff; text-decoration: none; }
 .call-btn--secondary { background: var(--color-card); color: var(--color-foreground); border: 1.5px solid var(--color-border); }
-.call-btn__label { display: block; font-size: 13px; opacity: .9; }
+.call-btn__label { display: block; font-size: 13px; }
 .call-btn__num { display: block; font-family: var(--font-heading); font-size: 22px; font-weight: var(--fw-700); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
 :root[data-theme="dark"] .call-btn:not(.call-btn--secondary) { color: #1b0505; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .call-btn:not(.call-btn--secondary) { color: #1b0505; } }
@@ -1397,7 +1397,7 @@ html[data-tab="id"] .subnav { display: flex; }
 .habitat__sp span { display: grid; line-height: 1.35; }
 .habitat__sp small { font-size: var(--fs-caption); color: var(--color-muted-foreground); }
 
-.jsteps { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.jsteps, .finds__form .jsteps, .panel .jsteps { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
 .jsteps__btn { width: 100%; min-height: 44px; border: 0; border-radius: var(--radius-sm); background: var(--color-muted); color: var(--color-muted-foreground); font: inherit; font-size: var(--fs-secondary); font-weight: var(--fw-600); cursor: pointer; }
 .jsteps__btn[aria-current="step"] { background: var(--color-primary); color: var(--color-on-primary); }
 .jstep { border: 0; margin: 0; padding: 0; min-width: 0; }
@@ -1406,6 +1406,12 @@ html[data-tab="id"] .subnav { display: flex; }
 .jstep__hint { margin: var(--space-1) 0 var(--space-3); font-size: var(--fs-secondary); color: var(--color-muted-foreground); text-wrap: pretty; }
 .jstep__nav { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); padding-top: var(--space-3); border-top: .5px solid var(--color-border); }
 .jstep__nav .finds__actions { margin-left: auto; display: flex; gap: var(--space-2); }
+
+@media (max-width: 639px) {  /* section chips: one swipeable row on phones instead of three wrapped lines */
+  .jump-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--space-4)); padding-inline: var(--space-4); scroll-padding-inline: var(--space-4); }
+  .jump-row::-webkit-scrollbar { display: none; }
+  .jump-row > * { flex: none; }
+}
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
