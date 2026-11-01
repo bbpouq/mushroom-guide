@@ -39,8 +39,9 @@ src/
                          plus records per year, keyed by slug.
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
   data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
-                         and HEROES: the header photo behind each view's large title (the home view's sits behind the search box;
-                         none on the species view and none on the emergency view).
+                         and HEROES: the header photo behind each view's large title, keyed by the <!--HERO:key--> marker
+                         (home, species, finder, toxic, explore, kitchen, log, recipes; none on the emergency view). To change a
+                         header photo, add a new key rather than reusing an old one: the offline MEDIA cache keeps old file names.
                          RECIPE_PHOTOS (dish photos, keyed by recipe id) is optional; without one a recipe shows its
                          main mushroom's example photo, captioned as such
                          Pin a better photo in fetch_photos.PINNED rather than editing this file

@@ -46,9 +46,11 @@ NAME_FIX = {"Agaricus silvicola": "Agaricus sylvicola"}  # spellings iNaturalist
 WIDTH = 480
 HD_WIDTH = 1024
 # Header photo for each view, shown behind the large title: (taxon, iNaturalist photo id from that taxon's photos).
-# The home view's header sits behind the search box; the species view and the emergency view have none on purpose.
-HEROES = {"home": ("Cantharellus formosus", 168845865), "finder": ("Agaricus augustus", 22093962),
-          "toxic": ("Amanita muscaria", 448681419), "guide": ("Aureoboletus mirabilis", 11502906),
+# Keys are the <!--HERO:key--> markers in template.html. The emergency view has none on purpose.
+# Use a new key (new file name) rather than a new photo under an old key: the offline MEDIA cache keeps old files.
+HEROES = {"home": ("Cantharellus formosus", 168845865), "species": ("Cantharellus formosus", 5924085),
+          "finder": ("Agaricus augustus", 22093962), "toxic": ("Amanita muscaria", 448681419),
+          "explore": ("Aureoboletus mirabilis", 11502906), "kitchen": ("Morchella", 7339458),
           "log": ("Craterellus tubaeformis", 250397284), "recipes": ("Boletus edulis", 29239600)}
 HERO_WIDTH = 1024
 
