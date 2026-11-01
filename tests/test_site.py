@@ -436,7 +436,7 @@ def run():
         pg.select_option("#finds-sp", ""); pg.fill("#finds-other", "褐色小伞菌")
         pg.click("#finds-gps"); pg.wait_for_timeout(500); pg.check("#finds-fuzzy")
         pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
-        saved = pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1'))")
+        saved = pg.evaluate("findsLoad()")
         fz = [f for f in saved if f.get("other") == "褐色小伞菌"][0]
         check(f"'only a rough location' stores coordinates cut to ~1 km ({fz['lat']}, {fz['lon']})",
               fz["fuzzy"] and fz["lat"] == 47.61 and fz["lon"] == -122.33 and fz["alt"] is None)
@@ -469,7 +469,7 @@ def run():
         backup = dl.value.path()
         data = __import__("json").loads(open(backup, encoding="utf-8").read())
         check("the JSON backup holds both finds and the photo", len(data["finds"]) == 2 and len(data["photos"]) == 1)
-        pg.evaluate("localStorage.removeItem('mushroom-guide:finds:v1')"); pg.reload(); pg.wait_for_timeout(600)
+        pg.evaluate("findsSave([])"); pg.reload(); pg.wait_for_timeout(600)
         pg.set_input_files("#finds-import", backup); pg.wait_for_timeout(1000)
         check(f"importing the backup restores the finds and photo {errs}", pg.locator("#finds-list .finds__item").count() == 2
               and pg.locator("#finds-list img.finds__pic").count() == 1 and not errs)
@@ -532,9 +532,9 @@ def run():
               not errs and (not items or items[0] or not any(items)) and items == sorted(items, reverse=True))
         # journal: invalid files never change existing records; duplicates are reported; web photo addresses are ignored
         rec = {"id": 111, "date": "2026-10-01", "sp": "boletus-edulis", "place": "测试", "photos": ["px1", "px2"], "parts": {}}
-        pg.evaluate("r => localStorage.setItem('mushroom-guide:finds:v1', JSON.stringify([r]))", rec)
+        pg.evaluate("r => findsSave([r])", rec)
         pg.evaluate("show('log')"); pg.wait_for_timeout(400)
-        before = pg.evaluate("localStorage.getItem('mushroom-guide:finds:v1')")
+        before = pg.evaluate("JSON.stringify(findsLoad())")
         tmp = Path(__import__("tempfile").mkdtemp())
         (tmp / "broken.json").write_text("{not json", encoding="utf-8")
         (tmp / "other.json").write_text('{"hello": 1}', encoding="utf-8")
@@ -547,19 +547,19 @@ def run():
             pg.set_input_files("#finds-import", str(tmp / f"{name}.json")); pg.wait_for_timeout(400)
             msgs.append(pg.inner_text("#toast"))
         check(f"invalid backups leave existing records untouched {msgs}",
-              pg.evaluate("localStorage.getItem('mushroom-guide:finds:v1')") == before and all("没有改动" in m for m in msgs))
+              pg.evaluate("JSON.stringify(findsLoad())") == before and all("没有改动" in m for m in msgs))
         pg.set_input_files("#finds-import", str(tmp / "dup.json")); pg.wait_for_timeout(400)
         m = pg.inner_text("#toast")
         check(f"a duplicate and a malformed record are reported, not imported ({m})",
-              "已经有了" in m and "格式不对" in m and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 1)
+              "已经有了" in m and "格式不对" in m and pg.evaluate("findsLoad().length") == 1)
         pg.set_input_files("#finds-import", str(tmp / "web.json")); pg.wait_for_timeout(500)
         check("an imported backup cannot make the page fetch a web address",
-              not any("example.invalid" in u for u in reqs) and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 2)
+              not any("example.invalid" in u for u in reqs) and pg.evaluate("findsLoad().length") == 2)
         pg.click('[data-del="111"]'); pg.wait_for_timeout(100)
         check("deleting a find says how many photos go with it", "含 2 张照片" in pg.inner_text('[data-del="111"]'))
         pg.click('[data-del="111"]'); pg.wait_for_timeout(300)
         check("the delete toast names the photos removed", "2 张照片" in pg.inner_text("#toast")
-              and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 1)
+              and pg.evaluate("findsLoad().length") == 1)
         ctx.close()
 
         # ---------- safety hotfix (2026-11-01): Paxillus, unevaluated species, checklist, emergency, old journal data ----------
@@ -567,7 +567,8 @@ def run():
         pg = ctx.new_page(); errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
         old = [{"id": 1700000000000, "date": "2024-09-14", "sp": "hydnum-repandum", "place": "旧版记录", "notes": "v1"}]
-        pg.goto(url); pg.evaluate("r => localStorage.setItem('mushroom-guide:finds:v1', JSON.stringify(r))", old); pg.reload(); pg.wait_for_timeout(500)
+        pg.goto(url + "manifest.webmanifest"); pg.evaluate("r => localStorage.setItem('mushroom-guide:finds:v1', JSON.stringify(r))", old)
+        pg.goto(url); pg.wait_for_timeout(700)  # first start with the new data layer: the old records are copied into IndexedDB
         leak = pg.evaluate("""() => {
           const out = [];
           for (const s of DATA.species) if (/^(Paxillus|Galerina|Gyromitra|Inocybe|Omphalotus|Lepiota )/.test(s.latin)) out.push(s.slug);
@@ -611,6 +612,11 @@ def run():
         check(f"an old-format journal record still shows and is unchanged {errs}",
               "旧版记录" in pg.inner_text("#finds-list") and not errs
               and pg.evaluate("localStorage.getItem('mushroom-guide:finds:v1')") == __import__("json").dumps(old, ensure_ascii=False, separators=(",", ":")))
+        mig = pg.evaluate("metaGet('migration')")
+        rec0 = pg.evaluate("findsLoad()[0]")
+        check(f"old localStorage records are copied into IndexedDB with timestamps, and the old copy is kept {mig}",
+              mig and mig["status"] == "done" and mig["count"] == 1 and rec0["id"] == 1700000000000
+              and rec0["createdAt"].startswith("2023-11-14") and pg.evaluate("STORE") == "idb")
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

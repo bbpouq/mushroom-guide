@@ -2651,21 +2651,87 @@ function regionOf(f) {
   return "other";
 }
 const fuzz = v => Math.round(v * 100) / 100;   // 0.01° ≈ 1.1 km
-function findsLoad() { try { const v = localStorage.getItem(FINDS_KEY); const a = v ? JSON.parse(v) : []; return Array.isArray(a) ? a : []; } catch (_) { return null; } }
-function findsSave(list) { try { localStorage.setItem(FINDS_KEY, JSON.stringify(list)); return true; } catch (_) { return false; } }
+// Records are read once into memory (FINDS) and every change is written in one IndexedDB transaction; the memory copy is
+// replaced only after that transaction commits, so a failed save never leaves half-written data. See docs/DATA_ARCHITECTURE.md.
+let FINDS = null, STORE = "loading", findsBuilt = false;  // STORE: loading | idb | local (old localStorage fallback) | none
+function findsLoad() { return FINDS ? FINDS.slice() : STORE === "loading" ? [] : null; }
+async function findsSave(list) {
+  await findsReady;
+  if (STORE === "none" || !FINDS) return false;
+  const now = new Date().toISOString(), prev = new Map(FINDS.map(f => [String(f.id), f]));
+  const next = list.map(f => { const p = prev.get(String(f.id)); return p === f ? f : { ...f, createdAt: f.createdAt || (p && p.createdAt) || now, updatedAt: now }; });
+  const keep = new Set(next.map(f => String(f.id))), gone = FINDS.filter(f => !keep.has(String(f.id)));
+  const changed = next.filter(f => prev.get(String(f.id)) !== f);
+  try {
+    if (STORE === "idb") await idbTx(["finds"], "readwrite", t => { const s = t.objectStore("finds"); changed.forEach(f => s.put(f)); gone.forEach(f => s.delete(f.id)); });
+    else localStorage.setItem(FINDS_KEY, JSON.stringify(next));
+  } catch (_) { return false; }
+  FINDS = next; return true;
+}
 function todayISO() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
 function findsName(f) { const i = bySlug[f.sp]; return i !== undefined ? DATA.species[i].zh : (f.other || "未命名"); }
 const findStatus = f => f.status || (f.sp ? "candidate" : "none");
 
-// photos: one IndexedDB store, key -> Blob. Every call fails soft (private windows, previews).
-const photoDB = (() => {
-  let db = null;
-  const open = () => db || (db = new Promise((res, rej) => {
-    try { const r = indexedDB.open("mushroom-guide", 1); r.onupgradeneeded = () => r.result.createObjectStore("photos"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }
-    catch (e) { rej(e); }
+// ----- local data layer (round 8): IndexedDB "mushroom-guide" v2 with stores finds (keyPath id), photos (key -> Blob) and meta -----
+const DB_NAME = "mushroom-guide", DB_VERSION = 2, SCHEMA_VERSION = 2;
+let dbP = null;
+function dbOpen() {
+  return dbP || (dbP = new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open(DB_NAME, DB_VERSION);
+      r.onupgradeneeded = () => { const d = r.result; [["photos"], ["finds", { keyPath: "id" }], ["meta"]].forEach(([n, o]) => { if (!d.objectStoreNames.contains(n)) d.createObjectStore(n, o); }); };
+      r.onsuccess = () => { r.result.onversionchange = () => r.result.close(); res(r.result); };
+      r.onerror = () => rej(r.error);
+      r.onblocked = () => toast("另一个打开着拾菌记的标签页挡住了数据升级：请关掉它");
+    } catch (e) { rej(e); }
   }));
-  const tx = (mode, fn) => open().then(d => new Promise((res, rej) => { const s = d.transaction("photos", mode).objectStore("photos"); const q = fn(s); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }));
-  return { get: k => tx("readonly", s => s.get(k)).catch(() => null), put: (k, v) => tx("readwrite", s => s.put(v, k)), del: k => tx("readwrite", s => s.delete(k)).catch(() => null) };
+}
+const idbReq = q => new Promise((res, rej) => { q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+// one transaction; resolves with fn's result only after the whole transaction has committed
+function idbTx(stores, mode, fn) {
+  return dbOpen().then(d => new Promise((res, rej) => {
+    const t = d.transaction(stores, mode); let out;
+    Promise.resolve(fn(t)).then(v => { out = v; }, () => {});
+    t.oncomplete = () => res(out); t.onerror = t.onabort = () => rej(t.error || new Error("abort"));
+  }));
+}
+const photoDB = {
+  get: k => idbTx(["photos"], "readonly", t => idbReq(t.objectStore("photos").get(k))).catch(() => null),
+  put: (k, v) => idbTx(["photos"], "readwrite", t => { t.objectStore("photos").put(v, k); }),
+  del: k => idbTx(["photos"], "readwrite", t => { t.objectStore("photos").delete(k); }).catch(() => null),
+  keys: () => idbTx(["photos"], "readonly", t => idbReq(t.objectStore("photos").getAllKeys())).catch(() => []),
+};
+const metaGet = k => idbTx(["meta"], "readonly", t => idbReq(t.objectStore("meta").get(k))).catch(() => undefined);
+const metaSet = (k, v) => idbTx(["meta"], "readwrite", t => { t.objectStore("meta").put(v, k); }).catch(() => null);
+// the first versions kept records in localStorage; they are copied (never moved) into IndexedDB once
+function legacyRead() { try { const v = localStorage.getItem(FINDS_KEY); if (!v) return []; const a = JSON.parse(v); return Array.isArray(a) ? a : null; } catch (_) { return null; } }
+function findStamp(f, now, i) {
+  const id = f.id === undefined || f.id === null || f.id === "" ? "m" + Date.now() + "-" + i : f.id;
+  const born = typeof id === "number" && id > 1e12 && id < 1e13 ? new Date(id).toISOString() : now;  // ids were Date.now()
+  return { ...f, id, createdAt: f.createdAt || born, updatedAt: f.updatedAt || f.createdAt || born };
+}
+const findsReady = (async () => {
+  try {
+    await dbOpen();
+    if (!(await idbTx(["meta"], "readonly", t => idbReq(t.objectStore("meta").get("migration"))))) {
+      const old = legacyRead(), now = new Date().toISOString();
+      if (old === null) await metaSet("migration", { status: "failed", at: now, note: "旧版记录无法读取，已原样保留在浏览器里，没有改动" });
+      else {
+        const seen = new Set(), recs = old.filter(f => f && typeof f === "object" && !Array.isArray(f)).map((f, i) => {
+          let r = findStamp(f, now, i); while (seen.has(String(r.id))) r = { ...r, id: r.id + "-" + i }; seen.add(String(r.id)); return r; });
+        await idbTx(["finds", "meta"], "readwrite", t => {
+          const s = t.objectStore("finds"); recs.forEach(r => s.put(r));
+          t.objectStore("meta").put({ status: "done", at: now, from: "localStorage", count: recs.length, legacyKept: recs.length > 0 }, "migration");
+          t.objectStore("meta").put(SCHEMA_VERSION, "schema");
+        });
+      }
+    }
+    FINDS = await idbTx(["finds"], "readonly", t => idbReq(t.objectStore("finds").getAll()));
+    STORE = "idb";
+  } catch (_) {
+    const old = legacyRead(); FINDS = old; STORE = old ? "local" : "none";  // no IndexedDB: keep working the old way
+  }
+  if (findsBuilt) renderFinds();
 })();
 const photoURLs = new Map();
 async function photoURL(key) {
@@ -2749,7 +2815,7 @@ $("#finds-thumbs").addEventListener("click", e => {
   const b = e.target.closest("[data-unphoto]"); if (!b) return;
   draft.photos = draft.photos.filter(k => k !== b.dataset.unphoto); drawThumbs();   // removed from the blob store when the record is saved
 });
-$("#finds-form").addEventListener("submit", e => {
+$("#finds-form").addEventListener("submit", async e => {
   e.preventDefault();
   const list = findsLoad();
   if (list === null) { toast("这个浏览器不能保存记录"); return; }
@@ -2768,7 +2834,7 @@ $("#finds-form").addEventListener("submit", e => {
     alt: hasLoc && !fuzzy ? draft.alt : null, acc: hasLoc ? (fuzzy ? Math.max(1100, draft.acc || 0) : draft.acc) : null, fuzzy: hasLoc && fuzzy,
     photos: [...draft.photos], parts: Object.fromEntries(draft.photos.map(k => [k, draft.parts[k] || "其他"])) };
   const next = old ? list.map(f => f.id === rec.id ? rec : f) : list.concat(rec);
-  if (!findsSave(next)) { toast("保存失败：浏览器存储已满或不可用"); return; }
+  if (!(await findsSave(next))) { toast("保存失败：浏览器存储已满或不可用，这条还没有存下"); return; }
   if (old) (old.photos || []).filter(k => !rec.photos.includes(k)).forEach(k => photoDB.del(k));
   toast(old ? "已保存修改" : "已记下"); formReset(); renderFinds();
 });
@@ -2790,6 +2856,7 @@ function findsFilterOptions(list) {
 async function renderFinds() {
   const list = findsLoad();
   if (list === null) { $("#finds-list").innerHTML = `<p class="finds__empty">这个浏览器不允许保存数据（例如无痕模式或预览窗口），记录功能用不了。</p>`; fmapDraw([]); return; }
+  if (STORE === "loading") { $("#finds-list").innerHTML = `<p class="finds__empty">正在读取这台设备上的记录…</p>`; return; }
   findsFilterOptions(list);
   const shown = findsFiltered(list).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id);
   fmapDraw(shown); renderYear(list);
@@ -2842,10 +2909,10 @@ $("#year-pick").addEventListener("change", () => renderYear(findsLoad() || []));
 function findsInit() {
   const opts = [...DATA.species].map(s => [s.zh, s.slug]).sort((a, b) => a[0].localeCompare(b[0], "zh-Hans-CN"));
   $("#finds-sp").innerHTML = `<option value="">其他 / 没认出来</option>` + opts.map(([zh, sl]) => `<option value="${sl}">${esc(zh)}</option>`).join("");
-  formReset(); renderFinds();
+  formReset(); findsBuilt = true; renderFinds();
 }
 let delArmed = null, delTimer;
-$("#finds-list").addEventListener("click", e => {
+$("#finds-list").addEventListener("click", async e => {
   const ed = e.target.closest("[data-edit]");
   if (ed) { const f = (findsLoad() || []).find(x => String(x.id) === ed.dataset.edit); if (f) formEdit(f); return; }
   const b = e.target.closest("[data-del]"); if (!b) return;
@@ -2859,7 +2926,7 @@ $("#finds-list").addEventListener("click", e => {
   delArmed = null; clearTimeout(delTimer);
   const list = findsLoad(); if (list === null) return;
   const gone = list.find(f => String(f.id) === b.dataset.del);
-  if (!findsSave(list.filter(f => f !== gone))) { toast("删除失败：浏览器不能保存，记录和照片都还在"); return; }
+  if (!(await findsSave(list.filter(f => f !== gone)))) { toast("删除失败：浏览器不能保存，记录和照片都还在"); return; }
   const ph = (gone && gone.photos) || []; ph.forEach(k => photoDB.del(k));
   if (draft.id && gone && draft.id === gone.id) formReset();
   renderFinds(); toast(ph.length ? `已删除这条记录和它的 ${ph.length} 张照片` : "已删除这条记录");
@@ -2938,7 +3005,7 @@ $("#finds-import").addEventListener("change", async e => {
       }
       delete r.photoKeys;
     }
-    if (add.length && !findsSave(list.concat(add))) { stored.forEach(k => photoDB.del(k)); toast("导入失败：浏览器存储已满。现有记录没有改动"); return; }
+    if (add.length && !(await findsSave(list.concat(add)))) { stored.forEach(k => photoDB.del(k)); toast("导入失败：浏览器存储已满。现有记录没有改动"); return; }
     renderFinds();
     const extra = [dup ? `${dup} 条已经有了` : "", bad ? `${bad} 条格式不对，已跳过` : ""].filter(Boolean).join("，");
     toast(add.length ? `导入了 ${add.length} 条记录${extra ? "（" + extra + "）" : ""}` : `没有导入新记录${extra ? "：" + extra : ""}`);
