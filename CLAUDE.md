@@ -45,7 +45,7 @@ src/
                          Book species with a different PNW taxon are mapped in fetch_seasonality.PNW_TAXON
   data/photos.py         Generated: one example photo per species (public/photos/<slug>.webp) with author, licence, link,
                          and HEROES: the header photo behind each view's large title, keyed by the <!--HERO:key--> marker
-                         (home-porcini, species, finder, toxic, explore, kitchen, log, recipes; none on the emergency view; a third number
+                         (home-porcini, species, finder, toxic, kitchen, log, recipes; none on the emergency or 拾菌 views; a third number
                          in fetch_photos.HEROES is the observation id, for photos outside the taxon's featured set). To change a
                          header photo, add a new key rather than reusing an old one: the offline MEDIA cache keeps old file names.
                          RECIPE_PHOTOS (dish photos, keyed by recipe id) is optional; without one a recipe shows its
@@ -250,7 +250,14 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   sub-page at a time: categories 找菌 / 野外指南 / 工具 (`.xnav`, `XP`, `xpShow()`), sub-pages `#explore-<sub>` (now, intel,
   cal, hab, rules, prep, pick, safety, offline, field; 设置 opens the settings sheet), panes `.xp__pane` hidden with the
   `hidden` attribute, last sub-page per category in `sessionStorage` `mushroom-guide:xp`, old `#guide-*` ids open their pane,
-  `#guide-theme` opens 设置. Do not stack 拾菌 sections again. 拾菌's "去哪里找" is rendered by the build as
+  `#guide-theme` opens 设置. Do not stack 拾菌 sections again. v53 (docs/V53_EXPLORE_UX.md): 拾菌 has a compact header (no
+  photo, one-line lead) and no chapter numbers; the all-regions chip reads 「整个 PNW」 (= BC + WA + OR combined, same data);
+  本月探索 = month strip + "在图鉴里看 N 月的全部种类"; 季节情报 = month change (`renderSeason()` follows `intelMonth`) + a
+  BC / WA / OR table for that month + the sampling-bias note, never a copy of the species list; intel month and calendar
+  mode / month / search persist in `sessionStorage` `mushroom-guide:xpstate` (`xsSave()`). 四条守则 live only in 采集守则;
+  采集与观察 is 观察 → 拍照 → 记录 → 依法采集（若允许）plus the 做孢子印 fold; 户外安全 opens with 911 and 中毒急救 buttons.
+  离线下载 shows a summary and one row each for text, thumbnails, HD, 3D and 个人菌记, each in a state from `ostate()`
+  (未下载 / 下载中 / 下载失败 / 部分完成 / 已完成). The 户外模式 pane uses a `.toggle` switch (`data-field-switch`). 拾菌's "去哪里找" is rendered by the build as
   `.habitat` folding cards (`habitat_cards()`), recommended species only. A new journal record is three steps (`jstep(n)`;
   照片与物种 / 地点与环境 / 备注与保存); "记下来" saves from any step and every field may stay empty except a name or species.
 - Nav: one sticky header for every size (brand left, the three tabs as `.topnav` from 768px, search / field mode / SOS

@@ -236,7 +236,8 @@ poison_extra = []
 # download sizes for the "download every photo before a trip" buttons
 _ph = {x["photo"]["file"]: x["photo"] for x in species + poison if x.get("photo")}
 photo_bytes = dict(small=sum((OUT.parent / "photos" / f).stat().st_size for f in _ph)
-                   + sum((OUT.parent / "photos" / h["file"]).stat().st_size for h in HEROES.values()),
+                   + sum((OUT.parent / "photos" / h["file"]).stat().st_size for k, h in HEROES.items()
+                         if f"<!--HERO:{k}-->" in (SRC / "template.html").read_text(encoding="utf-8")),  # only header photos the page shows
                    hd=sum((OUT.parent / "photos" / p["hd"]["file"]).stat().st_size for p in _ph.values() if p.get("hd")))
 DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_extra,
             compare=COMPARE, recipes=recipes, obsFetched=FETCHED, obsPlaces=PLACES, photoBytes=photo_bytes, gloss=[[k, v] for k, _s, v in GLOSS],
@@ -316,7 +317,8 @@ assert "原书" not in html, "the page mentions 原书; name the book in full in
 for x in species + poison + poison_extra:
     for _t, u in x.get("sources") or []:
         assert re.match(r"^https://[^\s\"'<>]+$", u), f"{x['slug']}: bad source URL {u}"
-for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "第一次吃少量", "先少量", "少量试", "试吃", "或再核对一次", "鹅膏类（", "留给沙拉", "做沙拉", "凉拌", "生拌野", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生"]:
+for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "第一次吃少量", "先少量", "少量试", "试吃", "或再核对一次", "鹅膏类（", "留给沙拉", "做沙拉", "凉拌", "生拌野", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生",
+            "好兆头", "一定能找到", "必定出现", "肯定有菌", "只在相应树"]:  # v53: no certainty about where or when mushrooms appear
     assert bad not in html, f"unsafe advice is back on the page: {bad}"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "
@@ -392,7 +394,7 @@ def design_page():
 <dialog class="bsheet" id="ds-sheet" aria-labelledby="ds-sheet-t"><div class="bsheet__box"><span class="bsheet__grab" aria-hidden="true"></span><div class="bsheet__head"><h2 class="bsheet__title" id="ds-sheet-t">示例面板</h2><button class="icon-btn" type="button" aria-label="关闭" onclick="this.closest('dialog').close()"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div><p>确认之前，什么都不会改动。</p><div class="bsheet__actions"><button class="btn" type="button" onclick="this.closest('dialog').close()">取消</button><button class="btn btn--primary" type="button" onclick="this.closest('dialog').close()">确认</button></div></div></dialog></section>
 <section><h2>加载占位 Skeleton 与错误状态</h2><div class="skel-list" aria-hidden="true"><div class="skel skel--row"><span class="skel skel--thumb"></span><span class="skel__lines"><span class="skel skel--line"></span><span class="skel skel--line skel--short"></span></span></div></div>
 <div class="err-state" role="status" style="margin-top:16px"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>这里不能保存记录</b><p>错误状态用琥珀色，不用红色：红色只留给毒性和急救。</p></div></div></section>
-<section><h2>筛选 Chip / 分段</h2><div class="chip-list"><button class="chip" type="button" aria-pressed="true">三地合计</button><button class="chip" type="button" aria-pressed="false">BC</button><button class="chip" type="button" aria-pressed="false">华盛顿</button></div>
+<section><h2>筛选 Chip / 分段</h2><div class="chip-list"><button class="chip" type="button" aria-pressed="true">整个 PNW</button><button class="chip" type="button" aria-pressed="false">BC</button><button class="chip" type="button" aria-pressed="false">华盛顿</button></div>
 <ol class="jsteps" style="margin-top:16px"><li><button type="button" class="jsteps__btn" aria-current="step">照片与物种</button></li><li><button type="button" class="jsteps__btn">地点与环境</button></li><li><button type="button" class="jsteps__btn">备注与保存</button></li></ol></section>
 <section><h2>输入</h2><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="ds-q">搜索</label><input id="ds-q" type="search" placeholder="搜中文名、英文名、学名或术语"></div>
 <p><label class="finds__label" for="ds-s">选择</label><select class="finds__input" id="ds-s"><option>林地地面</option></select></p>

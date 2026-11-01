@@ -336,10 +336,10 @@ def run():
         pg.click('[data-dl="small"]')
         for _ in range(60):
             pg.wait_for_timeout(250)
-            if "小图 " in pg.inner_text("#off-photos") and pg.locator("#off-bar").is_hidden():
+            if " 张" in pg.inner_text("#off-photos") and pg.locator("#off-bar").is_hidden():
                 break
         n_small = pg.evaluate("photoSets.small.length")
-        check(f"'download every photo' stores all {n_small} small photos", f"小图 {n_small} / {n_small}" in pg.inner_text("#off-photos"))
+        check(f"'download every photo' stores all {n_small} small photos", f"{n_small} / {n_small} 张" in pg.inner_text("#off-photos") and "已完成" in pg.inner_text("#off-photos"))
         sw = (PUBLIC / "sw.js").read_text(encoding="utf-8")
         check("the page and the service worker use the same photo cache",
               pg.evaluate("MEDIA_CACHE") in sw and pg.evaluate("MEDIA_CACHE").startswith("mushroom-guide-media"))
@@ -709,13 +709,14 @@ def run():
         pg.on("pageerror", lambda e: errs.append(str(e)))
         pg.goto(url + "#explore-intel"); pg.wait_for_timeout(700)
         pg.click('[data-intel-m="10"]'); pg.wait_for_timeout(200)
-        items = pg.locator("#intel-body .intel__item").count()
+        items = pg.locator("#intel-body tbody tr").count()
         txt = pg.inner_text("#intel")
-        ok_rec = pg.evaluate("[...document.querySelectorAll('#intel-body .season__item')].every(a => recommendable(DATA.species.find(s => '#sp-' + s.slug === a.getAttribute('href'))))")
-        check(f"season intelligence lists recommended species for a chosen month with habitat, look-alikes and data notes ({items})",
-              0 < items <= 8 and ok_rec and "生境" in txt and "易混毒菌" in txt and "样本" in txt and "不是实时出菇预测" in txt)
-        pg.click('[data-intel-m="2"]'); pg.click('[data-intel-sub="grass"]'); pg.wait_for_timeout(200)
-        check("an empty month says why, without implying there are no mushrooms", "这不代表林子里没有菌" in pg.inner_text("#intel-body") and not errs)
+        ok_rec = pg.evaluate("[...document.querySelectorAll('#intel-body tbody a')].every(a => recommendable(DATA.species.find(s => '#sp-' + s.slug === a.getAttribute('href'))))")
+        check(f"season intelligence compares BC / WA / OR for a chosen month (recommended species only) with month changes and data notes ({items})",
+              0 < items <= 10 and ok_rec and pg.locator("#intel-body thead th").count() == 4 and "10 月 → 11 月" in txt and "样本" in txt and "不是实时出菇预测" in txt)
+        pg.click('[data-intel-m="2"]'); pg.wait_for_timeout(200)
+        empty = pg.inner_text("#season-cols") + pg.inner_text("#intel-body")
+        check("a quiet month says why, without implying there are no mushrooms", ("没有明显" in empty or "这不代表林子里没有菌" in empty) and not errs)
         ctx.close()
 
         # ---------- round 8: finder explanations (phone) ----------
@@ -954,7 +955,7 @@ def run():
         off = pg.inner_text("#off-photos") if pg.locator("#off-photos").count() else ""
         cached = pg.evaluate("""caches.open(MEDIA_CACHE).then(c => c.keys()).then(ks => photoSets.small.filter(f => ks.some(r => new URL(r.url).pathname.endsWith('/' + f))).length)""")
         import re as _re
-        shown = int(_re.search(r"小图 (\d+) /", off).group(1)) if _re.search(r"小图 (\d+) /", off) else -1
+        shown = int(_re.search(r"(\d+) / \d+ 张", off).group(1)) if _re.search(r"(\d+) / \d+ 张", off) else -1
         check(f"offline after one online visit: the page starts and reports exactly the photos really cached ({shown} = {cached})", ready and shown == cached and shown < pg.evaluate("photoSets.small.length"))
         pg.evaluate("navigate('finder')"); pg.wait_for_timeout(300)
         pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(300)
@@ -1015,8 +1016,8 @@ def run():
         check("工具 › 设置 opens the existing settings sheet", pg.evaluate("document.getElementById('settings').open"))
         pg.keyboard.press("Escape")
         txt = pg.evaluate("document.getElementById('v-explore').textContent")
-        found = all(k in txt for k in ["四条守则", "带什么", "什么时候找", "采摘", "做孢子印", "迷路或受伤", "这台设备上存了什么", "装到手机桌面", "户外模式", "季节情报", "产季日历"])
-        check("every old 拾菌 section is still reachable from the new navigation", found and pg.locator("#xp-field [data-field-toggle]").count() == 1)
+        found = all(k in txt for k in ["四条守则", "出发前清单", "什么时候找", "依法采集", "做孢子印", "迷路或受伤", "这台设备上存了什么", "装到手机桌面", "户外模式", "季节情报", "产季日历"])
+        check("every old 拾菌 section is still reachable from the new navigation", found and pg.locator("#xp-field [role=switch][data-field-switch]").count() == 1)
         pg.evaluate("themeSet('dark'); fieldSet(true); navigate('explore-now')"); pg.wait_for_timeout(300)
         hgt = pg.evaluate("document.querySelector('[data-xp-subs=find] .xnav__sub').getBoundingClientRect().height")
         check(f"outdoor mode and dark theme: the navigation stays usable ({hgt}px) and the theme is kept",
@@ -1024,6 +1025,177 @@ def run():
         pg.evaluate("fieldSet(false); themeSet('system')")
         check(f"no JavaScript errors in the 拾菌 navigation {errs}", not errs)
         ctx.close()
+
+        # ---------- v53: 拾菌 Explore UX polish ----------
+        SUBS = ["now", "intel", "cal", "hab", "rules", "prep", "pick", "safety", "offline", "field"]
+        shown_sub = "[...document.querySelectorAll('.xp__pane')].filter(p => !p.hidden).map(p => p.dataset.xp)"
+        # AC-01 / AC-02: direct links; record every frame so a flash of another sub-page would be caught
+        FRAMES = "window.__panes = []; (function f() { const v = document.getElementById('v-explore'); if (v && v.classList.contains('is-active')) window.__panes.push([...document.querySelectorAll('.xp__pane')].filter(p => !p.hidden && p.offsetParent !== null).map(p => p.dataset.xp).join()); requestAnimationFrame(f); })();"
+        for h, want in [("explore", "now"), ("guide-calendar", "cal")]:
+            ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True)
+            pg = ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)))
+            pg.add_init_script(FRAMES)
+            pg.goto(url + "#" + h); pg.wait_for_timeout(900)
+            seen = set(pg.evaluate("window.__panes"))
+            check(f"v53 AC-0{1 if want == 'now' else 2}: #{h} opens only 拾菌 › {want}, no other sub-page painted first ({seen}) {errs}",
+                  seen == {want} and pg.evaluate(shown_sub) == [want] and not errs)
+            ctx.close()
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, color_scheme="light")
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#explore-now"); pg.wait_for_timeout(800)
+        head = pg.inner_text("#v-explore .view__head")
+        check(f"v53: the 拾菌 header is compact: no header photo, no eyebrow, a short lead ({len(head)} chars)",
+              pg.locator("#v-explore .view__hero").count() == 0 and pg.locator("#v-explore .view__eyebrow").count() == 0 and len(head) < 60 and "不是实时出菇预测" in head)
+        nav_y = pg.evaluate("document.getElementById('explore-nav').getBoundingClientRect().top")
+        sticky = pg.evaluate("getComputedStyle(document.getElementById('explore-nav')).position")
+        check(f"v53: the 拾菌 navigation sits in the first screen and is not sticky ({nav_y}px, {sticky})", nav_y < 260 and sticky not in ("sticky", "fixed"))
+        regs = pg.evaluate("[...document.querySelectorAll('[data-cal-region=all]')].map(b => b.textContent.trim())")
+        check(f"v53: the all-regions chip reads 整个 PNW everywhere and keeps its meaning ({regs})",
+              regs and all(r == "整个 PNW" for r in regs) and "三地合计" not in pg.content()
+              and all("BC" in pg.get_attribute(f"[data-cal-region=all] >> nth={i}", "title") for i in range(len(regs))))
+        lbl = pg.inner_text("[data-now-all]")
+        check(f"v53: 本月探索 names month, region and what the full-list button does ({lbl!r})",
+              "看全部" not in pg.inner_text("#xp-now") and "月的全部种类" in lbl and "整个 PNW" in pg.inner_text("#now-title") and pg.locator("#now-track .now__item").count() > 0)
+        pg.click("[data-now-all]"); pg.wait_for_timeout(500)
+        check("v53: the full-list button opens the 图鉴 filtered to this month", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species" and pg.evaluate("state.season") == "now")
+        # every sub-page at 5 widths: one pane, no overflow, 44px targets, state not by colour alone
+        for w in [320, 375, 390, 768, 1024]:
+            pg.set_viewport_size({"width": w, "height": 800}); bad = []
+            for s in SUBS:
+                pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(120)
+                sw = pg.evaluate("document.documentElement.scrollWidth")
+                small = pg.evaluate("[...document.querySelectorAll('#explore-nav button:not([hidden])')].filter(b => b.offsetParent && b.getBoundingClientRect().height < 44).length")
+                marks = pg.evaluate("(() => { const c = document.querySelector('[data-xp-cat][aria-pressed=true]'), g = document.querySelector('[data-xp-go][aria-current=page]'); return [c && getComputedStyle(c).boxShadow !== 'none' || getComputedStyle(c).backgroundColor, g && getComputedStyle(g).boxShadow !== 'none', g && +getComputedStyle(g).fontWeight >= 600]; })()")
+                if sw > w or small or pg.evaluate(shown_sub) != [s] or not all(marks):
+                    bad.append((s, sw, small, marks))
+            check(f"v53 AC-03 at {w}px: every sub-page shows alone, no horizontal overflow, 44px nav targets, selected state shown by shape and weight {bad}", not bad)
+        pg.set_viewport_size({"width": 375, "height": 812})
+        # 野外指南: no chapter numbers, one rules source, the spore print is back, collecting order, permits, emergency first
+        txt = pg.evaluate("document.getElementById('v-explore').textContent")
+        import re as _re
+        nums = pg.evaluate("[...document.querySelectorAll('#v-explore .panel__title, #v-explore h2, #v-explore h3')].map(h => h.textContent.trim()).filter(t => /^0\\d/.test(t))")
+        check(f"v53 AC-05: no chapter numbers left in 拾菌 ({nums})", pg.locator("#v-explore .panel__num").count() == 0 and not nums)
+        check(f"v53 AC-05: 四条守则 has one source ({txt.count('四条守则')}) and 采集与观察 links to it",
+              txt.count("四条守则") == 1 and pg.locator("#v-explore ol.rules").count() == 1 and pg.locator('#xp-pick a[href="#explore-rules"]').count() == 1)
+        pg.evaluate("navigate('explore-pick')"); pg.wait_for_timeout(300)
+        pk = pg.inner_text("#xp-pick")
+        order = [pk.find(k) for k in ["观察", "拍照", "记录", "依法采集（若允许）"]]
+        check(f"v53: 采集与观察 runs 观察 → 拍照 → 记录 → 依法采集 and says to only look where collecting is not allowed {order}",
+              all(i >= 0 for i in order) and order == sorted(order) and "不允许或不确定，就只看、只拍、只记" in pk)
+        spore = pg.locator("#spore-print")
+        pg.click("#spore-print summary"); pg.wait_for_timeout(400)
+        check("v53: the spore-print method (lost in v52) is back as a fold under 采集与观察",
+              spore.count() == 1 and pg.locator("#spore-print .steps li").count() == 4 and "绿色" in pg.inner_text("#spore-print") and "不能证明安全" in pg.inner_text("#spore-print"))
+        pg.evaluate("navigate('explore-rules')"); pg.wait_for_timeout(200)
+        rl = pg.inner_text("#xp-rules")
+        check("v53: the permit rule says to follow the land manager's latest rules and promises nothing", "管理方" in rl and "最新的规定" in rl and "本站不判断任何地点能不能采" in rl)
+        pg.evaluate("navigate('explore-prep')"); pg.wait_for_timeout(200)
+        pr = pg.inner_text("#xp-prep")
+        miss = [k for k in ["离线地图", "充电宝", "头灯", "天气预报", "告诉家人", "AdventureSmart"] if k not in pr]
+        check(f"v53: 装备与准备 is a short checklist: offline map, power, light, weather, trip plan, with a source {miss}", not miss and pg.locator("#xp-prep .xp-check li").count() <= 7)
+        pg.evaluate("navigate('explore-safety')"); pg.wait_for_timeout(300)
+        tops = pg.evaluate("[...document.querySelectorAll('#xp-safety .xp-sos a')].map(a => [a.getAttribute('href'), Math.round(a.getBoundingClientRect().bottom)])")
+        check(f"v53: 户外安全 puts 911 and 中毒急救 first, outside any fold ({tops})",
+              [t[0] for t in tops] == ["tel:911", "#emergency"] and all(t[1] < 812 for t in tops) and pg.locator("#xp-safety details").count() == 0)
+        # 找菌: habitats, season intelligence, calendar state
+        pg.evaluate("navigate('explore-hab')"); pg.wait_for_timeout(300)
+        hb = pg.inner_text("#xp-hab")
+        sums = pg.evaluate("[...document.querySelectorAll('#xp-hab details.habitat')].map(d => [d.open, d.querySelector('.habitat__name b').textContent.trim().length > 0])")
+        check(f"v53: 生境探索 shows compact folded cards with a text name (photos optional) and no 'good sign' inference ({len(sums)})",
+              sums and all(not o and n for o, n in sums) and "好兆头" not in hb and "不代表某一种菌就在附近" in hb)
+        pg.evaluate("navigate('explore-intel')"); pg.wait_for_timeout(300)
+        pg.click('[data-intel-m="9"]'); pg.wait_for_timeout(200)
+        cav = pg.inner_text(".intel__caveat")
+        check("v53: 季节情报 states sampling bias and timeliness limits", all(k in cav for k in ["拍照上传", "不是菌有多少", "反映不了今年的天气", "不代表这个月就能找到"]))
+        pg.evaluate("navigate('explore-cal')"); pg.wait_for_timeout(300)
+        pg.click('[data-cal-mode="month"]'); pg.select_option("#cal-month", "3"); pg.fill("#cal-q", "鸡油"); pg.wait_for_timeout(200)
+        st0 = pg.inner_text("#cal-state")
+        pg.reload(); pg.wait_for_timeout(900)
+        restored = [pg.evaluate("calState.mode"), pg.input_value("#cal-month"), pg.input_value("#cal-q"), pg.evaluate("intelMonth"), pg.evaluate(shown_sub)]
+        check(f"v53 AC-04: calendar mode, month, search and the intel month survive a refresh ({restored}, {st0!r})",
+              restored == ["month", "3", "鸡油", 9, ["cal"]] and "3 月" in st0 and "鸡油" in st0 and pg.is_visible("#cal-month"))
+        pg.click('.botnav a[href="#log"]'); pg.wait_for_timeout(300); pg.click('.botnav a[href="#explore"]'); pg.wait_for_timeout(400)
+        check("v53 AC-04: leaving for another tab and coming back keeps the calendar state", pg.evaluate(shown_sub) == ["cal"] and pg.input_value("#cal-q") == "鸡油")
+        pg.go_back(); pg.wait_for_timeout(300); pg.go_forward(); pg.wait_for_timeout(300)
+        check(f"v53 AC-08: back and forward keep the sub-page and its state {errs}", pg.evaluate(shown_sub) == ["cal"] and pg.evaluate("calState.mode") == "month" and not errs)
+        pg.fill("#cal-q", "zzzz"); pg.wait_for_timeout(150)
+        check("v53: an empty calendar search says what to try and that not listed is not safe", "没有列出不代表它安全" in pg.inner_text("#cal"))
+        pg.fill("#cal-q", ""); pg.click('[data-cal-mode="cal"]')
+        # 工具: outdoor switch, independent of the theme; settings reuse
+        pg.evaluate("themeSet('dark'); navigate('explore-field')"); pg.wait_for_timeout(300)
+        swt = pg.locator("#xp-field-switch")
+        pg.click("#xp-field .xp-switch .toggle"); pg.wait_for_timeout(200)
+        on = [pg.evaluate("document.documentElement.dataset.field"), swt.is_checked(), pg.inner_text("[data-field-state]"), pg.get_attribute(".hdr__field", "aria-pressed"), pg.evaluate("document.getElementById('set-field').checked"), pg.evaluate("document.documentElement.dataset.theme")]
+        pg.click("#xp-field .xp-switch .toggle"); pg.wait_for_timeout(200)
+        off = [pg.evaluate("document.documentElement.dataset.field || ''"), swt.is_checked(), pg.inner_text("[data-field-state]"), pg.evaluate("document.documentElement.dataset.theme")]
+        check(f"v53 AC-07: the outdoor switch shows its state, stays in step with the header and settings, and leaves the theme alone {on} {off}",
+              on == ["on", True, "已打开", "true", True, "dark"] and off == ["", False, "已关闭", "dark"] and swt.get_attribute("role") == "switch")
+        pg.click('#xp-field [data-open-settings]'); pg.wait_for_timeout(200)
+        check("v53 AC-07: 户外模式 links to the one existing settings sheet", pg.evaluate("document.getElementById('settings').open") and pg.locator("dialog#settings").count() == 1)
+        pg.keyboard.press("Escape"); pg.evaluate("themeSet('system')")
+        # keyboard: the sub-page buttons work with Enter and keep a visible focus
+        pg.evaluate("navigate('explore-now')"); pg.wait_for_timeout(200)
+        pg.focus('[data-xp-go="intel"]'); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
+        ring = pg.evaluate("getComputedStyle(document.activeElement).outlineStyle")
+        check(f"v53: keyboard Enter switches the sub-page and focus stays on the control with a visible ring ({ring})",
+              pg.evaluate(shown_sub) == ["intel"] and pg.evaluate("document.activeElement.dataset.xpGo") == "intel" and ring != "none")
+        xt = pg.evaluate("document.getElementById('v-explore').textContent")
+        safe_bad = [k for k in ["好兆头", "一定能找到", "肯定有菌", "可以放心吃", "必定出现"] if k in xt] + _re.findall(r"(?<!不能)(?<!不)保证安全", xt)
+        check(f"v53 AC-10: 拾菌 makes no safety guarantee or certainty claim {safe_bad}", not safe_bad)
+        ctx.close()
+        # 工具 › 离线下载: real states for text, thumbnails, HD and the personal journal (service worker blocked so routing sees every request)
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, service_workers="block")
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#explore-offline"); pg.wait_for_timeout(1200)
+        states = pg.evaluate("[[0, 5, false, 0], [5, 5, false, 0], [2, 5, false, 0], [2, 5, false, 3], [2, 5, true, 0]].map(a => ostate(...a).t)")
+        check(f"v53 AC-06: the offline rows know five states ({states})", states == ["未下载", "已完成", "部分完成", "下载失败", "下载中"])
+        rows = pg.evaluate("[...document.querySelectorAll('.offline__k')].map(k => k.textContent)")
+        check(f"v53 AC-06: text, thumbnails, HD and the personal journal are separate rows, status before the download buttons ({rows})",
+              all(k in rows for k in ["文字资料", "缩略图", "高清图", "个人菌记"]) and pg.evaluate("document.querySelector('.offline__list').compareDocumentPosition(document.getElementById('off-actions')) & 4") > 0)
+        pg.evaluate("findsSave([{id: 77, date: '2026-10-01', sp: 'boletus-edulis', status: 'candidate'}])"); pg.wait_for_timeout(200)
+        pg.evaluate("offlineReport()"); pg.wait_for_timeout(400)
+        check("v53: the journal row counts this device's records and says they are not a download", "1 条记录" in pg.inner_text("#off-journal") and "不需要下载" in pg.inner_text("#off-journal"))
+        summ = pg.inner_text("#off-summary")
+        check(f"v53 AC-06: a first visit with nothing downloaded does not claim the photos are offline ({summ!r})",
+              "缩略图未下载" in summ and "高清图未下载" in summ and "未下载" in pg.inner_text("#off-photos"))
+        pg.route("**/photos/**", lambda r: r.abort())
+        pg.click('[data-dl="small"]')
+        for _ in range(80):
+            pg.wait_for_timeout(250)
+            if pg.locator("#off-bar").is_hidden() and pg.inner_text("#off-dl"):
+                break
+        pg.wait_for_timeout(300)
+        check(f"v53 AC-06: a failed download says so, row and message ({pg.inner_text('#off-dl')[:30]!r})",
+              "下载失败" in pg.inner_text("#off-photos") and "没下载成功" in pg.inner_text("#off-dl"))
+        pg.unroute("**/photos/**")
+        pg.evaluate("caches.open(MEDIA_CACHE).then(c => c.add(photoSets.small[0]))"); pg.wait_for_timeout(300)
+        pg.evaluate("dl.failed = 0; offlineReport()"); pg.wait_for_timeout(400)
+        check("v53 AC-06: one cached photo reads as partial, not as offline-ready", "部分完成" in pg.inner_text("#off-photos") and "部分完成" in pg.inner_text("#off-summary"))
+        ctx.set_offline(True); pg.evaluate("offlineReport()"); pg.wait_for_timeout(400)
+        check("v53 AC-06: offline, the summary says so and keeps the real counts", pg.inner_text("#off-summary").startswith("现在离线") and "1 / " in pg.inner_text("#off-photos"))
+        ctx.set_offline(False)
+        for s in SUBS:
+            pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(60)
+        pg.reload(); pg.wait_for_timeout(900)
+        check(f"v53 AC-09: the journal survives every sub-page, downloads and a reload {errs}", pg.evaluate("findsLoad().length") == 1 and pg.evaluate("findsLoad()[0].id") == 77 and not errs)
+        ctx.close()
+        # outdoor mode × theme on the new pieces
+        for scheme in ["light", "dark"]:
+            ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, color_scheme=scheme)
+            ctx.add_init_script("try{localStorage.setItem('mushroom-guide:field','on')}catch(e){}")
+            pg = ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)))
+            pg.goto(url + "#explore-safety"); pg.wait_for_timeout(700)
+            bad = []
+            for s in SUBS:
+                pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(100)
+                if pg.evaluate("document.documentElement.scrollWidth") > 375: bad.append(s)
+            check(f"v53: outdoor mode on, {scheme}: every 拾菌 sub-page fits 375px and the switch reads 已打开 {bad} {errs}",
+                  not bad and pg.inner_text("[data-field-state]") == "已打开" and pg.is_checked("#xp-field-switch") and not errs)
+            ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
