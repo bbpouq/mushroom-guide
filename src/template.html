@@ -71,6 +71,7 @@
   --model-cap: #9A6A43; --model-gill: #EFE4CC; --model-stem: #F2ECDF; --model-ring: #FBF8F1; --model-volva: #F6F2EA; --model-ground: rgba(92, 64, 40, .62);
   --aura-1: rgba(94, 115, 52, .14); --aura-2: rgba(201, 138, 43, .10); --aura-3: rgba(45, 90, 61, .08);
   --color-chart: #2D5A3D;
+  --hero-forest: #17271C;  /* deep forest behind the home hero photo on wide screens */
   --color-seq-1: #A9C49A; --color-seq-2: #5E8A63; --color-seq-3: #2D5A3D;
 
   --fw-400: 400; --fw-500: 500; --fw-600: 600; --fw-700: 700; --fw-800: 800;
@@ -1156,7 +1157,19 @@ html[data-tab="id"] .subnav { display: flex; }
 @media (max-width: 400px) { .hdr__search { display: none; } }
 /* 识菌 overview */
 .home-hero .view__lead { font-size: 18px; }
-.home-hero .view__hero { object-position: 50% 22%; }  /* keep the porcini caps in frame on wide screens */
+.home-hero .view__hero { object-position: 50% 30%; }
+/* desktop: the photo sits on the right at its own 3:2 shape so every mushroom shows; title and search on deep forest at left */
+@media (min-width: 1024px) {
+  /* 64% of the width at 3:2 = width / 2.34: the photo box keeps the photo's own shape at any desktop width */
+  .home-hero.view__head:has(> .view__hero) { min-height: 0; aspect-ratio: 2.34 / 1; align-content: center; padding: 40px 48px; background: var(--hero-forest); }
+  .home-hero .view__hero { left: auto; right: 0; width: 64%; object-position: 50% 50%; animation: none; translate: none;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(10, 14, 11, 1) 24%); mask-image: linear-gradient(to right, transparent 0, rgba(10, 14, 11, 1) 24%); }
+  .home-hero.view__head:has(> .view__hero)::before { background: linear-gradient(to right, var(--hero-forest) 0, rgba(10, 14, 11, .35) 46%, rgba(10, 14, 11, 0) 62%); }
+  .home-hero > :not(.view__hero):not(.view__credit) { max-width: 44%; }
+  .home-hero .view__title { font-size: 56px; }
+  [data-field="on"] .home-hero.view__head:has(> .view__hero) { background: none; aspect-ratio: auto; padding: 0; }
+  [data-field="on"] .home-hero > :not(.view__hero):not(.view__credit) { max-width: none; }
+}
 .home-hero__en { margin: 0; font-size: 13px; font-weight: var(--fw-600); letter-spacing: .06em; color: rgba(255, 255, 255, .78); }
 [data-field="on"] .home-hero__en { color: var(--color-muted-foreground); }
 .home-start { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-5) 0 var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg);
