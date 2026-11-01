@@ -200,9 +200,9 @@ html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("<!--N_NA-->", str(sum(1 for x in species if not x.get("page")))))
 def hero_small(name):
     """A 640px copy of a header photo for phones (made from the 1024px file; the build never fetches)."""
-    from PIL import Image
     src, dst = OUT.parent / "photos" / name, OUT.parent / "photos" / name.replace(".webp", "-640.webp")
-    if not dst.exists() or dst.stat().st_mtime < src.stat().st_mtime:
+    if not dst.exists():  # committed with the photo; only a new header photo needs Pillow here (CI has no Pillow)
+        from PIL import Image
         im = Image.open(src).convert("RGB")
         im.resize((640, round(im.height * 640 / im.width)), Image.LANCZOS).save(dst, "WEBP", quality=66, method=6)
     return dst.name
