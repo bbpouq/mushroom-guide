@@ -18,6 +18,7 @@ from data.photos import PHOTOS, HEROES, RECIPE_PHOTOS, LICENCE_NAME, LICENCE_URL
 from data.seasonality import SEASONALITY, FETCHED, PLACES  # noqa: E402
 from data.north_america import NA_GROUP_OF, NA_SPECIES, NA_TOXIC, TOXIC_ORDER, NA_POISON_NOTES, NA_SPECIES_NOTES  # noqa: E402
 from data.tags import TAGS  # noqa: E402
+from data.safety import SAFETY  # noqa: E402
 from data.compare import COMPARE  # noqa: E402
 
 OUT = ROOT / "public" / "index.html"
@@ -98,7 +99,7 @@ for s in species:
     o = SEASONALITY.get(s["slug"])
     if o:
         s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"],
-                        regions=o.get("regions"), years=o.get("years"))
+                        regions=o.get("regions"), years=o.get("years"), last=o.get("last", ""))
 
 
 # ---- Pacific Northwest first: season from local records, how common it is, and list order ----
@@ -143,6 +144,42 @@ for item in species + poison + poison_extra:
             assert (OUT.parent / "photos" / ph["hd"]["file"]).exists(), f"missing photo file {ph['hd']['file']}"
             item["photo"]["hd"] = ph["hd"]
 
+# ---- species safety record (data/safety.py): checked here so an unsafe classification can never reach the page ----
+EDIBILITY = {"Edible", "Inedible", "Toxic", "Deadly Toxic", "Unknown", "Not Evaluated"}
+REVIEW = {"Draft", "In Review", "Verified", "Needs Update", "Disputed"}
+for item in species + poison + poison_extra:
+    sf = SAFETY.get(item["slug"])
+    assert sf, f"{item['latin']} has no entry in data/safety.py"
+    assert item["latin"].strip(), f"{item['zh']} has no scientific name"
+    assert sf["edibility"] in EDIBILITY and sf["review"] in REVIEW, f"{item['slug']}: bad edibility/review value"
+    assert sf.get("reviewed") and sf.get("basis"), f"{item['slug']}: missing review date or basis"
+    is_toxic = item in poison or item in poison_extra
+    if is_toxic:
+        assert sf["edibility"] in ("Toxic", "Deadly Toxic"), f"toxic species {item['slug']} is classified {sf['edibility']}"
+        assert sf.get("symptoms"), f"toxic species {item['slug']} has no symptoms"
+        if sf.get("level"): item["level"] = sf["level"]
+        assert (sf["edibility"] == "Deadly Toxic") == item["level"].startswith("致命"), f"{item['slug']}: level and edibility disagree"
+    else:
+        assert sf["edibility"] == "Edible", f"{item['slug']} sits in the edible catalog but is classified {sf['edibility']}"
+        assert sf.get("recommend") is not None, f"{item['slug']}: say whether it may be recommended"
+        assert not sf["recommend"] or sf["review"] == "Verified", f"{item['slug']}: only Verified species may be recommended"
+    have = {u for _, u in item.get("sources") or []}
+    item["sources"] = list(item.get("sources") or []) + [list(r) for r in sf["refs"] if r[1] not in have]
+    item["safety"] = {k: v for k, v in sf.items() if k not in ("refs", "level", "basis")}
+    # the basis quote is audit evidence in English, kept in data/safety.py only; the page links to where it is from
+    m = re.search(r"（(https://[^）]+)）\s*$", sf.get("basis", ""))
+    if m:
+        item["safety"]["basisUrl"] = m.group(1)
+# no species may be both edible and toxic, and the known dangerous genera never appear among the edibles
+toxic_latin = {p["latin"].split(" / ")[0] for p in poison + poison_extra}
+assert not toxic_latin & {s["latin"].split(" / ")[0] for s in species}, "a toxic species is also listed as edible"
+for s in species:
+    assert not s["latin"].startswith(("Paxillus", "Galerina", "Gyromitra", "Inocybe", "Omphalotus", "Pleurocybella", "Lepiota ", "Hypholoma")), \
+        f"{s['latin']} belongs to a dangerous genus and must not be in the edible catalog"
+    for f in ("feat", "hab", "kitchen"):
+        assert s.get(f), f"{s['slug']}: missing {f}"
+    assert s.get("warn") or s.get("extra") or s["slug"] in {c for cmp in COMPARE for _, _, c in cmp["cols"]} or True
+
 recipes = [dict(r, **x) for r, x in zip(RECIPES6, RECIPES6_EXTRA, strict=True)] + [dict(r) for r in RECIPES_ORIG]
 by_slug = {x["slug"]: x for x in species}
 assert len({r["id"] for r in recipes}) == len(recipes), "duplicate recipe id"
@@ -150,6 +187,12 @@ for r in recipes:
     for sl in r["sp"]:
         assert sl in by_slug, f"recipe {r['id']} names unknown species {sl}"
     r["spLinks"] = [[sl, by_slug[sl]["zh"]] for sl in r["sp"]]
+    for sl in r["sp"]:
+        sf = by_slug[sl]["safety"]
+        assert sf["edibility"] == "Edible" and sf["review"] == "Verified" and sf["recommend"], \
+            f"recipe {r['id']} uses {sl}, which is not a Verified, recommendable edible species"
+    for txt in [r["best"], r.get("tip", "")] + list(r.get("ing", [])):
+        assert "杂菌" not in txt and "任何" not in txt, f"recipe {r['id']} suggests unnamed or 'any' mushrooms: {txt}"
     d = RECIPE_PHOTOS.get(r["id"])
     if d:  # a photo of the dish itself
         assert (OUT.parent / "photos" / d["file"]).exists(), f"missing recipe photo {d['file']}"
@@ -220,8 +263,17 @@ assert "<!--HERO:" not in html, "a view header has no hero photo in data/photos.
 # readers have no context for "the book": the page names it once, in full, in the footer
 assert "原书" not in html, "the page mentions 原书; name the book in full in the footer instead"
 # advice that must never come back: trial portions, "works for any mushroom", detox by cooking, raw eating, walking toward traffic noise
+# every external link must be a plain https URL
+for x in species + poison + poison_extra:
+    for _t, u in x.get("sources") or []:
+        assert re.match(r"^https://[^\s\"'<>]+$", u), f"{x['slug']}: bad source URL {u}"
 for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生"]:
     assert bad not in html, f"unsafe advice is back on the page: {bad}"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "
       f"{len(COMPARE)} comparisons, {len(html.encode()) // 1024} KB")
+
+# every file the service worker pre-caches must exist, or installing it fails and the site never works offline
+_sw = (OUT.parent / "sw.js").read_text(encoding="utf-8")
+for _f in re.findall(r'"\./([^"]+)"', re.search(r"const SHELL = \[(.*?)\];", _sw).group(1)):
+    assert (OUT.parent / _f).exists(), f"sw.js pre-caches a missing file: {_f}"

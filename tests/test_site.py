@@ -243,7 +243,7 @@ def run():
         pg.fill("#cal-q", "松茸"); pg.wait_for_timeout(150)
         one = pg.locator("#cal .cal-month__list li").count()
         check(f"season explorer: region ({all_rows} -> {bc_rows} rows), month view and search",
-              0 < bc_rows < all_rows and "高峰" in month_txt and "不是实时预测" in month_txt and one == 1)
+              0 < bc_rows < all_rows and "高峰" in month_txt and "不能作为实时出菇预测" in month_txt and one == 1)
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         check("the species sheet shows records by region and by year, with the upload caveat",
               pg.locator("#sheet-body .obs-chart__regions span").count() == 3 and pg.locator("#sheet-body .obs-years__col").count() >= 3
@@ -473,6 +473,92 @@ def run():
         pg.set_input_files("#finds-import", backup); pg.wait_for_timeout(1000)
         check(f"importing the backup restores the finds and photo {errs}", pg.locator("#finds-list .finds__item").count() == 2
               and pg.locator("#finds-list img.finds__pic").count() == 1 and not errs)
+        ctx.close()
+
+        # ---------- round 7: safety data, finder edge cases, journal import and delete (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []; reqs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.on("request", lambda r: reqs.append(r.url))
+        pg.goto(url); pg.wait_for_timeout(500)
+        bad = pg.evaluate("""() => {
+          const E = ["Edible","Inedible","Toxic","Deadly Toxic","Unknown","Not Evaluated"], R = ["Draft","In Review","Verified","Needs Update","Disputed"];
+          const out = [];
+          for (const s of DATA.species) if (!s.safety || s.safety.edibility !== "Edible" || !R.includes(s.safety.review)) out.push(s.slug);
+          for (const p of toxicAll) if (!p.safety || !["Toxic","Deadly Toxic"].includes(p.safety.edibility) || !p.safety.symptoms
+                                         || (p.safety.edibility === "Deadly Toxic") !== (p.level === "致命")) out.push(p.slug);
+          for (const r of DATA.recipes) for (const sp of r.sp) { const s = DATA.species.find(x => x.slug === sp); if (!s || !recommendable(s)) out.push(r.id + ":" + sp); }
+          return out; }""")
+        check(f"every species has a valid safety record; recipes use only verified edibles {bad}", not bad)
+        pax = pg.evaluate("(() => { const p = toxicAll.find(x => x.slug === 'paxillus-involutus'); return p && [p.safety.edibility, p.level]; })()")
+        hyd = pg.evaluate("DATA.species.find(x => x.slug === 'hydnum-repandum').safety.note || ''")
+        check(f"Paxillus involutus is deadly toxic and Hydnum repandum warns about the name {pax}",
+              pax == ["Deadly Toxic", "致命"] and "Paxillus" in hyd)
+        picks = pg.evaluate("Array.from({length: 60}, (_, i) => recommendable(todayPick(i).s)).every(Boolean)")
+        check("today's mushroom is always a verified, recommended edible (60 days)", picks)
+        unver = pg.evaluate("DATA.species.filter(s => s.safety.review !== 'Verified').length")
+        pg.evaluate("show('species')"); pg.wait_for_timeout(300)
+        check(f"species cards flag every unverified species ({unver})", pg.locator(".sp-card__review").count() == unver and unver > 0)
+        pg.evaluate("show('recipes')"); pg.wait_for_timeout(200)
+        check("recipes carry the exact safety notice",
+              "本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。" in pg.inner_text("#v-recipes"))
+        pg.evaluate("openSpecies(DATA.species.findIndex(s => s.slug === 'hydnum-repandum'))"); pg.wait_for_timeout(300)
+        sh = pg.inner_text("#sheet")
+        check("a species sheet shows edibility, review status, season coverage and the history-not-forecast line",
+              "资料审核" in sh and "非真菌学专家审核" in sh and "覆盖年份" in sh and "最近一条" in sh
+              and "历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。" in sh)
+        pg.evaluate("document.getElementById('sheet').close()")
+        pg.evaluate("openToxic('paxillus-involutus')"); pg.wait_for_timeout(300)
+        sh = pg.inner_text("#sheet")
+        check("a toxic sheet shows symptoms and the name warning", "中毒表现" in sh and "溶血" in sh and "羊蹄菇" in sh)
+        pg.evaluate("document.getElementById('sheet').close()")
+        few = pg.evaluate("(() => { const s = DATA.species.find(x => x.obs && x.obs.counts.reduce((a, b) => a + b, 0) < 30); if (!s) return null; openSpecies(DATA.species.indexOf(s)); return document.getElementById('sheet').innerText.includes('数据不足'); })()")
+        check("a species with fewer than 30 records says 数据不足", few is True)
+        pg.evaluate("document.getElementById('sheet').close()")
+        # finder: everything skipped, then contradicting answers
+        pg.evaluate("show('finder')"); pg.wait_for_timeout(200)
+        for _ in range(5):
+            pg.click("#finder-steps [data-v='']"); pg.wait_for_timeout(60)
+        check("skipping every finder question says nothing could be narrowed and lists no candidates",
+              "都跳过了" in pg.inner_text("#finder-results") and pg.locator("#finder-results .res-item").count() == 0)
+        pg.click("#finder-reset"); pg.wait_for_timeout(60)
+        pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(60)
+        pg.click('#finder-steps .wiz__dot[data-step="4"]'); pg.wait_for_timeout(60)
+        vol = pg.locator('#finder-steps [data-f="volva"]:not([data-v=""])').first
+        vol.click(); pg.wait_for_timeout(100)
+        items = pg.eval_on_selector_all("#finder-results .res-item", "els => els.map(e => e.classList.contains('res-item--toxic'))")
+        check(f"contradicting finder answers still list toxic species first {errs}",
+              not errs and (not items or items[0] or not any(items)) and items == sorted(items, reverse=True))
+        # journal: invalid files never change existing records; duplicates are reported; web photo addresses are ignored
+        rec = {"id": 111, "date": "2026-10-01", "sp": "boletus-edulis", "place": "测试", "photos": ["px1", "px2"], "parts": {}}
+        pg.evaluate("r => localStorage.setItem('mushroom-guide:finds:v1', JSON.stringify([r]))", rec)
+        pg.evaluate("show('log')"); pg.wait_for_timeout(400)
+        before = pg.evaluate("localStorage.getItem('mushroom-guide:finds:v1')")
+        tmp = Path(__import__("tempfile").mkdtemp())
+        (tmp / "broken.json").write_text("{not json", encoding="utf-8")
+        (tmp / "other.json").write_text('{"hello": 1}', encoding="utf-8")
+        (tmp / "dup.json").write_text(__import__("json").dumps({"version": 3, "finds": [rec, {"id": 222, "date": 5}],
+                                     "photos": {}}), encoding="utf-8")
+        (tmp / "web.json").write_text(__import__("json").dumps({"version": 3, "finds": [{"id": 333, "date": "2026-10-02", "photos": ["w1"]}],
+                                     "photos": {"w1": "https://example.invalid/track.jpg"}}), encoding="utf-8")
+        msgs = []
+        for name in ["broken", "other"]:
+            pg.set_input_files("#finds-import", str(tmp / f"{name}.json")); pg.wait_for_timeout(400)
+            msgs.append(pg.inner_text("#toast"))
+        check(f"invalid backups leave existing records untouched {msgs}",
+              pg.evaluate("localStorage.getItem('mushroom-guide:finds:v1')") == before and all("没有改动" in m for m in msgs))
+        pg.set_input_files("#finds-import", str(tmp / "dup.json")); pg.wait_for_timeout(400)
+        m = pg.inner_text("#toast")
+        check(f"a duplicate and a malformed record are reported, not imported ({m})",
+              "已经有了" in m and "格式不对" in m and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 1)
+        pg.set_input_files("#finds-import", str(tmp / "web.json")); pg.wait_for_timeout(500)
+        check("an imported backup cannot make the page fetch a web address",
+              not any("example.invalid" in u for u in reqs) and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 2)
+        pg.click('[data-del="111"]'); pg.wait_for_timeout(100)
+        check("deleting a find says how many photos go with it", "含 2 张照片" in pg.inner_text('[data-del="111"]'))
+        pg.click('[data-del="111"]'); pg.wait_for_timeout(300)
+        check("the delete toast names the photos removed", "2 张照片" in pg.inner_text("#toast")
+              and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 1)
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

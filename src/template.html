@@ -1273,6 +1273,22 @@ html[data-tab="id"] .subnav { display: flex; }
 .card__ops { display: flex; justify-content: space-between; border-top: .5px solid var(--color-border); padding: 0 var(--space-2); }
 .card__ops .btn-text { font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
 
+/* ---------- safety block on species sheets (round 7): edibility, review status, symptoms ---------- */
+.safety { margin: var(--space-4) 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); background: var(--surface-2); }
+.safety--toxic { background: var(--color-danger-surface); }
+.safety__rows { display: grid; gap: var(--space-2); margin: 0; }
+.safety__row { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: var(--space-3); font-size: 14px; line-height: 1.55; }
+.safety__row dt { color: var(--color-muted-foreground); font-weight: var(--fw-500); }
+.safety__row dd { margin: 0; text-wrap: pretty; }
+.safety__status { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: var(--fw-600); background: var(--surface-3); }
+.safety__status--in-review, .safety__status--disputed, .safety__status--needs-update, .safety__status--draft { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.safety__line { margin: var(--space-3) 0 0; font-size: 13px; color: var(--color-danger-text); text-wrap: pretty; }
+.sp-card__review { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 12px; line-height: 1.5; font-weight: var(--fw-600); background: var(--color-warning-surface); color: var(--color-warning-text); }
+
+.obs-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5em, 1fr)); gap: var(--space-2) var(--space-4); margin: var(--space-3) 0 0; font-size: 13px; }
+.obs-meta dt { color: var(--color-muted-foreground); }
+.obs-meta dd { margin: 0; font-weight: var(--fw-600); font-variant-numeric: tabular-nums; }
+.obs-chart__few { display: inline-block; margin: 0 6px; padding: 0 7px; border-radius: 999px; font-size: 11px; font-weight: var(--fw-600); background: var(--color-warning-surface); color: var(--color-warning-text); }
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1526,6 +1542,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <h2 class="panel__title"><span class="panel__num">04</span>去哪里找</h2>
             <p>我们采的只是真菌的“果实”。有的菌靠腐烂有机物生活，有的寄生在活树上，还有的与特定树种的根共生（菌根菌），所以可能长在离树一段距离的地方。附近出现其他（哪怕不能吃的）菌，往往是好兆头。</p>
             <!--HABITATS-->
+            <p class="muted-note">生境和伴生树只能帮你决定去哪里找、缩小范围，<b>不能证明手上的菌是哪一种</b>：毒菌常和食用菌长在同一片林子、同一种树下。</p>
           </section>
           <section class="panel">
             <h2 class="panel__title"><span class="panel__num">05</span>采摘</h2>
@@ -1799,8 +1816,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           </section>
           <section class="panel">
             <h2 class="panel__title"><span class="panel__num">04</span>基础做法：香芹蒜香</h2>
-            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，也适合鸡油菌、卷缘齿菌等本站列为可食、<b>已经当面确认过身份</b>的种类。羊肚菌、鹅膏类等“须煮熟”的种类按各自页面的要求煮够时间。4 人份，约 35 分钟。</p>
-            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 已确认身份的可食菌 500 g 切厚片 · 盐、黑胡椒</p>
+            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，也适合太平洋金鸡油菌、卷缘齿菌（羊蹄菇），前提是<b>已经由有经验的人当面确认过身份</b>。也可以用超市的褐蘑菇。4 人份，约 35 分钟。</p>
+            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 美味牛肝菌、太平洋金鸡油菌或卷缘齿菌（已确认身份）500 g 切厚片 · 盐、黑胡椒</p>
             <ol class="steps">
               <li>小火加热油、蒜和一半欧芹。</li>
               <li>转大火下菌，勤翻炒 5 分钟，再转小火。</li>
@@ -1924,7 +1941,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <h1 class="view__title" id="h-recipes">精选食谱</h1>
           <p class="view__lead"><!--N_RECIPES--> 道家常做法，中式、日式、西式都有。用量为公制，1 汤匙 ≈ 15 ml；勾选材料可以当购物清单用。</p>
         </header>
-        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>食谱只适用于已经由有经验的人当面确认过身份的菌，并要彻底煮熟。</b>烹饪不能让有毒的菌变安全。下锅前留一两朵生的样本放冰箱。每道菜也都可以用超市的栽培菌来做。</div></div>
+        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。</b>每道都要彻底煮熟。下锅前留一两朵生的样本放冰箱。每道菜也都可以用超市的栽培菌来做。</div></div>
         <div class="rc-filter" id="rc-filter" role="group" aria-label="按菜系筛选"></div>
         <h2 class="sr-only">食谱列表</h2>
         <div class="rc-grid" id="rc-grid"></div>
@@ -2052,7 +2069,7 @@ const SEASONS = [
   { key: "winter", label: "冬", months: [12, 1, 2] },
 ];
 const BADGE = { "上品": "choice", "须煮熟": "cook", "高风险": "risk", "不宜多吃": "small", "西北太平洋常见": "local", "西北太平洋少见": "rare" };
-const badges = f => f.length ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}</span>` : "";
+const badges = (f, extra = "") => f.length || extra ? `<span class="badges">${f.map(x => `<span class="badge badge--${BADGE[x]}">${esc(x)}</span>`).join("")}${extra}</span>` : "";
 function monthStrip(ms) {
   // numbered circles: filled = in season, ringed = this month
   const cells = Array.from({ length: 12 }, (_, i) => `<span class="month-strip__cell${ms.includes(i + 1) ? " is-in" : ""}${i + 1 === MONTH ? " is-now" : ""}" style="--m:${i}" aria-hidden="true">${i + 1}</span>`).join("");
@@ -2095,7 +2112,7 @@ function renderGrid() {
         <span class="sp-card__latin latin">${esc(s.latin)}</span></span></span>
       ${monthStrip(s.months)}
       <span class="sp-card__feat">${s.feat}</span>
-      ${badges(s.flags)}
+      ${badges(s.flags, s.safety && s.safety.review !== "Verified" ? `<span class="sp-card__review">${REVIEW_ZH[s.safety.review]}</span>` : "")}
       ${s.warn ? `<span class="sp-card__warn">${icon("alert", "icon--sm")}<span><span class="sr-only">易混毒菌：</span>${s.warn}</span></span>` : ""}
     </button>`).join("")
     : `<div class="empty-state"><p>没有符合条件的菌。</p><button class="btn" type="button" data-reset>清除全部筛选</button></div>`;
@@ -2187,6 +2204,7 @@ function openSpecies(i) {
       <div class="sheet__q"><dt>本地观察记录</dt><dd>${s.obs ? s.pnw.toLocaleString("en") + " 条" : "无数据"}</dd></div>
     </dl>
     ${badges(s.flags)}
+    ${safetyBlock(s, false)}
     ${sheetNav([["sh-id", "快速鉴别"], ["sh-look", "易混毒菌"], ["sh-eco", "生态与季节"], ["sh-kitchen", "厨房"], ["sh-more", "资料来源"]])}
     <section class="sheet__sec" id="sh-id"><h3 class="sheet__h">快速鉴别</h3>
       <dl class="facts">
@@ -2208,13 +2226,14 @@ function openSpecies(i) {
         <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
         <div class="fact"><dt>季节</dt><dd>${esc(s.season)}（${s.seasonLocal ? "据西北太平洋观察记录，" : ""}因地区和海拔而异）</dd></div>
       </dl>
+      <p class="muted-note">生境和伴生树只能帮你决定去哪里找、缩小范围，<b>不能证明手上的菌是哪一种</b>：毒菌常和食用菌长在同一片林子、同一种树下。</p>
       <div class="sheet__months">${monthStrip(s.months)}</div>
       ${obsChart(s)}
     </section>
     <section class="sheet__sec" id="sh-kitchen"><h3 class="sheet__h">厨房</h3>
       <p>${s.kitchen}</p>
       ${rc.length ? `<div class="sheet__recipes">${rc.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}</div>` : ""}
-      <p class="muted-note">食谱只适用于已经由可靠的人或渠道确认身份的菌。烹饪不能去掉未知的毒素。</p>
+      <p class="muted-note">本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。</p>
       <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a><a class="btn" href="#recipes">${icon("book", "icon--sm")}全部食谱</a></div>
     </section>
     <section class="sheet__sec" id="sh-more"><h3 class="sheet__h">深入资料</h3>
@@ -2232,13 +2251,37 @@ function openSpecies(i) {
   $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
   $("[data-close]", d).focus({ focusVisible: false });
 }
+const EDIBILITY_ZH = { "Edible": "可食", "Inedible": "不宜食用", "Toxic": "有毒", "Deadly Toxic": "剧毒，可致死", "Unknown": "未知", "Not Evaluated": "未评估" };
+const REVIEW_ZH = { "Draft": "草稿", "In Review": "待核实", "Verified": "已核对资料", "Needs Update": "需要更新", "Disputed": "资料有分歧" };
+const REVIEW_HINT = {
+  "Verified": "编辑已对照外部参考资料核对分级。",
+  "In Review": "目前只有一份资料支持这个分级，外部参考还没核对上。本站不推荐它，也不放进食谱。",
+  "Disputed": "参考资料说法不一致，本站按更谨慎的一方处理。",
+  "Needs Update": "资料可能过时，正在重新核对。",
+  "Draft": "草稿，尚未核对。"
+};
+// recommended on the home page, in season lists and in recipes only when an outside reference confirms it is edible
+const recommendable = s => !!(s.safety && s.safety.recommend && s.safety.review === "Verified");
+function safetyBlock(x, toxic) {
+  const f = x.safety; if (!f) return "";
+  const host = f.basisUrl ? f.basisUrl.replace(/^https:\/\/(www\.)?/, "").split("/")[0] : "";
+  return `<div class="safety${toxic ? " safety--toxic" : ""}">
+    <dl class="safety__rows">
+      <div class="safety__row"><dt>分级</dt><dd><b>${EDIBILITY_ZH[f.edibility] || esc(f.edibility)}</b></dd></div>
+      <div class="safety__row"><dt>资料审核</dt><dd><span class="safety__status safety__status--${f.review.toLowerCase().replace(/\s+/g, "-")}">${REVIEW_ZH[f.review] || esc(f.review)}</span> ${REVIEW_HINT[f.review] || ""}编辑核对（非真菌学专家审核），${esc(f.reviewed)}。${host ? ` 依据：<a href="${f.basisUrl}" target="_blank" rel="noopener">${esc(host)}</a>` : ""}</dd></div>
+      ${f.symptoms ? `<div class="safety__row"><dt>中毒表现</dt><dd>${esc(f.symptoms)}</dd></div>` : ""}
+      ${f.note ? `<div class="safety__row"><dt>注意</dt><dd>${esc(f.note)}</dd></div>` : ""}
+    </dl>
+    ${toxic ? "" : `<p class="safety__line">“可食”只说明这个物种本身，不说明你手里这一朵。没有经验丰富的人当面确认，就不要吃。</p>`}
+  </div>`;
+}
 // where each kind of content on a species page comes from
 function dataNotes(x) {
   return `<ul class="data-notes">
-    <li><span class="src-type src-type--community">社区观察</span>季节和记录数：iNaturalist 研究级观察（BC、华盛顿、俄勒冈），取自 ${DATA.obsFetched}。反映的是人们什么时候拍照上传，不等于产量，也不是实时预测。</li>
+    <li><span class="src-type src-type--community">社区观察</span>季节和记录数：iNaturalist 研究级观察（BC、华盛顿、俄勒冈），取自 ${DATA.obsFetched}。反映的是人们什么时候拍照上传，不等于产量。历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。</li>
     ${x.photo ? `<li><span class="src-type src-type--community">示例照片</span>iNaturalist 用户 ${esc(x.photo.author)}，${esc(x.photo.lic)}。只是一个例子，不能只凭照片鉴定。</li>` : ""}
     <li><span class="src-type src-type--editor">编者注</span>标有【编者注】的是本站补充的安全提示。</li>
-    <li><span class="src-type src-type--editor">审核状态</span>本站编辑根据上面列出的资料整理，<b>没有经过真菌学专家逐条审核</b>。资料整理到 ${DATA.built}。发现错误请告诉站长。</li>
+    <li><span class="src-type src-type--editor">审核状态</span>${x.safety ? (REVIEW_ZH[x.safety.review] || "") + "。" : ""}本站编辑根据上面列出的资料整理，<b>没有经过真菌学专家逐条审核</b>。资料整理到 ${DATA.built}。发现错误请告诉站长。</li>
   </ul>`;
 }
 $("#sheet").addEventListener("click", e => {
@@ -2261,7 +2304,7 @@ function obsChart(s) {
   const where = "BC、华盛顿、俄勒冈";
   const link = `<a href="https://www.inaturalist.org/observations?place_id=${DATA.obsPlaces}&quality_grade=research&taxon_id=${o.id}" target="_blank" rel="noopener">在 iNaturalist 查看记录</a>`;
   if (total < 30) return `<section class="obs-chart"><h3 class="obs-chart__title">西北太平洋什么时候能见到</h3>
-    <p class="obs-chart__note">${total ? `iNaturalist 上${where}只有 ${total} 条研究级记录（<span class="latin">${esc(o.taxon)}</span>），太少，看不出季节。` : `iNaturalist 上目前没有${where}的研究级记录（<span class="latin">${esc(o.taxon)}</span>）。`}${total ? link : ""}</p></section>`;
+    <p class="obs-chart__note"><span class="obs-chart__few">数据不足</span>${total ? `iNaturalist 上${where}只有 ${total} 条研究级记录（<span class="latin">${esc(o.taxon)}</span>），太少，看不出季节。` : `iNaturalist 上目前没有${where}的研究级记录（<span class="latin">${esc(o.taxon)}</span>）。`}${total ? link : ""}</p></section>`;
   const max = Math.max(...o.counts), peak = o.counts.indexOf(max);
   const cols = o.counts.map((n, i) => `<div class="obs-chart__col${i === peak ? " is-active" : ""}" data-m="${i}"><span class="obs-chart__bar" style="height:${n ? Math.max(2, Math.round(n / max * 100)) : 0}%"></span></div>`).join("");
   return `<section class="obs-chart" aria-labelledby="obs-title">
@@ -2271,10 +2314,22 @@ function obsChart(s) {
     <div class="obs-chart__plot" aria-hidden="true" data-counts="${o.counts.join(",")}">${cols}</div>
     <div class="obs-chart__months" aria-hidden="true">${o.counts.map((_, i) => `<span>${i + 1}</span>`).join("")}</div>
     <table class="sr-only"><caption>每月观察记录数</caption><tr><th scope="col">月份</th><th scope="col">记录数</th></tr>${o.counts.map((n, i) => `<tr><td>${i + 1} 月</td><td>${n}</td></tr>`).join("")}</table>
-    ${o.regions ? `<p class="obs-chart__regions">${["bc", "wa", "or"].map(r => `<span>${REGION[r]} <b>${o.regions[r].reduce((a, b) => a + b, 0).toLocaleString("en")}</b></span>`).join("")}</p>` : ""}
+    ${o.regions ? `<p class="obs-chart__regions">${["bc", "wa", "or"].map(r => { const n = o.regions[r].reduce((a, b) => a + b, 0); return `<span>${REGION[r]} <b>${n.toLocaleString("en")}</b>${n < 30 ? `<span class="obs-chart__few">数据不足</span>` : ""}</span>`; }).join("")}</p>` : ""}
     ${obsYears(o)}
-    <p class="obs-chart__note">数量反映的是人们什么时候出门拍照上传，不等于产量；具体时间因地区、海拔和当年天气而异。数据取自 ${DATA.obsFetched}。${link}</p>
+    ${obsMeta(o)}
+    <p class="obs-chart__note"><b>历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。</b>数量反映的是人们什么时候出门拍照上传，不等于产量；具体时间因地区、海拔和当年天气而异。${link}</p>
   </section>`;
+}
+// what the season numbers cover: years, total, latest record, when fetched, source
+function obsMeta(o) {
+  const ys = Object.keys(o.years || {}).sort(), total = o.counts.reduce((a, b) => a + b, 0);
+  return `<dl class="obs-meta">
+    <div><dt>来源</dt><dd>iNaturalist 研究级</dd></div>
+    <div><dt>覆盖年份</dt><dd>${ys.length ? `${ys[0]}–${ys[ys.length - 1]} 年` : "—"}</dd></div>
+    <div><dt>记录总数</dt><dd>${total.toLocaleString("en")} 条</dd></div>
+    <div><dt>最近一条</dt><dd>${o.last || "—"}</dd></div>
+    <div><dt>数据更新</dt><dd>${DATA.obsFetched}</dd></div>
+  </dl>`;
 }
 // records per year: uploads grow every year, so this is about people photographing, not about the mushroom
 function obsYears(o) {
@@ -2346,6 +2401,7 @@ function openToxic(slug) {
     <div class="sheet__en">${esc(p.en)}</div>
     <div class="badges" style="margin-top: var(--space-3)"><span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></div>
     <div class="sheet__text">${p.feat}</div>
+    ${safetyBlock(p, true)}
     ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
     ${lookPairs(p.slug) ? `<div class="look-list">${lookPairs(p.slug)}</div>` : ""}
     <div class="link-row"><a class="btn" href="#emergency">${icon("phone", "icon--sm")}中毒急救</a>${photoLinks(p.latin)}</div>
@@ -2437,7 +2493,7 @@ const STEPS = [
 ];
 const F_TIP = { hym: "把菌翻过来看菌盖下面", sub: "看清它从什么上面长出来", spore: "做一张孢子印", ring: "看菌柄上部有没有一圈膜", volva: "把整个柄基连土挖出来，看有没有袋状菌托" };
 const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
-let fstep = 0;
+let fstep = 0, fskipAll = false;  // fskipAll: the last question was skipped with nothing answered
 const fLabel = (k, v) => { const o = STEPS.find(s => s.key === k).opts.find(x => x[0] === v); return o ? o[1] : v; };
 function fmatch(s, lenient) {
   const why = [];
@@ -2497,6 +2553,7 @@ function renderFinder() {
       </div>
     </fieldset>`;
   const jump = $("#finder-jump");
+  if (!answered && fskipAll) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">五个问题都跳过了，没有特征可以用来缩小范围。至少看清一项（比如菌盖下面是褶还是孔），再回来回答。<b>认不出来的菌，不要吃。</b></div>`; return; }
   if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答上面任意一个问题，这里会列出外形相符的候选种。不知道的问题直接跳过。</div>`; return; }
   const tox = toxicAll.filter(p => fmatch(p, true));
   const ed = DATA.species.filter(s => fmatch(s, false));
@@ -2519,12 +2576,13 @@ function renderFinder() {
 }
 document.addEventListener("click", e => {
   if (!e.target.closest("#v-finder")) return;
-  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); fstep = 0; return renderFinder(); }
+  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); fstep = 0; fskipAll = false; return renderFinder(); }
   const go = e.target.closest("[data-step]");
   if (go) { fstep = +go.dataset.step; renderFinder(); $(".wiz__q legend").scrollIntoView({ block: "nearest" }); return; }
   if (e.target.closest('[data-wiz="prev"]')) { fstep = Math.max(0, fstep - 1); return renderFinder(); }
   const b = e.target.closest("[data-f]"); if (!b) return;
   fstate[b.dataset.f] = b.dataset.v || null;
+  fskipAll = !b.dataset.v && fstep === STEPS.length - 1 && STEPS.every(x => fstate[x.key] === null);
   if (fstep < STEPS.length - 1) fstep++;
   renderFinder();
   const first = $("#finder-steps .wiz__opt"); if (first && e.detail === 0) first.focus();  // keyboard users land on the next question
@@ -2784,19 +2842,39 @@ $("#finds-list").addEventListener("click", e => {
   const b = e.target.closest("[data-del]"); if (!b) return;
   if (delArmed !== b) {
     if (delArmed) { delArmed.classList.remove("is-confirm"); delArmed.querySelector("span").textContent = "删除"; }
-    delArmed = b; b.classList.add("is-confirm"); b.querySelector("span").textContent = "确认删除";
+    const nph = ((findsLoad() || []).find(f => String(f.id) === b.dataset.del) || {}).photos;
+    delArmed = b; b.classList.add("is-confirm"); b.querySelector("span").textContent = nph && nph.length ? `确认删除（含 ${nph.length} 张照片）` : "确认删除";
     clearTimeout(delTimer); delTimer = setTimeout(() => { if (delArmed) { delArmed.classList.remove("is-confirm"); delArmed.querySelector("span").textContent = "删除"; delArmed = null; } }, 4000);
     return;
   }
   delArmed = null; clearTimeout(delTimer);
   const list = findsLoad(); if (list === null) return;
   const gone = list.find(f => String(f.id) === b.dataset.del);
-  findsSave(list.filter(f => f !== gone)); (gone && gone.photos || []).forEach(k => photoDB.del(k));
+  if (!findsSave(list.filter(f => f !== gone))) { toast("删除失败：浏览器不能保存，记录和照片都还在"); return; }
+  const ph = (gone && gone.photos) || []; ph.forEach(k => photoDB.del(k));
   if (draft.id && gone && draft.id === gone.id) formReset();
-  renderFinds(); toast("已删除");
+  renderFinds(); toast(ph.length ? `已删除这条记录和它的 ${ph.length} 张照片` : "已删除这条记录");
 });
 
 // ----- backup: JSON with photos, CSV for spreadsheets, import merges by id -----
+// An imported record keeps only known fields with the right types; anything else in the file is dropped.
+const FIND_TEXT = ["date", "sp", "other", "place", "notes", "status", "verifier", "vorg", "vdate", "vmethod", "hab", "trees"];
+function findClean(f) {
+  if (!f || typeof f !== "object" || Array.isArray(f)) return null;
+  const id = (typeof f.id === "number" && isFinite(f.id)) || (typeof f.id === "string" && f.id && f.id.length < 64) ? f.id
+    : f.id === undefined || f.id === null ? Date.now() + Math.random() : null;  // very old backups had no id
+  if (id === null) return null;
+  const r = { id };
+  for (const k of FIND_TEXT) if (f[k] !== undefined && f[k] !== null) { if (typeof f[k] !== "string") return null; r[k] = f[k].slice(0, 4000); }
+  if (r.date && !/^\d{4}-\d{2}-\d{2}/.test(r.date)) return null;
+  if (r.status && !STATUS[r.status]) delete r.status;
+  for (const k of ["lat", "lon", "alt", "acc"]) if (typeof f[k] === "number" && isFinite(f[k])) r[k] = f[k];
+  if (r.lat !== undefined && (Math.abs(r.lat) > 90 || r.lon === undefined || Math.abs(r.lon) > 180)) { delete r.lat; delete r.lon; }
+  if (f.fuzzy === true) r.fuzzy = true;
+  if (f.parts && typeof f.parts === "object" && !Array.isArray(f.parts)) r.parts = Object.fromEntries(Object.entries(f.parts).filter(([k, v]) => typeof k === "string" && typeof v === "string"));
+  r.photoKeys = Array.isArray(f.photos) ? f.photos.filter(k => typeof k === "string").slice(0, 8) : [];
+  return r;
+}
 function saveFile(name, blob) {
   try {
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
@@ -2827,20 +2905,35 @@ $("#finds-export").addEventListener("click", () => {
 $("#finds-import").addEventListener("change", async e => {
   const file = e.target.files[0]; e.target.value = ""; if (!file) return;
   try {
-    const data = JSON.parse(await file.text()), list = findsLoad();
+    if (file.size > 200 * 1024 * 1024) { toast("文件太大，不像本站导出的备份。现有记录没有改动"); return; }
+    let data; try { data = JSON.parse(await file.text()); } catch (_) { toast("这个文件不是有效的 JSON。现有记录没有改动"); return; }
+    const list = findsLoad();
     if (list === null) { toast("这个浏览器不能保存记录"); return; }
-    const incoming = Array.isArray(data) ? data : data.finds;
-    if (!Array.isArray(incoming)) throw new Error("format");
-    const have = new Set(list.map(f => String(f.id))); let added = 0;
+    const incoming = Array.isArray(data) ? data : data && data.finds;
+    if (!Array.isArray(incoming)) { toast("这个文件不是本站导出的备份。现有记录没有改动"); return; }
+    if (data && !Array.isArray(data) && typeof data.version === "number" && data.version > 3) { toast("这个备份来自更新版本的拾菌记，请先更新页面。现有记录没有改动"); return; }
+    const photos = data && !Array.isArray(data) && data.photos && typeof data.photos === "object" ? data.photos : {};
+    const have = new Set(list.map(f => String(f.id))), add = []; let dup = 0, bad = 0;
     for (const f of incoming) {
-      if (!f || typeof f !== "object" || have.has(String(f.id))) continue;
-      const rec = { ...f, id: f.id || Date.now() + added, photos: [] };
-      for (const k of f.photos || []) { const d = data.photos && data.photos[k]; if (d) { try { await photoDB.put(k, await (await fetch(d)).blob()); rec.photos.push(k); } catch (_) {} } }
-      list.push(rec); added++;
+      const r = findClean(f);
+      if (!r) { bad++; continue; }
+      if (have.has(String(r.id))) { dup++; continue; }
+      have.add(String(r.id)); add.push(r);
     }
-    if (!findsSave(list)) { toast("导入失败：浏览器存储已满"); return; }
-    renderFinds(); toast(added ? `导入了 ${added} 条记录` : "没有新的记录（已经都有了）");
-  } catch (_) { toast("这个文件不是本站导出的备份"); }
+    const stored = [];  // photos are written first; if saving the records fails they are removed again
+    for (const r of add) {
+      r.photos = [];
+      for (const k of r.photoKeys) {
+        const d = photos[k];  // only embedded images: an imported file must never make the page fetch a web address
+        if (typeof d === "string" && /^data:image\/(jpeg|png|webp);base64,/.test(d)) { try { await photoDB.put(k, await (await fetch(d)).blob()); r.photos.push(k); stored.push(k); } catch (_) {} }
+      }
+      delete r.photoKeys;
+    }
+    if (add.length && !findsSave(list.concat(add))) { stored.forEach(k => photoDB.del(k)); toast("导入失败：浏览器存储已满。现有记录没有改动"); return; }
+    renderFinds();
+    const extra = [dup ? `${dup} 条已经有了` : "", bad ? `${bad} 条格式不对，已跳过` : ""].filter(Boolean).join("，");
+    toast(add.length ? `导入了 ${add.length} 条记录${extra ? "（" + extra + "）" : ""}` : `没有导入新记录${extra ? "：" + extra : ""}`);
+  } catch (_) { toast("导入没有完成。现有记录没有改动"); }
 });
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-log-sp]"); if (!a) return;
@@ -3221,7 +3314,7 @@ function typeIn(el) {
 /* ---------- species view: one mushroom a day ---------- */
 // Each day shows one common Pacific Northwest edible that is in season that month (never a "高风险" one, e.g. an amanita).
 let todayOff = 0, todayFit = 0;
-const todayOk = s => s.pnw >= 300 && !s.flags.includes("高风险") && s.photo;
+const todayOk = s => s.pnw >= 300 && !s.flags.includes("高风险") && s.photo && recommendable(s);
 function todayPool(m) {
   const pool = DATA.species.filter(s => todayOk(s) && s.months.includes(m));
   return pool.length ? pool : DATA.species.filter(todayOk);
@@ -3313,7 +3406,7 @@ $("#today").addEventListener("click", e => {
 /* ---------- species view: what to look for this month ---------- */
 function renderNow() {
   const r = calState.region, min = r === "all" ? 300 : 100;
-  const list = DATA.species.map((s, i) => [s, i, obsCounts(s, r)]).filter(([, , c]) => c && c.reduce((a, b) => a + b, 0) >= min && calLevel(c[MONTH - 1], Math.max(...c)) >= 2)
+  const list = DATA.species.map((s, i) => [s, i, obsCounts(s, r)]).filter(([s, , c]) => recommendable(s) && c && c.reduce((a, b) => a + b, 0) >= min && calLevel(c[MONTH - 1], Math.max(...c)) >= 2)
     .sort((a, b) => b[2][MONTH - 1] - a[2][MONTH - 1]).slice(0, 12);
   $("#now-title").textContent = `${MONTH} 月在${REGION[r] === REGION.all ? "西北太平洋" : REGION[r]}常见`;
   $("#explore-month").textContent = `${MONTH} 月`;
@@ -3502,6 +3595,7 @@ function renderSeason() {
   const next = MONTH % 12 + 1, rising = [], falling = [];
   const r = calState.region, min = r === "all" ? 300 : 100;
   DATA.species.forEach(s => {
+    if (!recommendable(s)) return;
     const c = obsCounts(s, r); if (!c || c.reduce((a, b) => a + b, 0) < min) return;
     const max = Math.max(...c), cur = c[MONTH - 1], nx = c[next - 1];
     if (nx >= max * 0.5 && nx > cur * 1.3) rising.push([s, nx / max]);
@@ -3510,7 +3604,7 @@ function renderSeason() {
   const list = (arr, empty) => arr.length ? `<ul class="season__list">${arr.sort((a, b) => b[1] - a[1]).slice(0, 6).map(([s]) =>
     `<li><a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)}</span></span></a></li>`).join("")}</ul>`
     : `<p class="season__empty">${empty}</p>`;
-  $("#season-sub").textContent = `比较 ${MONTH} 月和 ${next} 月在 iNaturalist 上的历年研究级观察记录（${REGION[calState.region]}，取自 ${DATA.obsFetched}）。这是过去的记录规律，不是实时出菇预测；具体时间因地区、海拔和当年天气而异。`;
+  $("#season-sub").textContent = `比较 ${MONTH} 月和 ${next} 月在 iNaturalist 上的历年研究级观察记录（${REGION[calState.region]}，取自 ${DATA.obsFetched}）。${"历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。"}具体时间因地区、海拔和当年天气而异。`;
   $("#season-cols").innerHTML = `
     <div class="season__col"><h3 class="season__h">${icon("arrow", "icon--sm")}${next} 月记录明显增多</h3>${list(rising, "没有明显增多的常见种。")}</div>
     <div class="season__col"><h3 class="season__h">${icon("arrow", "icon--sm season__down")}${next} 月记录明显减少</h3>${list(falling, "没有明显减少的常见种。")}</div>`;
@@ -3803,7 +3897,7 @@ function renderCalendar() {
     const max = Math.max(...c);
     rows.push({ s, c, max, peak: c.indexOf(max), total });
   });
-  const where = REGION[region], note = `数据来自 iNaturalist 研究级观察（${where}），取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量，也不是实时预测。具体时间因地区、海拔和当年天气而异。`;
+  const where = REGION[region], note = `数据来自 iNaturalist 研究级观察（${where}），取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量。历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。具体时间因地区、海拔和当年天气而异。`;
   const restHtml = `<p class="cal__rest">${where}记录太少（少于 30 条）、没有列入的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。</p>`;
   $("#cal-month").hidden = mode !== "month";
   if (mode === "month") {

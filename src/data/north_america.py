@@ -32,7 +32,7 @@ _MATSUTAKE = dict(
 )
 
 NA_TOXIC = [dict(
-    zh="史密斯鹅膏", en="Smith's amanita", latin="Amanita smithiana", level="有毒", tag="伤肾",
+    zh="史密斯鹅膏", en="Smith's amanita", latin="Amanita smithiana", level="致命", tag="伤肾",
     feat="白至浅棕色菌盖 5–15 cm，常带白色疣；菌褶白、密；菌柄白，大部分埋在土里，在地面或地下最宽，向下收成萝卜或鱼雷状；气味起初温和，之后变得难闻（像变质的火腿）；孢子印白色。<br><b>中毒过程：</b>食后 20 分钟到 1 天内出现腹痛、腹泻、呕吐；2–6 天后可发生肾衰竭，部分患者需要住院透析。少到 2–3 朵就可能致病。",
     conf="松茸（北美西部常与松茸长在同一片林子里）",
     sources=[("UBC Beaty Museum · Mushrooms Up!", "https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html"),

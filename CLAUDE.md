@@ -16,10 +16,11 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 153 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 168 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
+python3 src/fetch_seasonality.py --last-only  # only refresh each species' latest observation date
 python3 src/fetch_photos.py          # pick example photos for species that lack one (--all to re-pick); needs network + Pillow
 ```
 
@@ -33,6 +34,9 @@ src/
   data/north_america.py  North American additions: NA_SPECIES, NA_TOXIC (each entry cites sources), NA_GROUP_OF (which
                          group each joins), TOXIC_ORDER (toxic list order, most dangerous in the PNW first),
                          plus NA_SPECIES_NOTES / NA_POISON_NOTES: 【编者注】 added to book entries, keyed by Latin name
+  data/safety.py         Safety record per slug (edible AND toxic): edibility, review status, reviewed date, basis (quote + URL,
+                         audit evidence only; the page shows just the link), refs, recommend (edible), symptoms (toxic,
+                         required), note. Model and rules: docs/CONTENT_SOURCES.md
   data/tags.py           Feature-finder tags for every edible AND toxic species, keyed by Chinese name
   data/compare.py        Side-by-side look-alike comparisons (cols reference species slugs)
   data/seasonality.py    Generated: iNaturalist research-grade observations per month in BC/WA/OR (combined and per region)
@@ -57,6 +61,7 @@ public/                  Deployed as-is: index.html (generated, do not hand-edit
                          vendor/three-0.160.0.module.min.js (MIT, licence beside it; loaded lazily for the 3D model),
                          vendor/leaflet-1.9.4.js + .css (BSD-2, licence beside it; loaded when the finds map scrolls into view)
 tests/test_site.py       Playwright checks (starts its own server)
+docs/                    SAFETY_AUDIT, CONTENT_SOURCES, CHANGES, TEST_REPORT, RELEASE_NOTES, OPEN_ISSUES (round 7)
 .github/workflows/pages.yml  Pages deploy on push to main; fails if public/index.html is stale (rebuild before committing)
 ```
 
@@ -102,6 +107,15 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
 - The emergency page says: call now, do not wait for symptoms, do not induce vomiting unless poison control says so, no
   home remedies, keep the mushroom and leftovers (source: California Poison Control). "我可能吃了不确定的菌" on the home
   view opens it. The guide's lost-in-the-woods panel follows S.T.O.P. and "stay put" (BC SAR Association, AdventureSmart).
+- **Safety records (round 7).** Every species needs a record in `data/safety.py`; the build fails otherwise. "Verified" means an
+  outside reference states the same edibility, never expert review. Only `recommend` + Verified species (`recommendable()` in the
+  script) may appear in 今日一菌, "N 月可以找", 季节变化 or recipes; others show a 待核实 / 资料有分歧 badge. When references
+  disagree, mark Disputed and take the cautious side. Recipes and the species kitchen section show the exact sentence
+  「本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。」
+- Season charts and notes use the sentence 「历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。」
+  and mark totals or regions under 30 records 数据不足. Habitat and trees narrow the search; they never prove an identification.
+- Journal import validates each record (`findClean`), never changes existing records on failure, and accepts photos only as
+  embedded `data:image/` URIs (an imported file must never make the page fetch a web address).
 - Species pages state their review status honestly: compiled by the editor from the listed sources, not reviewed by a
   mycologist, with the build date (`DATA.built`). Never invent reviewers, review dates or expert sign-off.
 
