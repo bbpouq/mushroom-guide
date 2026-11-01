@@ -99,7 +99,7 @@ for s in species:
     o = SEASONALITY.get(s["slug"])
     if o:
         s["obs"] = dict(taxon=o["taxon"], id=o["taxon_id"], counts=o["counts"],
-                        regions=o.get("regions"), years=o.get("years"), last=o.get("last", ""))
+                        regions=o.get("regions"), years=o.get("years"), last=o.get("last", ""), ryears={r: {y: 1 for y in (min(ys), max(ys))} for r, ys in (o.get("ryears") or {}).items() if ys})  # first and last year only
 
 
 # ---- Pacific Northwest first: season from local records, how common it is, and list order ----
@@ -145,6 +145,7 @@ for item in species + poison + poison_extra:
             item["photo"]["hd"] = ph["hd"]
 
 # ---- species safety record (data/safety.py): checked here so an unsafe classification can never reach the page ----
+HIGH_RISK = ("Amanita", "Cortinarius", "Chlorophyllum", "Macrolepiota", "Lepiota", "Galerina", "Gyromitra", "Paxillus", "Inocybe")
 EDIBILITY = {"Edible", "Inedible", "Toxic", "Deadly Toxic", "Unknown", "Not Evaluated"}
 REVIEW = {"Draft", "In Review", "Verified", "Needs Update", "Disputed"}
 for item in species + poison + poison_extra:
@@ -159,10 +160,22 @@ for item in species + poison + poison_extra:
         assert sf.get("symptoms"), f"toxic species {item['slug']} has no symptoms"
         if sf.get("level"): item["level"] = sf["level"]
         assert (sf["edibility"] == "Deadly Toxic") == item["level"].startswith("致命"), f"{item['slug']}: level and edibility disagree"
+        assert any("wikipedia.org" not in u for _, u in (item.get("sources") or []) + sf["refs"]), \
+            f"toxic species {item['slug']} cites only Wikipedia"
     else:
-        assert sf["edibility"] == "Edible", f"{item['slug']} sits in the edible catalog but is classified {sf['edibility']}"
+        assert sf["edibility"] in ("Edible", "Not Evaluated", "Unknown"), \
+            f"{item['slug']} sits in the edible catalog but is classified {sf['edibility']}"
+        # "Edible" needs an outside reference; a book-only species is Not Evaluated (hotfix 2026-11-01)
+        assert sf["edibility"] != "Edible" or sf["review"] in ("Verified", "Disputed"), \
+            f"{item['slug']}: Edible without an external reference must be Not Evaluated"
         assert sf.get("recommend") is not None, f"{item['slug']}: say whether it may be recommended"
-        assert not sf["recommend"] or sf["review"] == "Verified", f"{item['slug']}: only Verified species may be recommended"
+        assert not sf["recommend"] or (sf["review"] == "Verified" and sf["edibility"] == "Edible"), \
+            f"{item['slug']}: only Verified edible species may be recommended"
+        assert not sf["recommend"] or not item["latin"].startswith(HIGH_RISK), \
+            f"{item['slug']}: species of high-risk genera are never recommended"
+        if sf["edibility"] != "Edible":  # no cooking advice and no "choice" badge for a species we have not evaluated
+            item["kitchen"] = "本站没有评估它在本地的可食性，不提供吃法。没有经验丰富的人当面确认，不要吃。"
+            item["flags"] = [f for f in item.get("flags", []) if f != "上品"]
     have = {u for _, u in item.get("sources") or []}
     item["sources"] = list(item.get("sources") or []) + [list(r) for r in sf["refs"] if r[1] not in have]
     item["safety"] = {k: v for k, v in sf.items() if k not in ("refs", "level", "basis")}

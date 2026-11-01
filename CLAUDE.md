@@ -16,11 +16,12 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 168 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 176 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
 python3 src/fetch_seasonality.py --last-only  # only refresh each species' latest observation date
+python3 src/fetch_seasonality.py --region-years  # only refresh records per year in each region (coverage per region)
 python3 src/fetch_photos.py          # pick example photos for species that lack one (--all to re-pick); needs network + Pillow
 ```
 
@@ -113,7 +114,14 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   disagree, mark Disputed and take the cautious side. Recipes and the species kitchen section show the exact sentence
   「本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。」
 - Season charts and notes use the sentence 「历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。」
-  and mark totals or regions under 30 records 数据不足. Habitat and trees narrow the search; they never prove an identification.
+  and mark totals or regions under 30 records 样本不足; each region shows its records, coverage years, update date and source. Habitat and trees narrow the search; they never prove an identification.
+- **Safety hotfix (2026-11-01).** An edible-catalog species with no external reference is `Not Evaluated`: the build replaces
+  its kitchen note with "不提供吃法", drops 上品, and it is never recommended. Species of `HIGH_RISK` genera (Amanita, Cortinarius,
+  Chlorophyllum, Macrolepiota, ...) are never recommended. *Hydnum repandum* is shown as 美味齿菌（羊蹄菇）: the name 卷缘齿菌 was
+  read as *Paxillus involutus* (卷边桩菇, deadly) more than once, so it survives only in `searchAlso` and the disambiguation notes
+  (searching 卷缘齿菌 lists Paxillus first). Kitchen instructions name only recommended species. The checklist is
+  「食用前风险检查」 with the exact warning 「本清单不能确认任何蘑菇是否可食用。…不要仅凭本应用决定是否食用。」. Poisoning
+  times are ranges with a source (NAMA), never fixed points; toxic species may not cite Wikipedia alone (build check).
 - Journal import validates each record (`findClean`), never changes existing records on failure, and accepts photos only as
   embedded `data:image/` URIs (an imported file must never make the page fetch a web address).
 - Species pages state their review status honestly: compiled by the editor from the listed sources, not reviewed by a

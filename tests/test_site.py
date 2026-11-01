@@ -484,7 +484,8 @@ def run():
         bad = pg.evaluate("""() => {
           const E = ["Edible","Inedible","Toxic","Deadly Toxic","Unknown","Not Evaluated"], R = ["Draft","In Review","Verified","Needs Update","Disputed"];
           const out = [];
-          for (const s of DATA.species) if (!s.safety || s.safety.edibility !== "Edible" || !R.includes(s.safety.review)) out.push(s.slug);
+          for (const s of DATA.species) if (!s.safety || !["Edible","Not Evaluated","Unknown"].includes(s.safety.edibility) || !R.includes(s.safety.review)
+                                    || (s.safety.edibility === "Edible" && s.safety.review === "In Review")) out.push(s.slug);
           for (const p of toxicAll) if (!p.safety || !["Toxic","Deadly Toxic"].includes(p.safety.edibility) || !p.safety.symptoms
                                          || (p.safety.edibility === "Deadly Toxic") !== (p.level === "致命")) out.push(p.slug);
           for (const r of DATA.recipes) for (const sp of r.sp) { const s = DATA.species.find(x => x.slug === sp); if (!s || !recommendable(s)) out.push(r.id + ":" + sp); }
@@ -512,8 +513,8 @@ def run():
         sh = pg.inner_text("#sheet")
         check("a toxic sheet shows symptoms and the name warning", "中毒表现" in sh and "溶血" in sh and "羊蹄菇" in sh)
         pg.evaluate("document.getElementById('sheet').close()")
-        few = pg.evaluate("(() => { const s = DATA.species.find(x => x.obs && x.obs.counts.reduce((a, b) => a + b, 0) < 30); if (!s) return null; openSpecies(DATA.species.indexOf(s)); return document.getElementById('sheet').innerText.includes('数据不足'); })()")
-        check("a species with fewer than 30 records says 数据不足", few is True)
+        few = pg.evaluate("(() => { const s = DATA.species.find(x => x.obs && x.obs.counts.reduce((a, b) => a + b, 0) < 30); if (!s) return null; openSpecies(DATA.species.indexOf(s)); return document.getElementById('sheet').innerText.includes('样本不足'); })()")
+        check("a species with fewer than 30 records says 样本不足", few is True)
         pg.evaluate("document.getElementById('sheet').close()")
         # finder: everything skipped, then contradicting answers
         pg.evaluate("show('finder')"); pg.wait_for_timeout(200)
@@ -559,6 +560,47 @@ def run():
         pg.click('[data-del="111"]'); pg.wait_for_timeout(300)
         check("the delete toast names the photos removed", "2 张照片" in pg.inner_text("#toast")
               and pg.evaluate("JSON.parse(localStorage.getItem('mushroom-guide:finds:v1')).length") == 1)
+        ctx.close()
+
+        # ---------- safety hotfix (2026-11-01): Paxillus, unevaluated species, checklist, emergency, old journal data ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        old = [{"id": 1700000000000, "date": "2024-09-14", "sp": "hydnum-repandum", "place": "旧版记录", "notes": "v1"}]
+        pg.goto(url); pg.evaluate("r => localStorage.setItem('mushroom-guide:finds:v1', JSON.stringify(r))", old); pg.reload(); pg.wait_for_timeout(500)
+        leak = pg.evaluate("""() => {
+          const out = [];
+          for (const s of DATA.species) if (/^(Paxillus|Galerina|Gyromitra|Inocybe|Omphalotus|Lepiota )/.test(s.latin)) out.push(s.slug);
+          for (const r of DATA.recipes) if (/Paxillus|卷边桩菇|卷缘齿菌/.test(JSON.stringify(r))) out.push("recipe " + r.id);
+          for (const s of DATA.species) if (recommendable(s) && /^(Amanita|Cortinarius|Chlorophyllum|Macrolepiota)/.test(s.latin)) out.push("recommended " + s.slug);
+          for (const s of DATA.species) if (s.safety.edibility !== "Edible" && (recommendable(s) || s.flags.includes("上品") || !s.kitchen.includes("不提供吃法"))) out.push("unevaluated " + s.slug);
+          return out; }""")
+        check(f"no dangerous genus, Paxillus name or unevaluated species reaches edibles, recipes or recommendations {leak}", not leak)
+        pg.evaluate("show('guide')"); pg.wait_for_timeout(300)
+        g = pg.inner_text("#v-guide")
+        check("the kitchen guide no longer uses 卷缘齿菌 or Paxillus anywhere", "卷缘齿菌" not in g and "Paxillus" not in g and "卷边桩菇" not in g)
+        check("the checklist is a risk check with the exact warning",
+              "食用前风险检查" in g and "本清单不能确认任何蘑菇是否可食用。孢子印、气味、形态特征及其他单项检查均不能排除所有毒菌。完成全部检查不代表可以安全食用。不要仅凭本应用决定是否食用。" in g)
+        pg.evaluate("show('recipes')"); pg.wait_for_timeout(200)
+        check("recipes no longer ask to keep raw samples of every dish", "留一两朵" not in pg.inner_text("#v-recipes"))
+        pg.evaluate("show('emergency')"); pg.wait_for_timeout(200)
+        em = pg.inner_text("#v-emergency")
+        check("the emergency page has the sample-keeping advice and timeline caveats",
+              "如果怀疑误食，保留剩余蘑菇或剩菜，用纸袋或蜡纸包装，不要使用塑料袋，并冷藏。拍摄菌盖、菌褶、菌柄和菌基照片。不要为了留样而延误联系毒物中心。" in em
+              and "早期症状缓解，不代表安全" in em and "不是固定规律" in em and "Wikipedia" not in em)
+        pg.evaluate("show('home')"); pg.wait_for_timeout(200)
+        pg.fill("#home-q", "卷缘齿菌"); pg.wait_for_timeout(250)
+        first = pg.locator("#home-results a").first.get_attribute("href")
+        check(f"searching 卷缘齿菌 lists the toxic Paxillus first, then the hedgehog ({first})",
+              first == "#tx-paxillus-involutus" and pg.locator('#home-results a[href="#sp-hydnum-repandum"]').count() == 1)
+        pg.evaluate("openSpecies(DATA.species.findIndex(s => s.slug === 'amanita-caesarea'))"); pg.wait_for_timeout(300)
+        sh = pg.inner_text("#sheet")
+        check("an unevaluated species sheet gives no cooking advice", "未评估" in sh and "不提供吃法" in sh and "上品" not in sh)
+        pg.evaluate("document.getElementById('sheet').close()")
+        pg.evaluate("show('log')"); pg.wait_for_timeout(400)
+        check(f"an old-format journal record still shows and is unchanged {errs}",
+              "旧版记录" in pg.inner_text("#finds-list") and not errs
+              and pg.evaluate("localStorage.getItem('mushroom-guide:finds:v1')") == __import__("json").dumps(old, ensure_ascii=False, separators=(",", ":")))
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

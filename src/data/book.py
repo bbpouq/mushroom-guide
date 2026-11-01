@@ -90,7 +90,7 @@ GROUPS = [
    "切薄片；干制后更香，配海鲜好", None),
  ]),
  ("形态特别的种类", "齿、多孔、珊瑚状、胶质——不易与毒菌混淆", [
-  ("卷缘齿菌（羊蹄菇）", "Hedgehog fungus", "Hydnum repandum", 71, "秋",
+  ("美味齿菌（羊蹄菇）", "Hedgehog fungus", "Hydnum repandum", 71, "秋",
    "奶油至赭色；盖下是易碎的细刺而非菌褶", "苔藓覆盖的林地，成圈或成簇", "白色",
    "味浓；老的会苦，煮前刮去菌刺；彻底煮熟", None),
   ("硫磺菌（林中鸡）", "Chicken-of-the-woods", "Laetiporus sulphureus", 44, "初夏–秋",

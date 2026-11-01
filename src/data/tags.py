@@ -13,7 +13,7 @@ TAGS = {
  "褐疣柄牛肝菌": T("pores", "brown", "ground"), "褐环乳牛肝菌": T("pores", "brown", "ground", ring=True),
  "乳牛肝菌": T("pores", "olive", "ground"), "厚环乳牛肝菌": T("pores", "brown", "ground", ring=True),
  "鸡油菌": T("ridges", "white", "ground"), "管形鸡油菌": T("ridges", "white", "ground"),
- "灰喇叭菌（黑喇叭菌）": T("ridges", "white", "ground"), "卷缘齿菌（羊蹄菇）": T("spines", "white", "ground"),
+ "灰喇叭菌（黑喇叭菌）": T("ridges", "white", "ground"), "美味齿菌（羊蹄菇）": T("spines", "white", "ground"),
  "硫磺菌（林中鸡）": T("pores", "white", "wood"), "牛排菌": T("pores", "white", "wood"),
  "绣球菌": T("other", "white", "wood"), "木耳": T("other", "white", "wood"),
  "大秃马勃": T("other", "olive", ["grass", "ground"]), "草地横膜马勃": T("other", "olive", "grass"),

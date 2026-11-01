@@ -1288,6 +1288,7 @@ html[data-tab="id"] .subnav { display: flex; }
 .obs-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5em, 1fr)); gap: var(--space-2) var(--space-4); margin: var(--space-3) 0 0; font-size: 13px; }
 .obs-meta dt { color: var(--color-muted-foreground); }
 .obs-meta dd { margin: 0; font-weight: var(--fw-600); font-variant-numeric: tabular-nums; }
+.obs-meta--cal { margin-bottom: var(--space-3); }
 .obs-chart__few { display: inline-block; margin: 0 6px; padding: 0 7px; border-radius: 999px; font-size: 11px; font-weight: var(--fw-600); background: var(--color-warning-surface); color: var(--color-warning-text); }
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
@@ -1397,7 +1398,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-home" aria-labelledby="h-home">
         <header class="view__head home-hero">
           <!--HERO:home-porcini-->
-          <span class="view__eyebrow">Identify</span>
+          <span class="view__eyebrow">识菌 · 概览</span>
           <h1 class="view__title" id="h-home">拾菌记</h1>
           <p class="view__lead">拾自然之菌，记森林之迹。</p>
           <p class="home-hero__en">MycoTrail · Pacific Northwest Mushroom Field Guide</p>
@@ -1426,7 +1427,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <div>
             <h2 class="home-safety__title" id="home-safety-title">认出来，不等于可以吃</h2>
             <p>本站帮你学习和缩小范围，<b>不能确认任何一朵菌可以食用</b>。烹饪、冷冻、干燥都不能让有毒的菌变安全。特征查找只列候选种；结果里没有毒菌，不代表手上的菌没毒。第一次吃一种菌，请有经验的人或当地菌会当面确认。<b>有任何疑问，就不要吃。</b></p>
-            <div class="link-row"><a class="btn" href="#guide-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查清单</a><a class="btn home-safety__sos" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>我可能吃了不确定的菌</a></div>
+            <div class="link-row"><a class="btn" href="#guide-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>食用前风险检查</a><a class="btn home-safety__sos" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>我可能吃了不确定的菌</a></div>
           </div>
         </section>
         <section class="deadly" aria-labelledby="deadly-title">
@@ -1454,7 +1455,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-explore" aria-labelledby="h-explore">
         <header class="view__head">
           <!--HERO:explore-->
-          <span class="view__eyebrow">Explore</span>
+          <span class="view__eyebrow">拾菌 · 探索森林</span>
           <h1 class="view__title" id="h-explore">拾菌</h1>
           <p class="view__lead">探索 Pacific Northwest 的森林：这个月常见什么、各地的产季、出门前和林子里该知道的事。季节信息来自历年观察记录，<b>不是实时出菇预测</b>。</p>
         </header>
@@ -1603,7 +1604,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <!-- ================= LEARN (识菌 › 学习) ================= -->
       <section class="view" id="v-learn" aria-labelledby="h-learn">
         <header class="view__head">
-          <span class="view__eyebrow">Learn</span>
+          <span class="view__eyebrow">识菌 · 学习</span>
           <h1 class="view__title" id="h-learn">学习</h1>
           <p class="view__lead">用测验和术语卡片练眼力、记特征、复习近似种。<b>答对再多题，也不等于会鉴定，更不能作为能不能吃的依据。</b></p>
         </header>
@@ -1638,7 +1639,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-species" aria-labelledby="h-species">
         <header class="view__head">
           <!--HERO:species-->
-          <span class="view__eyebrow">Field guide</span>
+          <span class="view__eyebrow">识菌 · 食用菌图鉴</span>
           <h1 class="view__title" id="h-species">食用菌图鉴</h1>
           <p class="view__lead"><!--N_EDIBLE--> 种食用菌，按在西北太平洋的常见程度排列。图鉴帮你认识它们，不能替代当面鉴定。<b>有任何疑问，就不要吃。</b></p>
         </header>
@@ -1672,7 +1673,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-finder" aria-labelledby="h-finder">
         <header class="view__head">
           <!--HERO:finder-->
-          <span class="view__eyebrow">Identify by features</span>
+          <span class="view__eyebrow">识菌 · 特征识别</span>
           <h1 class="view__title" id="h-finder">特征识别</h1>
           <p class="view__lead">手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道就跳过。<b>毒菌永远排在最前面。</b></p>
         </header>
@@ -1705,7 +1706,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-toxic" aria-labelledby="h-toxic">
         <header class="view__head">
           <!--HERO:toxic-->
-          <span class="view__eyebrow">Toxic look-alikes</span>
+          <span class="view__eyebrow">识菌 · 毒菌与近似种</span>
           <h1 class="view__title" id="h-toxic">毒菌与易混对比</h1>
           <p class="view__lead">西北太平洋采菌时最需要警惕的 <!--N_TOXIC--> 种毒菌，最危险的排在前面；以及 <!--N_COMPARE--> 组最常混淆的食用菌和毒菌对比。</p>
         </header>
@@ -1739,29 +1740,29 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-guide" aria-labelledby="h-guide">
         <header class="view__head">
           <!--HERO:kitchen-->
-          <span class="view__eyebrow">Kitchen guide</span>
+          <span class="view__eyebrow">识菌 · 厨房指南</span>
           <h1 class="view__title" id="h-guide">厨房指南</h1>
           <p class="view__lead">只适用于已经由有经验的人当面确认过身份的菌：下锅前检查、清理、切分、烹饪和保存，以及具体物种的处理要求。<b>烹饪不能让有毒的菌变安全。</b></p>
         </header>
         <div class="jump-row">
-          <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>吃之前检查</button>
+          <button class="chip" type="button" data-jump="guide-check"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>食用前风险检查</button>
           <button class="chip" type="button" data-jump="guide-kitchen">清理、烹饪、保存</button>
           <a class="chip" href="#recipes"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-book"/></svg>食谱</a>
         </div>
-        <div class="subhead" id="guide-check"><h2>吃之前：逐条检查</h2><p>每次下锅前都过一遍。全部打勾也不等于安全。</p></div>
+        <div class="subhead" id="guide-check"><h2>食用前风险检查</h2><p>帮你发现风险，不是帮你确认安全。</p></div>
         <section class="panel panel--wide" aria-labelledby="eat-check-title">
-          <h2 class="sr-only" id="eat-check-title">吃之前检查清单</h2>
-          <div class="callout callout--danger" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>有任何疑问，就不要吃。</b>有一项做不到或对不上，就把它扔掉。</div></div>
+          <h2 class="sr-only" id="eat-check-title">食用前风险检查清单</h2>
+          <div class="callout callout--danger" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>本清单不能确认任何蘑菇是否可食用。孢子印、气味、形态特征及其他单项检查均不能排除所有毒菌。完成全部检查不代表可以安全食用。不要仅凭本应用决定是否食用。</b>有一项做不到或对不上，就把它扔掉。有任何疑问，就不要吃。</div></div>
           <ol class="eat-check" id="eat-check">
             <li><label><input type="checkbox"><span class="eat-check__text"><b>挖出完整的柄基</b>整朵连根挖出，看有没有袋状菌托。毒鹅膏的菌托常埋在土里，柄基断在土中就看不到了。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>做孢子印</b>白色孢子印、白色菌褶，再加上菌环或菌托，先按鹅膏处理；长在木头上、孢子印锈褐色的小褐菇，可能是致命的纹缘盔孢伞。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>纵切开看</b>马勃内部必须是均匀的纯白，看到菌盖和菌褶的轮廓就是鹅膏的“蛋”；羊肚菌应该从头到柄整个中空。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>闻气味，看变色和乳汁</b>碰伤或切开后的颜色变化、乳菇乳汁的颜色、特殊气味，按这个物种页面上写的逐项核对。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>对照易混毒菌</b>打开物种页面的“易混毒菌”和对比表逐项比较。有一项对不上，就不吃。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>做孢子印</b>白色孢子印、白色菌褶，再加上菌环或菌托，先按鹅膏处理；长在木头上、孢子印锈褐色的小褐菇，可能是致命的纹缘盔孢伞。孢子印颜色对得上，只能排除一部分毒菌，不能证明安全。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>纵切开看</b>马勃内部不是均匀的纯白就不要吃，看到菌盖和菌褶的轮廓可能是鹅膏的“蛋”；羊肚菌应该从头到柄整个中空。切开对得上，也只是排除了其中一种风险。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>闻气味，看变色和乳汁</b>碰伤或切开后的颜色变化、乳菇乳汁的颜色、特殊气味，按这个物种页面上写的逐项核对。气味好闻不代表无毒。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>对照易混毒菌</b>打开物种页面的“易混毒菌”和对比表逐项比较。有一项对不上，就不吃。全部对得上，也排除不了本站没有收录的毒菌。</span></label></li>
             <li><label><input type="checkbox"><span class="eat-check__text"><b>确认采集地点干净</b>路边、工业区等污染地点的菌会富集铅等重金属，不要吃。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>留一两朵生的样本</b>单独放进冰箱，不要一起煮掉。万一不舒服，医生和专家可以据此鉴定。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>留一两朵生的样本</b>用纸袋或蜡纸包好放进冰箱，不要一起煮掉。万一不舒服，医生和专家可以据此鉴定。</span></label></li>
             <li><label><input type="checkbox"><span class="eat-check__text"><b>第一次吃的种类：先请有经验的人当面确认</b>自己对照图鉴认出来的不算数。确认过也要彻底煮熟；同一种菌，有人吃了没事，有人会不适。</span></label></li>
-            <li><label><input type="checkbox"><span class="eat-check__text"><b>知道出事打什么电话</b>一旦不舒服，立即联系毒物中心，不要等。很多毒菌要过 6–12 小时甚至更久才发作。</span></label></li>
+            <li><label><input type="checkbox"><span class="eat-check__text"><b>知道出事打什么电话</b>怀疑误食就立即联系毒物中心，不要等症状。有些毒菌要过几个小时，甚至几天到几周才发作。</span></label></li>
           </ol>
           <div class="eat-check__foot">
             <span class="eat-check__count" id="eat-check-count" aria-live="polite">已核对 0 / 9</span>
@@ -1800,7 +1801,6 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <li>大多数野菌不用去皮，例外是黏盖的<b>褐环乳牛肝菌</b>。</li>
               <li><b>结实的</b>（牛肝菌、香蘑）：小湿刀刮去柄基杂物，顺柄刮净。</li>
               <li><b>娇嫩的</b>（羊肚菌、鸡油菌）：软毛刷刷，嵌进去的泥用小刀挑出。</li>
-              <li><b>卷缘齿菌</b>：老的菌刺发苦，轻搓即可脱落。</li>
               <li>清理好后冷藏：有盖盒子，上下垫湿厨房纸。</li>
             </ul>
           </section>
@@ -1810,14 +1810,13 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <ul>
               <li><b>牛肝菌、硫磺菌、大马勃</b>：用刀切。大的盖柄分开，盖纵切片，柄切薄片。</li>
               <li><b>羊肚菌</b>：拧下柄，大的纵切，检查空腔里有无虫。</li>
-              <li><b>卷缘齿菌等脆的</b>：用手掰成均匀小块。</li>
               <li><b>鸡油菌等纤维质的</b>：从盖往下撕开；硬柄留着熬高汤。</li>
             </ul>
           </section>
           <section class="panel">
             <h2 class="panel__title"><span class="panel__num">04</span>基础做法：香芹蒜香</h2>
-            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，也适合太平洋金鸡油菌、卷缘齿菌（羊蹄菇），前提是<b>已经由有经验的人当面确认过身份</b>。也可以用超市的褐蘑菇。4 人份，约 35 分钟。</p>
-            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 美味牛肝菌、太平洋金鸡油菌或卷缘齿菌（已确认身份）500 g 切厚片 · 盐、黑胡椒</p>
+            <p><b>香芹蒜香野菌</b>：意大利做牛肝菌的经典方法，也适合太平洋金鸡油菌，前提是<b>已经由有经验的人当面确认过身份</b>。也可以用超市的褐蘑菇。4 人份，约 35 分钟。</p>
+            <p class="muted-note" style="margin-top:0">特级初榨橄榄油 120 ml · 蒜 3 瓣切碎 · 平叶欧芹 1 大把 · 美味牛肝菌或太平洋金鸡油菌（已确认身份）500 g 切厚片 · 盐、黑胡椒</p>
             <ol class="steps">
               <li>小火加热油、蒜和一半欧芹。</li>
               <li>转大火下菌，勤翻炒 5 分钟，再转小火。</li>
@@ -1841,7 +1840,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-log" aria-labelledby="h-log">
         <header class="view__head">
           <!--HERO:log-->
-          <span class="view__eyebrow">Field log</span>
+          <span class="view__eyebrow">菌记 · 记录发现</span>
           <h1 class="view__title" id="h-log">菌记</h1>
           <p class="view__lead">你自己的蘑菇探索档案：在哪里、什么时候、找到了什么，明年同一时间再去看看。</p>
         </header>
@@ -1937,11 +1936,11 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <section class="view" id="v-recipes" aria-labelledby="h-recipes">
         <header class="view__head">
           <!--HERO:recipes-->
-          <span class="view__eyebrow">Recipes</span>
+          <span class="view__eyebrow">识菌 · 食谱</span>
           <h1 class="view__title" id="h-recipes">精选食谱</h1>
           <p class="view__lead"><!--N_RECIPES--> 道家常做法，中式、日式、西式都有。用量为公制，1 汤匙 ≈ 15 ml；勾选材料可以当购物清单用。</p>
         </header>
-        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。</b>每道都要彻底煮熟。下锅前留一两朵生的样本放冰箱。每道菜也都可以用超市的栽培菌来做。</div></div>
+        <div class="callout callout--danger" role="note" style="margin-bottom: var(--space-4)"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。</b>每道都要彻底煮熟。每道菜也都可以用超市的栽培菌来做。</div></div>
         <div class="rc-filter" id="rc-filter" role="group" aria-label="按菜系筛选"></div>
         <h2 class="sr-only">食谱列表</h2>
         <div class="rc-grid" id="rc-grid"></div>
@@ -1950,7 +1949,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <!-- ================= EMERGENCY ================= -->
       <section class="view" id="v-emergency" aria-labelledby="h-emergency">
         <header class="view__head">
-          <span class="view__eyebrow">Emergency</span>
+          <span class="view__eyebrow">紧急求助</span>
           <h1 class="view__title" id="h-emergency">中毒急救</h1>
           <p class="view__lead">怀疑吃了有毒的野菌：<b>不要等症状</b>，立刻打电话。症状出现得越晚，往往越危险。</p>
         </header>
@@ -1970,23 +1969,24 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <section class="panel">
             <h2 class="panel__title">2. 保留证据</h2>
             <ul>
-              <li><b>留下剩余的菌子和剩菜</b>，包括切下的柄基和边角料；能拍照就多角度拍照。这能帮医生和鉴定人员确认是哪一种。</li>
+              <li><b>如果怀疑误食，保留剩余蘑菇或剩菜，用纸袋或蜡纸包装，不要使用塑料袋，并冷藏。拍摄菌盖、菌褶、菌柄和菌基照片。不要为了留样而延误联系毒物中心。</b>切下的柄基和边角料也留着，不要洗、不要修。这能帮医生和鉴定人员确认是哪一种。</li>
               <li>记下<b>什么时候吃的、吃了多少、怎么做的</b>，以及第一次出现不适的时间。</li>
               <li><b>一起吃过的人都要联系医生</b>，即使暂时没有症状。</li>
             </ul>
           </section>
           <section class="panel panel--wide">
             <h2 class="panel__title">3. 症状出现晚，不代表没事</h2>
-            <p>有几类最危险的毒菌，吃下后要过好几个小时甚至几天才出现症状，那时器官可能已经受损。</p>
+            <p>不同毒素的潜伏期不同。有些严重中毒要过几个小时、甚至几天才出现症状，那时器官可能已经受损。<b>早期症状缓解，不代表安全。怀疑误食，立即联系毒物中心，不要等症状。</b></p>
             <table class="delay-table">
-              <thead><tr><th>毒菌</th><th>首发症状</th><th>之后</th></tr></thead>
+              <thead><tr><th>毒素（代表种）</th><th>常见潜伏期</th><th>可能的后果</th></tr></thead>
               <tbody>
-                <tr><td>毒鹅膏、毁灭天使、纹缘盔孢伞（鹅膏毒素）</td><td>约 6–10 小时后恶心、呕吐、腹泻</td><td>约 36 小时肝功能指标升高，约 72 小时可发生肝衰竭。毒素<b>煮不坏</b></td></tr>
-                <tr><td>史密斯鹅膏</td><td>20 分钟到 1 天内腹痛、腹泻、呕吐</td><td>2–6 天后可发生肾衰竭，部分患者需要透析</td></tr>
-                <tr><td>细鳞丝膜菌等丝膜菌</td><td>可能数天后才出现</td><td>伤肾</td></tr>
-                <tr><td>大青褶伞、发光类脐菇</td><td>1–3 小时内剧烈呕吐腹泻</td><td>通常数天内恢复，但仍应就医</td></tr>
+                <tr><td>鹅膏毒素（毒鹅膏、毁灭天使、纹缘盔孢伞）</td><td>多为 6–24 小时，严重时最早约 6 小时</td><td>剧烈吐泻后可能短暂“好转”，随后肝、肾衰竭，可致死。毒素<b>煮不坏</b></td></tr>
+                <tr><td>史密斯鹅膏</td><td>多为 4–11 小时</td><td>之后数天内可发生肾衰竭，部分患者需要透析</td></tr>
+                <tr><td>奥来毒素（细鳞丝膜菌等丝膜菌）</td><td>36 小时到 3 周</td><td>肾损伤，没有特效治疗</td></tr>
+                <tr><td>肠胃刺激物（大青褶伞、发光类脐菇等）</td><td>多为 20 分钟到 4 小时</td><td>剧烈呕吐腹泻，重者需要补液住院</td></tr>
               </tbody>
             </table>
+            <p class="muted-note">时间是文献给出的常见范围，不是固定规律：每个人、吃的量和种类都会让它不同。来源：NAMA 蘑菇中毒综合征。</p>
           </section>
           <div class="sources panel--wide" style="grid-column: 1 / -1">
             <h3>资料来源</h3>
@@ -1997,7 +1997,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <li><a href="https://www.kansashealthsystem.com/medical-services/poison-control/common-poisons/mushrooms" target="_blank" rel="noopener">The University of Kansas Health System Poison Control：Mushrooms（烹饪不能去毒、症状可能几天后才出现）</a></li>
               <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/G_marginata.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Galerina marginata（中毒时间线与毒物中心电话）</a></li>
               <li><a href="https://explore.beatymuseum.ubc.ca/mushroomsup/A_smithiana.html" target="_blank" rel="noopener">UBC Mushrooms Up!：Amanita smithiana</a></li>
-              <li><a href="https://en.wikipedia.org/wiki/Chlorophyllum_molybdites" target="_blank" rel="noopener">Wikipedia：Chlorophyllum molybdites</a></li>
+              <li><a href="https://www.namyco.org/mushroom_poisoning_syndromes.php" target="_blank" rel="noopener">North American Mycological Association：Mushroom Poisoning Syndromes（各类毒素的潜伏期与病程）</a></li>
+              <li><a href="https://cascademyco.org/mushroom-info-menu-guide/mushroom-poisonings/" target="_blank" rel="noopener">Cascade Mycological Society（俄勒冈）：Mushroom Poisonings（剩余菌子用棕色纸袋保存）</a></li>
+              <li><a href="https://azpoison.com/sites/default/files/poisonology_mushrooms.pdf" target="_blank" rel="noopener">Arizona Poison and Drug Information Center：Mushrooms（不要洗、不要修，用蜡纸或棕色纸袋包好冷藏）</a></li>
             </ol>
           </div>
         </div>
@@ -2083,7 +2085,7 @@ function matches(s) {
     if (!s.months.some(m => ms.includes(m))) return false;
   }
   if (state.q) {
-    const hay = [s.zh, s.en, s.latin, s.latin2 || "", s.region || "", strip(s.feat), strip(s.hab), groupBy[s.group].name].join(" ").toLowerCase();
+    const hay = [s.zh, s.en, s.latin, s.latin2 || "", ...((s.safety && s.safety.searchAlso) || []), s.region || "", strip(s.feat), strip(s.hab), groupBy[s.group].name].join(" ").toLowerCase();
     if (!state.q.toLowerCase().split(/\s+/).every(t => hay.includes(t))) return false;
   }
   return true;
@@ -2112,7 +2114,7 @@ function renderGrid() {
         <span class="sp-card__latin latin">${esc(s.latin)}</span></span></span>
       ${monthStrip(s.months)}
       <span class="sp-card__feat">${s.feat}</span>
-      ${badges(s.flags, s.safety && s.safety.review !== "Verified" ? `<span class="sp-card__review">${REVIEW_ZH[s.safety.review]}</span>` : "")}
+      ${badges(s.flags, s.safety && s.safety.review !== "Verified" ? `<span class="sp-card__review">${s.safety.edibility === "Edible" ? REVIEW_ZH[s.safety.review] : "未评估"}</span>` : "")}
       ${s.warn ? `<span class="sp-card__warn">${icon("alert", "icon--sm")}<span><span class="sr-only">易混毒菌：</span>${s.warn}</span></span>` : ""}
     </button>`).join("")
     : `<div class="empty-state"><p>没有符合条件的菌。</p><button class="btn" type="button" data-reset>清除全部筛选</button></div>`;
@@ -2234,7 +2236,7 @@ function openSpecies(i) {
       <p>${s.kitchen}</p>
       ${rc.length ? `<div class="sheet__recipes">${rc.map(r => `<a class="chip" href="#rc-${r.id}">${icon("book", "icon--sm")}${esc(r.zh)}</a>`).join("")}</div>` : ""}
       <p class="muted-note">本食谱仅适用于已经由可靠方式确认身份的食用菌。烹饪不能使有毒蘑菇变得安全。不要仅凭本应用的识别结果决定是否食用。</p>
-      <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}吃之前检查清单</a><a class="btn" href="#log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a><a class="btn" href="#recipes">${icon("book", "icon--sm")}全部食谱</a></div>
+      <div class="link-row"><a class="btn" href="#guide-check">${icon("check", "icon--sm")}食用前风险检查</a><a class="btn" href="#log" data-log-sp="${s.slug}">${icon("plus", "icon--sm")}记录这次发现</a><a class="btn" href="#recipes">${icon("book", "icon--sm")}全部食谱</a></div>
     </section>
     <section class="sheet__sec" id="sh-more"><h3 class="sheet__h">深入资料</h3>
       ${s.extra ? `<ul class="note-list">${s.extra.map(x => `<li>${x}</li>`).join("")}</ul>` : ""}
@@ -2251,11 +2253,11 @@ function openSpecies(i) {
   $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
   $("[data-close]", d).focus({ focusVisible: false });
 }
-const EDIBILITY_ZH = { "Edible": "可食", "Inedible": "不宜食用", "Toxic": "有毒", "Deadly Toxic": "剧毒，可致死", "Unknown": "未知", "Not Evaluated": "未评估" };
+const EDIBILITY_ZH = { "Edible": "可食", "Inedible": "不宜食用", "Toxic": "有毒", "Deadly Toxic": "剧毒，可致死", "Unknown": "未知", "Not Evaluated": "未评估（本地资料不足）" };
 const REVIEW_ZH = { "Draft": "草稿", "In Review": "待核实", "Verified": "已核对资料", "Needs Update": "需要更新", "Disputed": "资料有分歧" };
 const REVIEW_HINT = {
   "Verified": "编辑已对照外部参考资料核对分级。",
-  "In Review": "目前只有一份资料支持这个分级，外部参考还没核对上。本站不推荐它，也不放进食谱。",
+  "In Review": "目前只有一份书籍资料，没有找到北美或西北太平洋的外部资料。本站不评估它的可食性，不推荐，也不放进食谱。",
   "Disputed": "参考资料说法不一致，本站按更谨慎的一方处理。",
   "Needs Update": "资料可能过时，正在重新核对。",
   "Draft": "草稿，尚未核对。"
@@ -2272,7 +2274,9 @@ function safetyBlock(x, toxic) {
       ${f.symptoms ? `<div class="safety__row"><dt>中毒表现</dt><dd>${esc(f.symptoms)}</dd></div>` : ""}
       ${f.note ? `<div class="safety__row"><dt>注意</dt><dd>${esc(f.note)}</dd></div>` : ""}
     </dl>
-    ${toxic ? "" : `<p class="safety__line">“可食”只说明这个物种本身，不说明你手里这一朵。没有经验丰富的人当面确认，就不要吃。</p>`}
+    ${toxic ? `<p class="safety__line">中毒时间是文献给出的常见范围，因人、吃的量和种类而异。怀疑误食，立即联系毒物中心，不要等症状。</p>`
+      : f.edibility === "Edible" ? `<p class="safety__line">“可食”只说明这个物种本身，不说明你手里这一朵。没有经验丰富的人当面确认，就不要吃。</p>`
+      : `<p class="safety__line">本站没有评估它在本地的可食性，不提供吃法。没有经验丰富的人当面确认，不要吃。</p>`}
   </div>`;
 }
 // where each kind of content on a species page comes from
@@ -2304,7 +2308,7 @@ function obsChart(s) {
   const where = "BC、华盛顿、俄勒冈";
   const link = `<a href="https://www.inaturalist.org/observations?place_id=${DATA.obsPlaces}&quality_grade=research&taxon_id=${o.id}" target="_blank" rel="noopener">在 iNaturalist 查看记录</a>`;
   if (total < 30) return `<section class="obs-chart"><h3 class="obs-chart__title">西北太平洋什么时候能见到</h3>
-    <p class="obs-chart__note"><span class="obs-chart__few">数据不足</span>${total ? `iNaturalist 上${where}只有 ${total} 条研究级记录（<span class="latin">${esc(o.taxon)}</span>），太少，看不出季节。` : `iNaturalist 上目前没有${where}的研究级记录（<span class="latin">${esc(o.taxon)}</span>）。`}${total ? link : ""}</p></section>`;
+    <p class="obs-chart__note"><span class="obs-chart__few">样本不足</span>${total ? `iNaturalist 上${where}只有 ${total} 条研究级记录（<span class="latin">${esc(o.taxon)}</span>），太少，看不出季节。` : `iNaturalist 上目前没有${where}的研究级记录（<span class="latin">${esc(o.taxon)}</span>）。`}${total ? link : ""}</p></section>`;
   const max = Math.max(...o.counts), peak = o.counts.indexOf(max);
   const cols = o.counts.map((n, i) => `<div class="obs-chart__col${i === peak ? " is-active" : ""}" data-m="${i}"><span class="obs-chart__bar" style="height:${n ? Math.max(2, Math.round(n / max * 100)) : 0}%"></span></div>`).join("");
   return `<section class="obs-chart" aria-labelledby="obs-title">
@@ -2314,12 +2318,14 @@ function obsChart(s) {
     <div class="obs-chart__plot" aria-hidden="true" data-counts="${o.counts.join(",")}">${cols}</div>
     <div class="obs-chart__months" aria-hidden="true">${o.counts.map((_, i) => `<span>${i + 1}</span>`).join("")}</div>
     <table class="sr-only"><caption>每月观察记录数</caption><tr><th scope="col">月份</th><th scope="col">记录数</th></tr>${o.counts.map((n, i) => `<tr><td>${i + 1} 月</td><td>${n}</td></tr>`).join("")}</table>
-    ${o.regions ? `<p class="obs-chart__regions">${["bc", "wa", "or"].map(r => { const n = o.regions[r].reduce((a, b) => a + b, 0); return `<span>${REGION[r]} <b>${n.toLocaleString("en")}</b>${n < 30 ? `<span class="obs-chart__few">数据不足</span>` : ""}</span>`; }).join("")}</p>` : ""}
+    ${o.regions ? `<p class="obs-chart__regions">${["bc", "wa", "or"].map(r => { const n = o.regions[r].reduce((a, b) => a + b, 0), yr = yearSpan(o.ryears && o.ryears[r]); return `<span>${REGION[r]} <b>${n.toLocaleString("en")}</b> 条${yr ? ` · ${yr}` : ""}${n < 30 ? `<span class="obs-chart__few">样本不足</span>` : ""}</span>`; }).join("")}</p>` : ""}
     ${obsYears(o)}
     ${obsMeta(o)}
     <p class="obs-chart__note"><b>历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。</b>数量反映的是人们什么时候出门拍照上传，不等于产量；具体时间因地区、海拔和当年天气而异。${link}</p>
   </section>`;
 }
+// "2010–2026 年" from a {year: count} map, "" when there is none
+function yearSpan(ys) { const k = Object.keys(ys || {}).sort(); return k.length ? (k[0] === k[k.length - 1] ? `${k[0]} 年` : `${k[0]}–${k[k.length - 1]} 年`) : ""; }
 // what the season numbers cover: years, total, latest record, when fetched, source
 function obsMeta(o) {
   const ys = Object.keys(o.years || {}).sort(), total = o.counts.reduce((a, b) => a + b, 0);
@@ -2532,6 +2538,7 @@ function fItem(s, toxic) {
         ${ok.length ? `<span class="res-item__ok">${icon("check", "icon--sm")}相符：${ok.map(esc).join("、")}</span>` : ""}
         ${warn.map(w => `<span class="res-item__why">${icon("alert", "icon--sm")}仍列出：${esc(w)}</span>`).join("")}
         ${open.length ? `<span class="res-item__open">未确认：${open.map(esc).join("、")}</span>` : ""}
+        ${!toxic && s.safety && s.safety.edibility !== "Edible" ? `<span class="res-item__why">${icon("alert", "icon--sm")}本站未评估它的可食性</span>` : ""}
         ${!toxic && s.warn ? `<span class="res-item__look">${icon("alert", "icon--sm")}<span>易混：${strip(s.warn)}</span></span>` : ""}
       </span>
       ${toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : ""}${icon("arrow")}</a></li>`;
@@ -3613,7 +3620,7 @@ function renderSeason() {
 /* ---------- home: search across edible and toxic species ---------- */
 function speciesHits(q) {
   const n = q.toLowerCase().replace(/\s+/g, " ").trim(); if (!n) return [];
-  const hit = x => [x.zh, x.en, x.latin, x.latin2].filter(Boolean).some(v => String(v).toLowerCase().includes(n));
+  const hit = x => [x.zh, x.en, x.latin, x.latin2, ...((x.safety && x.safety.searchAlso) || [])].filter(Boolean).some(v => String(v).toLowerCase().includes(n));
   return toxicAll.filter(hit).map(p => ({ p, toxic: true })).concat(DATA.species.filter(hit).map(p => ({ p, toxic: false })));
 }
 function renderHomeSearch() {
@@ -3897,13 +3904,16 @@ function renderCalendar() {
     const max = Math.max(...c);
     rows.push({ s, c, max, peak: c.indexOf(max), total });
   });
+  const yrs = [...rows, ...rest.map(s => ({ s }))].flatMap(({ s }) => Object.keys((region === "all" ? s.obs.years : s.obs.ryears && s.obs.ryears[region]) || {})).sort();
+  const sum = rows.reduce((a, r) => a + r.total, 0);
+  const meta = `<dl class="obs-meta obs-meta--cal"><div><dt>来源</dt><dd>iNaturalist 研究级</dd></div><div><dt>地区</dt><dd>${REGION[region]}</dd></div><div><dt>覆盖年份</dt><dd>${yrs.length ? `${yrs[0]}–${yrs[yrs.length - 1]} 年` : "—"}</dd></div><div><dt>样本</dt><dd>${sum.toLocaleString("en")} 条 · ${rows.length} 种</dd></div><div><dt>数据更新</dt><dd>${DATA.obsFetched}</dd></div></dl>`;
   const where = REGION[region], note = `数据来自 iNaturalist 研究级观察（${where}），取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量。历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。具体时间因地区、海拔和当年天气而异。`;
-  const restHtml = `<p class="cal__rest">${where}记录太少（少于 30 条）、没有列入的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。</p>`;
+  const restHtml = `<p class="cal__rest">${where}样本不足（少于 30 条）、没有列入的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。</p>`;
   $("#cal-month").hidden = mode !== "month";
   if (mode === "month") {
     const lv = r => calLevel(r.c[month - 1], r.max);
     const groups = [3, 2, 1].map(l => [l, rows.filter(r => lv(r) === l).sort((a, b) => b.c[month - 1] / b.max - a.c[month - 1] / a.max)]);
-    $("#cal").innerHTML = `<p class="cal__lead">${month} 月，按每种菌和它自己全年最多的月份相比。${note}</p>
+    $("#cal").innerHTML = `<p class="cal__lead">${month} 月，按每种菌和它自己全年最多的月份相比。${note}</p>${meta}
       ${groups.map(([l, list]) => `<section class="cal-month"><h3 class="cal-month__h"><span class="cal__swatch cal__swatch--${l}"></span>${CAL_LEVELS[l]}（${list.length}）</h3>
         ${list.length ? `<ul class="cal-month__list">${list.map(({ s, c }) => `<li><a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)} · ${month} 月 ${c[month - 1].toLocaleString("en")} 条</span></span></a></li>`).join("")}</ul>` : `<p class="season__empty">没有。</p>`}</section>`).join("")}
       ${restHtml}`;
@@ -3917,7 +3927,7 @@ function renderCalendar() {
     return `<td class="cal__cell${lv ? " cal__cell--" + lv : ""}" data-n="${n}" data-m="${m}" data-name="${esc(s.zh)}"${n === max ? ' data-peak=""' : ""}><span class="sr-only">${CAL_LEVELS[lv]}</span></td>`;
   }).join("")}</tr>`).join("");
   $("#cal").innerHTML = `
-    <p class="cal__lead">颜色越深，这个月的记录越多（与这种菌自己全年最多的月份相比）。${note}</p>
+    <p class="cal__lead">颜色越深，这个月的记录越多（与这种菌自己全年最多的月份相比）。${note}</p>${meta}
     <ul class="cal__key" aria-hidden="true">${CAL_LEVELS.map((x, i) => `<li><span class="cal__swatch cal__swatch--${i}"></span>${x}</li>`).join("")}</ul>
     <p class="cal__readout" id="cal-readout" aria-hidden="true">${now + 1} 月是本月。把手指或鼠标放在格子上看记录数。</p>
     ${rows.length ? `<table class="cal__table"><caption class="sr-only">${where}每月记录多少，按高峰月份排列</caption><colgroup><col class="cal__namecol">${"<col>".repeat(12)}</colgroup><thead>${head}</thead><tbody>${body}</tbody></table>` : `<p class="season__empty">没有找到。</p>`}
