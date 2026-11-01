@@ -1156,6 +1156,7 @@ html[data-tab="id"] .subnav { display: flex; }
 @media (max-width: 400px) { .hdr__search { display: none; } }
 /* 识菌 overview */
 .home-hero .view__lead { font-size: 18px; }
+.home-hero .view__hero { object-position: 50% 22%; }  /* keep the porcini caps in frame on wide screens */
 .home-hero__en { margin: 0; font-size: 13px; font-weight: var(--fw-600); letter-spacing: .06em; color: rgba(255, 255, 255, .78); }
 [data-field="on"] .home-hero__en { color: var(--color-muted-foreground); }
 .home-start { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-5) 0 var(--space-3); padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg);
@@ -1303,7 +1304,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       <!-- ================= HOME ================= -->
       <section class="view" id="v-home" aria-labelledby="h-home">
         <header class="view__head home-hero">
-          <!--HERO:home-->
+          <!--HERO:home-porcini-->
           <span class="view__eyebrow">Identify</span>
           <h1 class="view__title" id="h-home">拾菌记</h1>
           <p class="view__lead">拾自然之菌，记森林之迹。</p>

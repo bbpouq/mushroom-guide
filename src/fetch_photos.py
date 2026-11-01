@@ -46,9 +46,10 @@ NAME_FIX = {"Agaricus silvicola": "Agaricus sylvicola"}  # spellings iNaturalist
 WIDTH = 480
 HD_WIDTH = 1024
 # Header photo for each view, shown behind the large title: (taxon, iNaturalist photo id from that taxon's photos).
+# A third number is the observation the photo belongs to, for photos that are not among the taxon's featured photos.
 # Keys are the <!--HERO:key--> markers in template.html. The emergency view has none on purpose.
 # Use a new key (new file name) rather than a new photo under an old key: the offline MEDIA cache keeps old files.
-HEROES = {"home": ("Cantharellus formosus", 168845865), "species": ("Cantharellus formosus", 5924085),
+HEROES = {"home-porcini": ("Boletus edulis", 233281376, 136662465), "species": ("Cantharellus formosus", 5924085),
           "finder": ("Agaricus augustus", 22093962), "toxic": ("Amanita muscaria", 448681419),
           "explore": ("Aureoboletus mirabilis", 11502906), "kitchen": ("Morchella", 7339458),
           "log": ("Craterellus tubaeformis", 250397284), "recipes": ("Boletus edulis", 29239600)}
@@ -175,12 +176,15 @@ def main():
             save_hd(sl, entry)
             time.sleep(0.5)
     heroes = {}
-    for view, (name, pid) in HEROES.items():
+    for view, (name, pid, *obs) in HEROES.items():
         if not redo and view in old_heroes and old_heroes[view]["id"] == pid and (OUT / old_heroes[view]["file"]).exists():
             heroes[view] = old_heroes[view]
             continue
-        full = api(f"taxa/{taxon(name)['id']}")["results"][0]
-        p = next(tp["photo"] for tp in full["taxon_photos"] if tp["photo"]["id"] == pid)
+        if obs:
+            p = next(ph for ph in api(f"observations/{obs[0]}")["results"][0]["photos"] if ph["id"] == pid)
+        else:
+            full = api(f"taxa/{taxon(name)['id']}")["results"][0]
+            p = next(tp["photo"] for tp in full["taxon_photos"] if tp["photo"]["id"] == pid)
         time.sleep(1)
         assert p.get("license_code") in OK, f"hero photo {pid} has licence {p.get('license_code')}"
         img = Image.open(io.BytesIO(get(re.sub(r"/(square|small|medium|large|original)\.", "/large.", p["url"])))).convert("RGB")
