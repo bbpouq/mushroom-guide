@@ -188,7 +188,7 @@ def run():
               pg.evaluate("document.querySelector('.view.is-active').id") == "v-guide" and not pg.evaluate("document.getElementById('sheet').open")
               and 0 <= pg.evaluate("document.getElementById('guide-check').getBoundingClientRect().top") < 200)
         pg.click("#eat-check li >> nth=0"); pg.click("#eat-check li >> nth=1")
-        check("checklist counts ticks", pg.inner_text("#eat-check-count") == "已核对 2 / 9")
+        check("checklist counts ticks", pg.inner_text("#eat-check-count") == "已核对 2 / 8")
         pg.goto(url + "#sp-tricholoma-matsutake"); pg.wait_for_timeout(700)
         pg.click('#sheet a[href="#recipes"]'); pg.wait_for_timeout(300)
         check("recipes reachable on a phone from a species sheet", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes")
@@ -581,6 +581,16 @@ def run():
         check("the kitchen guide no longer uses 卷缘齿菌 or Paxillus anywhere", "卷缘齿菌" not in g and "Paxillus" not in g and "卷边桩菇" not in g)
         check("the checklist is a risk check with the exact warning",
               "食用前风险检查" in g and "本清单不能确认任何蘑菇是否可食用。孢子印、气味、形态特征及其他单项检查均不能排除所有毒菌。完成全部检查不代表可以安全食用。不要仅凭本应用决定是否食用。" in g)
+        check("the checklist no longer asks for a raw sample every time; it points to the emergency page instead",
+              "留一两朵" not in g and pg.locator("#eat-check li").count() == 8 and "按急救页面保留剩余蘑菇和剩菜" in g)
+        check("no absolute 'you must be sure it is non-toxic' wording; in-person checks are not called a guarantee",
+              "必须确定它无毒" not in g and "当面确认能减少认错，但不能保证安全" in pg.inner_text("#v-guide"))
+        pg.evaluate("show('explore')"); pg.wait_for_timeout(400)
+        ex = pg.inner_text("#v-explore")
+        bad_hab = [n for n in ["美味齿菌", "卷缘齿菌", "、鸡油菌、", "皱盖罗鳞伞", "夏松露", "木耳", "高大环柄菇", "粗鳞青褶伞", "荷叶离褶伞"] if n in ex.split("去哪里找")[-1].split("采摘")[0]]
+        check(f"the 'where to look' lists name only recommended species {bad_hab}", not bad_hab and "未评估和高风险的种类不列出" in ex and "必须确定它无毒" not in ex)
+        check("the month and season lists say what data they rest on",
+              all(k in pg.inner_text("#now-data") + pg.inner_text("#season-data") for k in ["iNaturalist", "覆盖", "样本", "更新于", "样本不足"]))
         pg.evaluate("show('recipes')"); pg.wait_for_timeout(200)
         check("recipes no longer ask to keep raw samples of every dish", "留一两朵" not in pg.inner_text("#v-recipes"))
         pg.evaluate("show('emergency')"); pg.wait_for_timeout(200)

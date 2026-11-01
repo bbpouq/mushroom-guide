@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 176 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 180 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -122,6 +122,10 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   (searching 卷缘齿菌 lists Paxillus first). Kitchen instructions name only recommended species. The checklist is
   「食用前风险检查」 with the exact warning 「本清单不能确认任何蘑菇是否可食用。…不要仅凭本应用决定是否食用。」. Poisoning
   times are ranges with a source (NAMA), never fixed points; toxic species may not cite Wikipedia alone (build check).
+  The field guide's "去哪里找" lists name only recommended species (build check, exact names). The checklist has no
+  "keep a raw sample" item: samples are kept only when poisoning is suspected (emergency page). Copy never says "you must be
+  sure it is safe"; in-person confirmation "减少认错，但不能保证安全". Season lists (月常见, 季节变化, calendar) state source,
+  region, coverage years, sample size and update date (`obsSummary`).
 - Journal import validates each record (`findClean`), never changes existing records on failure, and accepts photos only as
   embedded `data:image/` URIs (an imported file must never make the page fetch a web address).
 - Species pages state their review status honestly: compiled by the editor from the listed sources, not reviewed by a

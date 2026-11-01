@@ -193,6 +193,17 @@ for s in species:
         assert s.get(f), f"{s['slug']}: missing {f}"
     assert s.get("warn") or s.get("extra") or s["slug"] in {c for cmp in COMPARE for _, _, c in cmp["cols"]} or True
 
+# the "where to look" lists name only species we recommend (no unevaluated or high-risk ones)
+_ok = set()
+for s in species:
+    if s["safety"].get("recommend") and s["safety"]["review"] == "Verified":  # "糙皮侧耳（平菇）" -> 糙皮侧耳, 平菇
+        _ok.add(re.sub(r"（[^）]*）", "", s["zh"]))
+        _ok.update(x for m in re.findall(r"（([^）]*)）", s["zh"]) for x in m.split("、"))
+for _hab, _trees, _names in HABITATS:
+    for _n in re.split(r"[、；]", re.sub(r"（[^）]*）", "", _names)):
+        _n = re.sub(r"^.*?：", "", _n).strip()
+        assert _n in _ok, f"habitat '{_hab}' names '{_n}', which is not a recommended species"
+
 recipes = [dict(r, **x) for r, x in zip(RECIPES6, RECIPES6_EXTRA, strict=True)] + [dict(r) for r in RECIPES_ORIG]
 by_slug = {x["slug"]: x for x in species}
 assert len({r["id"] for r in recipes}) == len(recipes), "duplicate recipe id"

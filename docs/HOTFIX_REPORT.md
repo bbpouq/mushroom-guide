@@ -98,3 +98,23 @@ See `OPEN_ISSUES.md`. In short:
 - Two emergency sources could only be read as search snippets.
 - BC DPIC numbers could not be re-checked from the sandbox.
 - Real-device testing has not been done.
+
+## Follow-up (v46, same day)
+
+Review notes and what was found on the live page:
+
+| Note | Live v45 | Done in v46 |
+|---|---|---|
+| 卷缘齿菌 still in the 阔叶林 list | No: the list said 美味齿菌（羊蹄菇）(*Hydnum repandum*). *Paxillus* was never there. A note naming 卷缘齿菌 most likely comes from a cached older copy | 美味齿菌 removed from the list as asked. Every habitat list now names only Verified + recommended species (the book's list also named 鸡油菌 *C. cibarius*, 皱盖罗鳞伞, 夏松露, 木耳, 高大环柄菇, 粗鳞青褶伞, 荷叶离褶伞 and others). Build check with exact names |
+| Checklist still asks for a raw sample every time | Yes | Item removed (9 → 8 items); the checklist points to the emergency page for suspected poisoning |
+| Season data lacks coverage, sample size, update date | Species charts and calendar had them; the "N 月常见" and 季节变化 lists did not | Both lists now state source, region, coverage years, sample size, update date and the 样本不足 cut-off |
+| "Learn" English label | Not present in v45 (replaced) | No change needed; a test now covers the absence of English eyebrows |
+| "你必须确定它无毒" | Yes (field guide) | Replaced: no method can guarantee a wild mushroom is safe; field guides and this app cannot be the only basis |
+| "请有经验的人当面确认" implies safety | Yes, several places | Now says in-person confirmation reduces misidentification but cannot guarantee safety (home, field guide, checklist, species sheet, comparisons, today card, recipes note, learn quiz) |
+
+Tests: 180 / 180.
+
+axe-core:
+- Changed views: no new issues.
+- Field guide, when scrolled to the bottom: two pre-existing contrast reports on the calendar's sticky header, which is off screen at that point (top −264 px).
+- The same cells pass when the calendar is on screen, so these look like an axe false positive. Not changed.
