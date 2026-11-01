@@ -167,12 +167,12 @@ def run():
         pg.goto(url + "#rc-bruschetta"); pg.wait_for_timeout(900)
         check("recipe deep link opens the recipe", pg.evaluate("document.querySelector('.view.is-active').id") == "v-recipes"
               and pg.evaluate("document.querySelector('#rc-bruschetta details').open"))
-        pg.goto(url + "#explore"); pg.wait_for_timeout(400)
+        pg.goto(url + "#explore-now"); pg.wait_for_timeout(400)
         n_now = pg.locator("#now-track .now__item").count()
         pg.click("#now-track .now__item >> nth=0"); pg.wait_for_timeout(500)
         check(f"'this month' strip lists species ({n_now}) and opens one", n_now > 0 and pg.evaluate("document.getElementById('sheet').open"))
         pg.goto(url + "#explore"); pg.wait_for_timeout(400)
-        pg.click('#v-explore [data-jump="guide-calendar"]'); pg.wait_for_timeout(1100)
+        pg.click('[data-xp-go="cal"]'); pg.wait_for_timeout(1100)
         rows = pg.locator("#cal tbody tr").count()
         check(f"season calendar opens from the guide view with rows ({rows})",
               pg.evaluate("document.querySelector('.view.is-active').id") == "v-explore" and rows > 30
@@ -330,7 +330,7 @@ def run():
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(500)
         pg.evaluate("navigator.share = undefined"); pg.click("[data-share]"); pg.wait_for_timeout(250)
         check("share copies deep link", pg.evaluate("navigator.clipboard.readText()").endswith("#sp-boletus-edulis"))
-        pg.goto(url + "#explore"); pg.wait_for_timeout(2500)
+        pg.goto(url + "#guide-offline"); pg.wait_for_timeout(2500)  # the old link opens 拾菌 › 工具 › 离线下载
         check("service worker ready", "已可离线" in pg.inner_text("#offline-status"))
         pg.locator("#off-photos").scroll_into_view_if_needed()
         pg.click('[data-dl="small"]')
@@ -640,9 +640,9 @@ def run():
               "留一两朵" not in g and pg.locator("#eat-check li").count() == 8 and "按急救页面保留剩余蘑菇和剩菜" in g)
         check("no absolute 'you must be sure it is non-toxic' wording; in-person checks are not called a guarantee",
               "必须确定它无毒" not in g and "当面确认能减少认错，但不能保证安全" in pg.inner_text("#v-guide"))
-        pg.evaluate("show('explore')"); pg.wait_for_timeout(400)
-        ex = pg.inner_text("#v-explore")
-        bad_hab = [n for n in ["美味齿菌", "卷缘齿菌", "、鸡油菌、", "皱盖罗鳞伞", "夏松露", "木耳", "高大环柄菇", "粗鳞青褶伞", "荷叶离褶伞"] if n in ex.split("去哪里找")[-1].split("采摘")[0]]
+        pg.evaluate("navigate('explore-hab')"); pg.wait_for_timeout(400)
+        hab_txt = pg.inner_text("#xp-hab"); ex = pg.evaluate("document.getElementById('v-explore').textContent") + hab_txt
+        bad_hab = [n for n in ["美味齿菌", "卷缘齿菌", "、鸡油菌、", "皱盖罗鳞伞", "夏松露", "木耳", "高大环柄菇", "粗鳞青褶伞", "荷叶离褶伞"] if n in hab_txt]
         check(f"the 'where to look' lists name only recommended species {bad_hab}", not bad_hab and "未评估和高风险的种类不列出" in ex and "必须确定它无毒" not in ex)
         check("the month and season lists say what data they rest on",
               all(k in pg.inner_text("#now-data") + pg.inner_text("#season-data") for k in ["iNaturalist", "覆盖", "样本", "更新于", "样本不足"]))
@@ -707,7 +707,7 @@ def run():
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         pg = ctx.new_page(); errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
-        pg.goto(url + "#explore"); pg.wait_for_timeout(700)
+        pg.goto(url + "#explore-intel"); pg.wait_for_timeout(700)
         pg.click('[data-intel-m="10"]'); pg.wait_for_timeout(200)
         items = pg.locator("#intel-body .intel__item").count()
         txt = pg.inner_text("#intel")
@@ -779,12 +779,14 @@ def run():
         pg.click('[data-theme-pick="dark"]'); pg.wait_for_timeout(150)
         dark_bg = pg.evaluate("getComputedStyle(document.body).backgroundColor")
         check(f"choosing 深色 switches to dark at once ({dark_bg})", pg.evaluate("document.documentElement.dataset.theme") == "dark" and dark_bg != "rgb(248, 246, 239)")
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(150)
         pg.click("[data-field-toggle] >> nth=0"); pg.wait_for_timeout(150)
         check("outdoor mode is independent of the theme", pg.evaluate("document.documentElement.dataset.field") == "on" and pg.evaluate("document.documentElement.dataset.theme") == "dark")
         pg.reload(); pg.wait_for_timeout(600)
         check("the theme choice is remembered on this device and applied before paint",
               pg.evaluate("localStorage.getItem('mushroom-guide:theme')") == "dark" and pg.evaluate("document.documentElement.dataset.theme") == "dark")
-        pg.click("[data-field-toggle] >> nth=0"); pg.click('[data-theme-pick="system"]'); pg.wait_for_timeout(150)
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(150)
+        pg.click("[data-field-toggle] >> nth=0"); pg.click("[data-open-settings]"); pg.click('#settings [data-theme-pick="system"]'); pg.keyboard.press("Escape"); pg.wait_for_timeout(150)
         check("跟随系统 clears the stored choice", pg.evaluate("localStorage.getItem('mushroom-guide:theme')") is None and pg.evaluate("document.documentElement.dataset.theme") is None)
         pg.evaluate("navigate('guide-calendar')"); pg.wait_for_timeout(400)
         pg.click('#v-explore [data-cal-mode="month"]'); pg.wait_for_timeout(150)
@@ -945,7 +947,7 @@ def run():
         ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, accept_downloads=True)
         pg = ctx.new_page(); errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
-        pg.goto(url + "#explore"); pg.wait_for_timeout(2500)
+        pg.goto(url + "#explore-offline"); pg.wait_for_timeout(2500)
         ready = "已可离线" in pg.inner_text("#offline-status")
         ctx.set_offline(True); pg.reload(); pg.wait_for_timeout(1200)
         pg.wait_for_timeout(1500); pg.evaluate("offlineReport()"); pg.wait_for_timeout(300)  # report and cache read at the same moment
@@ -973,6 +975,55 @@ def run():
         miss = pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return !i.complete || i.naturalWidth === 0 || i.classList.contains('is-missing'); })()")
         check("an example photo that was never downloaded shows as a grey frame, not as cached", miss)
         ctx.set_offline(False); ctx.close()
+
+        # ---------- v50.2: 拾菌 navigation (phone) ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#explore"); pg.wait_for_timeout(700)
+        active = lambda: pg.evaluate("[document.querySelector('[data-xp-cat][aria-pressed=true]').dataset.xpCat, document.querySelector('[data-xp-go][aria-current=page]').dataset.xpGo, [...document.querySelectorAll('.xp__pane')].filter(p => !p.hidden).map(p => p.dataset.xp)]")
+        check(f"拾菌 opens on 找菌 › 本月探索 with one pane shown {active()}", active() == ["find", "now", ["now"]] and pg.is_visible("#explore-region"))
+        h0 = pg.evaluate("document.getElementById('v-explore').scrollHeight")
+        check(f"the 拾菌 page no longer stacks every section ({h0}px)", h0 < 4000)
+        pg.click('[data-xp-cat="guide"]'); pg.wait_for_timeout(300); pg.click('[data-xp-go="prep"]'); pg.wait_for_timeout(300)
+        nav_top = pg.evaluate("document.getElementById('explore-nav').getBoundingClientRect().top")
+        check(f"a new sub-page starts at the top of the content ({nav_top})", nav_top < 200 and active() == ["guide", "prep", ["prep"]] and not pg.is_visible("#explore-region"))
+        pg.click('[data-xp-cat="tools"]'); pg.wait_for_timeout(300)
+        check("工具 opens 离线下载 first", active()[1] == "offline" and pg.is_visible("#offline-status"))
+        pg.click('[data-xp-cat="guide"]'); pg.wait_for_timeout(300)
+        check("each category keeps its last sub-page", active()[1] == "prep")
+        pg.go_back(); pg.wait_for_timeout(300); a1 = active()[1]
+        pg.go_back(); pg.wait_for_timeout(300); a2 = active()[1]
+        pg.go_forward(); pg.wait_for_timeout(300); a3 = active()[1]
+        check(f"back and forward restore the sub-page ({a1}, {a2}, {a3})", (a1, a2, a3) == ("offline", "prep", "offline"))
+        pg.evaluate("navigate('explore-pick')"); pg.wait_for_timeout(300); pg.reload(); pg.wait_for_timeout(700)
+        check("a refresh restores the current sub-page", active()[1] == "pick")
+        pg.click('.botnav a[href="#log"]'); pg.wait_for_timeout(300); pg.click('.botnav a[href="#explore"]'); pg.wait_for_timeout(300)
+        check("leaving 拾菌 and coming back keeps the sub-page", active()[1] == "pick")
+        pg.click('.botnav a[href="#explore"]'); pg.wait_for_timeout(400)
+        check("tapping 拾菌 again goes to 找菌 › 本月探索 at the top", active()[:2] == ["find", "now"] and pg.evaluate("scrollY") < 5)
+        for h, sub in [("guide-calendar", "cal"), ("guide-field", "rules"), ("guide-offline", "offline"), ("guide-habitats", "hab")]:
+            pg.goto(url + "#" + h); pg.wait_for_timeout(500)
+            check(f"old link #{h} opens 拾菌 › {sub}", active()[1] == sub and pg.evaluate("document.querySelector('.view.is-active').id") == "v-explore")
+        pg.goto(url + "#guide-theme"); pg.wait_for_timeout(500)
+        check("old link #guide-theme opens the settings sheet (外观 lives there now)", pg.evaluate("document.getElementById('settings').open"))
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(150)
+        focusable = pg.evaluate("[...document.querySelectorAll('.xp__pane[hidden] a, .xp__pane[hidden] button, .xp__pane[hidden] input, .xp__pane[hidden] select')].filter(e => e.offsetParent !== null).length")
+        check(f"hidden sub-pages are out of the focus order ({focusable})", focusable == 0 and pg.locator(".xp__pane[hidden]").count() == 9)
+        pg.evaluate("navigate('explore-field')"); pg.wait_for_timeout(300)
+        pg.click('[data-xp-subs="tools"] [data-open-settings]'); pg.wait_for_timeout(200)
+        check("工具 › 设置 opens the existing settings sheet", pg.evaluate("document.getElementById('settings').open"))
+        pg.keyboard.press("Escape")
+        txt = pg.evaluate("document.getElementById('v-explore').textContent")
+        found = all(k in txt for k in ["四条守则", "带什么", "什么时候找", "采摘", "做孢子印", "迷路或受伤", "这台设备上存了什么", "装到手机桌面", "户外模式", "季节情报", "产季日历"])
+        check("every old 拾菌 section is still reachable from the new navigation", found and pg.locator("#xp-field [data-field-toggle]").count() == 1)
+        pg.evaluate("themeSet('dark'); fieldSet(true); navigate('explore-now')"); pg.wait_for_timeout(300)
+        hgt = pg.evaluate("document.querySelector('[data-xp-subs=find] .xnav__sub').getBoundingClientRect().height")
+        check(f"outdoor mode and dark theme: the navigation stays usable ({hgt}px) and the theme is kept",
+              hgt >= 52 and pg.evaluate("document.documentElement.dataset.theme") == "dark" and pg.evaluate("document.documentElement.scrollWidth") <= 375)
+        pg.evaluate("fieldSet(false); themeSet('system')")
+        check(f"no JavaScript errors in the 拾菌 navigation {errs}", not errs)
+        ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})

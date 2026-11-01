@@ -1170,7 +1170,7 @@ fieldset.finds__field { border: 0; margin: 0; padding: 0; min-width: 0; }
 img.brand__mark { width: 36px; height: 36px; border-radius: var(--radius-sm); background: none; display: block; flex: none; }
 .brand__name { letter-spacing: .02em; }
 .brand__sub { font-size: var(--fs-caption); font-weight: var(--fw-600); letter-spacing: .06em; color: var(--color-foreground); }  /* full text colour: the header is translucent over photos and maps */
-.topnav__link { font-size: var(--fs-body); }
+.topnav__link { font-size: var(--fs-body); color: var(--color-foreground); }  /* full text colour: the header is translucent over header photos */
 .topnav__link[aria-current="page"] { background: var(--color-primary-surface); color: var(--color-primary); font-weight: var(--fw-700); }
 .hdr__search { flex: none; }
 .subnav { display: none; gap: var(--space-2); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-4) var(--space-2); overflow-x: auto; scrollbar-width: none; }
@@ -1518,6 +1518,20 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 
 .cmp__key { display: inline-block; margin-left: var(--space-1); padding: 0 var(--space-1); border-radius: var(--radius-xs); font-size: var(--fs-caption-sm); font-weight: var(--fw-700); background: var(--color-warning-surface); color: var(--color-warning-text); vertical-align: 1px; }
 
+/* ---------- v50.2: 拾菌 navigation ---------- */
+.xnav { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); }
+@media (min-width: 768px) { .xnav { max-width: 720px; } }
+.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.xnav__subs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: var(--space-1); }
+.xnav__subs[hidden] { display: none; }
+.xnav__sub { min-height: var(--target); padding: 0 var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-muted-foreground);
+  font: inherit; font-size: var(--fs-footnote); font-weight: var(--fw-600); cursor: pointer; line-height: 1.25; box-shadow: inset 0 -2px 0 transparent; }
+.xnav__sub:hover { color: var(--color-foreground); background: var(--color-muted); }
+.xnav__sub[aria-current="page"] { color: var(--color-foreground); box-shadow: inset 0 -2px 0 var(--color-primary); font-weight: var(--fw-700); }
+.xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.explore-region[hidden], .xp__pane[hidden] { display: none; }
+[data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1663,7 +1677,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           </div>
         </section>
         <section class="home-season" aria-labelledby="home-season-title">
-          <div class="now__head"><h2 class="now__title" id="home-season-title"></h2><a class="now__all" href="#explore">季节情报</a></div>
+          <div class="now__head"><h2 class="now__title" id="home-season-title"></h2><a class="now__all" href="#explore-intel">季节情报</a></div>
           <div class="chip-list" role="group" aria-label="地区">
             <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
             <button type="button" class="chip" data-cal-region="bc" aria-pressed="false">BC</button>
@@ -1704,7 +1718,31 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <h1 class="view__title" id="h-explore">拾菌</h1>
           <p class="view__lead">探索 Pacific Northwest 的森林：这个月常见什么、各地的产季、出门前和林子里该知道的事。季节信息来自历年观察记录，<b>不是实时出菇预测</b>。</p>
         </header>
-        <section class="explore-region" aria-labelledby="explore-region-title">
+        <nav class="xnav" id="explore-nav" aria-label="拾菌分类">
+          <div class="xnav__cats"><div class="seg" role="group" aria-label="分类">
+            <button type="button" class="seg__btn" data-xp-cat="find" aria-pressed="true">找菌</button>
+            <button type="button" class="seg__btn" data-xp-cat="guide" aria-pressed="false">野外指南</button>
+            <button type="button" class="seg__btn" data-xp-cat="tools" aria-pressed="false">工具</button>
+          </div></div>
+          <div class="xnav__subs" data-xp-subs="find" role="group" aria-label="找菌">
+            <button type="button" class="xnav__sub" data-xp-go="now" aria-current="page">本月探索</button>
+            <button type="button" class="xnav__sub" data-xp-go="intel">季节情报</button>
+            <button type="button" class="xnav__sub" data-xp-go="cal">产季日历</button>
+            <button type="button" class="xnav__sub" data-xp-go="hab">生境探索</button>
+          </div>
+          <div class="xnav__subs" data-xp-subs="guide" role="group" aria-label="野外指南" hidden>
+            <button type="button" class="xnav__sub" data-xp-go="rules">采集守则</button>
+            <button type="button" class="xnav__sub" data-xp-go="prep">装备与准备</button>
+            <button type="button" class="xnav__sub" data-xp-go="pick">采集与观察</button>
+            <button type="button" class="xnav__sub" data-xp-go="safety">户外安全</button>
+          </div>
+          <div class="xnav__subs" data-xp-subs="tools" role="group" aria-label="工具" hidden>
+            <button type="button" class="xnav__sub" data-xp-go="offline">离线下载</button>
+            <button type="button" class="xnav__sub" data-xp-go="field">户外模式</button>
+            <button type="button" class="xnav__sub" data-open-settings>设置</button>
+          </div>
+        </nav>
+        <section class="explore-region" id="explore-region" aria-labelledby="explore-region-title">
           <h2 class="explore-region__title" id="explore-region-title"><span id="explore-month"></span> · 选择地区</h2>
           <div class="chip-list" role="group" aria-label="地区" id="region-chips">
             <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
@@ -1713,159 +1751,170 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <button type="button" class="chip" data-cal-region="or" aria-pressed="false">俄勒冈</button>
           </div>
         </section>
-        <div class="jump-row">
-          <button class="chip" type="button" data-jump="now-title">本月探索</button>
-          <button class="chip" type="button" data-jump="intel-title">季节情报</button>
-          <button class="chip" type="button" data-jump="guide-calendar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-calendar"/></svg>产季日历</button>
-          <button class="chip" type="button" data-jump="guide-habitats">生境探索</button>
-          <button class="chip" type="button" data-jump="guide-field">采集指南</button>
-          <button class="chip" type="button" data-jump="lost-title"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"/></svg>户外安全</button>
-          <button class="chip" type="button" data-jump="guide-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>离线使用</button>
-        </div>
-        <section class="now" aria-labelledby="now-title">
-          <div class="now__head"><h2 class="now__title" id="now-title"></h2><button type="button" class="now__all" data-now-all>看全部</button></div>
-          <p class="now__sub">这个月记录多的食用菌（与它自己全年最多的月份相比，据历年 iNaturalist 观察）。点开看易混毒菌。</p>
-          <div class="now__track" id="now-track"></div>
-          <p class="now__data" id="now-data"></p>
+        <section class="xp__pane" id="xp-now" data-xp="now" aria-label="本月探索">
+          <section class="now" aria-labelledby="now-title">
+            <div class="now__head"><h2 class="now__title" id="now-title"></h2><button type="button" class="now__all" data-now-all>看全部</button></div>
+            <p class="now__sub">这个月记录多的食用菌（与它自己全年最多的月份相比，据历年 iNaturalist 观察）。点开看易混毒菌。</p>
+            <div class="now__track" id="now-track"></div>
+            <p class="now__data" id="now-data"></p>
+          </section>
+          <section class="season" aria-labelledby="season-title">
+            <h2 class="season__title" id="season-title">季节变化</h2>
+            <p class="season__sub" id="season-sub"></p>
+            <div class="season__cols" id="season-cols"></div>
+            <p class="now__data" id="season-data"></p>
+          </section>
         </section>
-        <section class="season" aria-labelledby="season-title">
-          <h2 class="season__title" id="season-title">季节变化</h2>
-          <p class="season__sub" id="season-sub"></p>
-          <div class="season__cols" id="season-cols"></div>
-          <p class="now__data" id="season-data"></p>
+        <section class="xp__pane" id="xp-intel" data-xp="intel" aria-label="季节情报" hidden>
+          <section class="intel" id="intel" aria-labelledby="intel-title">
+            <h2 class="season__title" id="intel-title">季节情报</h2>
+            <p class="season__sub">选一个月份，看那时候历史记录较多的推荐食用菌：长在哪里、常和什么树在一起、要防哪些毒菌。<b>这是历史观察记录，不是实时出菇预测，也不保证某个地点一定有。</b></p>
+            <div class="intel__months"><div class="chip-list" role="group" aria-label="月份" id="intel-months"></div></div>
+            <div class="chip-list" role="group" aria-label="长在哪里" id="intel-sub"></div>
+            <ul class="intel__list" id="intel-body"></ul>
+            <p class="now__data" id="intel-data"></p>
+            <p class="finds__hint">森林类型、伴生树和海拔没有可靠的结构化数据，这里只照抄每种菌页面上写的生境，不按它们筛选。生境只能帮你决定去哪里找，不能证明手上的菌是哪一种。</p>
+          </section>
         </section>
-        <section class="intel" id="intel" aria-labelledby="intel-title">
-          <h2 class="season__title" id="intel-title">季节情报</h2>
-          <p class="season__sub">选一个月份，看那时候历史记录较多的推荐食用菌：长在哪里、常和什么树在一起、要防哪些毒菌。<b>这是历史观察记录，不是实时出菇预测，也不保证某个地点一定有。</b></p>
-          <div class="intel__months"><div class="chip-list" role="group" aria-label="月份" id="intel-months"></div></div>
-          <div class="chip-list" role="group" aria-label="长在哪里" id="intel-sub"></div>
-          <ul class="intel__list" id="intel-body"></ul>
-          <p class="now__data" id="intel-data"></p>
-          <p class="finds__hint">森林类型、伴生树和海拔没有可靠的结构化数据，这里只照抄每种菌页面上写的生境，不按它们筛选。生境只能帮你决定去哪里找，不能证明手上的菌是哪一种。</p>
-        </section>
-        <div class="subhead" id="guide-calendar"><h2>产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
-        <div class="cal-ctl" id="cal-ctl">
-          <div class="cal-ctl__row">
-            <div class="seg" role="group" aria-label="显示方式">
-              <button type="button" class="seg__btn" data-cal-mode="cal" aria-pressed="true">全年日历</button>
-              <button type="button" class="seg__btn" data-cal-mode="month" aria-pressed="false">按月份看</button>
+        <section class="xp__pane" id="xp-cal" data-xp="cal" aria-label="产季日历" hidden>
+          <div class="subhead" id="guide-calendar"><h2>产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
+          <div class="cal-ctl" id="cal-ctl">
+            <div class="cal-ctl__row">
+              <div class="seg" role="group" aria-label="显示方式">
+                <button type="button" class="seg__btn" data-cal-mode="cal" aria-pressed="true">全年日历</button>
+                <button type="button" class="seg__btn" data-cal-mode="month" aria-pressed="false">按月份看</button>
+              </div>
+              <label class="sr-only" for="cal-month">月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
+              <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌"></div></div>
             </div>
-            <label class="sr-only" for="cal-month">月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
-            <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌"></div></div>
           </div>
-        </div>
-        <div class="cal" id="cal"></div>
-        <div class="subhead"><h2>野外指南</h2><p>守则、装备、时间、地点、采摘和做孢子印。</p></div>
-        <div class="panel-grid" id="guide-field">
-          <section class="panel panel--wide">
-            <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
-            <ol class="rules">
-              <li><div><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请有经验的人当面看实物；图鉴和本应用都不能单独作为食用依据，当面确认能减少认错，但不能保证安全。</div></li>
-              <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
-              <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
-              <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
-            </ol>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title"><span class="panel__num">02</span>带什么</h2>
-            <ul>
-              <li><b>宽底轻篮子</b>最好。塑料袋会挤坏菌子、让它们“出汗”。</li>
-              <li><b>采菌刀</b>：折叠刀，一侧带锯齿可刮泥，尾端带小刷子。普通小刀也行。</li>
-              <li><b>长手杖</b>：拨开落叶、标记位置、上下坡。</li>
-              <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路了怎么办，见下面的“迷路或受伤”。</li>
-            </ul>
-          </section>
-          <section class="panel panel--danger" aria-labelledby="lost-title">
-            <h2 class="panel__title" id="lost-title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>迷路或受伤：停下来（S.T.O.P.）</h2>
-            <ul>
-              <li><b>出门前</b>把去哪、走哪条路、几点回来告诉家人或朋友，过时没回就报警。带上头灯、保暖衣物、哨子；手机充满电，离线地图提前下好。</li>
-              <li><b>停（Stop）</b>：一发现找不到路就停下，<b>不要继续乱走</b>，更不要为了找路钻进陌生地形。离原路越远，搜救范围越大。</li>
-              <li><b>想（Think）与看（Observe）</b>：冷静回想来路，看看周围有什么危险；用手机或 GPS 看自己的位置。</li>
-              <li><b>计划（Plan）</b>：有信号就打 <a href="tel:911">911</a>（有卫星求救功能的手机或卫星信使也能用）；<b>原地等待</b>，保暖、喝水、找避风处；用哨子或闪光求救，<b>每组三声</b>。</li>
-            </ul>
-            <div class="sources"><h3>资料来源</h3><ol>
-              <li><a href="https://www.bcsara.com/public-safety/" target="_blank" rel="noopener">BC Search and Rescue Association：Public Safety（S.T.O.P.、原地等待）</a></li>
-              <li><a href="https://www.adventuresmart.ca/" target="_blank" rel="noopener">AdventureSmart（加拿大户外安全项目：行程计划、必备物品）</a></li>
-            </ol></div>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
-            <ul>
-              <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>，可以用本站的<a href="#log">采集记录</a>。</li>
-              <li>春夏：连续几天透雨后转暖的温和天气最好；秋冬：温和潮湿的日子。久旱和暴雨都不利。</li>
-              <li>霜雪会让多数菌停止出菇，但管形鸡油菌、野生金针菇等耐寒。</li>
-              <li><b>早起</b>：菌子没被动物和行人破坏，你也是第一个到场的人。</li>
-            </ul>
-          </section>
-          <section class="panel panel--wide">
-            <h2 class="panel__title" id="guide-habitats"><span class="panel__num">04</span>生境探索：去哪里找</h2>
-            <p>我们采的只是真菌的“果实”。有的菌靠腐烂有机物生活，有的寄生在活树上，还有的与特定树种的根共生（菌根菌），所以可能长在离树一段距离的地方。附近出现其他（哪怕不能吃的）菌，往往是好兆头。</p>
-            <!--HABITATS-->
-            <p class="muted-note">这里只列本站核对过资料、可以推荐的种类；未评估和高风险的种类不列出。生境和伴生树只能帮你决定去哪里找、缩小范围，<b>不能证明手上的菌是哪一种</b>：毒菌常和食用菌长在同一片林子、同一种树下。</p>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title"><span class="panel__num">05</span>采摘</h2>
-            <ul>
-              <li><b>先鉴定。</b>检查整朵菌，记下生境、颜色、气味、大小、形状。同一种菌在不同生长阶段外观会变。</li>
-              <li><b>完整取下。</b>轻轻拔、或用刀尖撬出，保留柄基便于鉴定。不要硬扯，以免伤到菌丝。</li>
-              <li><b>只要状态最好的。</b>过熟、软烂、虫蛀多的留在原地散播孢子。</li>
-              <li><b>边采边清理。</b>刷掉杂物、切掉脏柄基，不同种类分开放。</li>
-            </ul>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title"><span class="panel__num">06</span>做孢子印</h2>
-            <ol class="steps">
-              <li>用<b>新鲜</b>菌子。切下菌盖，菌褶朝下放在纸上；拿不准颜色深浅就一半白纸、一半黑纸。</li>
-              <li>在菌盖顶滴一滴水，用玻璃碗扣住。</li>
-              <li>放几小时或过夜，轻轻拿开碗和菌盖即可看到。</li>
-              <li>在自然光下看：白至奶油、粉至红、赭至黏土色、锈褐、紫褐、黑；大青褶伞是<b>绿色</b>。</li>
-            </ol>
-            <p class="muted-note">同属内孢子颜色差别很小：鹅膏属白色，蘑菇属巧克力色，丝盖伞属、丝膜菌属和盔孢伞属褐色，粉褶菌属粉色。</p>
-          </section>
-        </div>
-        <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册；出门前把照片也下载好。</p></div>
-        <div class="panel-grid">
-          <section class="panel panel--wide offline" aria-labelledby="offline-title">
-            <h2 class="panel__title" id="offline-title">这台设备上存了什么</h2>
-            <ul class="offline__list">
-              <li><span class="offline__k">网络</span><span class="offline__v" id="off-net">检查中…</span></li>
-              <li><span class="offline__k">文字资料</span><span class="offline__v"><span class="offline-status" id="offline-status">检查中…</span><span class="offline__note">全部物种、对比、急救、指南、食谱和你的记录</span></span></li>
-              <li><span class="offline__k">示例照片</span><span class="offline__v" id="off-photos">检查中…</span></li>
-              <li><span class="offline__k">3D 模型</span><span class="offline__v" id="off-model">检查中…</span></li>
-              <li><span class="offline__k">外部链接</span><span class="offline__v"><span>iNaturalist 和资料来源网页<b>需要联网</b>；离线时这些链接后面会标“需联网”。</span></span></li>
-            </ul>
-            <div class="offline__actions" id="off-actions">
-              <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>出门前下载全部照片<span class="offline__size" data-size="small"></span></button>
-              <button class="btn" type="button" data-dl="all">连高清版一起下载<span class="offline__size" data-size="all"></span></button>
-              <button class="btn-text" type="button" data-dl-stop hidden>停止</button>
-            </div>
-            <progress class="offline__bar" id="off-bar" max="1" value="0" hidden></progress>
-            <p class="muted-note" id="off-msg">照片平时只在看到时才存下来。进山前在有网的地方点一下上面的按钮，没信号时所有照片也能看。照片只存在这台设备上；手机空间紧张时浏览器可能会清掉，出门前再看一眼这里。</p>
-          </section>
-          <section class="panel" id="guide-theme">
-            <h2 class="panel__title">外观</h2>
-            <p>深色或浅色。默认跟随手机的设置；只在这台设备上记住。和户外模式互相独立，可以同时打开。</p>
-            <div class="seg" role="group" aria-label="外观">
-              <button type="button" class="seg__btn" data-theme-pick="system" aria-pressed="true">跟随系统</button>
-              <button type="button" class="seg__btn" data-theme-pick="light" aria-pressed="false">浅色</button>
-              <button type="button" class="seg__btn" data-theme-pick="dark" aria-pressed="false">深色</button>
-            </div>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title">户外模式</h2>
-            <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。更省电。</p>
-            <button class="btn btn--primary" type="button" data-field-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span data-field-label>打开户外模式</span></button>
-            <p class="muted-note" style="margin-top: var(--space-3)">也可以随时点页面顶部的太阳图标切换。只在这台设备上记住。</p>
-          </section>
-          <section class="panel">
-            <h2 class="panel__title">装到手机桌面</h2>
-            <ul>
-              <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
-              <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
-              <li>装好后从桌面图标打开，会像独立的 App 一样全屏显示。</li>
-            </ul>
-          </section>
-        </div>
+          <div class="cal" id="cal"></div>
+        </section>
+        <section class="xp__pane" id="xp-hab" data-xp="hab" aria-label="生境探索" hidden>
+          <div class="panel-grid">
+            <section class="panel panel--wide">
+              <h2 class="panel__title" id="guide-habitats"><span class="panel__num">04</span>生境探索：去哪里找</h2>
+              <p>我们采的只是真菌的“果实”。有的菌靠腐烂有机物生活，有的寄生在活树上，还有的与特定树种的根共生（菌根菌），所以可能长在离树一段距离的地方。附近出现其他（哪怕不能吃的）菌，往往是好兆头。</p>
+              <!--HABITATS-->
+              <p class="muted-note">这里只列本站核对过资料、可以推荐的种类；未评估和高风险的种类不列出。生境和伴生树只能帮你决定去哪里找、缩小范围，<b>不能证明手上的菌是哪一种</b>：毒菌常和食用菌长在同一片林子、同一种树下。</p>
+            </section>
+          </div>
+        </section>
+        <section class="xp__pane" id="xp-rules" data-xp="rules" aria-label="采集守则" hidden>
+          <div class="panel-grid" id="guide-field">
+            <section class="panel panel--wide">
+              <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
+              <ol class="rules">
+                <li><div><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请有经验的人当面看实物；图鉴和本应用都不能单独作为食用依据，当面确认能减少认错，但不能保证安全。</div></li>
+                <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
+                <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
+                <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
+              </ol>
+            </section>
+          </div>
+        </section>
+        <section class="xp__pane" id="xp-prep" data-xp="prep" aria-label="装备与准备" hidden>
+          <div class="panel-grid">
+            <section class="panel">
+              <h2 class="panel__title"><span class="panel__num">02</span>带什么</h2>
+              <ul>
+                <li><b>宽底轻篮子</b>最好。塑料袋会挤坏菌子、让它们“出汗”。</li>
+                <li><b>采菌刀</b>：折叠刀，一侧带锯齿可刮泥，尾端带小刷子。普通小刀也行。</li>
+                <li><b>长手杖</b>：拨开落叶、标记位置、上下坡。</li>
+                <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路了怎么办，见下面的“迷路或受伤”。</li>
+              </ul>
+            </section>
+            <section class="panel">
+              <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
+              <ul>
+                <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>，可以用本站的<a href="#log">采集记录</a>。</li>
+                <li>春夏：连续几天透雨后转暖的温和天气最好；秋冬：温和潮湿的日子。久旱和暴雨都不利。</li>
+                <li>霜雪会让多数菌停止出菇，但管形鸡油菌、野生金针菇等耐寒。</li>
+                <li><b>早起</b>：菌子没被动物和行人破坏，你也是第一个到场的人。</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+        <section class="xp__pane" id="xp-pick" data-xp="pick" aria-label="采集与观察" hidden>
+          <div class="panel-grid">
+            <section class="panel">
+              <h2 class="panel__title"><span class="panel__num">05</span>采摘</h2>
+              <ul>
+                <li><b>先鉴定。</b>检查整朵菌，记下生境、颜色、气味、大小、形状。同一种菌在不同生长阶段外观会变。</li>
+                <li><b>完整取下。</b>轻轻拔、或用刀尖撬出，保留柄基便于鉴定。不要硬扯，以免伤到菌丝。</li>
+                <li><b>只要状态最好的。</b>过熟、软烂、虫蛀多的留在原地散播孢子。</li>
+                <li><b>边采边清理。</b>刷掉杂物、切掉脏柄基，不同种类分开放。</li>
+              </ul>
+            </section>
+            <section class="panel panel--wide">
+              <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
+              <ol class="rules">
+                <li><div><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请有经验的人当面看实物；图鉴和本应用都不能单独作为食用依据，当面确认能减少认错，但不能保证安全。</div></li>
+                <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
+                <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
+                <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
+              </ol>
+            </section>
+          </div>
+        </section>
+        <section class="xp__pane" id="xp-safety" data-xp="safety" aria-label="户外安全" hidden>
+          <div class="panel-grid">
+            <section class="panel panel--danger" aria-labelledby="lost-title">
+              <h2 class="panel__title" id="lost-title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>迷路或受伤：停下来（S.T.O.P.）</h2>
+              <ul>
+                <li><b>出门前</b>把去哪、走哪条路、几点回来告诉家人或朋友，过时没回就报警。带上头灯、保暖衣物、哨子；手机充满电，离线地图提前下好。</li>
+                <li><b>停（Stop）</b>：一发现找不到路就停下，<b>不要继续乱走</b>，更不要为了找路钻进陌生地形。离原路越远，搜救范围越大。</li>
+                <li><b>想（Think）与看（Observe）</b>：冷静回想来路，看看周围有什么危险；用手机或 GPS 看自己的位置。</li>
+                <li><b>计划（Plan）</b>：有信号就打 <a href="tel:911">911</a>（有卫星求救功能的手机或卫星信使也能用）；<b>原地等待</b>，保暖、喝水、找避风处；用哨子或闪光求救，<b>每组三声</b>。</li>
+              </ul>
+              <div class="sources"><h3>资料来源</h3><ol>
+                <li><a href="https://www.bcsara.com/public-safety/" target="_blank" rel="noopener">BC Search and Rescue Association：Public Safety（S.T.O.P.、原地等待）</a></li>
+                <li><a href="https://www.adventuresmart.ca/" target="_blank" rel="noopener">AdventureSmart（加拿大户外安全项目：行程计划、必备物品）</a></li>
+              </ol></div>
+            </section>
+          </div>
+        </section>
+        <section class="xp__pane" id="xp-offline" data-xp="offline" aria-label="离线下载" hidden>
+          <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册；出门前把照片也下载好。</p></div>
+          <div class="panel-grid">
+            <section class="panel panel--wide offline" aria-labelledby="offline-title">
+              <h2 class="panel__title" id="offline-title">这台设备上存了什么</h2>
+              <ul class="offline__list">
+                <li><span class="offline__k">网络</span><span class="offline__v" id="off-net">检查中…</span></li>
+                <li><span class="offline__k">文字资料</span><span class="offline__v"><span class="offline-status" id="offline-status">检查中…</span><span class="offline__note">全部物种、对比、急救、指南、食谱和你的记录</span></span></li>
+                <li><span class="offline__k">示例照片</span><span class="offline__v" id="off-photos">检查中…</span></li>
+                <li><span class="offline__k">3D 模型</span><span class="offline__v" id="off-model">检查中…</span></li>
+                <li><span class="offline__k">外部链接</span><span class="offline__v"><span>iNaturalist 和资料来源网页<b>需要联网</b>；离线时这些链接后面会标“需联网”。</span></span></li>
+              </ul>
+              <div class="offline__actions" id="off-actions">
+                <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>出门前下载全部照片<span class="offline__size" data-size="small"></span></button>
+                <button class="btn" type="button" data-dl="all">连高清版一起下载<span class="offline__size" data-size="all"></span></button>
+                <button class="btn-text" type="button" data-dl-stop hidden>停止</button>
+              </div>
+              <progress class="offline__bar" id="off-bar" max="1" value="0" hidden></progress>
+              <p class="muted-note" id="off-msg">照片平时只在看到时才存下来。进山前在有网的地方点一下上面的按钮，没信号时所有照片也能看。照片只存在这台设备上；手机空间紧张时浏览器可能会清掉，出门前再看一眼这里。</p>
+            </section>
+            <section class="panel">
+              <h2 class="panel__title">装到手机桌面</h2>
+              <ul>
+                <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
+                <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
+                <li>装好后从桌面图标打开，会像独立的 App 一样全屏显示。</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+        <section class="xp__pane" id="xp-field" data-xp="field" aria-label="户外模式" hidden>
+          <div class="panel-grid">
+            <section class="panel">
+              <h2 class="panel__title">户外模式</h2>
+              <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。更省电。</p>
+              <button class="btn btn--primary" type="button" data-field-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span data-field-label>打开户外模式</span></button>
+              <p class="muted-note" style="margin-top: var(--space-3)">也可以随时点页面顶部的太阳图标切换。只在这台设备上记住。</p>
+            </section>
+          </div>
+        </section>
+
       </section>
 
       <!-- ================= LEARN (识菌 › 学习) ================= -->
@@ -4193,6 +4242,31 @@ function obsSummary(r, list, min) {
   const n = list.reduce((a, s) => a + obsCounts(s, r).reduce((x, y) => x + y, 0), 0);
   return `数据：iNaturalist 研究级观察 · ${REGION[r]} · ${yrs.length ? `覆盖 ${yrs[0]}–${yrs[yrs.length - 1]} 年` : "无记录"} · 样本 ${n.toLocaleString("en")} 条（${list.length} 种）· 更新于 ${DATA.obsFetched}。${REGION[r]}记录少于 ${min} 条的种类样本不足，不列出。历史记录，不是实时出菇预测。`;
 }
+/* ---------- 拾菌: three categories, one sub-page at a time (hash #explore-<sub>; old #guide-* ids open their pane) ---------- */
+const XP = { find: ["now", "intel", "cal", "hab"], guide: ["rules", "prep", "pick", "safety"], tools: ["offline", "field"] };
+const xpCatOf = sub => Object.keys(XP).find(c => XP[c].includes(sub));
+const xpLast = (() => { const d = { cat: "find", find: "now", guide: "rules", tools: "offline" };
+  try { const v = JSON.parse(sessionStorage.getItem("mushroom-guide:xp") || "{}"); for (const c in XP) if (XP[c].includes(v[c])) d[c] = v[c]; if (XP[v.cat]) d.cat = v.cat; } catch (_) {}
+  return d; })();
+const xpCurrent = () => xpLast[xpLast.cat];
+// show one pane; the others carry the hidden attribute, so they are out of the focus order and the accessibility tree
+function xpShow(sub) {
+  const cat = xpCatOf(sub); if (!cat) return;
+  xpLast.cat = cat; xpLast[cat] = sub;
+  try { sessionStorage.setItem("mushroom-guide:xp", JSON.stringify(xpLast)); } catch (_) {}
+  document.querySelectorAll("[data-xp-cat]").forEach(b => b.setAttribute("aria-pressed", b.dataset.xpCat === cat));
+  document.querySelectorAll("[data-xp-subs]").forEach(g => { g.hidden = g.dataset.xpSubs !== cat; });
+  document.querySelectorAll("[data-xp-go]").forEach(b => { if (b.dataset.xpGo === sub) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  document.querySelectorAll(".xp__pane").forEach(pn => { pn.hidden = pn.dataset.xp !== sub; });
+  $("#explore-region").hidden = !(cat === "find" && sub !== "hab");  // region chips only where they change the content
+  if (sub === "offline") setTimeout(() => offlineReport(), 0);  // after the script has finished initialising (xpShow also runs at start-up)
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-xp-cat]"), g = e.target.closest("[data-xp-go]");
+  if (c) navigate("explore-" + xpLast[c.dataset.xpCat]);
+  else if (g) navigate("explore-" + g.dataset.xpGo);
+});
+xpShow(xpCurrent());
 /* ---------- 季节情报: by region and month, recommended species with many past records, their habitat and look-alikes ---------- */
 let intelMonth = MONTH, intelSub = "";
 function renderIntel() {
@@ -4583,7 +4657,9 @@ function parse(h) {
   if (h.startsWith("cmp-")) return { view: "toxic", target: h };
   if (h.startsWith("rc-") && DATA.recipes.some(r => "rc-" + r.id === h)) return { view: "recipes", target: h };
   if (h === "guide-log") return { view: "log" };
-  if (h === "data-center") return { view: "log", target: h };  // 设置 › 数据管理与备份  // older links to the log when it lived in the guide view
+  if (h === "data-center") return { view: "log", target: h };  // 设置 › 数据管理与备份
+  if (h.startsWith("explore-") && XP && Object.values(XP).some(a => a.includes(h.slice(8)))) return { view: "explore", xp: h.slice(8) };
+  if (h === "guide-theme") return { view: "explore", xp: "field", settings: true };  // 外观 moved into 设置  // older links to the log when it lived in the guide view
   // sections keep their old ids wherever they now live (e.g. #guide-calendar moved to 拾菌): open the view that holds them
   if (/^(guide|learn)-/.test(h) && document.getElementById(h)) return { view: document.getElementById(h).closest(".view").id.slice(2), target: h };
   if (VIEWS.includes(h)) return { view: h };
@@ -4601,6 +4677,7 @@ function tabTap(tab, root) {
   if (document.documentElement.dataset.tab === tab) {
     viewScroll[root] = 0;
     const cur = VIEWS.find(k => $("#v-" + k).classList.contains("is-active"));
+    if (root === "explore") { xpShow("now"); navigate("explore"); try { window.scrollTo(0, 0); } catch (_) {} return; }
     if (cur === root) { try { window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } catch (_) { window.scrollTo(0, 0); } return; }
     navigate(root); return;
   }
@@ -4641,6 +4718,12 @@ function apply(h, opts = {}) {
     openToxic(r.tx); return;
   }
   closeSheet();
+  if (r.view === "explore") {  // which 拾菌 pane: the one asked for, the one holding the target, or the last one used
+    const pane = r.target && document.getElementById(r.target) && document.getElementById(r.target).closest(".xp__pane");
+    xpShow(r.xp || (pane && pane.dataset.xp) || xpCurrent());
+    if (r.xp && !r.target) r.target = "explore-nav";  // a new sub-page starts at the top of the content, not at the old scroll
+  }
+  if (r.settings) requestAnimationFrame(() => { const d = $("#settings"); if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); } });
   if (r.target && r.target.startsWith("rc-")) {
     if (!document.getElementById(r.target)) { rcStyle = "全部"; renderRecipes(); }
     const more = $(`#${r.target} details`); if (more) more.open = true;
@@ -4661,7 +4744,7 @@ document.addEventListener("click", e => {
     if (h === "main") return;
     e.preventDefault();
     if (a.dataset.tab && (a.closest(".botnav") || a.closest(".topnav"))) { tabTap(a.dataset.tab, h); return; }
-    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-") || h === "data-center") navigate(h);
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-") || h.startsWith("explore-") || h === "data-center") navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
@@ -4692,7 +4775,10 @@ function fieldSync() {
   const sw = $("#set-field"); if (sw) sw.checked = on;
 }
 /* ---------- 设置: one bottom sheet; it reuses themeSet / fieldSet, it does not keep state of its own ---------- */
-$("[data-open-settings]").addEventListener("click", () => { const d = $("#settings"); if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); });
+document.addEventListener("click", e => {  // every 设置 button (header gear, 拾菌 › 工具) opens the same sheet
+  if (!e.target.closest("[data-open-settings]")) return;
+  const d = $("#settings"); if (d.open) return; if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+});
 $("#settings").addEventListener("click", e => {
   if (e.target === e.currentTarget || e.target.closest("[data-settings-close]") || e.target.closest("a[href^='#']")) e.currentTarget.close();
 });

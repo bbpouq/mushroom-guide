@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 266 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 285 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -246,7 +246,11 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   puts the questions and results before the 3D model; its 查看候选 pill floats above the tab bar and hides while the results
   are in view. The species sheet shows the section jumps right after the quick facts and a one-row safety summary (grade,
   review status, "非真菌学专家审核", notes and the warning line stay visible; only the review explanation folds). Section chips (`.jump-row`) are
-  the second-level navigation of 拾菌 and 菌记 and scroll as one row on phones. 拾菌's "去哪里找" is rendered by the build as
+  the second-level navigation of 菌记 and scroll as one row on phones. 拾菌 (v50.2, docs/V50_2_EXPLORE_NAV.md) shows one
+  sub-page at a time: categories 找菌 / 野外指南 / 工具 (`.xnav`, `XP`, `xpShow()`), sub-pages `#explore-<sub>` (now, intel,
+  cal, hab, rules, prep, pick, safety, offline, field; 设置 opens the settings sheet), panes `.xp__pane` hidden with the
+  `hidden` attribute, last sub-page per category in `sessionStorage` `mushroom-guide:xp`, old `#guide-*` ids open their pane,
+  `#guide-theme` opens 设置. Do not stack 拾菌 sections again. 拾菌's "去哪里找" is rendered by the build as
   `.habitat` folding cards (`habitat_cards()`), recommended species only. A new journal record is three steps (`jstep(n)`;
   照片与物种 / 地点与环境 / 备注与保存); "记下来" saves from any step and every field may stay empty except a name or species.
 - Nav: one sticky header for every size (brand left, the three tabs as `.topnav` from 768px, search / field mode / SOS

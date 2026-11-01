@@ -1127,7 +1127,7 @@ fieldset.finds__field { border: 0; margin: 0; padding: 0; min-width: 0; }
 img.brand__mark { width: 36px; height: 36px; border-radius: var(--radius-sm); background: none; display: block; flex: none; }
 .brand__name { letter-spacing: .02em; }
 .brand__sub { font-size: var(--fs-caption); font-weight: var(--fw-600); letter-spacing: .06em; color: var(--color-foreground); }  /* full text colour: the header is translucent over photos and maps */
-.topnav__link { font-size: var(--fs-body); }
+.topnav__link { font-size: var(--fs-body); color: var(--color-foreground); }  /* full text colour: the header is translucent over header photos */
 .topnav__link[aria-current="page"] { background: var(--color-primary-surface); color: var(--color-primary); font-weight: var(--fw-700); }
 .hdr__search { flex: none; }
 .subnav { display: none; gap: var(--space-2); max-width: 1200px; margin: 0 auto; padding: 0 var(--space-4) var(--space-2); overflow-x: auto; scrollbar-width: none; }
@@ -1474,6 +1474,20 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .limits { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); font-size: var(--fs-secondary); text-wrap: pretty; }
 
 .cmp__key { display: inline-block; margin-left: var(--space-1); padding: 0 var(--space-1); border-radius: var(--radius-xs); font-size: var(--fs-caption-sm); font-weight: var(--fw-700); background: var(--color-warning-surface); color: var(--color-warning-text); vertical-align: 1px; }
+
+/* ---------- v50.2: 拾菌 navigation ---------- */
+.xnav { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); }
+@media (min-width: 768px) { .xnav { max-width: 720px; } }
+.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.xnav__subs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: var(--space-1); }
+.xnav__subs[hidden] { display: none; }
+.xnav__sub { min-height: var(--target); padding: 0 var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-muted-foreground);
+  font: inherit; font-size: var(--fs-footnote); font-weight: var(--fw-600); cursor: pointer; line-height: 1.25; box-shadow: inset 0 -2px 0 transparent; }
+.xnav__sub:hover { color: var(--color-foreground); background: var(--color-muted); }
+.xnav__sub[aria-current="page"] { color: var(--color-foreground); box-shadow: inset 0 -2px 0 var(--color-primary); font-weight: var(--fw-700); }
+.xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.explore-region[hidden], .xp__pane[hidden] { display: none; }
+[data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
