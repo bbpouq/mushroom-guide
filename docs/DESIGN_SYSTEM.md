@@ -27,6 +27,19 @@ values (forest black, weights −40); axe-core reports no contrast failures in e
 
 Green marks interaction only, never "safe" or "edible". Red is only for toxicity and emergency.
 
+## Tokens added in Sprint 1
+
+- Type: `--fs-body-sm` 15, `--fs-footnote` 13, `--fs-caption-sm` 11, `--fs-h3` 18 (was 19); outdoor mode `--fs-field-body` 18, `--fs-field-title` 20, `--fs-field-display` 34.
+- Radius: `--radius-xs` 4, `--radius-md` 12, `--radius-pill` 999 (with `--radius-sm` 8, `--radius` 14, `--radius-lg` 22).
+- Colour: `--color-on-danger` (white; `#1B0505` in dark), `--on-photo` / `--on-photo-muted` / `--on-photo-fill`, `--scrim`, `--toast-bg` / `--toast-fg`,
+  `--hero-input-bg` / `-fg` / `-muted`; dark values for every PRD palette token.
+
+## Lint (build fails otherwise)
+
+`style_lint()` in `src/build_site.py` rejects, in component CSS: colour literals, pixel font sizes, spacing > 3px that is not
+`var(--space-*)`, radii > 2px that are not `var(--radius-*)`. Allowed: token definitions, forest-black `rgba(10, 14, 11, a)`,
+`calc()` / `env()`, relative units. Any other case needs `/* ds-ok: reason */` in the declaration (2 today).
+
 ## Type
 
 | Level | Token | Size | Face |
@@ -66,8 +79,11 @@ stays 48 so existing layouts do not move).
 | SafetyWarning | `.callout--danger`, `.safety` | sheets, finder, recipes, checklist |
 | SpeciesBadge / IdentificationStatus | `.badge--*`, `.sp-card__review`, `.jcard__st`, `.mine__st` | |
 
-States: hover and pressed use `--surface-3` and a short shrink; focus uses the double ring; disabled is 50% opacity
-with a not-allowed cursor; loading uses a text status (`正在读取…`) rather than skeleton blocks (see open issues).
+New in Sprint 1: segmented control `.seg` (+ `.seg--steps`), switch `.toggle` (checkbox `role="switch"`), bottom sheet
+`.bsheet` (bottom on phones, centred from 640px; backdrop, Esc and close all cancel), skeleton `.skel` (`skelRows(n)`), error
+state `.err-state` (`errState(title, text)`, amber: red stays for toxicity). States: hover and pressed use a tint and a short
+shrink; focus is the 3px ring on every control; disabled is 50% with a not-allowed cursor; busy is `aria-busy="true"` with a
+spinner (static under reduced motion). Theme: System / Light / Dark, `localStorage` `mushroom-guide:theme`, applied before paint.
 
 ## Motion
 

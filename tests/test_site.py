@@ -763,6 +763,52 @@ def run():
         check("the home journal preview shows the new record", "美味齿菌" in pg.inner_text("#home-jr-body"))
         ctx.close()
 
+        # ---------- round 10 / Sprint 1: theme, components, design page (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True, color_scheme="light")
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#guide-theme"); pg.wait_for_timeout(700)
+        check("the theme follows the system by default", pg.evaluate("document.documentElement.dataset.theme") is None
+              and pg.get_attribute('[data-theme-pick="system"]', "aria-pressed") == "true")
+        pg.click('[data-theme-pick="dark"]'); pg.wait_for_timeout(150)
+        dark_bg = pg.evaluate("getComputedStyle(document.body).backgroundColor")
+        check(f"choosing 深色 switches to dark at once ({dark_bg})", pg.evaluate("document.documentElement.dataset.theme") == "dark" and dark_bg != "rgb(248, 246, 239)")
+        pg.click("[data-field-toggle] >> nth=0"); pg.wait_for_timeout(150)
+        check("outdoor mode is independent of the theme", pg.evaluate("document.documentElement.dataset.field") == "on" and pg.evaluate("document.documentElement.dataset.theme") == "dark")
+        pg.reload(); pg.wait_for_timeout(600)
+        check("the theme choice is remembered on this device and applied before paint",
+              pg.evaluate("localStorage.getItem('mushroom-guide:theme')") == "dark" and pg.evaluate("document.documentElement.dataset.theme") == "dark")
+        pg.click("[data-field-toggle] >> nth=0"); pg.click('[data-theme-pick="system"]'); pg.wait_for_timeout(150)
+        check("跟随系统 clears the stored choice", pg.evaluate("localStorage.getItem('mushroom-guide:theme')") is None and pg.evaluate("document.documentElement.dataset.theme") is None)
+        pg.evaluate("navigate('guide-calendar')"); pg.wait_for_timeout(400)
+        pg.click('#v-explore [data-cal-mode="month"]'); pg.wait_for_timeout(150)
+        check("the calendar mode switch is a segmented control", pg.get_attribute('[data-cal-mode="month"]', "class") == "seg__btn"
+              and pg.get_attribute('[data-cal-mode="month"]', "aria-pressed") == "true")
+        pg.evaluate("navigate('log')"); pg.wait_for_timeout(700)
+        check("location options are switches", pg.get_attribute("#finds-fuzzy", "role") == "switch" and pg.get_attribute("#fmap-tiles", "role") == "switch")
+        tmpd = Path(__import__("tempfile").mkdtemp())
+        (tmpd / "one.json").write_text(__import__("json").dumps({"backupVersion": 4, "finds": [{"id": 99, "date": "2026-10-05"}], "photos": {}}), encoding="utf-8")
+        pg.set_input_files("#finds-import", str(tmpd / "one.json")); pg.wait_for_timeout(400)
+        check("the import preview is a bottom sheet", pg.get_attribute("#imp", "class") == "bsheet" and pg.evaluate("document.getElementById('imp').open"))
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+        check("Esc cancels the sheet and changes nothing", not pg.evaluate("document.getElementById('imp').open") and "没有改动" in pg.inner_text("#toast") and pg.evaluate("findsLoad().length") == 0)
+        pg.set_input_files("#finds-import", str(tmpd / "one.json")); pg.wait_for_timeout(400)
+        pg.mouse.click(195, 20); pg.wait_for_timeout(200)
+        check("tapping the backdrop cancels too", not pg.evaluate("document.getElementById('imp').open") and pg.evaluate("findsLoad().length") == 0)
+        check("skeleton and error-state helpers render", pg.evaluate("skelRows(2).includes('skel--row') && errState('a', 'b').includes('err-state')"))
+        pg.evaluate("STORE = 'none'; FINDS = null; renderFinds()"); pg.wait_for_timeout(200)
+        check(f"blocked storage shows an error state with a next step {errs}", pg.locator("#finds-list .err-state").count() == 1 and "换成普通浏览器窗口" in pg.inner_text("#finds-list") and not errs)
+        ctx.close()
+        ctx = b.new_context(viewport={"width": 390, "height": 844})
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "design-system.html"); pg.wait_for_timeout(500)
+        have = [pg.locator(s).count() > 0 for s in [".seg", ".toggle", "dialog.bsheet", ".skel", ".err-state", '.btn[aria-busy="true"]', ".ds-sw"]]
+        pg.click('[data-ds-theme="dark"]'); pg.wait_for_timeout(100)
+        check(f"the design system page shows every component and switches theme {have} {errs}", all(have) and pg.evaluate("document.documentElement.dataset.theme") == "dark" and not errs
+              and pg.evaluate("document.documentElement.scrollWidth") <= 390)
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')

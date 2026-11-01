@@ -327,6 +327,38 @@ _sw = (OUT.parent / "sw.js").read_text(encoding="utf-8")
 for _f in re.findall(r'"\./([^"]+)"', re.search(r"const SHELL = \[(.*?)\];", _sw).group(1)):
     assert (OUT.parent / _f).exists(), f"sw.js pre-caches a missing file: {_f}"
 
+# ---- design-system lint (round 10, Sprint 1): components use tokens; any exception says why in /* ds-ok: reason */ ----
+def style_lint(css):
+    """Return violations: colour literals, pixel font sizes, off-scale spacing and radii outside the token definitions.
+    Custom properties (--name: value) are the token definitions and are exempt. Allowed without a note: forest-black
+    rgba(10, 14, 11, a) for shadows and scrims, hairlines up to 3px, calc()/env() expressions, %, em, rem and 0."""
+    css = re.sub(r"/\*(?!\s*ds-ok)[\s\S]*?\*/", "", css)  # drop ordinary comments, keep ds-ok notes
+    bad = []
+    for m in re.finditer(r"(?<![\w-])([a-z-]+)\s*:\s*([^;{}]+)", css):
+        prop, val = m.group(1), m.group(2)
+        if prop.startswith("--") or "ds-ok:" in val or prop in ("content", "src", "font-family", "grid-template-areas"):
+            continue
+        line = css.count("\n", 0, m.start()) + 1
+        if re.search(r"#[0-9a-fA-F]{3,8}\b|\brgba?\((?!10, 14, 11)|\bhsla?\(", val):
+            bad.append(f"line {line}: colour literal in {prop}: {val.strip()[:60]}")
+        if prop == "font-size" and re.search(r"(?<![\w.])\d+(\.\d+)?px", val) and "calc" not in val:
+            bad.append(f"line {line}: pixel font-size {val.strip()[:40]} (use var(--fs-*))")
+        if re.match(r"(margin|padding|gap|row-gap|column-gap)(-|$)", prop) and "calc" not in val and "env(" not in val:
+            for n in re.findall(r"(?<![\w.-])(\d+)px", val):
+                if int(n) > 3:
+                    bad.append(f"line {line}: off-token spacing {prop}: {val.strip()[:40]} (use var(--space-*))"); break
+        if "radius" in prop:
+            for n in re.findall(r"(?<![\w.-])(\d+)px", val):
+                if int(n) > 2:
+                    bad.append(f"line {line}: off-token radius {val.strip()[:40]} (use var(--radius-*))"); break
+    return bad
+
+
+_tpl = (SRC / "template.html").read_text(encoding="utf-8")
+_lint = style_lint(_tpl[_tpl.index("<style>"):_tpl.index("</style>")])
+assert not _lint, "design-system lint (fix, or add /* ds-ok: reason */):\n  " + "\n  ".join(_lint[:40])
+
+
 # ---- design system showcase (public/design-system.html): the site's own CSS and icons, so it can never drift ----
 def design_page():
     tpl = (SRC / "template.html").read_text(encoding="utf-8")
@@ -347,11 +379,19 @@ def design_page():
                     for i, px in [(1, 4), (2, 8), (3, 12), (4, 16), (5, 24), (6, 32), (8, 40), (7, 48), (9, 64)])
     body = f"""<main class="ds">
 <header class="ds-head"><h1 class="view__title">拾菌记 设计系统</h1><p>Nature Editorial × Modern Field App · 组件直接使用网站的 CSS 和图标。色块显示当前主题下的实际颜色。</p>
-<div class="link-row"><button class="btn" type="button" onclick="document.documentElement.dataset.theme='light'">浅色</button><button class="btn" type="button" onclick="document.documentElement.dataset.theme='dark'">深色</button><a class="btn" href="./">回到拾菌记</a></div></header>
+<div class="link-row"><div class="seg" role="group" aria-label="外观"><button type="button" class="seg__btn" data-ds-theme="system" aria-pressed="true">跟随系统</button><button type="button" class="seg__btn" data-ds-theme="light" aria-pressed="false">浅色</button><button type="button" class="seg__btn" data-ds-theme="dark" aria-pressed="false">深色</button></div>
+<label class="toggle"><input type="checkbox" role="switch" id="ds-field"><span class="toggle__track" aria-hidden="true"></span><span>户外模式</span></label><a class="btn" href="./">回到拾菌记</a></div></header>
 <section><h2>颜色</h2><div class="ds-grid">{colors}</div></section>
 <section><h2>字体层级</h2>{types}</section>
 <section><h2>间距（4px 基础）</h2>{space}</section>
-<section><h2>按钮</h2><div class="link-row"><button class="btn btn--primary" type="button">主按钮</button><button class="btn" type="button">次按钮</button><button class="btn btn--danger" type="button">危险操作</button><button class="btn" type="button" disabled>不可用</button><button class="icon-btn" type="button" aria-label="搜索"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button></div></section>
+<section><h2>按钮与状态</h2><p class="muted-note">默认 · 悬停 · 按下（缩小）· 键盘聚焦（双环）· 不可用 · 进行中（aria-busy）</p><div class="link-row"><button class="btn btn--primary" type="button">主按钮</button><button class="btn" type="button">次按钮</button><button class="btn btn--danger" type="button">危险操作</button><button class="btn" type="button" disabled>不可用</button><button class="btn" type="button" aria-busy="true">导出中</button><button class="icon-btn" type="button" aria-label="搜索"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button></div></section>
+<section><h2>分段控件 Segmented Control</h2><div class="seg" role="group" aria-label="显示方式"><button type="button" class="seg__btn" aria-pressed="true">全年日历</button><button type="button" class="seg__btn" aria-pressed="false">按月份看</button></div>
+<ol class="seg seg--steps" aria-label="步骤" style="margin-top:16px"><li><button type="button" class="seg__btn" aria-current="step">照片与物种</button></li><li><button type="button" class="seg__btn">地点与环境</button></li><li><button type="button" class="seg__btn">备注与保存</button></li></ol></section>
+<section><h2>开关 Toggle</h2><label class="toggle"><input type="checkbox" role="switch" checked><span class="toggle__track" aria-hidden="true"></span><span>只记大概位置（约 1 公里）</span></label><br><label class="toggle"><input type="checkbox" role="switch" disabled><span class="toggle__track" aria-hidden="true"></span><span>不可用</span></label></section>
+<section><h2>底部面板 Bottom Sheet</h2><p class="muted-note">手机上从底部升起，电脑上居中；点背景、Esc 或关闭按钮都会取消。</p><button class="btn" type="button" onclick="document.getElementById('ds-sheet').showModal()">打开示例面板</button>
+<dialog class="bsheet" id="ds-sheet" aria-labelledby="ds-sheet-t"><div class="bsheet__box"><span class="bsheet__grab" aria-hidden="true"></span><div class="bsheet__head"><h2 class="bsheet__title" id="ds-sheet-t">示例面板</h2><button class="icon-btn" type="button" aria-label="关闭" onclick="this.closest('dialog').close()"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div><p>确认之前，什么都不会改动。</p><div class="bsheet__actions"><button class="btn" type="button" onclick="this.closest('dialog').close()">取消</button><button class="btn btn--primary" type="button" onclick="this.closest('dialog').close()">确认</button></div></div></dialog></section>
+<section><h2>加载占位 Skeleton 与错误状态</h2><div class="skel-list" aria-hidden="true"><div class="skel skel--row"><span class="skel skel--thumb"></span><span class="skel__lines"><span class="skel skel--line"></span><span class="skel skel--line skel--short"></span></span></div></div>
+<div class="err-state" role="status" style="margin-top:16px"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>这里不能保存记录</b><p>错误状态用琥珀色，不用红色：红色只留给毒性和急救。</p></div></div></section>
 <section><h2>筛选 Chip / 分段</h2><div class="chip-list"><button class="chip" type="button" aria-pressed="true">三地合计</button><button class="chip" type="button" aria-pressed="false">BC</button><button class="chip" type="button" aria-pressed="false">华盛顿</button></div>
 <ol class="jsteps" style="margin-top:16px"><li><button type="button" class="jsteps__btn" aria-current="step">照片与物种</button></li><li><button type="button" class="jsteps__btn">地点与环境</button></li><li><button type="button" class="jsteps__btn">备注与保存</button></li></ol></section>
 <section><h2>输入</h2><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="ds-q">搜索</label><input id="ds-q" type="search" placeholder="搜中文名、英文名、学名或术语"></div>
@@ -369,8 +409,15 @@ def design_page():
 .ds-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}.ds-sw{display:grid;gap:2px;padding:8px;border-radius:14px;background:var(--surface-1)}
 .ds-sw span{height:48px;border-radius:10px;border:.5px solid var(--color-border)}.ds-sw small,.ds-sw code{font-size:12px;color:var(--color-muted-foreground)}
 .ds-sp{display:flex;align-items:center;gap:12px;margin:4px 0}.ds-sp span{height:12px;background:var(--color-primary);border-radius:3px}</style>"""
+    script = """<script>
+document.addEventListener("click", e => { const b = e.target.closest("[data-ds-theme]"); if (!b) return; const v = b.dataset.dsTheme;
+  if (v === "system") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = v;
+  document.querySelectorAll("[data-ds-theme]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+document.getElementById("ds-field").addEventListener("change", e => { if (e.target.checked) document.documentElement.dataset.field = "on"; else delete document.documentElement.dataset.field; });
+document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e => { if (e.target === d) d.close(); }));
+</script>"""
     return (f'<!doctype html><html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
-            f'<meta name="robots" content="noindex"><title>拾菌记 设计系统</title>{css}{extra}</head><body>{sprite}{body}</body></html>')
+            f'<meta name="robots" content="noindex"><title>拾菌记 设计系统</title>{css}{extra}</head><body>{sprite}{body}{script}</body></html>')
 
 
 (OUT.parent / "design-system.html").write_text(design_page(), encoding="utf-8")

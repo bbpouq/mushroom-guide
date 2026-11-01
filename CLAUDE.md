@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 217 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 230 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -171,7 +171,11 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   `#243B30` brand surfaces, moss `#819477`, bark `#967A5A`, amber `#C18B43` (fills only), text `#29352D` / `#5E665D` (AA), danger
   `#B84D42` fill / `#A3392F` text, reserved for toxicity and emergency.
   Green marks interaction only; never use it as a "safe/edible" verdict (the 上品 and 西北太平洋常见 badges are amber and grey).
-  Style everything through tokens; no raw hex in components.
+  Style everything through tokens; no raw hex in components. The build's `style_lint()` enforces it: no colour literals,
+  pixel font sizes (`--fs-*`), off-token spacing (`--space-*`) or radii (`--radius-*`) in component CSS; a genuine exception
+  carries `/* ds-ok: reason */`. Theme: System / Light / Dark (`localStorage` `mushroom-guide:theme`, applied before paint,
+  independent of outdoor mode). Shared components: `.seg` segmented control, `.toggle` switch, `.bsheet` bottom sheet,
+  `.skel` skeleton (`skelRows`), `.err-state` (`errState`, amber, never red). docs/SPRINT1_REPORT.md.
 - Motion (since 2026-11): views fade in with a springy header; cards ease in as they scroll into view
   (IntersectionObserver adds `is-reveal` / `is-shown`, skipped under reduced motion); controls shrink on press;
   header photos drift slowly; the phone species sheet can be dragged down to close. Never animate warnings.
