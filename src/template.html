@@ -1291,6 +1291,27 @@ html[data-tab="id"] .subnav { display: flex; }
 .now__data { margin: var(--space-3) 0 0; font-size: 12px; color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; text-wrap: pretty; }
 .obs-meta--cal { margin-bottom: var(--space-3); }
 .obs-chart__few { display: inline-block; margin: 0 6px; padding: 0 7px; border-radius: 999px; font-size: 11px; font-weight: var(--fw-600); background: var(--color-warning-surface); color: var(--color-warning-text); }
+/* ---------- round 8: import / wipe dialogs and the data center ---------- */
+.imp { width: min(520px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: var(--radius-lg); background: var(--surface-2); color: var(--color-foreground); box-shadow: 0 24px 64px rgba(10, 14, 11, .28); }
+.imp::backdrop { background: rgba(10, 14, 11, .42); }
+.imp__box { padding: var(--space-5); display: grid; gap: var(--space-3); }
+.imp__title { margin: 0; font-size: 20px; font-weight: var(--fw-700); text-wrap: balance; }
+.imp__rows, .dc__stats { display: grid; gap: var(--space-2); margin: 0; font-size: 14px; }
+.imp__rows div, .dc__stats div { display: grid; grid-template-columns: minmax(7em, 40%) minmax(0, 1fr); gap: var(--space-3); padding-bottom: var(--space-2); border-bottom: .5px solid var(--color-border); }
+.imp__rows dt, .dc__stats dt { color: var(--color-muted-foreground); }
+.imp__rows dd, .dc__stats dd { margin: 0; font-variant-numeric: tabular-nums; text-wrap: pretty; }
+.imp__choice { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.imp__choice legend { font-weight: var(--fw-600); margin-bottom: var(--space-2); }
+.imp__actions { display: flex; gap: var(--space-2); justify-content: flex-end; flex-wrap: wrap; }
+.btn--danger { color: var(--color-danger-text); }
+.btn--danger:disabled, .btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.is-confirm { background: var(--color-danger-surface); color: var(--color-danger-text); }
+.panel--dc { display: grid; gap: var(--space-3); }
+.finds__q { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.finds__q .finds__input { width: auto; flex: 1 1 14em; }
+.finds__thumb .finds__left { left: 4px; right: auto; }
+.finds__left .icon { transform: rotate(180deg); }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1891,6 +1912,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <div class="finds__field finds__field--wide">
                 <span class="finds__label">照片（可选，最多 8 张；可以标注拍的是哪个部位）</span>
                 <label class="btn finds__pick"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>添加照片<input class="sr-only" id="finds-photo" type="file" accept="image/*" multiple></label>
+                <label class="finds__q"><span>照片保存尺寸</span><select class="finds__input" id="finds-photo-q"><option value="1280">标准（长边 1280 像素，省空间）</option><option value="2048">高清（长边 2048 像素）</option></select></label>
                 <div class="finds__thumbs" id="finds-thumbs"></div>
               </div>
               <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="600" placeholder="数量、孢子印颜色、气味、切开变色、吃了没有……"></textarea></div>
@@ -1924,13 +1946,26 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               <label class="sr-only" for="finds-fregion">按地区筛选</label><select class="finds__input" id="finds-fregion"><option value="">全部地区</option><option value="bc">BC</option><option value="wa">华盛顿</option><option value="or">俄勒冈</option><option value="other">其他地方</option><option value="none">没有坐标</option></select>
             </div>
             <div id="finds-list" aria-live="polite"></div>
+          </section>
+
+          <section class="panel panel--dc" id="data-center" aria-labelledby="dc-title">
+            <h2 class="panel__title" id="dc-title">数据管理</h2>
+            <p class="finds__hint">记录和照片只存在这台设备的浏览器里，不会上传。清除浏览器数据、卸载或换手机都会让它们消失：请定期导出完整备份。</p>
+            <div class="dc__remind" id="dc-remind" role="status"></div>
+            <dl class="dc__stats" id="dc-stats"></dl>
             <p class="finds__hint" id="finds-export-note">备份文件只在你自己的设备之间搬运时用“精确”。要分享给别人，请选“约 1 公里”或“不包含坐标”。</p>
             <div class="finds__bar">
-              <button class="btn" type="button" id="finds-export-json"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出备份（含照片）</button>
+              <button class="btn" type="button" id="finds-export-json"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出完整备份（JSON，含照片）</button>
               <button class="btn" type="button" id="finds-export"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>导出 CSV 表格</button>
               <label class="finds__export-gps"><span>导出的坐标</span><select class="finds__input" id="finds-export-gps"><option value="exact">精确（完整备份）</option><option value="approx">约 1 公里</option><option value="none">不包含坐标</option></select></label>
               <label class="btn finds__import"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-plus"/></svg>导入备份<input type="file" id="finds-import" accept="application/json,.json" hidden></label>
             </div>
+            <div class="finds__bar">
+              <button class="btn" type="button" id="dc-orphans">清理无关联照片</button>
+              <button class="btn" type="button" id="dc-media">清除下载的示例图片</button>
+              <button class="btn btn--danger" type="button" id="dc-wipe">清空本地数据…</button>
+            </div>
+            <p class="finds__hint">“清除下载的示例图片”只删离线用的图鉴图片，不会动你的记录和照片。</p>
           </section>
         </section>
       </section>
@@ -2021,6 +2056,15 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <a class="botnav__link" href="#log" data-tab="jr"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook-pen"/></svg>菌记</a>
 </nav>
 
+<dialog class="imp" id="imp" aria-labelledby="imp-title"><div class="imp__box">
+  <h2 class="imp__title" id="imp-title">导入备份之前</h2><div id="imp-body"></div>
+  <div class="imp__actions"><button class="btn" type="button" data-imp-cancel>取消</button><button class="btn btn--primary" type="button" id="imp-go">确认导入</button></div>
+</div></dialog>
+<dialog class="imp" id="wipe" aria-labelledby="wipe-title"><div class="imp__box">
+  <h2 class="imp__title" id="wipe-title">清空这台设备上的拾菌记数据</h2><div id="wipe-body"></div>
+  <label class="finds__check"><input type="checkbox" id="wipe-ok"><span>我已经导出了完整备份，或者确定不再需要这些记录和照片</span></label>
+  <div class="imp__actions"><button class="btn" type="button" data-wipe-cancel>取消</button><button class="btn btn--danger" type="button" id="wipe-go" disabled>永久删除</button></div>
+</div></dialog>
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-title"><div class="sheet__body" id="sheet-body"></div></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <dialog class="zoom" id="zoom" aria-label="放大的照片"><button class="icon-btn zoom__close" type="button" data-zoom-close aria-label="关闭放大的照片"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button><img class="zoom__img" id="zoom-img" alt=""><p class="zoom__cap" id="zoom-cap"></p></dialog>
@@ -2659,7 +2703,7 @@ async function findsSave(list) {
   await findsReady;
   if (STORE === "none" || !FINDS) return false;
   const now = new Date().toISOString(), prev = new Map(FINDS.map(f => [String(f.id), f]));
-  const next = list.map(f => { const p = prev.get(String(f.id)); return p === f ? f : { ...f, createdAt: f.createdAt || (p && p.createdAt) || now, updatedAt: now }; });
+  const next = list.map(f => { const p = prev.get(String(f.id)); return p === f ? f : { ...f, createdAt: f.createdAt || (p && p.createdAt) || now, updatedAt: f.updatedAt && (!p || f.updatedAt !== p.updatedAt) ? f.updatedAt : now }; });
   const keep = new Set(next.map(f => String(f.id))), gone = FINDS.filter(f => !keep.has(String(f.id)));
   const changed = next.filter(f => prev.get(String(f.id)) !== f);
   try {
@@ -2764,7 +2808,7 @@ function gpsText() {
 }
 async function drawThumbs() {
   const urls = await Promise.all(draft.photos.map(photoURL));
-  $("#finds-thumbs").innerHTML = draft.photos.map((k, i) => `<div class="finds__shot"><div class="finds__thumb">${urls[i] ? `<img src="${urls[i]}" alt="已添加的照片 ${i + 1}">` : ""}<button type="button" data-unphoto="${esc(k)}" aria-label="移除照片 ${i + 1}">${icon("x", "icon--sm")}</button></div>
+  $("#finds-thumbs").innerHTML = draft.photos.map((k, i) => `<div class="finds__shot"><div class="finds__thumb">${urls[i] ? `<img src="${urls[i]}" alt="已添加的照片 ${i + 1}">` : ""}<button type="button" data-unphoto="${esc(k)}" aria-label="移除照片 ${i + 1}">${icon("x", "icon--sm")}</button>${i ? `<button type="button" class="finds__left" data-photo-left="${i}" aria-label="照片 ${i + 1} 往前移">${icon("arrow", "icon--sm")}</button>` : ""}</div>
     <label class="sr-only" for="part-${i}">照片 ${i + 1} 拍的部位</label><select class="finds__part" id="part-${i}" data-part="${esc(k)}">${PARTS.map(p => `<option${draft.parts[k] === p ? " selected" : ""}>${p}</option>`).join("")}</select></div>`).join("");
 }
 function formReset() {
@@ -2805,13 +2849,15 @@ $("#finds-photo").addEventListener("change", async e => {
   const files = [...e.target.files].slice(0, MAX_PHOTOS - draft.photos.length); e.target.value = "";
   if (!files.length) { toast(`最多 ${MAX_PHOTOS} 张照片`); return; }
   for (const f of files) {
-    try { const b = await shrink(f), k = "p" + Date.now() + Math.random().toString(36).slice(2, 7); await photoDB.put(k, b); draft.photos.push(k); draft.parts[k] = draft.photos.length === 1 ? "整体" : "其他"; }
+    try { const b = await shrink(f, +$("#finds-photo-q").value || 1280), k = "p" + Date.now() + Math.random().toString(36).slice(2, 7); await photoDB.put(k, b); draft.photos.push(k); draft.parts[k] = draft.photos.length === 1 ? "整体" : "其他"; }
     catch (_) { toast("这张照片存不下来（浏览器不允许或空间不够）"); }
   }
   drawThumbs();
 });
 $("#finds-thumbs").addEventListener("change", e => { const s = e.target.closest("[data-part]"); if (s) draft.parts[s.dataset.part] = s.value; });
 $("#finds-thumbs").addEventListener("click", e => {
+  const l = e.target.closest("[data-photo-left]");
+  if (l) { const i = +l.dataset.photoLeft; [draft.photos[i - 1], draft.photos[i]] = [draft.photos[i], draft.photos[i - 1]]; drawThumbs(); return; }
   const b = e.target.closest("[data-unphoto]"); if (!b) return;
   draft.photos = draft.photos.filter(k => k !== b.dataset.unphoto); drawThumbs();   // removed from the blob store when the record is saved
 });
@@ -2854,6 +2900,7 @@ function findsFilterOptions(list) {
   keep("#finds-fmonth", `<option value="">全部月份</option>${Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1} 月</option>`).join("")}`);
 }
 async function renderFinds() {
+  renderDataCenter();
   const list = findsLoad();
   if (list === null) { $("#finds-list").innerHTML = `<p class="finds__empty">这个浏览器不允许保存数据（例如无痕模式或预览窗口），记录功能用不了。</p>`; fmapDraw([]); return; }
   if (STORE === "loading") { $("#finds-list").innerHTML = `<p class="finds__empty">正在读取这台设备上的记录…</p>`; return; }
@@ -2934,7 +2981,7 @@ $("#finds-list").addEventListener("click", async e => {
 
 // ----- backup: JSON with photos, CSV for spreadsheets, import merges by id -----
 // An imported record keeps only known fields with the right types; anything else in the file is dropped.
-const FIND_TEXT = ["date", "sp", "other", "place", "notes", "status", "verifier", "vorg", "vdate", "vmethod", "hab", "trees"];
+const FIND_TEXT = ["date", "sp", "other", "place", "notes", "status", "verifier", "vorg", "vdate", "vmethod", "hab", "trees", "createdAt", "updatedAt"];
 function findClean(f) {
   if (!f || typeof f !== "object" || Array.isArray(f)) return null;
   const id = (typeof f.id === "number" && isFinite(f.id)) || (typeof f.id === "string" && f.id && f.id.length < 64) ? f.id
@@ -2965,10 +3012,23 @@ function exportCoords(list) {
     : { ...f, lat: null, lon: null, alt: null, acc: null, fuzzy: false });
 }
 function exportWarn(list) { if ($("#finds-export-gps").value === "exact" && list.some(f => typeof f.lat === "number")) toast("导出的文件含精确坐标：不要直接分享给别人"); }
+// Full backup (backupVersion 4): records, photos, settings and learning progress. Format: docs/BACKUP_FORMAT.md
+const BACKUP_VERSION = 4;
+const PREF_KEYS = ["mushroom-guide:field", "mushroom-guide:region", "mushroom-guide:photo-q"];
+function lsGet(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
+function lsSet(k, v) { try { if (v === null || v === undefined) localStorage.removeItem(k); else localStorage.setItem(k, v); return true; } catch (_) { return false; } }
 $("#finds-export-json").addEventListener("click", async () => {
+  await findsReady;
   const list = exportCoords(findsLoad() || []), photos = {}; exportWarn(list);
   for (const f of list) for (const k of f.photos || []) { const b = await photoDB.get(k); if (b) photos[k] = await blobToData(b); }
-  saveFile(`拾菌记-菌记备份-${todayISO()}.json`, new Blob([JSON.stringify({ app: "mushroom-guide", brand: "拾菌记 MycoTrail", version: 3, exported: new Date().toISOString(), coords: $("#finds-export-gps").value, finds: list, photos })], { type: "application/json" }));
+  const at = new Date().toISOString(), coords = $("#finds-export-gps").value;
+  let learning = null; try { learning = JSON.parse(lsGet(LEARN_KEY) || "null"); } catch (_) {}
+  saveFile(`拾菌记-完整备份-${todayISO()}.json`, new Blob([JSON.stringify({
+    app: "mushroom-guide", brand: "拾菌记 MycoTrail", backupVersion: BACKUP_VERSION, version: BACKUP_VERSION, schemaVersion: SCHEMA_VERSION,
+    exportedAt: at, exported: at, coords, finds: list, photos,
+    prefs: Object.fromEntries(PREF_KEYS.map(k => [k, lsGet(k)]).filter(([, v]) => v !== null)), learning,
+  })], { type: "application/json" }));
+  if (STORE === "idb") { await metaSet("lastBackup", { at, finds: list.length, photos: Object.keys(photos).length, coords }); renderDataCenter(); }
 });
 $("#finds-export").addEventListener("click", () => {
   const list = exportCoords(findsLoad() || []); exportWarn(list);
@@ -2978,26 +3038,61 @@ $("#finds-export").addEventListener("click", () => {
   }));
   saveFile(`拾菌记-菌记-${todayISO()}.csv`, new Blob(["﻿" + rows.map(r => r.map(q).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }));
 });
+// Import: read and check the whole file first, show what it holds and what would change, write only after the person confirms.
+const recSame = (a, b) => { const s = x => JSON.stringify(Object.fromEntries(Object.entries(x).filter(([k]) => k !== "createdAt" && k !== "updatedAt" && k !== "photoKeys").sort())); return s(a) === s(b); };
+let impPlan = null;
 $("#finds-import").addEventListener("change", async e => {
   const file = e.target.files[0]; e.target.value = ""; if (!file) return;
   try {
     if (file.size > 200 * 1024 * 1024) { toast("文件太大，不像本站导出的备份。现有记录没有改动"); return; }
     let data; try { data = JSON.parse(await file.text()); } catch (_) { toast("这个文件不是有效的 JSON。现有记录没有改动"); return; }
+    await findsReady;
     const list = findsLoad();
     if (list === null) { toast("这个浏览器不能保存记录"); return; }
     const incoming = Array.isArray(data) ? data : data && data.finds;
     if (!Array.isArray(incoming)) { toast("这个文件不是本站导出的备份。现有记录没有改动"); return; }
-    if (data && !Array.isArray(data) && typeof data.version === "number" && data.version > 3) { toast("这个备份来自更新版本的拾菌记，请先更新页面。现有记录没有改动"); return; }
+    const ver = data && !Array.isArray(data) ? (data.backupVersion ?? data.version) : 1;
+    if (typeof ver === "number" && ver > BACKUP_VERSION) { toast("这个备份来自更新版本的拾菌记，请先更新页面。现有记录没有改动"); return; }
     const photos = data && !Array.isArray(data) && data.photos && typeof data.photos === "object" ? data.photos : {};
-    const have = new Set(list.map(f => String(f.id))), add = []; let dup = 0, bad = 0;
+    const have = new Map(list.map(f => [String(f.id), f])), seen = new Set(), add = [], conflict = [];
+    let same = 0, bad = 0, dupInFile = 0;
     for (const f of incoming) {
       const r = findClean(f);
       if (!r) { bad++; continue; }
-      if (have.has(String(r.id))) { dup++; continue; }
-      have.add(String(r.id)); add.push(r);
+      if (seen.has(String(r.id))) { dupInFile++; continue; } seen.add(String(r.id));
+      const mine = have.get(String(r.id));
+      if (!mine) add.push(r); else if (recSame({ ...r, photos: r.photoKeys }, mine)) same++; else conflict.push(r);
     }
-    const stored = [];  // photos are written first; if saving the records fails they are removed again
-    for (const r of add) {
+    const nPhotos = Object.values(photos).filter(d => typeof d === "string" && /^data:image\/(jpeg|png|webp);base64,/.test(d)).length;
+    const extras = data && !Array.isArray(data) ? { prefs: data.prefs && typeof data.prefs === "object" ? data.prefs : null, learning: data.learning && typeof data.learning === "object" ? data.learning : null } : {};
+    impPlan = { add, conflict, photos, extras };
+    $("#imp-body").innerHTML = `
+      <p>备份文件：${esc(file.name)}${data.exportedAt || data.exported ? `，导出于 ${esc(String(data.exportedAt || data.exported).slice(0, 10))}` : ""}，格式版本 ${esc(String(ver ?? 1))}。</p>
+      <dl class="imp__rows">
+        <div><dt>文件里的记录</dt><dd>${incoming.length} 条（照片 ${nPhotos} 张）</dd></div>
+        <div><dt>新记录，会加进来</dt><dd>${add.length} 条</dd></div>
+        <div><dt>这台设备上已经有，内容相同</dt><dd>${same} 条（不动）</dd></div>
+        <div><dt>同一条记录，内容不同</dt><dd>${conflict.length} 条</dd></div>
+        ${bad || dupInFile ? `<div><dt>格式不对或重复，跳过</dt><dd>${bad + dupInFile} 条</dd></div>` : ""}
+      </dl>
+      ${conflict.length ? `<fieldset class="imp__choice"><legend>内容不同的 ${conflict.length} 条怎么办</legend>
+        <label class="finds__check"><input type="radio" name="imp-conflict" value="keep" checked><span>保留这台设备上的版本（推荐）</span></label>
+        <label class="finds__check"><input type="radio" name="imp-conflict" value="replace"><span>用备份里的版本替换这 ${conflict.length} 条</span></label></fieldset>` : ""}
+      ${extras.learning || extras.prefs ? `<label class="finds__check"><input type="checkbox" id="imp-extras"><span>同时恢复备份里的学习进度和设置（会替换这台设备上现在的）</span></label>` : ""}
+      <p class="finds__hint">确认之前，这台设备上的数据不会有任何改动。</p>`;
+    $("#imp-go").disabled = !add.length && !conflict.length && !extras.learning && !extras.prefs;
+    const d = $("#imp"); if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+  } catch (_) { toast("导入没有完成。现有记录没有改动"); }
+});
+$("#imp").addEventListener("click", async e => {
+  if (e.target.closest("[data-imp-cancel]")) { impPlan = null; $("#imp").close(); toast("已取消，现有记录没有改动"); return; }
+  if (!e.target.closest("#imp-go") || !impPlan) return;
+  const { add, conflict, photos, extras } = impPlan, replace = (document.querySelector('[name="imp-conflict"]:checked') || {}).value === "replace";
+  const restoreExtras = !!($("#imp-extras") && $("#imp-extras").checked);
+  impPlan = null; $("#imp").close();
+  try {
+    const take = add.concat(replace ? conflict : []), stored = [];  // photos are written first; if saving the records fails they are removed again
+    for (const r of take) {
       r.photos = [];
       for (const k of r.photoKeys) {
         const d = photos[k];  // only embedded images: an imported file must never make the page fetch a web address
@@ -3005,16 +3100,82 @@ $("#finds-import").addEventListener("change", async e => {
       }
       delete r.photoKeys;
     }
-    if (add.length && !(await findsSave(list.concat(add)))) { stored.forEach(k => photoDB.del(k)); toast("导入失败：浏览器存储已满。现有记录没有改动"); return; }
+    const list = findsLoad() || [], byId = new Map(take.map(r => [String(r.id), r]));
+    const before = new Map(list.map(f => [String(f.id), f]));
+    const next = list.map(f => byId.get(String(f.id)) || f).concat(add);
+    if (take.length && !(await findsSave(next))) { stored.forEach(k => photoDB.del(k)); toast("导入失败：浏览器存储已满。现有记录没有改动"); return; }
+    if (replace) conflict.forEach(r => { const old = before.get(String(r.id)); (old && old.photos || []).filter(k => !r.photos.includes(k)).forEach(k => photoDB.del(k)); });
+    if (restoreExtras) {
+      if (extras.learning) lsSet(LEARN_KEY, JSON.stringify(extras.learning));
+      if (extras.prefs) PREF_KEYS.forEach(k => { if (typeof extras.prefs[k] === "string") lsSet(k, extras.prefs[k]); });
+    }
     renderFinds();
-    const extra = [dup ? `${dup} 条已经有了` : "", bad ? `${bad} 条格式不对，已跳过` : ""].filter(Boolean).join("，");
-    toast(add.length ? `导入了 ${add.length} 条记录${extra ? "（" + extra + "）" : ""}` : `没有导入新记录${extra ? "：" + extra : ""}`);
+    const parts = [add.length ? `新增 ${add.length} 条` : "", replace && conflict.length ? `替换 ${conflict.length} 条` : "", !replace && conflict.length ? `保留本机 ${conflict.length} 条` : "", restoreExtras ? "恢复了学习进度和设置" : ""].filter(Boolean);
+    toast(parts.length ? "导入完成：" + parts.join("，") : "没有导入新记录");
   } catch (_) { toast("导入没有完成。现有记录没有改动"); }
 });
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-log-sp]"); if (!a) return;
   ensure("log");
   formReset(); $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; setStatus("candidate");
+});
+
+// ----- 数据管理: what is stored, backup reminder, orphan photos, wipe -----
+const fmtMB = n => n >= 1073741824 ? (n / 1073741824).toFixed(1) + " GB" : n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
+let dcOrphans = [];
+async function renderDataCenter() {
+  if (!$("#dc-stats")) return;
+  await findsReady;
+  const list = findsLoad() || [], idb = STORE === "idb";
+  const blobs = idb ? await idbTx(["photos"], "readonly", t => Promise.all([idbReq(t.objectStore("photos").getAllKeys()), idbReq(t.objectStore("photos").getAll())])).catch(() => [[], []]) : [[], []];
+  const used = new Set(list.flatMap(f => f.photos || []).concat(draft.photos));
+  dcOrphans = blobs[0].filter(k => !used.has(k));
+  const bytes = blobs[1].reduce((a, b) => a + ((b && b.size) || 0), 0);
+  const est = navigator.storage && navigator.storage.estimate ? await navigator.storage.estimate().catch(() => null) : null;
+  const kept = navigator.storage && navigator.storage.persisted ? await navigator.storage.persisted().catch(() => null) : null;
+  const mig = idb ? await metaGet("migration") : null, last = idb ? await metaGet("lastBackup") : null, legacy = legacyRead();
+  const since = last ? list.filter(f => (f.updatedAt || "") > last.at).length : list.length;
+  const migText = !idb ? (STORE === "local" ? "这个浏览器打不开 IndexedDB，记录仍按旧方式存在 localStorage" : "这个浏览器不允许保存数据")
+    : !mig ? "—" : mig.status === "done" ? `${mig.at.slice(0, 10)} 完成${mig.count ? `，从旧版搬过来 ${mig.count} 条` : "（没有旧记录）"}` : `${mig.at.slice(0, 10)} 失败：${mig.note}`;
+  $("#dc-stats").innerHTML = [
+    ["记录", `${list.length} 条`], ["照片", `${used.size ? blobs[0].length - dcOrphans.length : 0} 张${bytes ? `，共 ${fmtMB(bytes)}` : ""}`],
+    ["无关联照片", `${dcOrphans.length} 张`],
+    ["浏览器存储", est && est.quota ? `已用 ${fmtMB(est.usage || 0)} / 可用约 ${fmtMB(est.quota)}${kept ? "（已申请长期保存）" : ""}` : "浏览器没有提供"],
+    ["最近完整备份", last ? `${last.at.slice(0, 10)}（${last.finds} 条，${last.photos} 张照片${last.coords !== "exact" ? "，坐标已处理" : ""}）` : "从未"],
+    ["数据版本", `schema ${SCHEMA_VERSION}，${idb ? "IndexedDB" : STORE === "local" ? "localStorage" : "不可用"}`],
+    ["旧版数据搬迁", migText],
+    ...(Array.isArray(legacy) && legacy.length ? [["旧版副本", `${legacy.length} 条，原样留在浏览器里，没有改动`]] : []),
+  ].map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
+  $("#dc-remind").innerHTML = list.length && (!last || since)
+    ? `<div class="callout callout--info">${icon("download")}<div>${last ? `上次完整备份是 ${esc(last.at.slice(0, 10))}，之后有 ${since} 条新的或改过的记录。` : "这些记录还没有完整备份过。"}浏览器清理数据或换手机时，没有备份就找不回来。<b>建议现在导出完整备份。</b></div></div>` : "";
+  $("#dc-orphans").disabled = !dcOrphans.length;
+}
+$("#dc-orphans").addEventListener("click", async e => {
+  const b = e.currentTarget;
+  if (!b.classList.contains("is-confirm")) { b.classList.add("is-confirm"); b.textContent = `确认删除 ${dcOrphans.length} 张没有记录用到的照片`; setTimeout(() => { b.classList.remove("is-confirm"); b.textContent = "清理无关联照片"; }, 4000); return; }
+  b.classList.remove("is-confirm"); b.textContent = "清理无关联照片";
+  await renderDataCenter(); const n = dcOrphans.length;  // recount right before deleting
+  for (const k of dcOrphans) await photoDB.del(k);
+  toast(`删除了 ${n} 张没有记录用到的照片`); renderDataCenter();
+});
+$("#dc-media").addEventListener("click", async () => {
+  try { await caches.delete(MEDIA_CACHE); toast("已清除下载的示例图片。你的记录和照片没有改动"); } catch (_) { toast("这个浏览器不能清除缓存"); }
+});
+$("#dc-wipe").addEventListener("click", async () => {
+  await findsReady;
+  const list = findsLoad() || [], keys = STORE === "idb" ? await photoDB.keys() : [], legacy = legacyRead();
+  $("#wipe-body").innerHTML = `<p>会永久删除这台设备上的 <b>${list.length} 条记录和 ${keys.length} 张照片</b>${Array.isArray(legacy) && legacy.length ? `，以及旧版留下的 ${legacy.length} 条副本` : ""}。学习进度和设置不受影响。<b>删除后无法恢复。</b></p>`;
+  $("#wipe-ok").checked = false; $("#wipe-go").disabled = true;
+  const d = $("#wipe"); if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+});
+$("#wipe-ok").addEventListener("change", e => { $("#wipe-go").disabled = !e.target.checked; });
+$("#wipe").addEventListener("click", async e => {
+  if (e.target.closest("[data-wipe-cancel]")) { $("#wipe").close(); return; }
+  if (!e.target.closest("#wipe-go") || !$("#wipe-ok").checked) return;
+  $("#wipe").close();
+  if (!(await findsSave([]))) { toast("清空失败，数据没有改动"); return; }
+  if (STORE === "idb") { await idbTx(["photos"], "readwrite", t => { t.objectStore("photos").clear(); }).catch(() => null); await metaSet("lastBackup", null); }
+  lsSet(FINDS_KEY, null); formReset(); renderFinds(); toast("这台设备上的记录和照片已清空");
 });
 
 // ----- my map: Leaflet, loaded the first time the map scrolls into view; no basemap unless asked -----

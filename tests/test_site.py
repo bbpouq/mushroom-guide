@@ -470,7 +470,10 @@ def run():
         data = __import__("json").loads(open(backup, encoding="utf-8").read())
         check("the JSON backup holds both finds and the photo", len(data["finds"]) == 2 and len(data["photos"]) == 1)
         pg.evaluate("findsSave([])"); pg.reload(); pg.wait_for_timeout(600)
-        pg.set_input_files("#finds-import", backup); pg.wait_for_timeout(1000)
+        pg.set_input_files("#finds-import", backup); pg.wait_for_timeout(600)
+        check("importing shows a preview first and changes nothing before confirming",
+              pg.evaluate("document.getElementById('imp').open") and "新记录，会加进来" in pg.inner_text("#imp") and pg.evaluate("findsLoad().length") == 0)
+        pg.click("#imp-go"); pg.wait_for_timeout(1000)
         check(f"importing the backup restores the finds and photo {errs}", pg.locator("#finds-list .finds__item").count() == 2
               and pg.locator("#finds-list img.finds__pic").count() == 1 and not errs)
         ctx.close()
@@ -549,10 +552,12 @@ def run():
         check(f"invalid backups leave existing records untouched {msgs}",
               pg.evaluate("JSON.stringify(findsLoad())") == before and all("没有改动" in m for m in msgs))
         pg.set_input_files("#finds-import", str(tmp / "dup.json")); pg.wait_for_timeout(400)
-        m = pg.inner_text("#toast")
-        check(f"a duplicate and a malformed record are reported, not imported ({m})",
-              "已经有了" in m and "格式不对" in m and pg.evaluate("findsLoad().length") == 1)
-        pg.set_input_files("#finds-import", str(tmp / "web.json")); pg.wait_for_timeout(500)
+        m = pg.inner_text("#imp")
+        check(f"a duplicate and a malformed record are reported in the preview, not imported",
+              "内容相同" in m and "格式不对或重复，跳过" in m and pg.evaluate("document.getElementById('imp-go').disabled"))
+        pg.click("[data-imp-cancel]"); pg.wait_for_timeout(200)
+        check("cancelling an import changes nothing", pg.evaluate("findsLoad().length") == 1 and "没有改动" in pg.inner_text("#toast"))
+        pg.set_input_files("#finds-import", str(tmp / "web.json")); pg.wait_for_timeout(400); pg.click("#imp-go"); pg.wait_for_timeout(500)
         check("an imported backup cannot make the page fetch a web address",
               not any("example.invalid" in u for u in reqs) and pg.evaluate("findsLoad().length") == 2)
         pg.click('[data-del="111"]'); pg.wait_for_timeout(100)
@@ -560,6 +565,37 @@ def run():
         pg.click('[data-del="111"]'); pg.wait_for_timeout(300)
         check("the delete toast names the photos removed", "2 张照片" in pg.inner_text("#toast")
               and pg.evaluate("findsLoad().length") == 1)
+        # conflicts: same id, different content -> keep mine by default, replace only when chosen
+        mine = pg.evaluate("findsLoad()[0]")
+        (tmp / "conf.json").write_text(__import__("json").dumps({"backupVersion": 4, "finds": [dict(mine, notes="备份里的版本")], "photos": {},
+                                       "learning": {"seen": ["sp:boletus-edulis"]}}), encoding="utf-8")
+        pg.set_input_files("#finds-import", str(tmp / "conf.json")); pg.wait_for_timeout(400)
+        check("a changed record shows up as a conflict, keeping this device's version by default",
+              "内容不同" in pg.inner_text("#imp") and pg.evaluate("document.querySelector('[name=imp-conflict]:checked').value") == "keep")
+        pg.click("#imp-go"); pg.wait_for_timeout(400)
+        kept = pg.evaluate("findsLoad()[0].notes || ''")
+        pg.set_input_files("#finds-import", str(tmp / "conf.json")); pg.wait_for_timeout(400)
+        pg.check('[name="imp-conflict"][value="replace"]'); pg.click("#imp-go"); pg.wait_for_timeout(400)
+        check(f"replacing a conflict happens only when chosen ({kept!r})", kept != "备份里的版本" and pg.evaluate("findsLoad()[0].notes") == "备份里的版本"
+              and pg.evaluate("findsLoad().length") == 1)
+        # full backup format, data center, orphan photos, wipe
+        with pg.expect_download() as dl:
+            pg.click("#finds-export-json")
+        full = __import__("json").loads(open(dl.value.path(), encoding="utf-8").read())
+        check("the full backup is versioned and carries records, photos, settings and learning",
+              full["backupVersion"] == 4 and full["schemaVersion"] == 2 and full["exportedAt"] and "learning" in full and "prefs" in full
+              and full["finds"][0]["createdAt"] and full["finds"][0]["updatedAt"])
+        pg.wait_for_timeout(400)
+        dc = pg.inner_text("#data-center")
+        check("the data center shows counts, last backup, schema and migration", all(k in dc for k in ["记录", "最近完整备份", "schema 2", "旧版数据搬迁"])
+              and "从未" not in dc.split("最近完整备份")[1][:20])
+        pg.evaluate("photoDB.put('orphan-test', new Blob(['x'], {type: 'image/jpeg'}))"); pg.evaluate("renderDataCenter()"); pg.wait_for_timeout(300)
+        pg.click("#dc-orphans"); pg.click("#dc-orphans"); pg.wait_for_timeout(500)
+        check("orphan photos are found and removed after a confirm", "orphan-test" not in pg.evaluate("photoDB.keys()"))
+        pg.click("#dc-wipe"); pg.wait_for_timeout(200)
+        check("wiping needs an explicit tick", pg.evaluate("document.getElementById('wipe-go').disabled"))
+        pg.check("#wipe-ok"); pg.click("#wipe-go"); pg.wait_for_timeout(500)
+        check("wiping clears records and photos", pg.evaluate("findsLoad().length") == 0 and pg.evaluate("photoDB.keys()") == [])
         ctx.close()
 
         # ---------- safety hotfix (2026-11-01): Paxillus, unevaluated species, checklist, emergency, old journal data ----------
