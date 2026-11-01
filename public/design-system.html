@@ -993,7 +993,7 @@ img.is-missing { visibility: hidden; }
 [data-field="on"] .view__head:has(> .view__hero) .view__lead a { color: var(--color-primary); }
 [data-field="on"] .view__head:has(> .view__hero) .btn { background: var(--color-muted); color: var(--color-foreground); -webkit-backdrop-filter: none; backdrop-filter: none; }
 [data-field="on"] .home-search__field input { box-shadow: 0 0 0 1.5px var(--color-border); background: var(--color-card-solid); color: var(--color-foreground); }
-[data-field="on"] #today, [data-field="on"] .now, [data-field="on"] .season, [data-field="on"] .home-learn, [data-field="on"] .model, [data-field="on"] .step__model, [data-field="on"] .site-footer { display: none; }
+[data-field="on"] #today, [data-field="on"] .now, [data-field="on"] .season, [data-field="on"] .home-season, [data-field="on"] .intel, [data-field="on"] .model, [data-field="on"] .step__model, [data-field="on"] .site-footer { display: none; }
 [data-field="on"] .chip { min-height: 44px; font-size: var(--fs-body); padding: 0 var(--space-4); }
 [data-field="on"] .btn { min-height: var(--target); font-size: var(--fs-body); }
 [data-field="on"] .botnav__link { min-height: 64px; font-size: var(--fs-footnote); }
@@ -1466,6 +1466,14 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .safety__more { margin-top: var(--space-2); font-size: var(--fs-footnote); }
 .safety__more > summary { cursor: pointer; color: var(--color-primary); font-weight: var(--fw-600); min-height: var(--target); display: flex; align-items: center; }
 .safety__more p { margin: 0; color: var(--color-muted-foreground); text-wrap: pretty; }
+
+.wiz__next { display: flex; gap: var(--space-1); align-items: flex-start; margin: 0 0 var(--space-2); font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-primary); text-wrap: pretty; }
+.wiz__next .icon { flex: none; margin-top: 2px; }
+#finder-reset.is-confirm { color: var(--color-danger-text); }
+
+.limits { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); font-size: var(--fs-secondary); text-wrap: pretty; }
+
+.cmp__key { display: inline-block; margin-left: var(--space-1); padding: 0 var(--space-1); border-radius: var(--radius-xs); font-size: var(--fs-caption-sm); font-weight: var(--fw-700); background: var(--color-warning-surface); color: var(--color-warning-text); vertical-align: 1px; }
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }

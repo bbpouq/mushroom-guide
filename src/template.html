@@ -1036,7 +1036,7 @@ img.is-missing { visibility: hidden; }
 [data-field="on"] .view__head:has(> .view__hero) .view__lead a { color: var(--color-primary); }
 [data-field="on"] .view__head:has(> .view__hero) .btn { background: var(--color-muted); color: var(--color-foreground); -webkit-backdrop-filter: none; backdrop-filter: none; }
 [data-field="on"] .home-search__field input { box-shadow: 0 0 0 1.5px var(--color-border); background: var(--color-card-solid); color: var(--color-foreground); }
-[data-field="on"] #today, [data-field="on"] .now, [data-field="on"] .season, [data-field="on"] .home-learn, [data-field="on"] .model, [data-field="on"] .step__model, [data-field="on"] .site-footer { display: none; }
+[data-field="on"] #today, [data-field="on"] .now, [data-field="on"] .season, [data-field="on"] .home-season, [data-field="on"] .intel, [data-field="on"] .model, [data-field="on"] .step__model, [data-field="on"] .site-footer { display: none; }
 [data-field="on"] .chip { min-height: 44px; font-size: var(--fs-body); padding: 0 var(--space-4); }
 [data-field="on"] .btn { min-height: var(--target); font-size: var(--fs-body); }
 [data-field="on"] .botnav__link { min-height: 64px; font-size: var(--fs-footnote); }
@@ -1509,6 +1509,14 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .safety__more { margin-top: var(--space-2); font-size: var(--fs-footnote); }
 .safety__more > summary { cursor: pointer; color: var(--color-primary); font-weight: var(--fw-600); min-height: var(--target); display: flex; align-items: center; }
 .safety__more p { margin: 0; color: var(--color-muted-foreground); text-wrap: pretty; }
+
+.wiz__next { display: flex; gap: var(--space-1); align-items: flex-start; margin: 0 0 var(--space-2); font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-primary); text-wrap: pretty; }
+.wiz__next .icon { flex: none; margin-top: 2px; }
+#finder-reset.is-confirm { color: var(--color-danger-text); }
+
+.limits { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); font-size: var(--fs-secondary); text-wrap: pretty; }
+
+.cmp__key { display: inline-block; margin-left: var(--space-1); padding: 0 var(--space-1); border-radius: var(--radius-xs); font-size: var(--fs-caption-sm); font-weight: var(--fw-700); background: var(--color-warning-surface); color: var(--color-warning-text); vertical-align: 1px; }
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
@@ -2049,7 +2057,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <ul>
               <li>尽快把收获摊在桌布上，挑掉杂物，<b>按种类分开</b>。有疑问的扔掉。</li>
               <li>湿透的先晾干，否则会发霉。</li>
-              <li>最好的幼嫩个体留给沙拉、主菜、腌制或冷冻；次一些的做汤、炖菜或晒干。</li>
+              <li>最好的幼嫩个体留给主菜，或煮熟后冷冻；次一些的做汤、炖菜或晒干。<b>不论哪种做法，野生菌都要彻底煮熟。</b></li>
               <li>暂不处理就放阴凉处，铺湿布、盖湿布，可放 1–2 天。</li>
             </ul>
           </section>
@@ -2562,7 +2570,7 @@ function openSpecies(i) {
       <div class="sheet__q"><dt>本地观察记录</dt><dd>${s.obs ? s.pnw.toLocaleString("en") + " 条" : "无数据"}</dd></div>
     </dl>
     ${badges(s.flags)}
-    ${sheetNav([["sh-id", "快速鉴别"], ["sh-look", "易混毒菌"], ["sh-eco", "生态与季节"], ["sh-kitchen", "厨房"], ["sh-more", "资料来源"]])}
+    ${sheetNav([["sh-id", "快速鉴别"], ["sh-look", "易混毒菌"], ["sh-limit", "鉴别限制"], ["sh-eco", "生态与季节"], ["sh-kitchen", "厨房"], ["sh-more", "资料来源"]])}
     ${safetyBlock(s, false)}
     <section class="sheet__sec" id="sh-id"><h3 class="sheet__h">快速鉴别</h3>
       <dl class="facts">
@@ -2579,6 +2587,7 @@ function openSpecies(i) {
         : `<p class="muted-note">本站没有为它单独列出易混毒菌。<b>这不代表没有</b>：先对照<a href="#toxic">毒菌列表</a>，并请有经验的人当面确认。</p>`}
       ${look ? `<div class="look-list">${look}</div>` : ""}
     </section>
+    ${limitsHtml(s, false)}
     <section class="sheet__sec" id="sh-eco"><h3 class="sheet__h">生态与季节</h3>
       <dl class="facts">
         <div class="fact"><dt>生境</dt><dd>${s.hab}</dd></div>
@@ -2636,6 +2645,21 @@ function safetyBlock(x, toxic) {
     <details class="safety__more"><summary>资料审核说明</summary><div><p>${REVIEW_HINT[f.review] || ""}核对日期 ${esc(f.reviewed)}。${host ? `依据：<a href="${f.basisUrl}" target="_blank" rel="noopener">${esc(host)}</a>。` : ""}完整来源见下方“资料来源”。</p></div></details>
   </div>`;
 }
+// 鉴别限制: what this page cannot settle, from facts the data already holds (no new claims about the species)
+function limitsHtml(x, toxic) {
+  const f = x.safety || {}, li = [];
+  li.push("照片、这里的特征清单和特征识别的结果，都不能确认手上的菌是哪一种。");
+  li.push("颜色、大小和形状会随年龄、天气和产地变化；幼菌和老菌可能长得很不一样，被雨淋或被虫吃过也会变样。");
+  if (x.hym === "gills") li.push("菌托常埋在土里：不把整朵连根挖出来，就看不到它有没有菌托。");
+  if (x.ring) li.push("菌环会随年龄脱落或残缺：看不到菌环，不等于它没有。");
+  if ((x.sporeTags || []).includes("unknown")) li.push("孢子印不适用，或资料没写清楚。");
+  if (!toxic && (x.pnw || 0) < 30) li.push("西北太平洋的记录很少：本地可能有外形相近、资料不多的其他种。");
+  if (f.review === "In Review" || f.edibility === "Not Evaluated") li.push("可食性只有一份书籍资料，外部参考还没核对上，本站没有评估。");
+  if (f.review === "Disputed") li.push("参考资料对它的可食性说法不一，本站按更谨慎的一方处理。");
+  if (toxic) li.push("和它相像的可食种不能靠单一特征区分；任何一条都不足以排除它。");
+  return `<section class="sheet__sec" id="sh-limit"><h3 class="sheet__h">鉴别限制</h3><ul class="limits">${li.map(s => `<li>${s}</li>`).join("")}</ul></section>`;
+}
+const sporeLabel = x => (x.sporeTags || []).filter(k => k !== "unknown").map(k => (STEPS.find(st => st.key === "spore").opts.find(o => o[0] === k) || [k, k])[1]).join("、") || "不明";
 // where each kind of content on a species page comes from
 function dataNotes(x) {
   return `<ul class="data-notes">
@@ -2763,13 +2787,28 @@ function openToxic(slug) {
     <div class="sheet__latin latin">${esc(p.latin)}</div>
     <div class="sheet__en">${esc(p.en)}</div>
     <div class="badges" style="margin-top: var(--space-3)"><span class="level ${deadly ? "level--deadly" : "level--poison"}">${icon(deadly ? "skull" : "alert", "icon--sm")}${esc(p.level)}${p.tag ? " · " + esc(p.tag) : ""}</span></div>
-    <div class="sheet__text">${p.feat}</div>
+    ${sheetNav([["sh-id", "关键特征"], ["sh-look", "易混与区别"], ["sh-limit", "鉴别限制"], ["sh-more", "资料来源"]])}
     ${safetyBlock(p, true)}
-    ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
-    ${lookPairs(p.slug) ? `<div class="look-list">${lookPairs(p.slug)}</div>` : ""}
-    <div class="link-row"><a class="btn" href="#emergency">${icon("phone", "icon--sm")}中毒急救</a>${photoLinks(p.latin)}</div>
-    ${sourcesHtml(p.sources, !p.sources)}
-    ${dataNotes(p).replace(/<li><span class="src-type src-type--community">社区观察<\/span>[^]*?<\/li>/, "")}`;
+    <section class="sheet__sec" id="sh-id"><h3 class="sheet__h">关键特征</h3>
+      <div class="sheet__text">${p.feat}</div>
+      <dl class="facts">
+        <div class="fact"><dt>菌盖下面</dt><dd>${FEAT.hym[p.hym]}</dd></div>
+        <div class="fact"><dt>孢子印</dt><dd>${sporeLabel(p)}</dd></div>
+        <div class="fact"><dt>菌环</dt><dd>${p.ring ? "有（老了可能脱落）" : "没有或不明显"}</dd></div>
+        <div class="fact"><dt>菌托</dt><dd>${p.volva ? "<b>有</b>：柄基有袋状菌托，常埋在土里" : "没有"}</dd></div>
+        <div class="fact"><dt>长在</dt><dd>${p.sub.map(k => FEAT.sub[k]).join("、")}</dd></div>
+      </dl>
+    </section>
+    <section class="sheet__sec" id="sh-look"><h3 class="sheet__h">易混与区别</h3>
+      ${p.conf && p.conf !== "—" ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>易误认为：</b>${p.conf}</div></div>` : ""}
+      ${lookPairs(p.slug) ? `<div class="look-list">${lookPairs(p.slug)}</div>` : `<p class="muted-note">本站没有为它单独做对比。<b>这不代表没有相像的可食种。</b></p>`}
+    </section>
+    ${limitsHtml(p, true)}
+    <section class="sheet__sec" id="sh-more"><h3 class="sheet__h">资料来源</h3>
+      <div class="link-row"><a class="btn" href="#emergency">${icon("phone", "icon--sm")}中毒急救</a>${photoLinks(p.latin)}</div>
+      ${sourcesHtml(p.sources, !p.sources)}
+      ${dataNotes(p).replace(/<li><span class="src-type src-type--community">社区观察<\/span>[^]*?<\/li>/, "")}
+    </section>`;
   $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 拾菌记", "tx-" + p.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
@@ -2788,6 +2827,15 @@ function cmpPic(name, sl) {
 function cmpLink(name, sl) {
   return sl ? `<a href="${bySlug[sl] !== undefined ? "#sp-" + sl : "#tx-" + sl}">${esc(name)}</a>` : esc(name);
 }
+// one dimension order for every comparison; rows the authors bolded as key differences first; 结论 last
+const CMP_ORDER = [[/菌盖|头部|颜色和厚度/, 1], [/菌褶|菌盖下面|菌孔/, 2], [/菌柄|菌环/, 3], [/柄基|纵切|^切开/, 4], [/气味|堆放|变色/, 5], [/孢子印/, 6], [/长在|生境/, 7]];
+function cmpRows(c) {
+  const dim = l => (CMP_ORDER.find(([re]) => re.test(l)) || [0, 8])[1];
+  const key = r => r[1].some(x => /<b>/.test(x));
+  return c.rows.filter(r => r[0] !== "结论").map((r, i) => [r, i]).sort((a, b) => (key(b[0]) - key(a[0])) || (dim(a[0][0]) - dim(b[0][0])) || (a[1] - b[1]))
+    .map(([r]) => [r[0], r[1], key(r)]).concat(c.rows.filter(r => r[0] === "结论").map(r => [r[0], r[1], false]));
+}
+const cmpLabel = (label, key) => `${esc(label)}${key ? `<span class="cmp__key">关键</span>` : ""}`;
 function cmpBody(c) {
   const st = cmpState[c.id] || (cmpState[c.id] = { mode: c.cols.length >= 3 && matchMedia("(max-width: 767px)").matches ? "switch" : "side", k: 0 });
   if (st.mode === "switch") {
@@ -2796,11 +2844,11 @@ function cmpBody(c) {
         `<button type="button" role="tab" class="cmp__tab cmp__tab--${kd}" data-cmp="${c.id}" data-cmp-k="${k}" aria-selected="${k === st.k}">${esc(n)}</button>`).join("")}</div>
       <div class="cmp__one cmp__col--${kind}" role="tabpanel">
         <div class="cmp__one-head">${cmpPic(name, sl)}<div><span class="cmp__kind">${KIND[kind]}</span><div class="cmp__one-name">${cmpLink(name, sl)}</div></div></div>
-        <dl class="cmp__one-rows">${c.rows.map(([label, cells]) => `<div><dt>${esc(label)}</dt><dd>${cells[st.k]}</dd></div>`).join("")}</dl>
+        <dl class="cmp__one-rows">${cmpRows(c).map(([label, cells, key]) => `<div><dt>${cmpLabel(label, key)}</dt><dd>${cells[st.k]}</dd></div>`).join("")}</dl>
       </div>`;
   }
   const colHtml = c.cols.map(([name, kind, sl]) => `<div class="cmp__col cmp__col--${kind}">${cmpPic(name, sl)}<span class="cmp__kind">${KIND[kind]}</span>${cmpLink(name, sl)}</div>`).join("");
-  const rows = c.rows.map(([label, cells]) => `<div class="cmp__row-label">${esc(label)}</div><div class="cmp__cells">${cells.map(x => `<div class="cmp__cell">${x}</div>`).join("")}</div>`).join("");
+  const rows = cmpRows(c).map(([label, cells, key]) => `<div class="cmp__row-label">${cmpLabel(label, key)}</div><div class="cmp__cells">${cells.map(x => `<div class="cmp__cell">${x}</div>`).join("")}</div>`).join("");
   return `<div class="cmp__table"><div class="cmp__cols">${colHtml}</div>${rows}</div>`;
 }
 function cmpCard(c) {
@@ -2815,6 +2863,7 @@ function cmpCard(c) {
       <button type="button" class="seg__btn" data-cmp="${c.id}" data-cmp-mode="switch" aria-pressed="${st.mode === "switch"}">逐个看</button>
     </div></div>
     <div class="cmp__body">${cmpBody(c)}</div>
+    <p class="cmp__note">${icon("alert", "icon--sm")}个体差异很大：幼菌和老菌、被雨淋或被虫吃过的，都可能和这里写的不一样；看不到的特征（例如埋在土里的菌托）不能当作“没有”。单靠一条区别，不能排除致命毒菌。</p>
     <p class="cmp__note">${icon("alert", "icon--sm")}任何一条区别都不足以单独确认可以吃：要几条特征同时对上，并请有经验的人当面确认；即使这样也不能保证安全。</p>
     <div class="cmp__src">${src}${credits.length ? `示例照片（iNaturalist，点照片放大）：${credits.join("；")}` : ""}</div>
   </article>`;
@@ -2857,6 +2906,35 @@ const STEPS = [
 const F_TIP = { hym: "把菌翻过来看菌盖下面", sub: "看清它从什么上面长出来", spore: "做一张孢子印", ring: "看菌柄上部有没有一圈膜", volva: "把整个柄基连土挖出来，看有没有袋状菌托" };
 const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
 let fstep = 0, fskipAll = false;  // fskipAll: the last question was skipped with nothing answered
+const fskip = new Set(); let fhist = [], fNextWhy = "";  // skipped questions; the order actually asked (for 上一题); why this one is next
+// answers stay on this device for 6 hours, so leaving the finder (or the phone killing the page) does not lose them
+const FINDER_KEY = "mushroom-guide:finder";
+function fSave() { try { localStorage.setItem(FINDER_KEY, JSON.stringify({ at: Date.now(), fstate, skip: [...fskip], fstep, fhist })); } catch (_) {} }
+(() => { try {
+  const v = JSON.parse(localStorage.getItem(FINDER_KEY) || "null");
+  if (!v || Date.now() - v.at > 6 * 3600e3) return;
+  Object.keys(fstate).forEach(k => { fstate[k] = typeof v.fstate[k] === "string" ? v.fstate[k] : null; });
+  (v.skip || []).forEach(k => k in fstate && fskip.add(k)); fstep = Math.min(4, Math.max(0, +v.fstep || 0)); fhist = Array.isArray(v.fhist) ? v.fhist.filter(n => n >= 0 && n < 5) : [];
+} catch (_) {} })();
+// Next question: if a deadly species with a volva is still possible, look at the stem base first (the amanita check);
+// otherwise the question that, on average, leaves the fewest candidates. Never a probability, only an order of questions.
+function fBestNext() {
+  const left = STEPS.map((x, i) => i).filter(i => fstate[STEPS[i].key] === null && !fskip.has(STEPS[i].key));
+  if (!left.length) return null;
+  if (!STEPS.some(x => fstate[x.key] !== null)) return { i: left[0], why: "" };
+  const tox = toxicAll.filter(p => fmatch(p, true)), ed = DATA.species.filter(s => fmatch(s, false)), all = tox.concat(ed);
+  const vi = STEPS.findIndex(x => x.key === "volva");
+  if (left.includes(vi) && tox.some(p => p.level === "致命" && p.volva)) return { i: vi, why: "候选里还有带菌托的致命鹅膏，所以先看柄基：把整朵连根挖出来。" };
+  let best = null;
+  for (const i of left) {
+    const st = STEPS[i], keep = fstate[st.key]; let sum = 0;
+    for (const [v] of st.opts) { fstate[st.key] = v; const n = toxicAll.filter(p => fmatch(p, true)).length + DATA.species.filter(s => fmatch(s, false)).length; sum += n * n; }
+    fstate[st.key] = keep;
+    const score = sum / Math.max(1, st.opts.length);
+    if (!best || score < best.score) best = { i, score };
+  }
+  return { i: best.i, why: `这一题最能缩小剩下的 ${all.length} 个候选。` };
+}
 const fLabel = (k, v) => { const o = STEPS.find(s => s.key === k).opts.find(x => x[0] === v); return o ? o[1] : v; };
 function fmatch(s, lenient) {
   const why = [];
@@ -2910,7 +2988,8 @@ function renderFinder() {
   $("#finder-steps").innerHTML = `
     <ol class="wiz__progress" aria-label="问题进度">${STEPS.map((x, i) => `<li><button type="button" class="wiz__dot${fstate[x.key] !== null ? " is-done" : ""}" data-step="${i}"${i === fstep ? ' aria-current="step"' : ""}>
       <span class="wiz__dot-n">${i + 1}</span><span class="wiz__dot-label">${x.short}</span><span class="wiz__dot-val">${fstate[x.key] !== null ? esc(fLabel(x.key, fstate[x.key]).split("（")[0]) : "未答"}</span></button></li>`).join("")}</ol>
-    <fieldset class="step wiz__q"><legend><span class="step__num">${fstep + 1} / ${STEPS.length}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
+    <fieldset class="step wiz__q"><legend><span class="step__num">${(n => n ? `还剩 ${n} 题` : "最后检查")(STEPS.filter(x => fstate[x.key] === null && !fskip.has(x.key)).length)}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
+      ${fNextWhy ? `<p class="wiz__next">${icon("arrow", "icon--sm")}${esc(fNextWhy)}</p>` : ""}
       <p class="step__hint">${esc(st.hint)}</p>
       <p class="wiz__why"><b>为什么看这个：</b>${esc(st.why)}</p>
       <div class="wiz__opts${st.opts[0][2] ? " wiz__opts--pics" : ""}">${st.opts.map(([v, label, ico, sw]) => `<button type="button" class="wiz__opt" data-f="${st.key}" data-v="${v}" aria-pressed="${fstate[st.key] === v}">
@@ -2938,6 +3017,7 @@ function renderFinder() {
     <div class="res-sum"><b>已回答 ${answered} / ${STEPS.length} 题</b> · 相符的毒菌 ${tox.length} 种、其他种 ${ed.length} 种（本站共收录 ${toxicAll.length + DATA.species.length} 种）。
       ${answered < 3 ? "回答的特征还少，候选会很多。" : ""}本站不计算匹配分数或概率：“相符”只说明没有矛盾，不说明就是它。</div>
     <div class="callout callout--info res-safe" role="note">${icon("shield")}<div>这里只列外形相符的候选，<b>不判断能不能吃</b>。本站没收录的菌不会出现在结果里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
+    ${!tox.length && !ed.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>一个候选都没有。</b>这不说明它无毒：本站只收录了 ${DATA.species.length + toxicAll.length} 种，真实世界的菌多得多，很多毒菌不在这里。也可能是某个答案看错了，试着把拿不准的改成“不知道，跳过”。<b>认不出来的菌，不要吃。</b></div></div>` : ""}
     ${fstate.volva === "yes" ? `<div class="callout callout--danger" role="alert">${icon("skull")}<div><b>你看到了菌托。</b>这是鹅膏的重要标志，西北太平洋最致命的毒菌多是鹅膏。<b>不要吃。</b></div></div>` : ""}
     ${deadly.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>按目前的回答，仍可能是这些致命毒菌：</b>${deadly.map(p => `<a href="#tx-${p.slug}">${esc(p.zh)}</a>`).join("、")}。没有把它们一一排除之前，不要考虑食用。</div></div>` : ""}
     ${fstate.hym === null || fstate.volva === null ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>信息不足。</b>还没回答${[fstate.hym === null ? "“菌盖下面”" : "", fstate.volva === null ? "“菌托”" : ""].filter(Boolean).join("和")}：不看这些，就排除不了致命的鹅膏类。少回答一题，候选只会更多，不会更确定。补充之前，不要把任何候选当成答案，更不要吃。</div></div>` : ""}
@@ -2945,19 +3025,26 @@ function renderFinder() {
     <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>
       ${tox.length ? `<ul class="res-list">${tox.map(p => fItem(p, true)).join("")}</ul>` : `<p class="muted-note" style="margin-top:0">本站收录的 ${toxicAll.length} 种毒菌里没有相符的。<b>这不代表它没毒</b>：本站只收录了少数毒菌。</p>`}</div>
     <div class="res-block"><h2 class="res-block__title">${icon("mushroom")}外形相符的其他候选（${ed.length}）</h2>
-      <p class="muted-note" style="margin-top:0">这些在本站被列为可食种。外形相符不等于就是它，更不等于可以吃。</p>
+      <p class="muted-note" style="margin-top:0">这些种在本站的食用菌图鉴里（其中有的未评估）。外形相符不等于就是它，更不等于可以吃。</p>
       ${ed.length ? `<ul class="res-list">${ed.map(s => fItem(s, false)).join("")}</ul>` : `<div class="res-empty">没有相符的。试着把拿不准的问题改成“不知道，跳过”。</div>`}</div>`;
 }
 document.addEventListener("click", e => {
   if (!e.target.closest("#v-finder")) return;
-  if (e.target.closest("#finder-reset")) { Object.keys(fstate).forEach(k => fstate[k] = null); fstep = 0; fskipAll = false; return renderFinder(); }
+  const rs = e.target.closest("#finder-reset");
+  if (rs) {  // two taps when there are answers, so a stray tap never wipes the progress
+    if (STEPS.some(x => fstate[x.key] !== null) && !rs.classList.contains("is-confirm")) { rs.classList.add("is-confirm"); rs.textContent = "再点一次：清空全部答案"; setTimeout(() => { rs.classList.remove("is-confirm"); rs.textContent = "重新开始"; }, 4000); return; }
+    Object.keys(fstate).forEach(k => fstate[k] = null); fskip.clear(); fhist = []; fstep = 0; fskipAll = false; fNextWhy = ""; fSave(); return renderFinder();
+  }
   const go = e.target.closest("[data-step]");
-  if (go) { fstep = +go.dataset.step; renderFinder(); $(".wiz__q legend").scrollIntoView({ block: "nearest" }); return; }
-  if (e.target.closest('[data-wiz="prev"]')) { fstep = Math.max(0, fstep - 1); return renderFinder(); }
+  if (go) { if (+go.dataset.step !== fstep) fhist.push(fstep); fstep = +go.dataset.step; fNextWhy = ""; fSave(); renderFinder(); $(".wiz__q legend").scrollIntoView({ block: "nearest" }); return; }
+  if (e.target.closest('[data-wiz="prev"]')) { fstep = fhist.length ? fhist.pop() : Math.max(0, fstep - 1); fNextWhy = ""; fSave(); return renderFinder(); }
   const b = e.target.closest("[data-f]"); if (!b) return;
   fstate[b.dataset.f] = b.dataset.v || null;
-  fskipAll = !b.dataset.v && fstep === STEPS.length - 1 && STEPS.every(x => fstate[x.key] === null);
-  if (fstep < STEPS.length - 1) fstep++;
+  if (b.dataset.v) fskip.delete(b.dataset.f); else fskip.add(b.dataset.f);
+  fskipAll = STEPS.every(x => fstate[x.key] === null) && fskip.size === STEPS.length;
+  const nx = fBestNext();
+  if (nx) { fhist.push(fstep); fstep = nx.i; fNextWhy = nx.why; } else fNextWhy = "";
+  fSave();
   renderFinder();
   const first = $("#finder-steps .wiz__opt"); if (first && e.detail === 0) first.focus();  // keyboard users land on the next question
 });
@@ -4508,7 +4595,7 @@ const LAZY = { species: () => sync(), finder: () => renderFinder(), log: () => {
 const built = new Set();
 function ensure(v) { if (LAZY[v] && !built.has(v)) { built.add(v); LAZY[v](); } }
 const viewScroll = {};  // each view keeps its own scroll position when you switch tabs and come back
-const tabLast = {};     // each tab remembers the last view opened in it (识菌 has seven)
+const tabLast = (() => { try { const v = JSON.parse(sessionStorage.getItem("mushroom-guide:tabs") || "{}"); return v && typeof v === "object" ? v : {}; } catch (_) { return {}; } })();  // each tab's last view (survives a refresh)
 // A tab button: from another tab, go back to that tab's last view and its scroll; on the current tab, go to its root, top.
 function tabTap(tab, root) {
   if (document.documentElement.dataset.tab === tab) {
@@ -4517,13 +4604,13 @@ function tabTap(tab, root) {
     if (cur === root) { try { window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } catch (_) { window.scrollTo(0, 0); } return; }
     navigate(root); return;
   }
-  navigate(tabLast[tab] || root);
+  navigate(VIEWS.includes(tabLast[tab]) && TAB[tabLast[tab]] === tab ? tabLast[tab] : root);
 }
 function show(v, opts = {}) {
   ensure(v);
   const was = VIEWS.find(k => $("#v-" + k).classList.contains("is-active"));
   if (was && was !== v) viewScroll[was] = window.scrollY;
-  if (TAB[v]) tabLast[TAB[v]] = v;
+  if (TAB[v]) { tabLast[TAB[v]] = v; try { sessionStorage.setItem("mushroom-guide:tabs", JSON.stringify(tabLast)); } catch (_) {} }
   // back/forward onto the view that is already showing (a sheet closed over it): keep the reader's place
   if (!opts.focus && $("#v-" + v).classList.contains("is-active")) opts = Object.assign({}, opts, { keepScroll: true });
   VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));

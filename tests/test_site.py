@@ -254,7 +254,7 @@ def run():
         body = pg.inner_text("#sheet-body")
         check("species sheet: photo first, quick facts, sections and typed sources",
               pg.evaluate("document.querySelector('#sheet-body .photo').compareDocumentPosition(document.getElementById('sheet-title')) & 4") > 0
-              and pg.locator("#sheet-body .sheet__q").count() == 3 and pg.locator("#sheet-body .sheet__sec").count() == 5
+              and pg.locator("#sheet-body .sheet__q").count() == 3 and pg.locator("#sheet-body .sheet__sec").count() == 6
               and pg.locator("#sheet-body .src-type").count() >= 2 and pg.locator("#sheet-body .look-pair").count() >= 1)
         pg.click("#sheet-body .photo__zoom"); pg.wait_for_timeout(300)
         check("tapping a photo opens the high-resolution copy full screen", pg.evaluate("document.getElementById('zoom').open")
@@ -300,9 +300,12 @@ def run():
               pg.get_attribute('#model-parts [data-model-part="ring"]', "aria-pressed") == "true")
         pg.click('#finder-steps .wiz__dot[data-step="0"]'); pg.wait_for_timeout(100)
         check("the finder asks one question at a time with progress", pg.locator("#finder-steps .wiz__q").count() == 1
-              and pg.locator("#finder-steps .wiz__dot").count() == 5 and "1 / 5" in pg.inner_text("#finder-steps legend"))
+              and pg.locator("#finder-steps .wiz__dot").count() == 5 and pg.get_attribute('#finder-steps .wiz__dot[data-step="0"]', "aria-current") == "step")
+        FIDX = {"hym": 0, "sub": 1, "spore": 2, "ring": 3, "volva": 4}
+        def ans(k, v):  # the finder now picks the next question itself; open each one by its progress dot
+            pg.click(f'#finder-steps .wiz__dot[data-step="{FIDX[k]}"]'); pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
         for k, v in [("hym", "gills"), ("sub", "wood"), ("spore", "white")]:
-            pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
+            ans(k, v)
         res = pg.inner_text("#finder-results")
         check("finder results do not widen the phone page", pg.evaluate("document.documentElement.scrollWidth") <= 390)
         check("finder gills+wood+white", "发光类脐菇" in res and "蜜环菌" in res and "纹缘盔孢伞" not in pg.inner_text(".res-block--toxic"))
@@ -311,16 +314,17 @@ def run():
         check("finder shows what matched and what is unchecked, with no score",
               "相符：" in res and "未确认：" in res and "%" not in res and "还没确认 2 项" in res)
         pg.click('[data-wiz="prev"]'); pg.wait_for_timeout(50)
-        check("the finder can step back to change an answer", "3 / 5" in pg.inner_text("#finder-steps legend")
+        check("the finder can step back to change an answer", pg.get_attribute('#finder-steps .wiz__dot[data-step="2"]', "aria-current") == "step"
               and pg.get_attribute('[data-f="spore"][data-v="white"]', "aria-pressed") == "true")
-        pg.click("#finder-reset")
+        pg.click("#finder-reset"); pg.click("#finder-reset")  # two taps: one tap never wipes the answers
         for k, v in [("hym", "gills"), ("sub", "ground"), ("spore", "white"), ("ring", ""), ("volva", "no")]:
-            pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(50)
+            ans(k, v)
         res = pg.inner_text("#finder-results")
         check("finder keeps deadly amanitas when volva=no, warns early and allows skipping",
               "毒鹅膏" in res and "菌托常埋在土里" in res and "仍可能是这些致命毒菌" in res and "菌环" in pg.inner_text(".res-open"))
-        pg.click("#finder-reset"); pg.click('[data-f="hym"][data-v="gills"]'); pg.click('[data-f="sub"][data-v="ground"]')
-        pg.click('[data-f="spore"][data-v="white"]'); pg.click('[data-f="ring"][data-v=""]'); pg.click('[data-f="volva"][data-v="yes"]'); pg.wait_for_timeout(50)
+        pg.click("#finder-reset"); pg.click("#finder-reset")
+        for k, v in [("hym", "gills"), ("sub", "ground"), ("spore", "white"), ("ring", ""), ("volva", "yes")]:
+            ans(k, v)
         check("seeing a volva raises the amanita alarm at once", "你看到了菌托" in pg.inner_text("#finder-results"))
         ctx.grant_permissions(["clipboard-read", "clipboard-write"], origin=url.rstrip("/"))
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(500)
@@ -871,6 +875,104 @@ def run():
         pg.mouse.move(box["x"] + 10, box["y"] + 2); pg.mouse.down(); pg.mouse.move(box["x"] + 10, box["y"] + 160, steps=6); pg.mouse.up(); pg.wait_for_timeout(200)
         check(f"dragging a sheet down closes it {errs}", not pg.evaluate("document.getElementById('settings').open") and not errs)
         ctx.close()
+
+        # ---------- Sprint 3: field experience (phone) ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, accept_downloads=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#guide-kitchen"); pg.wait_for_timeout(700)
+        g = pg.inner_text("#v-guide")
+        check("no salad wording for wild mushrooms; every method says cook thoroughly", "沙拉" not in g and "不论哪种做法，野生菌都要彻底煮熟" in g)
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(500)
+        check("the mycorrhiza entry is no longer absolute", "菌根菌只在相应树木附近出现" not in pg.inner_text("#v-finder"))
+        # tab memory survives a refresh
+        pg.evaluate("navigate('toxic')"); pg.wait_for_timeout(300); pg.click('.botnav a[href="#log"]'); pg.wait_for_timeout(300)
+        pg.reload(); pg.wait_for_timeout(700); pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(400)
+        check("after a refresh, 识菌 still reopens its last page", pg.evaluate("document.querySelector('.view.is-active').id") == "v-toxic")
+        # finder: dynamic order, persistence, safe reset, empty result
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(400)
+        pg.click('[data-f="hym"][data-v="gills"]'); pg.wait_for_timeout(200)
+        check("with deadly amanitas still possible, the next question is the stem base (volva); the header counts what is left",
+              "还剩 4 题" in pg.inner_text("#finder-steps legend") and "菌托" in pg.inner_text("#finder-steps legend") and "致命鹅膏" in pg.inner_text("#finder-steps .wiz__next"))
+        pg.click('[data-f="volva"][data-v="no"]'); pg.wait_for_timeout(200)
+        nxt = pg.inner_text("#finder-steps legend")
+        check(f"then the question that narrows most, with the reason shown ({nxt[:12]})", "最能缩小" in pg.inner_text("#finder-steps .wiz__next"))
+        pg.click('.botnav a[href="#log"]'); pg.wait_for_timeout(300); pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(300)
+        pg.reload(); pg.wait_for_timeout(700)
+        kept = pg.evaluate("[fstate.hym, fstate.volva]")
+        check(f"answers survive leaving the finder and a reload ({kept})", kept == ["gills", "no"])
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(400)
+        pg.click("#finder-reset"); pg.wait_for_timeout(100)
+        check("one tap on 重新开始 does not wipe the answers", pg.evaluate("fstate.hym") == "gills" and "再点一次" in pg.inner_text("#finder-reset"))
+        pg.click("#finder-reset"); pg.wait_for_timeout(100)
+        check("the second tap clears them", pg.evaluate("fstate.hym") is None)
+        pg.evaluate("fstate.hym = 'pores'; fstate.sub = 'wood'; fstate.spore = 'pink'; renderFinder()"); pg.wait_for_timeout(200)
+        r0 = pg.inner_text("#finder-results")
+        check("no candidates at all: says the database is limited and toxic species are not ruled out", "一个候选都没有" in r0 and "不说明它无毒" in r0)
+        check("the finder never claims success or safety", not any(w in r0 for w in ["识别成功", "可以食用", "确认是"]))
+        pg.click("#finder-reset"); pg.click("#finder-reset")
+        # species and toxic sheets share one hierarchy
+        pg.goto(url + "#sp-cantharellus-formosus"); pg.wait_for_timeout(700)
+        ids = pg.eval_on_selector_all("#sheet .sheet__sec", "els => els.map(e => e.id)")
+        check(f"species sheet order: features, look-alikes, limits, habitat and season, kitchen, sources {ids}",
+              ids == ["sh-id", "sh-look", "sh-limit", "sh-eco", "sh-kitchen", "sh-more"] and "都不能确认手上的菌是哪一种" in pg.inner_text("#sh-limit"))
+        pg.evaluate("document.getElementById('sheet').close()")
+        pg.goto(url + "#tx-amanita-phalloides"); pg.wait_for_timeout(700)
+        ids = pg.eval_on_selector_all("#sheet .sheet__sec", "els => els.map(e => e.id)")
+        lim = pg.inner_text("#sh-limit")
+        check(f"toxic sheet uses the same hierarchy with a feature table {ids}", ids == ["sh-id", "sh-look", "sh-limit", "sh-more"]
+              and pg.locator("#sh-id .fact").count() == 5 and "菌托常埋在土里" in lim and "任何一条都不足以排除它" in lim)
+        pg.evaluate("document.getElementById('sheet').close()")
+        # comparisons
+        pg.evaluate("navigate('toxic')"); pg.wait_for_timeout(500)
+        card = "#cmp-chanterelle"
+        pg.click(f'{card} [data-cmp-mode="side"]'); pg.wait_for_timeout(100)
+        labels = pg.eval_on_selector_all(f"{card} .cmp__row-label", "els => els.map(e => e.textContent)")
+        keyfirst = [("关键" in l) for l in labels[:-1]]
+        check(f"comparison rows: key differences first, 结论 last, variability warned ({labels})",
+              labels[-1].startswith("结论") and keyfirst == sorted(keyfirst, reverse=True) and "看不到的特征" in pg.inner_text(card)
+              and pg.locator(f"{card} .cmp__cols a").count() >= 3)
+        # outdoor mode: fewer extras, journal and safety kept, theme untouched
+        pg.evaluate("themeSet('dark')"); pg.evaluate("fieldSet(true)"); pg.evaluate("navigate('home')"); pg.wait_for_timeout(300)
+        vis = lambda s: pg.evaluate(f"(() => {{ const e = document.querySelector('{s}'); return !!(e && e.offsetParent); }})()")
+        check("outdoor mode keeps search, finder entry, journal and safety, hides seasonal extras, and leaves the theme alone",
+              vis("#home-q") and vis(".home-act") and vis(".home-jr") and vis(".home-safety") and not vis(".home-season") and not vis("#today")
+              and pg.evaluate("document.documentElement.dataset.theme") == "dark")
+        pg.evaluate("fieldSet(false); themeSet('system')")
+        check(f"no errors in the field-experience flow {errs}", not errs)
+        ctx.close()
+        # offline: incomplete cache, finder and journal without network
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, accept_downloads=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#explore"); pg.wait_for_timeout(2500)
+        ready = "已可离线" in pg.inner_text("#offline-status")
+        ctx.set_offline(True); pg.reload(); pg.wait_for_timeout(1200)
+        pg.wait_for_timeout(1500); pg.evaluate("offlineReport()"); pg.wait_for_timeout(300)  # report and cache read at the same moment
+        off = pg.inner_text("#off-photos") if pg.locator("#off-photos").count() else ""
+        cached = pg.evaluate("""caches.open(MEDIA_CACHE).then(c => c.keys()).then(ks => photoSets.small.filter(f => ks.some(r => new URL(r.url).pathname.endsWith('/' + f))).length)""")
+        import re as _re
+        shown = int(_re.search(r"小图 (\d+) /", off).group(1)) if _re.search(r"小图 (\d+) /", off) else -1
+        check(f"offline after one online visit: the page starts and reports exactly the photos really cached ({shown} = {cached})", ready and shown == cached and shown < pg.evaluate("photoSets.small.length"))
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(300)
+        pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(300)
+        check("the finder works offline", pg.locator("#finder-results .res-item").count() > 0)
+        pg.evaluate("navigate('log')"); pg.wait_for_timeout(700)
+        pg.select_option("#finds-sp", "boletus-edulis"); pg.click("#finds-save"); pg.wait_for_timeout(400)
+        rid = pg.evaluate("findsLoad()[0].id")
+        pg.click(f'[data-edit="{rid}"]'); pg.evaluate("jstep(3)"); pg.fill("#finds-notes", "离线改的"); pg.click("#finds-save"); pg.wait_for_timeout(400)
+        with pg.expect_download() as dl:
+            pg.click("#finds-export-json")
+        bk = dl.value.path(); pg.wait_for_timeout(300)
+        pg.set_input_files("#finds-import", bk); pg.wait_for_timeout(400)
+        same = "内容相同" in pg.inner_text("#imp"); pg.click("[data-imp-cancel]")
+        check(f"journal add, edit, export and import preview all work offline {errs}", pg.evaluate("findsLoad().length") == 1
+              and pg.evaluate("findsLoad()[0].notes") == "离线改的" and same and not errs)
+        slug = pg.evaluate("""caches.open(MEDIA_CACHE).then(c => c.keys()).then(ks => DATA.species.find(s => s.photo && !ks.some(r => r.url.endsWith('/photos/' + s.photo.file))).slug)""")
+        pg.goto(url + "#sp-" + slug); pg.wait_for_timeout(800)
+        miss = pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return !i.complete || i.naturalWidth === 0 || i.classList.contains('is-missing'); })()")
+        check("an example photo that was never downloaded shows as a grey frame, not as cached", miss)
+        ctx.set_offline(False); ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})

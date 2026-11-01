@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 247 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 266 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -180,7 +180,11 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   (IntersectionObserver adds `is-reveal` / `is-shown`, skipped under reduced motion); controls shrink on press;
   header photos drift slowly; the phone species sheet can be dragged down to close. Never animate warnings.
   Animate `.view` with opacity only: a transform on it moves the sticky search bar inside.
-- The finder (特征识别) is a step-by-step guide: one question at a time with a progress row (tap any step to change it),
+- The finder (特征识别) is a step-by-step guide: one question at a time with a progress row (tap any step to change it).
+  Sprint 3: the next question is chosen from the answers (`fBestNext()`): the volva question first while a deadly volva species
+  is still possible, otherwise the question that leaves the fewest candidates on average; the reason is shown and the header
+  says how many are left (never a probability). Skips are remembered (`fskip`), 上一题 follows `fhist`, answers persist 6 h in
+  `localStorage` `mushroom-guide:finder`, 重新开始 needs two taps, and an empty result says the database is limited.
   "不知道，跳过" on every question, 上一题, and a short "why this matters". It asks only the five features every species is tagged
   with in `data/tags.py`; do not add questions without checked tags for every species. Results never score or rank by
   probability: each candidate shows 相符 / 仍列出 (kept despite a contradicting answer) / 未确认, deadly matches are named in an
@@ -199,6 +203,9 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   the tallest possible body (measured off screen per width), and the description, habitat and look-alike note are clamped to a few
   lines like the species cards (full text in the sheet). Never clamp the kitchen note. Then "N 月可以找", 季节变化 (species whose
   historical iNaturalist records rise or fall next month, labelled as past records, not a forecast) and learning links.
+- Species and toxic sheets share one hierarchy: photo, names and risk; 快速鉴别/关键特征 (feature table); 易混; 鉴别限制
+  (`limitsHtml()`, built only from data the page has); 生态与季节 (+ 厨房 for edibles); 资料来源. Comparisons order rows by one
+  dimension list (`cmpRows()`), key (bold) rows first with a 关键 tag, 结论 last, plus a variability warning.
 - The species view is the edible 图鉴 (catalog). The species sheet opens with the photo (tap to zoom the 1024px copy full
   screen, `#zoom`), names, a one-line summary and three quick facts, then sticky section jumps: 快速鉴别 (the tagged features),
   易混毒菌 (warning plus photo pairs of every comparison it is in), 生态与季节, 厨房, 资料来源 (sources labelled by kind:
@@ -233,7 +240,7 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   The emergency page belongs to no tab and stays one tap away (header SOS). `TAB` in the script maps views to tabs.
   Never add a fourth tab; 食谱 and 厨房 stay inside 识菌.
 - Each view keeps its own scroll position when tabs are switched (`viewScroll` in `show()`), and each tab remembers its last
-  view (`tabLast`, `tabTap()`): coming back to a tab reopens that view; tapping the current tab again opens its first view at
+  view (`tabLast`, `tabTap()`, kept in `sessionStorage` so it survives a refresh): coming back to a tab reopens that view; tapping the current tab again opens its first view at
   the top. Browser back is unchanged. Settings live in one header bottom sheet (`#settings`, gear): it reuses `themeSet()` /
   `data-theme-pick` and `fieldSet()`, keeps no state of its own, and links to 离线使用, `#data-center` and 中毒急救. The finder
   puts the questions and results before the 3D model; its 查看候选 pill floats above the tab bar and hides while the results
