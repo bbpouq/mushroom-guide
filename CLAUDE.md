@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 180 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 206 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -62,7 +62,9 @@ public/                  Deployed as-is: index.html (generated, do not hand-edit
                          vendor/three-0.160.0.module.min.js (MIT, licence beside it; loaded lazily for the 3D model),
                          vendor/leaflet-1.9.4.js + .css (BSD-2, licence beside it; loaded when the finds map scrolls into view)
 tests/test_site.py       Playwright checks (starts its own server)
-docs/                    SAFETY_AUDIT, CONTENT_SOURCES, CHANGES, TEST_REPORT, RELEASE_NOTES, OPEN_ISSUES (round 7)
+docs/                    SAFETY_AUDIT, CONTENT_SOURCES, CHANGES, TEST_REPORT, RELEASE_NOTES, OPEN_ISSUES (round 7);
+                         DATA_ARCHITECTURE, BACKUP_FORMAT, OFFLINE_CACHE, ROUND8_REPORT (round 8)
+.github/workflows/seasonality.yml  Monthly iNaturalist refresh: fetch, rebuild, commit if changed, dispatch Pages; issue on failure
 .github/workflows/pages.yml  Pages deploy on push to main; fails if public/index.html is stale (rebuild before committing)
 ```
 
@@ -238,9 +240,14 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
   `#guide-<section>` to a section of the guide view (e.g. `#guide-check`, the before-you-eat checklist;
   `#guide-calendar`, the season calendar built from `data/seasonality.py`), `#rc-<id>` opens a recipe in the recipes view, `#guide-gloss` opens the glossary.
   A sheet opened from any view stays over that view; closing it returns there and keeps the scroll position. The old `#guide-log` link still opens `#log`.
-- The finds journal (`#log`) keeps records in `localStorage` under `mushroom-guide:finds:v1` (same key as the first version;
-  newer fields: status none/candidate/expert, verifier, lat/lon/alt/acc, hab, trees, photos) and photos as resized JPEG blobs in
-  IndexedDB (`mushroom-guide` / `photos`). This device only, never uploaded. Choosing a species makes a find a "候选"; only the
+- The finds journal (`#log`) keeps records in IndexedDB `mushroom-guide` v2 (stores `finds` keyPath id, `photos` id → JPEG Blob,
+  `meta`: migration, schema, lastBackup; see docs/DATA_ARCHITECTURE.md). Only `findsLoad()` (memory copy) and `await findsSave(list)`
+  (one transaction; memory replaced after commit; returns false on failure) touch records. The old `localStorage`
+  `mushroom-guide:finds:v1` is copied once and never deleted except by 清空本地数据; without IndexedDB the app falls back to it.
+  Records carry createdAt/updatedAt. Backups are backupVersion 4 (docs/BACKUP_FORMAT.md); import always previews, keeps this
+  device's version on conflicts unless replacing is chosen, and restores settings/learning only when ticked. 数据管理 shows
+  counts, storage, last backup and migration, and cleans orphan photos. 我的物种 counts "expert" only with a named verifier;
+  再次探索 groups by place name or ~1 km coordinates; the year share picture never contains places, coordinates or photos. This device only, never uploaded. Choosing a species makes a find a "候选"; only the
   person marks "专家当面确认（自记）", naming who confirmed it (plus organisation, date and method; photo-only opinions do not
   count). GPS is read only when the person taps "记下当前位置"; "只记大概位置" stores coordinates cut to 0.01° (~1 km) and no
   altitude. Up to 8 photos, each labelled with the part it shows (`parts`). Filters add region (rough BC / WA / OR from
