@@ -1312,6 +1312,20 @@ html[data-tab="id"] .subnav { display: flex; }
 .finds__thumb .finds__left { left: 4px; right: auto; }
 .finds__left .icon { transform: rotate(180deg); }
 
+.mine { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+.mine__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.mine__row { width: 100%; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-3); align-items: center; padding: var(--space-2); border: 0; border-radius: var(--radius-lg); background: var(--surface-1); color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.mine__row:hover { background: var(--surface-3); }
+.mine__pic { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: var(--color-muted); grid-row: span 2; }
+.mine__pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mine__main { display: grid; gap: 2px; min-width: 0; }
+.mine__main > span { font-size: 13px; color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
+.mine__st { justify-self: start; font-size: 12px; font-weight: var(--fw-600); padding: 1px 8px; border-radius: var(--radius-sm); background: var(--surface-3); }
+.mine__st--expert { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.mine__place { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-start; justify-content: space-between; padding: var(--space-3); border-radius: var(--radius-lg); background: var(--surface-1); }
+.mine__place .mine__main { flex: 1 1 16em; }
+.mine__years { list-style: none; margin: var(--space-1) 0 0; padding: 0; font-size: 13px; display: grid; gap: 2px; text-wrap: pretty; }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1934,6 +1948,29 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <div class="year__stats" id="year-stats"></div>
             <div class="year__months" id="year-months" aria-hidden="true"></div>
             <div class="year__wall" id="year-wall"></div>
+            <div class="finds__bar"><button class="btn" type="button" id="year-share"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>生成分享图片</button><span class="finds__hint">图片只有数字、月份和菌名，不含地点、坐标和照片。</span></div>
+          </section>
+
+          <section class="mine" id="my-species" aria-labelledby="mine-title">
+            <h2 class="finds__h" id="mine-title">我的物种</h2>
+            <div id="mine-body"></div>
+          </section>
+
+          <section class="mine" id="revisit" aria-labelledby="rv-title">
+            <h2 class="finds__h" id="rv-title">再次探索：我去过的地点</h2>
+            <p class="finds__hint">只列你自己存下的地点名或坐标，只在这台设备上显示。</p>
+            <div id="rv-body"></div>
+          </section>
+
+          <section class="mine" id="photo-archive" aria-labelledby="pa-title">
+            <h2 class="finds__h" id="pa-title">我的照片</h2>
+            <div class="finds__filters">
+              <label class="sr-only" for="pa-sp">按菌名筛选照片</label><select class="finds__input" id="pa-sp"></select>
+              <label class="sr-only" for="pa-year">按年份筛选照片</label><select class="finds__input" id="pa-year"></select>
+              <label class="sr-only" for="pa-region">按地区筛选照片</label><select class="finds__input" id="pa-region"><option value="">全部地区</option><option value="bc">BC</option><option value="wa">华盛顿</option><option value="or">俄勒冈</option><option value="none">没有坐标</option></select>
+            </div>
+            <div class="year__wall" id="pa-wall"></div>
+            <button class="btn" type="button" id="pa-more" hidden>显示更多照片</button>
           </section>
 
           <section class="finds__browse" id="finds-timeline" aria-labelledby="ftl-title">
@@ -2906,7 +2943,7 @@ async function renderFinds() {
   if (STORE === "loading") { $("#finds-list").innerHTML = `<p class="finds__empty">正在读取这台设备上的记录…</p>`; return; }
   findsFilterOptions(list);
   const shown = findsFiltered(list).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id);
-  fmapDraw(shown); renderYear(list);
+  fmapDraw(shown); renderYear(list); renderMine(list); renderRevisit(list); renderPhotos(list);
   if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。</p>`; return; }
   const kinds = new Set(shown.map(f => f.sp || "_" + f.other)).size, withGps = shown.filter(f => f.lat !== null && f.lat !== undefined).length;
   const urls = await Promise.all(shown.map(f => f.photos && f.photos[0] ? photoURL(f.photos[0]) : ""));
@@ -2933,6 +2970,7 @@ async function renderFinds() {
     ${shown.length ? `<ul class="finds__list">${items}</ul>` : `<p class="finds__empty">没有符合筛选的记录。</p>`}`.replace("<ul class=\"finds__list\"></ul>", "");
 }
 // ----- 年度探索报告: counts, months, most-found species and a wall of the year's photos -----
+let yearShare = null;
 async function renderYear(list) {
   const years = [...new Set(list.map(f => (f.date || "").slice(0, 4)).filter(Boolean))].sort().reverse();
   $("#finds-year").hidden = !years.length; if (!years.length) return;
@@ -2942,9 +2980,15 @@ async function renderYear(list) {
   const by = {}; fs.forEach(f => { const n = findsName(f); by[n] = (by[n] || 0) + 1; });
   const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 3);
   const months = Array.from({ length: 12 }, (_, m) => fs.filter(f => +(f.date || "").slice(5, 7) === m + 1).length), mx = Math.max(1, ...months);
-  $("#year-stats").innerHTML = [["记录", fs.length], ["种类", Object.keys(by).length], ["当面确认", fs.filter(f => findStatus(f) === "expert").length], ["有坐标", fs.filter(f => typeof f.lat === "number").length]]
+  const firstOf = {}; list.forEach(f => { if (f.sp && f.date && (!firstOf[f.sp] || f.date < firstOf[f.sp])) firstOf[f.sp] = f.date; });
+  const spYear = new Set(fs.filter(f => f.sp).map(f => f.sp)), fresh = [...spYear].filter(s => firstOf[s].startsWith(cur));
+  const regs = [...new Set(fs.map(regionOf).filter(r => REGION[r] && r !== "all"))].map(r => REGION[r]);
+  yearShare = { year: cur, records: fs.length, days: new Set(fs.map(f => f.date)).size, species: spYear.size, fresh: fresh.length, regions: regs, photos: fs.reduce((a, f) => a + (f.photos || []).length, 0), expert: fs.filter(f => findStatus(f) === "expert").length, top, months };
+  $("#year-stats").innerHTML = [["记录", fs.length], ["外出天数", yearShare.days], ["物种", spYear.size], ["第一次记到", fresh.length], ["照片", yearShare.photos], ["当面确认", yearShare.expert]]
     .map(([k, v]) => `<div class="year__stat"><b>${v}</b><span>${k}</span></div>`).join("")
-    + (top.length ? `<p class="year__top">最常记下：${top.map(([n, c]) => `${esc(n)}（${c}）`).join("、")}</p>` : "");
+    + (top.length ? `<p class="year__top">最常记下：${top.map(([n, c]) => `${esc(n)}（${c}）`).join("、")}</p>` : "")
+    + (regs.length ? `<p class="year__top">去过的地区（按坐标）：${regs.join("、")}</p>` : "")
+    + (fresh.length ? `<p class="year__top">这一年第一次记到：${fresh.map(s => esc(findsName({ sp: s }))).join("、")}</p>` : "");
   $("#year-months").innerHTML = months.map((n, m) => `<span class="year__m"><span class="year__bar" style="height:${n ? Math.max(8, n / mx * 100) : 0}%"></span><span>${m + 1}</span></span>`).join("");
   const shots = fs.flatMap(f => (f.photos || []).map(k => [k, f])).slice(0, 24);
   const urls = await Promise.all(shots.map(([k]) => photoURL(k)));
@@ -3118,6 +3162,104 @@ document.addEventListener("click", e => {
   const a = e.target.closest("[data-log-sp]"); if (!a) return;
   ensure("log");
   formReset(); $("#finds-sp").value = a.dataset.logSp; $("#finds-other-wrap").hidden = true; setStatus("candidate");
+});
+
+// ----- 我的物种: what this person has recorded, by species; "expert" only when they wrote down who confirmed it -----
+function renderMine(list) {
+  const by = new Map();
+  for (const f of list) {
+    if (!f.sp) continue;
+    const e = by.get(f.sp) || { sp: f.sp, n: 0, photos: 0, first: "", last: "", best: 0, photo: null };
+    e.n++; e.photos += (f.photos || []).length;
+    if (f.date && (!e.first || f.date < e.first)) e.first = f.date;
+    if (f.date && f.date > e.last) e.last = f.date;
+    e.best = Math.max(e.best, findStatus(f) === "expert" && f.verifier ? 2 : 1);
+    if (!e.photo && f.photos && f.photos[0]) e.photo = f.photos[0];
+    by.set(f.sp, e);
+  }
+  const rows = [...by.values()].sort((a, b) => b.last.localeCompare(a.last)), unknown = list.filter(f => !f.sp).length;
+  if (!list.length) { $("#mine-body").innerHTML = `<p class="finds__empty">还没有记录。在上面记下第一次发现，这里会按物种整理你见过的菌。</p>`; return; }
+  const ex = rows.filter(r => r.best === 2).length;
+  $("#mine-body").innerHTML = `<div class="year__stats">${[["记录过的物种", rows.length], ["有专家当面确认（自记）", ex], ["只有自己判断", rows.length - ex], ["没认出来的记录", unknown]].map(([k, v]) => `<div class="year__stat"><b>${v}</b><span>${k}</span></div>`).join("")}</div>
+    <p class="finds__hint">“专家当面确认”只算你写下了确认人的记录，网站无法核实；其余都只是你自己的判断，不代表可以吃。</p>
+    ${rows.length ? `<ul class="mine__list">${rows.map(r => `<li><button type="button" class="mine__row" data-mine-sp="${r.sp}">
+      <span class="mine__pic" data-mine-pic="${r.photo ? esc(r.photo) : ""}"></span>
+      <span class="mine__main"><b>${esc(findsName({ sp: r.sp }))}</b><span>${r.n} 条记录 · ${r.photos} 张照片 · 第一次 ${esc(r.first || "—")} · 最近 ${esc(r.last || "—")}</span></span>
+      <span class="mine__st mine__st--${r.best === 2 ? "expert" : "self"}">${r.best === 2 ? "专家当面确认（自记）" : "候选（自己判断）"}</span></button></li>`).join("")}</ul>`
+      : `<p class="finds__empty">还没有选过菌名的记录。</p>`}`;
+  $("#mine-body").querySelectorAll("[data-mine-pic]").forEach(async el => { const k = el.dataset.minePic; if (!k) return; const u = await photoURL(k); if (u) el.innerHTML = `<img src="${u}" alt="">`; });
+}
+$("#my-species").addEventListener("click", e => {
+  const b = e.target.closest("[data-mine-sp]"); if (!b) return;
+  $("#finds-fsp").value = b.dataset.mineSp; renderFinds();
+  $("#finds-timeline").scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+});
+
+// ----- 再次探索: the person's own places, grouped by the name they wrote or by coordinates rounded to ~1 km -----
+const placeKey = f => (f.place || "").trim() ? "p:" + f.place.trim().toLowerCase() : typeof f.lat === "number" ? "g:" + f.lat.toFixed(2) + "," + f.lon.toFixed(2) : null;
+let rvGroups = new Map();
+function renderRevisit(list) {
+  rvGroups = new Map();
+  for (const f of [...list].sort((a, b) => (a.date || "").localeCompare(b.date || ""))) { const k = placeKey(f); if (!k) continue; (rvGroups.get(k) || rvGroups.set(k, []).get(k)).push(f); }
+  if (!rvGroups.size) { $("#rv-body").innerHTML = `<p class="finds__empty">还没有带地点名或坐标的记录。记录时写下地点，或点“记下当前位置”，以后就能在这里看同一个地方历年的发现。</p>`; return; }
+  const groups = [...rvGroups.entries()].sort((a, b) => new Set(b[1].map(f => f.date)).size - new Set(a[1].map(f => f.date)).size || (b[1].at(-1).date || "").localeCompare(a[1].at(-1).date || "")).slice(0, 30);
+  $("#rv-body").innerHTML = `<ul class="mine__list">${groups.map(([k, fs]) => {
+    const name = k.startsWith("p:") ? fs.at(-1).place.trim() : `坐标约 ${fs[0].lat.toFixed(2)}, ${fs[0].lon.toFixed(2)}`;
+    const years = {}; fs.forEach(f => { const y = (f.date || "????").slice(0, 4); (years[y] = years[y] || new Set()).add(findsName(f)); });
+    return `<li class="mine__place"><div class="mine__main"><b>${esc(name)}</b><span>去过 ${new Set(fs.map(f => f.date)).size} 天 · ${fs.length} 条记录 · 最近 ${esc(fs.at(-1).date || "—")}</span>
+      <ul class="mine__years">${Object.entries(years).sort((a, b) => b[0].localeCompare(a[0])).map(([y, s]) => `<li><b>${esc(y)}</b> ${[...s].map(esc).join("、")}</li>`).join("")}</ul></div>
+      <button class="btn" type="button" data-rv="${esc(k)}">在这里再记一条</button></li>`;
+  }).join("")}</ul>`;
+}
+$("#revisit").addEventListener("click", e => {
+  const b = e.target.closest("[data-rv]"); if (!b) return;
+  const fs = rvGroups.get(b.dataset.rv); if (!fs) return;
+  const last = fs.at(-1), withGps = [...fs].reverse().find(f => typeof f.lat === "number");
+  formReset(); $("#finds-place").value = last.place || "";
+  if (withGps) { Object.assign(draft, { lat: withGps.lat, lon: withGps.lon, alt: withGps.alt ?? null, acc: withGps.acc ?? null }); $("#finds-fuzzy").checked = !!withGps.fuzzy; gpsText(); }
+  $("#finds-form").scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  toast("已填好上次的地点。日期是今天，请核对");
+});
+
+// ----- 我的照片: every photo, newest first, filtered by species, year and region -----
+let paLimit = 48;
+async function renderPhotos(list) {
+  const keep = (id, html) => { const el = $(id), v = el.value; el.innerHTML = html; if ([...el.options].some(o => o.value === v)) el.value = v; };
+  const withPh = list.filter(f => (f.photos || []).length);
+  keep("#pa-sp", `<option value="">全部种类</option>${[...new Set(withPh.filter(f => f.sp).map(f => f.sp))].map(s => `<option value="${s}">${esc(findsName({ sp: s }))}</option>`).join("")}${withPh.some(f => !f.sp) ? `<option value="_other">没认出来的</option>` : ""}`);
+  keep("#pa-year", `<option value="">全部年份</option>${[...new Set(withPh.map(f => (f.date || "").slice(0, 4)).filter(Boolean))].sort().reverse().map(y => `<option value="${y}">${y} 年</option>`).join("")}`);
+  const sp = $("#pa-sp").value, y = $("#pa-year").value, rg = $("#pa-region").value;
+  const shots = withPh.filter(f => (!sp || f.sp === sp || (sp === "_other" && !f.sp)) && (!y || (f.date || "").startsWith(y)) && (!rg || regionOf(f) === rg))
+    .sort((a, b) => (b.date || "").localeCompare(a.date || "")).flatMap(f => f.photos.map(k => [k, f]));
+  if (!shots.length) { $("#pa-wall").innerHTML = `<p class="finds__hint">${withPh.length ? "没有符合筛选的照片。" : "还没有照片。记录时可以给每次发现拍几张：菌盖、菌褶、菌柄和柄基。"}</p>`; $("#pa-more").hidden = true; return; }
+  const part = shots.slice(0, paLimit), urls = await Promise.all(part.map(([k]) => photoURL(k)));
+  $("#pa-wall").innerHTML = part.map(([k, f], i) => urls[i] ? `<button type="button" class="year__shot" data-zoom="${esc(k)}" data-zoom-src="${urls[i]}" data-zoom-cap="${esc(findsName(f))} · ${esc(f.date || "")} · ${esc((f.parts || {})[k] || "")}" aria-label="放大 ${esc(findsName(f))} ${esc(f.date || "")} 的照片"><img src="${urls[i]}" alt=""></button>` : "").join("");
+  $("#pa-more").hidden = shots.length <= paLimit;
+}
+["#pa-sp", "#pa-year", "#pa-region"].forEach(id => $(id).addEventListener("change", () => { paLimit = 48; renderPhotos(findsLoad() || []); }));
+$("#pa-more").addEventListener("click", () => { paLimit += 48; renderPhotos(findsLoad() || []); });
+
+// ----- share picture of the year: numbers, months and species names only; never places, coordinates or photos -----
+$("#year-share").addEventListener("click", () => {
+  const s = yearShare; if (!s) return;
+  const c = document.createElement("canvas"), W = 1080, H = 1350; c.width = W; c.height = H;
+  const g = c.getContext("2d"), font = (w, px) => `${w} ${px}px -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif`;
+  g.fillStyle = "#1E3B2A"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#F5F2EA"; g.font = font(700, 64); g.fillText(`${s.year} 年度探索`, 80, 150);
+  g.font = font(500, 34); g.fillStyle = "#C9D3C7"; g.fillText("拾菌记 MycoTrail · 我的菌记", 80, 210);
+  [["记录", s.records], ["外出天数", s.days], ["物种", s.species], ["第一次记到", s.fresh], ["照片", s.photos], ["当面确认", s.expert]].forEach(([k, v], i) => {
+    const x = 80 + (i % 3) * 320, y = 330 + Math.floor(i / 3) * 190;
+    g.fillStyle = "#F2B23C"; g.font = font(700, 88); g.fillText(String(v), x, y);
+    g.fillStyle = "#E4E9E1"; g.font = font(500, 32); g.fillText(k, x, y + 52);
+  });
+  const mx = Math.max(1, ...s.months);
+  s.months.forEach((n, i) => { const bh = n ? Math.max(8, n / mx * 220) : 0; g.fillStyle = "#9CCB9F"; g.fillRect(80 + i * 78, 960 - bh, 52, bh); g.fillStyle = "#C9D3C7"; g.font = font(500, 26); g.fillText(String(i + 1), 92 + i * 78 - (i > 8 ? 8 : 0), 1000); });
+  g.fillStyle = "#F5F2EA"; g.font = font(600, 34);
+  g.fillText(s.top.length ? "最常记下：" + s.top.map(([n, k]) => `${n}（${k}）`).join("、").slice(0, 40) : "", 80, 1090);
+  if (s.regions.length) { g.font = font(500, 30); g.fillStyle = "#C9D3C7"; g.fillText("地区：" + s.regions.join("、"), 80, 1145); }
+  g.font = font(500, 26); g.fillStyle = "#B7C4B6";
+  g.fillText("不含地点和坐标。记录只是我自己的观察，不代表可以食用。", 80, 1270);
+  c.toBlob(b => { if (b) saveFile(`拾菌记-${s.year}-年度探索.png`, b); toast("已生成分享图片：不含地点、坐标和照片"); }, "image/png");
 });
 
 // ----- 数据管理: what is stored, backup reminder, orphan photos, wipe -----

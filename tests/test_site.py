@@ -655,6 +655,36 @@ def run():
               and rec0["createdAt"].startswith("2023-11-14") and pg.evaluate("STORE") == "idb")
         ctx.close()
 
+        # ---------- round 8: my species, revisits, photo archive, year report (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True, accept_downloads=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#log"); pg.wait_for_timeout(600)
+        recs = [{"id": 11, "date": "2025-09-10", "sp": "boletus-edulis", "status": "candidate", "place": "A 步道", "lat": 47.6, "lon": -122.3},
+                {"id": 12, "date": "2026-10-01", "sp": "boletus-edulis", "status": "expert", "verifier": "王老师", "place": "A 步道"},
+                {"id": 13, "date": "2026-10-02", "sp": "cantharellus-formosus", "status": "expert", "place": "B"},
+                {"id": 14, "date": "2026-10-03", "other": "褐色小菇", "place": "a 步道"}]
+        pg.evaluate("r => findsSave(r).then(() => renderFinds())", recs); pg.wait_for_timeout(600)
+        mine = pg.inner_text("#my-species")
+        nums = pg.eval_on_selector_all("#mine-body .year__stat b", "els => els.map(e => +e.textContent)")
+        check(f"my species counts species, expert-confirmed (only with a named verifier), self-judged and unknown {nums}", nums == [2, 1, 1, 1])
+        check("expert status is never inferred", "候选（自己判断）" in mine and mine.count("专家当面确认（自记）") >= 2)
+        rv = pg.inner_text("#rv-body")
+        check("revisit groups the same place (case-insensitive) across years", "去过 3 天" in rv and "2025" in rv and "2026" in rv)
+        pg.click('[data-rv="p:a 步道"]'); pg.wait_for_timeout(300)
+        check("revisit prefills the place and last coordinates for a new record",
+              pg.input_value("#finds-place") == "a 步道" and pg.evaluate("draft.lat") == 47.6 and pg.evaluate("draft.id") is None)
+        pg.select_option("#year-pick", "2026"); pg.wait_for_timeout(300)
+        ys = pg.eval_on_selector_all("#year-stats .year__stat b", "els => els.map(e => +e.textContent)")
+        check(f"the year report counts records, days, species and first-time species from real records {ys}", ys[:4] == [3, 3, 2, 1] and "鸡油菌" in pg.inner_text("#year-stats"))
+        with pg.expect_download() as dl:
+            pg.click("#year-share")
+        check("the year report makes a share picture", dl.value.suggested_filename.endswith(".png"))
+        check("the photo archive has an empty state with a next step", "还没有照片" in pg.inner_text("#pa-wall"))
+        sw = pg.evaluate("document.documentElement.scrollWidth")
+        check(f"the journal does not overflow at 390px ({sw}) {errs}", sw <= 390 and not errs)
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')
