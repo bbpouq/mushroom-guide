@@ -48,7 +48,8 @@ COLLISIONS = r"""() => { const ok = new Set(["latin", "btn", "chip", "icon", "ic
     walk(rs); }
   const out = new Set();
   for (const el of document.querySelectorAll("body *")) {
-    const own = [...el.classList].filter(c => bare.has(c) && !c.includes("--") && !c.startsWith("is-") && !ok.has(c));
+    if (el.closest(".leaflet-container")) continue;  // the vendored map library's own markup
+    const own = [...el.classList].filter(c => bare.has(c) && !c.includes("--") && !c.startsWith("is-") && !c.startsWith("leaflet-") && !ok.has(c));
     if (own.length > 1) out.add(el.tagName.toLowerCase() + "." + [...el.classList].join("."));
   }
   return [...out]; }"""
@@ -207,7 +208,7 @@ def run():
               pg.evaluate("document.querySelector('.view.is-active').id") == "v-log" and pg.input_value("#finds-sp") == "tricholoma-matsutake")
         check("picking a species makes a find a candidate, never confirmed",
               pg.evaluate("document.querySelector('[name=finds-status]:checked').value") == "candidate")
-        pg.fill("#finds-place", "测试步道"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(200)
+        pg.evaluate("jstep(2)"); pg.fill("#finds-place", "测试步道"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(200)
         pg.reload(); pg.wait_for_timeout(700)
         check("a saved find survives a reload", "松茸" in pg.inner_text("#finds-list") and "测试步道" in pg.inner_text("#finds-list"))
         pg.click("#finds-list [data-del]"); pg.wait_for_timeout(100)
@@ -236,7 +237,7 @@ def run():
               n_tx == 22 and pg.locator("#tox-grid .sp-card__photo").count() == n_tx and pg.evaluate("document.getElementById('sheet').open"))
         pg.goto(url + "#guide-calendar"); pg.reload(); pg.wait_for_timeout(1000)
         all_rows = pg.locator("#cal tbody tr").count()
-        pg.click('[data-cal-region="bc"]'); pg.wait_for_timeout(150)
+        pg.click('#v-explore [data-cal-region="bc"]'); pg.wait_for_timeout(150)
         bc_rows = pg.locator("#cal tbody tr").count()
         pg.click('[data-cal-mode="month"]'); pg.wait_for_timeout(150)
         month_txt = pg.inner_text("#cal")
@@ -346,7 +347,7 @@ def run():
               pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return i.complete && i.naturalWidth > 0; })()"))
         # offline in the forest: write a record with a photo, then come back online after a cache wipe (what an update does)
         pg.goto(url + "#log"); pg.wait_for_timeout(800)
-        pg.select_option("#finds-sp", "boletus-edulis"); pg.fill("#finds-place", "离线测试")
+        pg.select_option("#finds-sp", "boletus-edulis"); pg.evaluate("jstep(2)"); pg.fill("#finds-place", "离线测试"); pg.evaluate("jstep(1)")
         pg.set_input_files("#finds-photo", str(PUBLIC / "photos" / "boletus-edulis.webp")); pg.wait_for_timeout(1200)
         pg.click("#finds-save"); pg.wait_for_timeout(600)
         off_ok = pg.evaluate("findsLoad().some(f => f.place === '离线测试' && f.photos.length === 1)")
@@ -435,7 +436,7 @@ def run():
                             geolocation={"latitude": 47.6062, "longitude": -122.3321, "accuracy": 12}, permissions=["geolocation"])
         pg = ctx.new_page(); errs = []; pg.on("pageerror", lambda e: errs.append(str(e)))
         pg.goto(url + "#log"); pg.wait_for_timeout(600)
-        pg.select_option("#finds-sp", "cantharellus-formosus"); pg.fill("#finds-place", "地图测试林")
+        pg.select_option("#finds-sp", "cantharellus-formosus"); pg.evaluate("jstep(2)"); pg.fill("#finds-place", "地图测试林")
         pg.click("#finds-gps"); pg.wait_for_timeout(600)
         gps = pg.inner_text("#finds-gps-out")
         png = __import__("base64").b64decode("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGP4z8DAwMDAxMDAwMDAAAANHQEDasKb6QAAAABJRU5ErkJggg==")
@@ -444,7 +445,7 @@ def run():
         pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(500)
         check(f"a find saves GPS ({gps}) and a photo ({thumbs})", "47.60620" in gps and thumbs == 1
               and pg.locator("#finds-list img.finds__pic").count() == 1)
-        pg.select_option("#finds-sp", ""); pg.fill("#finds-other", "褐色小伞菌")
+        pg.evaluate("jstep(1)"); pg.select_option("#finds-sp", ""); pg.fill("#finds-other", "褐色小伞菌"); pg.evaluate("jstep(2)")
         pg.click("#finds-gps"); pg.wait_for_timeout(500); pg.check("#finds-fuzzy")
         pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
         saved = pg.evaluate("findsLoad()")
@@ -461,7 +462,7 @@ def run():
         check("the year report counts the year's finds", not pg.locator("#finds-year").is_hidden() and "2" in pg.inner_text("#year-stats"))
         pg.click('#finds-list [data-edit] >> nth=1'); pg.wait_for_timeout(300)
         editing = pg.inner_text("#finds-title")
-        pg.fill("#finds-notes", "改过的备注"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
+        pg.evaluate("jstep(3)"); pg.fill("#finds-notes", "改过的备注"); pg.click('#finds-form button[type="submit"]'); pg.wait_for_timeout(300)
         check("a find can be edited in place", editing == "编辑记录" and "改过的备注" in pg.inner_text("#finds-list")
               and pg.locator("#finds-list .finds__item").count() == 2)
         pg.select_option("#finds-fsp", "cantharellus-formosus"); pg.wait_for_timeout(200)
@@ -724,6 +725,42 @@ def run():
         for k, v in [("sub", "ground"), ("spore", "white"), ("ring", "no"), ("volva", "no")]:
             pg.click('#finder-steps .wiz__dot[data-step="%d"]' % ["hym", "sub", "spore", "ring", "volva"].index(k)); pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(100)
         check(f"answering the key questions removes the missing-information alarm {errs}", "信息不足" not in pg.inner_text("#finder-results") and not errs)
+        ctx.close()
+
+        # ---------- round 9: home, tab memory, habitats, three-step journal (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url); pg.wait_for_timeout(900)
+        home = pg.inner_text("#v-home")
+        check("home leads with the hero line, search and the two main actions",
+              "走进森林，发现自然。" in home and pg.locator(".home-act__item").count() == 2
+              and pg.locator('.home-act__item[href="#finder"]').count() == 1 and pg.locator('.home-act__item[href="#explore"]').count() == 1)
+        hs = pg.evaluate("[...document.querySelectorAll('#home-season-track a')].map(a => recommendable(DATA.species.find(s => '#sp-' + s.slug === a.getAttribute('href'))))")
+        check(f"home season discovery shows recommended species with its data notes ({len(hs)})",
+              0 < len(hs) <= 8 and all(hs) and "样本" in pg.inner_text("#home-season-data") and "不是实时出菇预测" in pg.inner_text("#home-season-data"))
+        check("home journal preview has an empty state with a next step", pg.locator('#home-jr-body a[href="#log"]').count() == 1)
+        pg.fill("#home-q", "菌托"); pg.wait_for_timeout(200)
+        check("home search also finds glossary terms", pg.locator('#home-results a[href="#guide-gloss"]').count() >= 1)
+        pg.fill("#home-q", "松茸"); pg.wait_for_timeout(200); pg.click("#home-results a >> nth=0"); pg.wait_for_timeout(400)
+        pg.click("#sheet [data-close]"); pg.wait_for_timeout(300); pg.fill("#home-q", ""); pg.focus("#home-q"); pg.wait_for_timeout(150)
+        check("recent searches stay on this device and can be reused", pg.locator('#home-recentq [data-rq="松茸"]').count() == 1)
+        pg.evaluate("window.scrollTo(0, 900)"); pg.wait_for_timeout(100)
+        pg.click('.botnav a[href="#explore"]'); pg.wait_for_timeout(300); pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(300)
+        check(f"switching tabs keeps each tab's scroll position ({pg.evaluate('scrollY')})", abs(pg.evaluate("scrollY") - 900) < 5)
+        pg.click('.botnav a[href="#explore"]'); pg.wait_for_timeout(300)
+        n_hab = pg.locator("#v-explore details.habitat").count()
+        bad = pg.evaluate("[...document.querySelectorAll('.habitat__sp')].filter(a => !recommendable(DATA.species.find(s => '#sp-' + s.slug === a.getAttribute('href')))).length")
+        check(f"habitat cards list only recommended species ({n_hab} cards)", n_hab == 5 and bad == 0)
+        pg.click('.botnav a[href="#log"]'); pg.wait_for_timeout(700)
+        check("a new record starts at step 1 of 3", pg.locator("#finds-form .jstep:not([hidden])").get_attribute("data-jstep") == "1"
+              and pg.locator('[data-jgo="1"][aria-current="step"]').count() == 1)
+        pg.click('[data-jnav="1"]'); pg.wait_for_timeout(100)
+        check("next goes to place and habitat, where GPS is optional", pg.locator("#finds-form .jstep:not([hidden])").get_attribute("data-jstep") == "2" and pg.is_visible("#finds-gps"))
+        pg.click('[data-jgo="1"]'); pg.select_option("#finds-sp", "hydnum-repandum"); pg.click("#finds-save"); pg.wait_for_timeout(500)
+        check(f"a record saves from step 1 with only a species, no GPS {errs}", pg.evaluate("findsLoad().length") == 1 and pg.evaluate("findsLoad()[0].lat") is None and not errs)
+        pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(400)
+        check("the home journal preview shows the new record", "美味齿菌" in pg.inner_text("#home-jr-body"))
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

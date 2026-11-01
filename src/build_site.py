@@ -245,6 +245,31 @@ DATA = dict(groups=groups, species=species, poison=poison, poisonExtra=poison_ex
 MEDIA = re.search(r'const MEDIA = "([^"]+)"', (OUT.parent / "sw.js").read_text(encoding="utf-8")).group(1)
 
 
+def habitat_cards(items):
+    """生境探索: one folding card per habitat with its trees and the recommended species seen there (photo, season, link)."""
+    by_name = {}
+    for s in species:
+        if s["safety"].get("recommend") and s["safety"]["review"] == "Verified":
+            for n in [re.sub(r"（[^）]*）", "", s["zh"])] + [x for m in re.findall(r"（([^）]*)）", s["zh"]) for x in m.split("、")]:
+                by_name[n] = s
+    out = []
+    for hab, trees, names in items:
+        chips = []
+        for part in re.split(r"[、；]", names):
+            where = re.match(r"^(.*?)：", part)
+            label = re.sub(r"^.*?：", "", part).strip()
+            s = by_name[re.sub(r"（[^）]*）", "", label).strip()]
+            img = f'<img class="habitat__img" src="photos/{s["photo"]["file"]}" alt="" loading="lazy" decoding="async">' if s.get("photo") else ""
+            note = (where.group(1) + " · " if where else "") + (re.search(r"（([^）]*)）", label).group(1) + " · " if "（" in label else "")
+            chips.append(f'<li><a class="habitat__sp" href="#sp-{s["slug"]}">{img}<span><b>{s["zh"]}</b><small>{note}{s["season"]}</small></span></a></li>')
+        thumbs = "".join(c.split("<span>")[0].split('">', 1)[1] for c in chips[:3] if "<img" in c)
+        out.append(f'<details class="habitat"><summary class="habitat__head"><span class="habitat__thumbs" aria-hidden="true">{thumbs}</span>'
+                   f'<span class="habitat__name"><b>{hab}</b><small>{("常见树种：" + trees) if trees else "&nbsp;"}</small></span></summary>'
+                   f'<div class="habitat__body"><p class="habitat__lead">本站推荐的种类里，这类生境常见：</p><ul class="habitat__list">{"".join(chips)}</ul>'
+                   f'<p class="habitat__note">点开每种菌看它的易混毒菌和全年记录。生境只帮你决定去哪里找，不保证一定有，也不能证明手上的菌是哪一种。</p></div></details>')
+    return '<div class="habitat__grid">' + "".join(out) + "</div>"
+
+
 def kv(items):
     return "".join(
         f'<div class="kv"><div class="kv-k">{k}{f"<small>{s}</small>" if s else ""}</div><div class="kv-v">{v}</div></div>'
@@ -254,7 +279,7 @@ def kv(items):
 html = ((SRC / "template.html").read_text(encoding="utf-8")
         .replace("/*__DATA__*/null", json.dumps(DATA, ensure_ascii=False).replace("</", "<\\/"))
         .replace("/*__MEDIA__*/", MEDIA)
-        .replace("<!--HABITATS-->", kv(HABITATS))
+        .replace("<!--HABITATS-->", habitat_cards(HABITATS))
         .replace("<!--FEATURES-->", kv(FEATURES))
         .replace("<!--COOK-->", kv(COOK))
         .replace("<!--KEEP-->", kv(KEEP))
