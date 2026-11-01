@@ -1,0 +1,55 @@
+# 每月刷新一次 iNaturalist 季节数据（公开的研究级观察统计），重建页面并发布。
+# 只读取公开统计，不涉及任何用户的菌记数据（菌记只存在用户自己的设备上）。
+# fetch_seasonality.py 全部抓完才写文件：中途失败时保留上一次的有效数据，并开一个 issue 记录失败。
+name: Refresh season data
+
+on:
+  schedule:
+    - cron: "17 9 3 * *"   # 每月 3 日 09:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+
+concurrency:
+  group: seasonality
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Fetch iNaturalist counts (about 1 request per second)
+        run: python3 src/fetch_seasonality.py
+      - name: Rebuild the page
+        run: python3 src/build_site.py
+      - name: Commit if the data changed
+        id: commit
+        run: |
+          if git diff --quiet src/data/seasonality.py; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/seasonality.py public/index.html
+          git commit -m "Refresh iNaturalist season data"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      # a push made with GITHUB_TOKEN does not start other workflows, so start the Pages deploy explicitly
+      - name: Deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
+      - name: Record the failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --title "季节数据更新失败 $(date -u +%F)" \
+            --body "自动更新 iNaturalist 季节数据失败，网站继续使用上一次的有效数据。运行记录：${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

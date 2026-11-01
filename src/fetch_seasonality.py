@@ -45,9 +45,16 @@ def slug(latin):  # same rule as build_site.slug
 
 
 def get(path, **params):
+    """GET with three tries (5 s, 20 s back-off); the last error is raised so a failed run writes nothing."""
     req = urllib.request.Request(f"{API}/{path}?{urllib.parse.urlencode(params)}", headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+    for wait in (5, 20, None):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.load(r)
+        except Exception:
+            if wait is None:
+                raise
+            time.sleep(wait)
 
 
 def taxon(name):
@@ -110,6 +117,12 @@ def last_only():
     write(out, FETCHED)
 
 
+try:
+    from data.seasonality import SEASONALITY as OLD
+except Exception:
+    OLD = {}
+
+
 def main():
     if "--last-only" in sys.argv:
         return last_only()
@@ -124,7 +137,11 @@ def main():
         tid, inat_name = taxon(name)
         time.sleep(1)
         if not tid:
-            print(f"  no taxon: {name}")
+            if slug(latin) in OLD:  # keep the last good data rather than dropping the species
+                out[slug(latin)] = OLD[slug(latin)]
+                print(f"  no taxon now, kept previous data: {name}")
+            else:
+                print(f"  no taxon: {name}")
             continue
         h = get("observations/histogram", taxon_id=tid, place_id=PLACES, quality_grade="research",
                 date_field="observed", interval="month_of_year")["results"]["month_of_year"]

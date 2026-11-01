@@ -1326,6 +1326,15 @@ html[data-tab="id"] .subnav { display: flex; }
 .mine__place .mine__main { flex: 1 1 16em; }
 .mine__years { list-style: none; margin: var(--space-1) 0 0; padding: 0; font-size: 13px; display: grid; gap: 2px; text-wrap: pretty; }
 
+.intel { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+.intel__months { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.intel__months .chip-list { flex-wrap: nowrap; }
+.intel__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.intel__item { padding: var(--space-3); border-radius: var(--radius-lg); background: var(--surface-1); display: grid; gap: var(--space-1); content-visibility: auto; contain-intrinsic-size: auto 180px; }
+.intel__line { margin: 0; font-size: 13px; line-height: 1.55; text-wrap: pretty; font-variant-numeric: tabular-nums; }
+.intel__line--warn { display: flex; gap: 6px; align-items: flex-start; color: var(--color-danger-text); }
+.intel__line--warn .icon { flex: none; margin-top: 3px; }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1522,6 +1531,15 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <p class="season__sub" id="season-sub"></p>
           <div class="season__cols" id="season-cols"></div>
           <p class="now__data" id="season-data"></p>
+        </section>
+        <section class="intel" id="intel" aria-labelledby="intel-title">
+          <h2 class="season__title" id="intel-title">季节情报</h2>
+          <p class="season__sub">选一个月份，看那时候历史记录较多的推荐食用菌：长在哪里、常和什么树在一起、要防哪些毒菌。<b>这是历史观察记录，不是实时出菇预测，也不保证某个地点一定有。</b></p>
+          <div class="intel__months"><div class="chip-list" role="group" aria-label="月份" id="intel-months"></div></div>
+          <div class="chip-list" role="group" aria-label="长在哪里" id="intel-sub"></div>
+          <ul class="intel__list" id="intel-body"></ul>
+          <p class="now__data" id="intel-data"></p>
+          <p class="finds__hint">森林类型、伴生树和海拔没有可靠的结构化数据，这里只照抄每种菌页面上写的生境，不按它们筛选。生境只能帮你决定去哪里找，不能证明手上的菌是哪一种。</p>
         </section>
         <div class="subhead" id="guide-calendar"><h2>产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
         <div class="cal-ctl" id="cal-ctl">
@@ -3788,6 +3806,29 @@ function obsSummary(r, list, min) {
   const n = list.reduce((a, s) => a + obsCounts(s, r).reduce((x, y) => x + y, 0), 0);
   return `数据：iNaturalist 研究级观察 · ${REGION[r]} · ${yrs.length ? `覆盖 ${yrs[0]}–${yrs[yrs.length - 1]} 年` : "无记录"} · 样本 ${n.toLocaleString("en")} 条（${list.length} 种）· 更新于 ${DATA.obsFetched}。${REGION[r]}记录少于 ${min} 条的种类样本不足，不列出。历史记录，不是实时出菇预测。`;
 }
+/* ---------- 季节情报: by region and month, recommended species with many past records, their habitat and look-alikes ---------- */
+let intelMonth = MONTH, intelSub = "";
+function renderIntel() {
+  if (!$("#intel-body")) return;
+  const r = calState.region, min = r === "all" ? 300 : 100, m = intelMonth;
+  $("#intel-months").innerHTML = Array.from({ length: 12 }, (_, i) => `<button type="button" class="chip" data-intel-m="${i + 1}" aria-pressed="${i + 1 === m}">${i + 1} 月</button>`).join("");
+  $("#intel-sub").innerHTML = [["", "全部"], ["ground", "林地地面"], ["wood", "木头上"], ["grass", "草地"]].map(([k, v]) => `<button type="button" class="chip" data-intel-sub="${k}" aria-pressed="${k === intelSub}">${v}</button>`).join("");
+  const pool = DATA.species.filter(s => recommendable(s) && (!intelSub || s.sub.includes(intelSub))).map(s => [s, obsCounts(s, r)]).filter(([, c]) => c && c.reduce((a, b) => a + b, 0) >= min);
+  const hits = pool.map(([s, c]) => [s, c, Math.max(...c)]).filter(([, c, mx]) => calLevel(c[m - 1], mx) >= 2).sort((a, b) => b[1][m - 1] / b[2] - a[1][m - 1] / a[2]).slice(0, 8);
+  $("#intel-body").innerHTML = hits.length ? hits.map(([s, c, mx]) => `<li class="intel__item">
+      <a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)}</span></span></a>
+      <p class="intel__line"><b>${calLevel(c[m - 1], mx) === 3 ? "历史高峰月" : "记录较多"}</b> · ${REGION[r]}这个月 ${c[m - 1].toLocaleString("en")} 条，全年 ${c.reduce((a, b) => a + b, 0).toLocaleString("en")} 条</p>
+      <p class="intel__line"><b>生境</b> ${s.hab}</p>
+      ${s.warn ? `<p class="intel__line intel__line--warn">${icon("alert", "icon--sm")}<span><b>易混毒菌</b> ${s.warn}</span></p>` : ""}
+    </li>`).join("")
+    : `<li class="finds__empty">${m} 月在${REGION[r]}没有记录较多的推荐种类。这不代表林子里没有菌：可能只是历史记录少、样本不足，或者那时候不是它们的季节。</li>`;
+  $("#intel-data").textContent = obsSummary(r, pool.map(([s]) => s), min);
+}
+$("#intel").addEventListener("click", e => {
+  const mb = e.target.closest("[data-intel-m]"), sb = e.target.closest("[data-intel-sub]");
+  if (mb) intelMonth = +mb.dataset.intelM; else if (sb) intelSub = sb.dataset.intelSub; else return;
+  renderIntel();
+});
 /* ---------- species view: what to look for this month ---------- */
 function renderNow() {
   const r = calState.region, min = r === "all" ? 300 : 100;
@@ -4323,7 +4364,7 @@ document.addEventListener("click", e => {
   document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
   document.querySelectorAll("[data-cal-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calMode === calState.mode));
   renderCalendar();
-  if (r) { renderNow(); renderSeason(); try { localStorage.setItem("mushroom-guide:region", calState.region); } catch (_) {} }
+  if (r) { renderNow(); renderSeason(); renderIntel(); try { localStorage.setItem("mushroom-guide:region", calState.region); } catch (_) {} }
 });
 $("#cal-month").addEventListener("change", e => { calState.month = +e.target.value; renderCalendar(); });
 $("#cal-q").addEventListener("input", e => { calState.q = e.target.value; renderCalendar(); });
@@ -4337,7 +4378,7 @@ document.addEventListener("pointerover", e => {
 
 try { const r = localStorage.getItem("mushroom-guide:region"); if (r && REGION[r]) calState.region = r; } catch (_) {}
 document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
-renderToday(); renderNow(); renderSeason(); renderDeadly(); renderRecent(); typeIn($("#h-home")); foldify(); route();
+renderToday(); renderNow(); renderSeason(); renderIntel(); renderDeadly(); renderRecent(); typeIn($("#h-home")); foldify(); route();
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add("is-ready")));
 </script>
 </body>

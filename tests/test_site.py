@@ -685,6 +685,21 @@ def run():
         check(f"the journal does not overflow at 390px ({sw}) {errs}", sw <= 390 and not errs)
         ctx.close()
 
+        # ---------- round 8: season intelligence (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#explore"); pg.wait_for_timeout(700)
+        pg.click('[data-intel-m="10"]'); pg.wait_for_timeout(200)
+        items = pg.locator("#intel-body .intel__item").count()
+        txt = pg.inner_text("#intel")
+        ok_rec = pg.evaluate("[...document.querySelectorAll('#intel-body .season__item')].every(a => recommendable(DATA.species.find(s => '#sp-' + s.slug === a.getAttribute('href'))))")
+        check(f"season intelligence lists recommended species for a chosen month with habitat, look-alikes and data notes ({items})",
+              0 < items <= 8 and ok_rec and "生境" in txt and "易混毒菌" in txt and "样本" in txt and "不是实时出菇预测" in txt)
+        pg.click('[data-intel-m="2"]'); pg.click('[data-intel-sub="grass"]'); pg.wait_for_timeout(200)
+        check("an empty month says why, without implying there are no mushrooms", "这不代表林子里没有菌" in pg.inner_text("#intel-body") and not errs)
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')
