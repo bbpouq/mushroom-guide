@@ -1335,6 +1335,8 @@ html[data-tab="id"] .subnav { display: flex; }
 .intel__line--warn { display: flex; gap: 6px; align-items: flex-start; color: var(--color-danger-text); }
 .intel__line--warn .icon { flex: none; margin-top: 3px; }
 
+.res-cmp { margin: 4px 0 0; padding: 0 var(--space-3) var(--space-2); font-size: 13px; color: var(--color-muted-foreground); display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -2642,7 +2644,12 @@ function fItem(s, toxic) {
         ${!toxic && s.safety && s.safety.edibility !== "Edible" ? `<span class="res-item__why">${icon("alert", "icon--sm")}本站未评估它的可食性</span>` : ""}
         ${!toxic && s.warn ? `<span class="res-item__look">${icon("alert", "icon--sm")}<span>易混：${strip(s.warn)}</span></span>` : ""}
       </span>
-      ${toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : ""}${icon("arrow")}</a></li>`;
+      ${toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : ""}${icon("arrow")}</a>${fCmp(s.slug)}</li>`;
+}
+// side-by-side comparisons this candidate appears in (links sit beside the item: a link may not hold another link)
+function fCmp(slug) {
+  const cs = DATA.compare.filter(c => c.cols.some(col => col[2] === slug));
+  return cs.length ? `<p class="res-cmp">${icon("search", "icon--sm")}和近似种对比：${cs.map(c => `<a href="#cmp-${c.id}">${esc(c.title)}</a>`).join("、")}</p>` : "";
 }
 function renderFinder() {
   const st = STEPS[fstep], answered = STEPS.filter(x => fstate[x.key] !== null).length;
@@ -2675,6 +2682,7 @@ function renderFinder() {
     <div class="callout callout--info res-safe" role="note">${icon("shield")}<div>这里只列外形相符的候选，<b>不判断能不能吃</b>。本站没收录的菌不会出现在结果里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
     ${fstate.volva === "yes" ? `<div class="callout callout--danger" role="alert">${icon("skull")}<div><b>你看到了菌托。</b>这是鹅膏的重要标志，西北太平洋最致命的毒菌多是鹅膏。<b>不要吃。</b></div></div>` : ""}
     ${deadly.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>按目前的回答，仍可能是这些致命毒菌：</b>${deadly.map(p => `<a href="#tx-${p.slug}">${esc(p.zh)}</a>`).join("、")}。没有把它们一一排除之前，不要考虑食用。</div></div>` : ""}
+    ${fstate.hym === null || fstate.volva === null ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>信息不足。</b>还没回答${[fstate.hym === null ? "“菌盖下面”" : "", fstate.volva === null ? "“菌托”" : ""].filter(Boolean).join("和")}：不看这些，就排除不了致命的鹅膏类。少回答一题，候选只会更多，不会更确定。补充之前，不要把任何候选当成答案，更不要吃。</div></div>` : ""}
     ${open.length ? `<div class="res-open"><b>还没确认 ${open.length} 项：</b>${open.map(x => `<button type="button" class="res-open__item" data-step="${STEPS.indexOf(x)}">${esc(x.short)}<span>${esc(F_TIP[x.key])}</span></button>`).join("")}</div>` : ""}
     <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>
       ${tox.length ? `<ul class="res-list">${tox.map(p => fItem(p, true)).join("")}</ul>` : `<p class="muted-note" style="margin-top:0">本站收录的 ${toxicAll.length} 种毒菌里没有相符的。<b>这不代表它没毒</b>：本站只收录了少数毒菌。</p>`}</div>
@@ -2962,7 +2970,7 @@ async function renderFinds() {
   findsFilterOptions(list);
   const shown = findsFiltered(list).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.id - a.id);
   fmapDraw(shown); renderYear(list); renderMine(list); renderRevisit(list); renderPhotos(list);
-  if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。</p>`; return; }
+  if (!list.length) { $("#finds-list").innerHTML = `<p class="finds__empty">还没有记录。用上面的表单记下第一次发现：日期、地点和几张照片就够了。所有内容只存在这台设备上。</p>`; return; }
   const kinds = new Set(shown.map(f => f.sp || "_" + f.other)).size, withGps = shown.filter(f => f.lat !== null && f.lat !== undefined).length;
   const urls = await Promise.all(shown.map(f => f.photos && f.photos[0] ? photoURL(f.photos[0]) : ""));
   let month = "";

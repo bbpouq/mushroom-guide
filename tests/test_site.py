@@ -344,7 +344,18 @@ def run():
         pg.goto(url + "#sp-boletus-edulis"); pg.wait_for_timeout(600)
         check("offline: a species photo still shows (downloaded before)",
               pg.evaluate("(() => { const i = document.querySelector('#sheet .photo__img'); return i.complete && i.naturalWidth > 0; })()"))
+        # offline in the forest: write a record with a photo, then come back online after a cache wipe (what an update does)
+        pg.goto(url + "#log"); pg.wait_for_timeout(800)
+        pg.select_option("#finds-sp", "boletus-edulis"); pg.fill("#finds-place", "离线测试")
+        pg.set_input_files("#finds-photo", str(PUBLIC / "photos" / "boletus-edulis.webp")); pg.wait_for_timeout(1200)
+        pg.click("#finds-save"); pg.wait_for_timeout(600)
+        off_ok = pg.evaluate("findsLoad().some(f => f.place === '离线测试' && f.photos.length === 1)")
+        check("offline: a record with a photo can be written", off_ok)
         ctx.set_offline(False)
+        pg.evaluate("caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k))))"); pg.wait_for_timeout(300)
+        pg.reload(); pg.wait_for_timeout(1200)
+        kept = pg.evaluate("(async () => { await findsReady; const f = findsLoad().find(f => f.place === '离线测试'); return !!(f && await photoDB.get(f.photos[0])); })()")
+        check("back online after all caches were cleared (as an update does), the offline record and its photo are still there", kept)
         ctx.close()
 
         # ---------- 学习: quiz, wrong answers, term cards, progress (phone) ----------
@@ -698,6 +709,21 @@ def run():
               0 < items <= 8 and ok_rec and "生境" in txt and "易混毒菌" in txt and "样本" in txt and "不是实时出菇预测" in txt)
         pg.click('[data-intel-m="2"]'); pg.click('[data-intel-sub="grass"]'); pg.wait_for_timeout(200)
         check("an empty month says why, without implying there are no mushrooms", "这不代表林子里没有菌" in pg.inner_text("#intel-body") and not errs)
+        ctx.close()
+
+        # ---------- round 8: finder explanations (phone) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#finder"); pg.wait_for_timeout(600)
+        pg.click('[data-f="hym"][data-v="ridges"]'); pg.wait_for_timeout(200)
+        res = pg.inner_text("#finder-results")
+        check("the finder says information is missing while the volva question is unanswered", "信息不足" in res and "“菌托”" in res and "不要把任何候选当成答案" in res)
+        check("candidates link to the comparisons they appear in", pg.locator('#finder-results .res-cmp a[href="#cmp-chanterelle"]').count() >= 1)
+        check("candidates still show matched / kept-despite / unconfirmed features, with no score", "相符" in res and "未确认" in res and "%" not in res and "概率" not in res.replace("不计算匹配分数或概率", ""))
+        for k, v in [("sub", "ground"), ("spore", "white"), ("ring", "no"), ("volva", "no")]:
+            pg.click('#finder-steps .wiz__dot[data-step="%d"]' % ["hym", "sub", "spore", "ring", "volva"].index(k)); pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(100)
+        check(f"answering the key questions removes the missing-information alarm {errs}", "信息不足" not in pg.inner_text("#finder-results") and not errs)
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
