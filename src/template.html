@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#1E3B2A">
+<meta name="theme-color" content="#F8F6EF">
 <meta name="description" content="拾菌记 MycoTrail：Pacific Northwest（BC、华盛顿、俄勒冈）野菌探索指南。识菌：按特征认识野生蘑菇和危险近似种；拾菌：产季与野外指南；菌记：本机保存的采集记录。野菌速查手册升级版，可离线使用。">
 <meta name="keywords" content="拾菌记,MycoTrail,野菌速查手册,野生蘑菇,蘑菇图鉴,毒蘑菇,Pacific Northwest,西北太平洋,BC,华盛顿,俄勒冈">
 <meta name="application-name" content="拾菌记">
@@ -31,7 +31,15 @@
 <meta name="twitter:image" content="https://bbpouq.github.io/mushroom-guide/og.png">
 <title>拾菌记 MycoTrail — Pacific Northwest 野菌探索指南</title>
 <script>try { if (localStorage.getItem("mushroom-guide:field") === "on") document.documentElement.dataset.field = "on"; } catch (_) {}
-try { const th = localStorage.getItem("mushroom-guide:theme"); if (th === "light" || th === "dark") document.documentElement.dataset.theme = th; } catch (_) {}
+// theme before first paint: the page and the browser bar (theme-color) get the right colours at once, no flash
+window.themePaint = th => {
+  const dark = th === "dark" || (th !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  if (th === "light" || th === "dark") document.documentElement.dataset.theme = th; else delete document.documentElement.dataset.theme;
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = dark ? "#0F1210" : "#F8F6EF";
+  document.dispatchEvent(new Event("themechange"));  // canvas drawings (3D model) re-read their colours
+};
+let th0 = "system"; try { th0 = localStorage.getItem("mushroom-guide:theme") || "system"; } catch (_) {}
+themePaint(th0);
 try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /^(explore|guide-(calendar|field|offline))/.test(h) ? "ex" : /^(log|guide-log)$/.test(h) ? "jr" : h === "emergency" ? "" : "id"; } catch (_) { document.documentElement.dataset.tab = "id"; }</script>
 <style>
 /* Design system: iOS-style translucent materials ("glass") over a soft grouped background.
@@ -529,6 +537,10 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .res-item__why { display: block; font-size: var(--fs-caption); color: var(--color-danger-text); }
 .finder__jump { position: sticky; top: calc(var(--header-h) + var(--space-2)); z-index: var(--z-sticky); width: 100%; justify-content: center; margin-bottom: var(--space-4); box-shadow: 0 6px 16px -8px rgba(10, 14, 11,.35); }
 .finder__jump[hidden] { display: none; }
+.finder__jump { position: fixed; top: auto; left: 50%; bottom: calc(var(--space-4) + env(safe-area-inset-bottom)); width: min(480px, calc(100vw - 2 * var(--space-4))); margin: 0;
+  transform: translateX(-50%); z-index: var(--z-nav); box-shadow: var(--shadow-float); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+@media (max-width: 767px) { .finder__jump { bottom: calc(76px + env(safe-area-inset-bottom)); } }
+.finder__jump.is-away { opacity: 0; pointer-events: none; transform: translate(-50%, 12px); }
 @media (min-width: 1024px) { .finder__jump { display: none !important; } }
 .finder__results { scroll-margin-top: calc(var(--header-h) + 16px); }
 .res-empty { color: var(--color-muted-foreground); background: var(--color-card); border: 1px dashed var(--color-border); border-radius: var(--radius); padding: var(--space-5); text-align: center; }
@@ -984,6 +996,8 @@ html.is-ready .view.is-active > .view__head { animation: head-in 520ms var(--spr
 .hdr__field[aria-pressed="true"] { background: var(--color-accent); color: var(--color-on-accent); }
 .net-pill { display: inline-flex; align-items: center; gap: var(--space-1); min-height: 32px; padding: 0 var(--space-2); border-radius: var(--radius-pill); font-size: var(--fs-footnote); font-weight: var(--fw-600); background: var(--color-foreground); color: var(--color-background); white-space: nowrap; }
 .net-pill[hidden] { display: none; }
+.net-pill { text-decoration: none; position: relative; }
+.net-pill::after { content: ""; position: absolute; inset: -6px 0; }  /* 44px hit area */
 
 @media (max-width: 359px) { .brand > span:last-child { display: none; } }
 .sidenav__tools { display: grid; gap: var(--space-2); }
@@ -1477,6 +1491,25 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .fmap .leaflet-container .leaflet-control-attribution { background: var(--glass-strong); color: var(--color-muted-foreground); }
 .fmap .leaflet-container .leaflet-control-attribution a { color: var(--color-primary); }
 
+/* ---------- Sprint 2: settings sheet ---------- */
+.hdr__set { flex: none; }
+.set__group { display: grid; gap: var(--space-2); padding-bottom: var(--space-3); border-bottom: .5px solid var(--color-border); }
+.set__h { margin: 0; font-size: var(--fs-secondary); font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.set__group .seg { justify-self: start; }
+.set__links { display: grid; }
+.set__link { display: flex; align-items: center; gap: var(--space-3); min-height: 56px; padding: var(--space-2) 0; color: inherit; text-decoration: none; border-bottom: .5px solid var(--color-border); }
+.set__link > span { flex: 1; display: grid; min-width: 0; }
+.set__link > span > span { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
+.set__link > .icon:first-child { color: var(--color-primary); }
+
+/* ---------- Sprint 2: species sheet hierarchy ---------- */
+.sheet__latin, .sheet__en { display: inline; }
+.sheet__latin + .sheet__en::before, .sheet__en + .sheet__en::before { content: " · "; color: var(--color-muted-foreground); }
+.safety__who { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
+.safety__more { margin-top: var(--space-2); font-size: var(--fs-footnote); }
+.safety__more > summary { cursor: pointer; color: var(--color-primary); font-weight: var(--fw-600); min-height: var(--target); display: flex; align-items: center; }
+.safety__more p { margin: 0; color: var(--color-muted-foreground); text-wrap: pretty; }
+
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
 body { font-weight: var(--fw-400); font-variant-numeric: tabular-nums; }
@@ -1514,6 +1547,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <symbol id="i-map" viewBox="0 0 24 24"><path d="m9 4-6 2.5v13L9 17l6 2.5 6-2.5V4l-6 2.5L9 4Z"/><path d="M9 4v13M15 6.5v13"/></symbol>
   <symbol id="i-pan" viewBox="0 0 24 24"><path d="M3 12h13a6.5 6.5 0 0 1-13 0Z"/><path d="M16 12h5M7 8c0-1.5 1-1.5 1-3M11 8c0-1.5 1-1.5 1-3"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2.5Z"/><path d="M6 21h14v-4M9 7h7"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
@@ -1564,8 +1598,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         </nav>
         <span class="hdr__tools">
           <button class="icon-btn hdr__search" type="button" data-go-search aria-label="搜索菌名" title="搜索"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
-          <span class="net-pill" data-net-pill hidden><svg class="icon icon--sm" aria-hidden="true"><use href="#i-offline"/></svg>离线</span>
+          <a class="net-pill" href="#guide-offline" data-net-pill hidden aria-label="离线：查看没网时哪些能用"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-offline"/></svg>离线</a>
           <button class="icon-btn hdr__field" type="button" data-field-toggle aria-pressed="false" aria-label="户外模式：字更大、按钮更大、关闭动画" title="户外模式"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></button>
+          <button class="icon-btn hdr__set" type="button" data-open-settings aria-label="设置：外观、户外模式、离线和数据" title="设置"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg></button>
           <a class="sos-pill" href="#emergency"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-phone"/></svg>中毒急救</a>
         </span>
       </div>
@@ -1651,15 +1686,6 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <div class="now__track" id="recent-track"></div>
         </section>
         <article class="today" id="today" aria-labelledby="today-name"></article>
-        <section class="home-learn" aria-labelledby="home-learn-title">
-          <h2 class="home-learn__title" id="home-learn-title">继续探索</h2>
-          <div class="home-learn__list">
-            <a class="home-learn__item" href="#explore"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg><span><b>拾菌：这个月常见什么</b><span>BC、华盛顿、俄勒冈的产季和野外指南</span></span></a>
-            <a class="home-learn__item" href="#guide-calendar"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span><b>产季日历</b><span>据历年 iNaturalist 观察记录</span></span></a>
-            <a class="home-learn__item" href="#log"><svg class="icon" aria-hidden="true"><use href="#i-notebook-pen"/></svg><span><b>菌记：我的采集记录</b><span>只存在这台设备上</span></span></a>
-            <a class="home-learn__item" href="#guide-gloss"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg><span><b>术语小词典</b><span>菌褶、菌托、孢子印……</span></span></a>
-          </div>
-        </section>
       </section>
 
       <!-- ================= EXPLORE (拾菌) ================= -->
@@ -1911,17 +1937,18 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <p class="view__lead">手上有一朵不认识的菌？一题一题回答看到的特征，列出外形相符的候选种。不知道就跳过。<b>毒菌永远排在最前面。</b></p>
         </header>
         <div class="finder__note" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div>这只是帮你缩小范围，<b>不是鉴定</b>。本站只收录了 <!--N_EDIBLE--> 种食用菌和 <!--N_TOXIC--> 种毒菌，真实世界里的菌要多得多：结果里没有毒菌，不代表手上这朵没毒。</div></div>
-        <section class="model" id="model" aria-labelledby="model-title">
-          <div class="model__head"><h2 class="model__title" id="model-title">认识一朵菌</h2><p class="model__hint">拖动可以旋转；点部位名称或模型看说明。</p></div>
-          <div class="model__stage"><canvas class="model__canvas" id="model-canvas" role="img" aria-label="一朵伞菌的三维模型：菌盖、菌褶、菌环、菌柄和埋在土里的菌托"></canvas></div>
-          <div class="model__parts" id="model-parts" role="group" aria-label="选择部位"></div>
-          <p class="model__desc" id="model-desc" aria-live="polite"></p>
-        </section>
         <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
         <div class="finder">
           <div class="finder__steps" id="finder-steps"></div>
           <div class="finder__results" id="finder-results" aria-live="polite"></div>
         </div>
+        <section class="model" id="model" aria-labelledby="model-title">
+          <div class="model__head"><h2 class="model__title" id="model-title">认识一朵菌</h2><p class="model__hint">拖动可以旋转；点部位名称或模型看说明。</p></div>
+          <div class="model__stage"><canvas class="model__canvas" id="model-canvas" role="img" aria-label="一朵伞菌的三维模型：菌盖、菌褶、菌环、菌柄和埋在土里的菌托"></canvas></div>
+          <div class="model__parts" id="model-parts" role="group" aria-label="选择部位"></div>
+          <p class="model__desc" id="model-desc" aria-live="polite"></p>
+          <button class="btn" type="button" data-jump="finder-steps">回到问题</button>
+        </section>
         <div class="subhead" id="learn-features"><h2>认识特征与术语</h2><p>鉴定一朵菌要看哪些地方，以及图鉴里常见的词是什么意思。</p></div>
         <div class="panel-grid">
           <section class="panel panel--wide">
@@ -2012,7 +2039,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         <div class="panel-grid">
           <section class="panel panel--danger panel--wide">
             <h2 class="panel__title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>先看这里</h2>
-            <p><b>必须彻底煮熟：</b>羊肚菌、鹅膏类（赭盖鹅膏、橙黄鹅膏），生吃有毒；紫丁香蘑、粉紫香蘑、疣柄牛肝菌、蜜环菌也须煮熟。</p>
+            <p><b>必须彻底煮熟：</b>羊肚菌（生吃有毒）；紫丁香蘑、褐疣柄牛肝菌、蜜环菌也须煮熟。所有野生菌都要彻底煮熟。<b>鹅膏属的种类本站没有评估，不提供吃法。</b></p>
             <p><b>烹饪、煮沸、焯水、腌渍、冷冻、干燥，都不能让有毒的菌变安全。</b>有毒的菌怎么做都有毒；身份没确认的菌，不要下锅。</p>
             <p><b>【编者注】所有野生菌都建议彻底煮熟再吃。</b>田野蘑菇、牛肝菌、松露在一些地方有生食的做法，但生吃更容易引起肠胃不适，本站不推荐。</p>
             <p style="margin:0">几种菌混着做时，注意各自所需时间不同，确保全部熟透。</p>
@@ -2020,7 +2047,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <section class="panel">
             <h2 class="panel__title"><span class="panel__num">01</span>回家第一件事</h2>
             <ul>
-              <li>尽快把收获摊在桌布上，挑掉杂物，<b>按种类分开</b>。有疑问的扔掉，或再核对一次。</li>
+              <li>尽快把收获摊在桌布上，挑掉杂物，<b>按种类分开</b>。有疑问的扔掉。</li>
               <li>湿透的先晾干，否则会发霉。</li>
               <li>最好的幼嫩个体留给沙拉、主菜、腌制或冷冻；次一些的做汤、炖菜或晒干。</li>
               <li>暂不处理就放阴凉处，铺湿布、盖湿布，可放 1–2 天。</li>
@@ -2319,6 +2346,24 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <a class="botnav__link" href="#log" data-tab="jr"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook-pen"/></svg>菌记</a>
 </nav>
 
+<dialog class="bsheet" id="settings" aria-labelledby="settings-title"><div class="bsheet__box">
+  <span class="bsheet__grab" aria-hidden="true"></span>
+  <div class="bsheet__head"><h2 class="bsheet__title" id="settings-title">设置</h2><button class="icon-btn" type="button" data-settings-close aria-label="关闭设置"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <section class="set__group" aria-labelledby="set-theme-t"><h3 class="set__h" id="set-theme-t">外观</h3>
+    <div class="seg" role="group" aria-labelledby="set-theme-t">
+      <button type="button" class="seg__btn" data-theme-pick="system" aria-pressed="true">跟随系统</button>
+      <button type="button" class="seg__btn" data-theme-pick="light" aria-pressed="false">浅色</button>
+      <button type="button" class="seg__btn" data-theme-pick="dark" aria-pressed="false">深色</button>
+    </div></section>
+  <section class="set__group" aria-labelledby="set-field-t"><h3 class="set__h" id="set-field-t">户外模式</h3>
+    <label class="toggle"><input type="checkbox" role="switch" id="set-field"><span class="toggle__track" aria-hidden="true"></span><span>字和按钮更大、对比更强、没有动画；和深浅色互相独立</span></label></section>
+  <nav class="set__links" aria-label="更多设置">
+    <a class="set__link" href="#guide-offline"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span><b>离线使用</b><span>没信号时也能用：下载全部照片、装到手机桌面</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <a class="set__link" href="#data-center"><svg class="icon" aria-hidden="true"><use href="#i-notebook-pen"/></svg><span><b>数据管理与备份</b><span>菌记只存在这台设备上：导出、导入、清理</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <a class="set__link" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span><b>中毒急救</b><span>电话和该做的事</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  </nav>
+  <p class="finds__hint">设置只保存在这台设备上，不会上传。</p>
+</div></dialog>
 <dialog class="bsheet" id="imp" aria-labelledby="imp-title"><div class="bsheet__box">
   <span class="bsheet__grab" aria-hidden="true"></span>
   <div class="bsheet__head"><h2 class="bsheet__title" id="imp-title">导入备份之前</h2><button class="icon-btn" type="button" data-imp-cancel aria-label="取消导入"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div><div id="imp-body"></div>
@@ -2517,8 +2562,8 @@ function openSpecies(i) {
       <div class="sheet__q"><dt>本地观察记录</dt><dd>${s.obs ? s.pnw.toLocaleString("en") + " 条" : "无数据"}</dd></div>
     </dl>
     ${badges(s.flags)}
-    ${safetyBlock(s, false)}
     ${sheetNav([["sh-id", "快速鉴别"], ["sh-look", "易混毒菌"], ["sh-eco", "生态与季节"], ["sh-kitchen", "厨房"], ["sh-more", "资料来源"]])}
+    ${safetyBlock(s, false)}
     <section class="sheet__sec" id="sh-id"><h3 class="sheet__h">快速鉴别</h3>
       <dl class="facts">
         <div class="fact"><dt>菌盖下面</dt><dd>${FEAT.hym[s.hym]}</dd></div>
@@ -2559,7 +2604,7 @@ function openSpecies(i) {
   $("[data-share]", $("#sheet-body")).onclick = e => share(s.zh + " · 拾菌记", "sp-" + s.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
-  $("#sheet-body").scrollTop = 0;
+  foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0;
   const bar = $("#sheet-body .sheet__bar");  // the section jumps stick right under the bar
   $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
   $("[data-close]", d).focus({ focusVisible: false });
@@ -2578,16 +2623,17 @@ const recommendable = s => !!(s.safety && s.safety.recommend && s.safety.review 
 function safetyBlock(x, toxic) {
   const f = x.safety; if (!f) return "";
   const host = f.basisUrl ? f.basisUrl.replace(/^https:\/\/(www\.)?/, "").split("/")[0] : "";
+  // compact on top (grade, review status, what to watch for); how it was checked folds away under 资料审核说明
   return `<div class="safety${toxic ? " safety--toxic" : ""}">
     <dl class="safety__rows">
-      <div class="safety__row"><dt>分级</dt><dd><b>${EDIBILITY_ZH[f.edibility] || esc(f.edibility)}</b></dd></div>
-      <div class="safety__row"><dt>资料审核</dt><dd><span class="safety__status safety__status--${f.review.toLowerCase().replace(/\s+/g, "-")}">${REVIEW_ZH[f.review] || esc(f.review)}</span> ${REVIEW_HINT[f.review] || ""}编辑核对（非真菌学专家审核），${esc(f.reviewed)}。${host ? ` 依据：<a href="${f.basisUrl}" target="_blank" rel="noopener">${esc(host)}</a>` : ""}</dd></div>
+      <div class="safety__row"><dt>分级</dt><dd><b>${EDIBILITY_ZH[f.edibility] || esc(f.edibility)}</b> · <span class="safety__status safety__status--${f.review.toLowerCase().replace(/\s+/g, "-")}">${REVIEW_ZH[f.review] || esc(f.review)}</span> <span class="safety__who">编辑核对，非真菌学专家审核</span></dd></div>
       ${f.symptoms ? `<div class="safety__row"><dt>中毒表现</dt><dd>${esc(f.symptoms)}</dd></div>` : ""}
       ${f.note ? `<div class="safety__row"><dt>注意</dt><dd>${esc(f.note)}</dd></div>` : ""}
     </dl>
     ${toxic ? `<p class="safety__line">中毒时间是文献给出的常见范围，因人、吃的量和种类而异。怀疑误食，立即联系毒物中心，不要等症状。</p>`
       : f.edibility === "Edible" ? `<p class="safety__line">“可食”只说明这个物种本身，不说明你手里这一朵。没有经验丰富的人当面确认，就不要吃；确认过也不等于保证安全。</p>`
       : `<p class="safety__line">本站没有评估它在本地的可食性，不提供吃法。没有经验丰富的人当面确认，不要吃。</p>`}
+    <details class="safety__more"><summary>资料审核说明</summary><div><p>${REVIEW_HINT[f.review] || ""}核对日期 ${esc(f.reviewed)}。${host ? `依据：<a href="${f.basisUrl}" target="_blank" rel="noopener">${esc(host)}</a>。` : ""}完整来源见下方“资料来源”。</p></div></details>
   </div>`;
 }
 // where each kind of content on a species page comes from
@@ -2727,7 +2773,7 @@ function openToxic(slug) {
   $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 拾菌记", "tx-" + p.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
-  $("#sheet-body").scrollTop = 0;
+  foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0;
   $("[data-close]", d).focus({ focusVisible: false });
 }
 const KIND = { edible: "可食种", caution: "谨慎", toxic: "有毒" };
@@ -2876,6 +2922,10 @@ function renderFinder() {
       </div>
     </fieldset>`;
   const jump = $("#finder-jump");
+  if (!jump.dataset.watch && "IntersectionObserver" in window) {  // hide the pill while the candidates are already in view
+    jump.dataset.watch = "1";
+    new IntersectionObserver(es => jump.classList.toggle("is-away", es[0].isIntersecting), { rootMargin: "0px 0px -30% 0px" }).observe($("#finder-results"));
+  }
   if (!answered && fskipAll) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">五个问题都跳过了，没有特征可以用来缩小范围。至少看清一项（比如菌盖下面是褶还是孔），再回来回答。<b>认不出来的菌，不要吃。</b></div>`; return; }
   if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答上面任意一个问题，这里会列出外形相符的候选种。不知道的问题直接跳过。</div>`; return; }
   const tox = toxicAll.filter(p => fmatch(p, true));
@@ -3380,10 +3430,20 @@ $("#finds-import").addEventListener("change", async e => {
     const d = $("#imp"); if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
   } catch (_) { toast("导入没有完成。现有记录没有改动"); }
 });
+// bottom sheets on phones: drag down from the grabber or the title row; past 90px it closes the same way as 取消
+document.querySelectorAll("dialog.bsheet").forEach(d => {
+  const box = d.querySelector(".bsheet__box"); let y0 = null, dy = 0;
+  const cancel = () => { const c = d.querySelector("[data-imp-cancel], [data-wipe-cancel], [data-settings-close]"); if (c) c.click(); else d.close(); };
+  d.addEventListener("pointerdown", e => { if (!matchMedia("(max-width: 639px)").matches || !e.target.closest(".bsheet__grab, .bsheet__head") || e.target.closest("button")) return; y0 = e.clientY; dy = 0; d.setPointerCapture(e.pointerId); });
+  d.addEventListener("pointermove", e => { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); d.style.transform = `translateY(${dy}px)`; });
+  const end = () => { if (y0 === null) return; y0 = null; d.style.transform = ""; if (dy > 90) cancel(); dy = 0; };
+  d.addEventListener("pointerup", end); d.addEventListener("pointercancel", end);
+  box.style.touchAction = "pan-y";
+});
 // bottom sheets: a tap on the backdrop or Esc cancels, exactly like the 取消 button
 document.querySelectorAll("dialog.bsheet").forEach(d => {
-  d.addEventListener("click", e => { if (e.target === d) d.querySelector("[data-imp-cancel], [data-wipe-cancel]").click(); });
-  d.addEventListener("cancel", e => { e.preventDefault(); d.querySelector("[data-imp-cancel], [data-wipe-cancel]").click(); });
+  d.addEventListener("click", e => { const c = d.querySelector("[data-imp-cancel], [data-wipe-cancel]"); if (e.target === d && c) c.click(); });
+  d.addEventListener("cancel", e => { const c = d.querySelector("[data-imp-cancel], [data-wipe-cancel]"); if (!c) return; e.preventDefault(); c.click(); });
 });
 $("#imp").addEventListener("click", async e => {
   if (e.target.closest("[data-imp-cancel]")) { impPlan = null; $("#imp").close(); toast("已取消，现有记录没有改动"); return; }
@@ -3781,6 +3841,7 @@ const model = (() => {
   else visible = true;
   addEventListener("resize", () => { W = 0; kick(); });
   const mq = matchMedia("(prefers-color-scheme: dark)"); (mq.addEventListener ? mq.addEventListener("change", () => { readColors(); kick(); }) : 0);
+  document.addEventListener("themechange", () => { readColors(); kick(); });
   readColors(); describe(); kick();
   return { select, onSelect: fn => listeners.push(fn), get selected() { return sel; }, draw: () => { W = 0; draw(); } };
 })();
@@ -4282,11 +4343,12 @@ function renderSeason() {
 const THEME_KEY = "mushroom-guide:theme";
 function themeGet() { try { const v = localStorage.getItem(THEME_KEY); return v === "light" || v === "dark" ? v : "system"; } catch (_) { return "system"; } }
 function themeSet(v) {
-  if (v === "light" || v === "dark") document.documentElement.dataset.theme = v; else delete document.documentElement.dataset.theme;
+  themePaint(v);  // the same function the pre-paint script uses: one theme system
   try { if (v === "system") localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, v); } catch (_) {}
   document.querySelectorAll("[data-theme-pick]").forEach(b => b.setAttribute("aria-pressed", b.dataset.themePick === v));
-  const meta = document.querySelector('meta[name="theme-color"]:not([media])'); if (meta) meta.content = getComputedStyle(document.body).backgroundColor;
 }
+// "跟随系统": the CSS follows the system by itself; keep the browser bar in step when the phone switches light/dark
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (themeGet() === "system") themePaint("system"); }); } catch (_) {}
 document.addEventListener("click", e => { const b = e.target.closest("[data-theme-pick]"); if (b) themeSet(b.dataset.themePick); });
 themeSet(themeGet());
 
@@ -4433,7 +4495,8 @@ function parse(h) {
   if (h.startsWith("tx-") && toxicAll.some(p => "tx-" + p.slug === h)) return { view: "toxic", tx: h.slice(3) };
   if (h.startsWith("cmp-")) return { view: "toxic", target: h };
   if (h.startsWith("rc-") && DATA.recipes.some(r => "rc-" + r.id === h)) return { view: "recipes", target: h };
-  if (h === "guide-log") return { view: "log" };  // older links to the log when it lived in the guide view
+  if (h === "guide-log") return { view: "log" };
+  if (h === "data-center") return { view: "log", target: h };  // 设置 › 数据管理与备份  // older links to the log when it lived in the guide view
   // sections keep their old ids wherever they now live (e.g. #guide-calendar moved to 拾菌): open the view that holds them
   if (/^(guide|learn)-/.test(h) && document.getElementById(h)) return { view: document.getElementById(h).closest(".view").id.slice(2), target: h };
   if (VIEWS.includes(h)) return { view: h };
@@ -4445,10 +4508,22 @@ const LAZY = { species: () => sync(), finder: () => renderFinder(), log: () => {
 const built = new Set();
 function ensure(v) { if (LAZY[v] && !built.has(v)) { built.add(v); LAZY[v](); } }
 const viewScroll = {};  // each view keeps its own scroll position when you switch tabs and come back
+const tabLast = {};     // each tab remembers the last view opened in it (识菌 has seven)
+// A tab button: from another tab, go back to that tab's last view and its scroll; on the current tab, go to its root, top.
+function tabTap(tab, root) {
+  if (document.documentElement.dataset.tab === tab) {
+    viewScroll[root] = 0;
+    const cur = VIEWS.find(k => $("#v-" + k).classList.contains("is-active"));
+    if (cur === root) { try { window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } catch (_) { window.scrollTo(0, 0); } return; }
+    navigate(root); return;
+  }
+  navigate(tabLast[tab] || root);
+}
 function show(v, opts = {}) {
   ensure(v);
   const was = VIEWS.find(k => $("#v-" + k).classList.contains("is-active"));
   if (was && was !== v) viewScroll[was] = window.scrollY;
+  if (TAB[v]) tabLast[TAB[v]] = v;
   // back/forward onto the view that is already showing (a sheet closed over it): keep the reader's place
   if (!opts.focus && $("#v-" + v).classList.contains("is-active")) opts = Object.assign({}, opts, { keepScroll: true });
   VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
@@ -4498,7 +4573,8 @@ document.addEventListener("click", e => {
     const h = a.getAttribute("href").slice(1);
     if (h === "main") return;
     e.preventDefault();
-    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-")) navigate(h);
+    if (a.dataset.tab && (a.closest(".botnav") || a.closest(".topnav"))) { tabTap(a.dataset.tab, h); return; }
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-") || h === "data-center") navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
@@ -4526,15 +4602,24 @@ function fieldSync() {
   const on = document.documentElement.dataset.field === "on";
   document.querySelectorAll("[data-field-toggle]").forEach(b => b.setAttribute("aria-pressed", on));
   document.querySelectorAll("[data-field-label]").forEach(s => s.textContent = on ? "关闭户外模式" : "打开户外模式");
+  const sw = $("#set-field"); if (sw) sw.checked = on;
 }
+/* ---------- 设置: one bottom sheet; it reuses themeSet / fieldSet, it does not keep state of its own ---------- */
+$("[data-open-settings]").addEventListener("click", () => { const d = $("#settings"); if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); });
+$("#settings").addEventListener("click", e => {
+  if (e.target === e.currentTarget || e.target.closest("[data-settings-close]") || e.target.closest("a[href^='#']")) e.currentTarget.close();
+});
+$("#set-field").addEventListener("change", e => fieldSet(e.target.checked));
 document.addEventListener("click", e => {
   if (!e.target.closest("[data-field-toggle]")) return;
-  const on = document.documentElement.dataset.field !== "on";
+  fieldSet(document.documentElement.dataset.field !== "on");
+});
+function fieldSet(on) {
   if (on) document.documentElement.dataset.field = "on"; else delete document.documentElement.dataset.field;
   try { localStorage.setItem("mushroom-guide:field", on ? "on" : "off"); } catch (_) {}
   fieldSync(); setHeaderH();
   toast(on ? "已打开户外模式：字和按钮更大，动画关闭" : "已关闭户外模式");
-});
+}
 fieldSync();
 
 /* ---------- network state: say plainly when the device is offline ---------- */
@@ -4545,7 +4630,7 @@ function netSync() {
   const n = $("#off-net"); if (n) n.innerHTML = off ? `<span class="offline__no">离线</span>：已存在这台设备上的内容照常可用` : `<span class="offline__ok">在线</span>`;
   setHeaderH();
 }
-addEventListener("offline", () => { netSync(); toast("已离线：存在这台设备上的资料照常可用"); });
+addEventListener("offline", () => { netSync(); toast("已离线：图鉴、识别和菌记照常可用；没下载的照片显示为灰框，外部链接要联网"); });
 addEventListener("online", () => { netSync(); toast("已重新联网"); offlineReport(); });
 netSync();
 // an image that is neither cached nor reachable: leave its grey frame instead of a broken-image icon

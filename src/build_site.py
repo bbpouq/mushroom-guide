@@ -316,7 +316,7 @@ assert "原书" not in html, "the page mentions 原书; name the book in full in
 for x in species + poison + poison_extra:
     for _t, u in x.get("sources") or []:
         assert re.match(r"^https://[^\s\"'<>]+$", u), f"{x['slug']}: bad source URL {u}"
-for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生"]:
+for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "第一次吃少量", "先少量", "少量试", "试吃", "或再核对一次", "鹅膏类（", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生"]:
     assert bad not in html, f"unsafe advice is back on the page: {bad}"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "

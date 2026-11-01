@@ -99,12 +99,14 @@ def run():
             tabs = pg.eval_on_selector_all(f"{nav} a", "els => els.map(e => e.textContent.trim())")
             for v in ["explore", "log", "home"]:
                 pg.click(f'{nav} a[href="#{v}"]'); pg.wait_for_timeout(80)
+            pg.click('.subnav a[href="#finder"]'); pg.wait_for_timeout(80)  # 识菌 reopens its last page (tab memory); go through two pages
+            id_last = "v-finder"
             pg.click('.subnav a[href="#species"]'); pg.wait_for_timeout(80)
             cur = pg.eval_on_selector_all(f"{nav} a[aria-current]", "els => els.map(e => e.textContent.trim())")
             check(f"{w}px three tabs {tabs}, sub-nav reaches the catalog and 识菌 stays current {cur}",
                   tabs == ["识菌", "拾菌", "菌记"] and pg.evaluate("document.querySelector('.view.is-active').id") == "v-species" and cur == ["识菌"])
             pg.go_back(); pg.wait_for_timeout(150)
-            check(f"{w}px back button", pg.evaluate("document.querySelector('.view.is-active').id") == "v-home")
+            check(f"{w}px back button ({id_last})", pg.evaluate("document.querySelector('.view.is-active').id") == id_last)
             check(f"{w}px no JS errors {errs}", not errs)
             ctx.close()
 
@@ -807,6 +809,67 @@ def run():
         pg.click('[data-ds-theme="dark"]'); pg.wait_for_timeout(100)
         check(f"the design system page shows every component and switches theme {have} {errs}", all(have) and pg.evaluate("document.documentElement.dataset.theme") == "dark" and not errs
               and pg.evaluate("document.documentElement.scrollWidth") <= 390)
+        ctx.close()
+
+        # ---------- Sprint 2: theme behaviour, settings, tab memory, finder, sheet, safety copy (phone) ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, color_scheme="light")
+        ctx.add_init_script("""new MutationObserver((ms, o) => { if (document.body) { window.__atBody = [document.documentElement.dataset.theme || 'system',
+          document.querySelector('meta[name=theme-color]') && document.querySelector('meta[name=theme-color]').content]; o.disconnect(); } }).observe(document, { childList: true, subtree: true });""")
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url); pg.wait_for_timeout(600)
+        check("system light: light browser bar", pg.evaluate("document.querySelector('meta[name=theme-color]').content") == "#F8F6EF")
+        pg.emulate_media(color_scheme="dark"); pg.wait_for_timeout(200)
+        check("following the system: the browser bar turns dark when the phone does",
+              pg.evaluate("document.querySelector('meta[name=theme-color]').content") == "#0F1210" and pg.evaluate("getComputedStyle(document.body).backgroundColor") != "rgb(248, 246, 239)")
+        pg.click("[data-open-settings]"); pg.wait_for_timeout(200)
+        check("the header opens one settings sheet", pg.evaluate("document.getElementById('settings').open"))
+        pg.click('#settings [data-theme-pick="light"]'); pg.wait_for_timeout(150)
+        check("a manual choice beats the system, and every theme control agrees",
+              pg.evaluate("getComputedStyle(document.body).backgroundColor") == "rgb(248, 246, 239)"
+              and pg.evaluate("[...document.querySelectorAll('[data-theme-pick=light]')].every(b => b.getAttribute('aria-pressed') === 'true')")
+              and pg.evaluate("document.querySelector('meta[name=theme-color]').content") == "#F8F6EF")
+        pg.check("#set-field"); pg.wait_for_timeout(150)
+        check("the outdoor switch in settings uses the same outdoor mode as the header", pg.evaluate("document.documentElement.dataset.field") == "on"
+              and pg.get_attribute(".hdr__field", "aria-pressed") == "true" and pg.evaluate("document.documentElement.dataset.theme") == "light")
+        pg.uncheck("#set-field"); pg.click('#settings a[href="#data-center"]'); pg.wait_for_timeout(500)
+        check("a settings link closes the sheet and opens the page", not pg.evaluate("document.getElementById('settings').open")
+              and pg.evaluate("document.querySelector('.view.is-active').id") == "v-log")
+        pg.reload(); pg.wait_for_timeout(600)
+        check(f"no flash: the chosen theme and bar colour are set before the body exists ({pg.evaluate('window.__atBody')})", pg.evaluate("window.__atBody") == ["light", "#F8F6EF"])
+        pg.evaluate("themeSet('system')"); pg.emulate_media(color_scheme="light")
+        # tab memory
+        pg.evaluate("navigate('species')"); pg.wait_for_timeout(400); pg.evaluate("window.scrollTo(0, 700)"); pg.wait_for_timeout(100)
+        pg.click('.botnav a[href="#explore"]'); pg.wait_for_timeout(300); pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(400)
+        check(f"returning to 识菌 restores its last page and scroll ({pg.evaluate('scrollY')})", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species" and abs(pg.evaluate("scrollY") - 700) < 5)
+        pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(500)
+        check("tapping the current tab again goes to its first page, at the top", pg.evaluate("document.querySelector('.view.is-active').id") == "v-home" and pg.evaluate("scrollY") < 5)
+        pg.go_back(); pg.wait_for_timeout(400)
+        check("browser back still works after tab taps", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species")
+        check("the home page has no duplicate 继续探索 links", pg.locator("#v-home .home-learn").count() == 0 and "继续探索" not in pg.inner_text("#v-home"))
+        # finder and sheet
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(600)
+        check("the first finder question starts within the first screen", pg.evaluate("document.querySelector('#finder-steps legend').getBoundingClientRect().top") < 812
+              and pg.evaluate("document.getElementById('model').compareDocumentPosition(document.getElementById('finder-results')) & Node.DOCUMENT_POSITION_PRECEDING") > 0)
+        pg.click('[data-f="hym"][data-v="gills"]'); pg.wait_for_timeout(400)
+        jr = pg.evaluate("document.getElementById('finder-jump').getBoundingClientRect().top"); pr = pg.evaluate("document.querySelector('.wiz__progress').getBoundingClientRect().bottom")
+        check(f"the candidates pill floats above the tab bar and does not cover the question ({pr} < {jr})", jr > pr and jr < 812)
+        pg.goto(url + "#sp-hydnum-repandum"); pg.wait_for_timeout(700)
+        sh = pg.inner_text("#sheet")
+        check("species sheet: section jumps within the first screen; grade, review honesty and notes visible; details fold",
+              pg.evaluate("document.querySelector('#sheet [class*=sheet__nav]').getBoundingClientRect().top") < 812
+              and "非真菌学专家审核" in sh and "卷边桩菇" in sh and pg.locator("#sheet details.safety__more").count() == 1)
+        pg.evaluate("document.getElementById('sheet').close()")
+        # safety copy and offline pill
+        pg.evaluate("navigate('guide')"); pg.wait_for_timeout(400)
+        g = pg.inner_text("#v-guide")
+        check("the kitchen guide gives no cooking advice for amanitas and no trial portions", "鹅膏属的种类本站没有评估，不提供吃法" in g and "赭盖鹅膏" not in g and "第一次吃少量" not in g and "先少量" not in g)
+        check("the offline pill links to what works offline", pg.get_attribute("[data-net-pill]", "href") == "#guide-offline")
+        # drag a sheet closed
+        pg.click("[data-open-settings]"); pg.wait_for_timeout(200)
+        box = pg.locator("#settings .bsheet__grab").bounding_box()
+        pg.mouse.move(box["x"] + 10, box["y"] + 2); pg.mouse.down(); pg.mouse.move(box["x"] + 10, box["y"] + 160, steps=6); pg.mouse.up(); pg.wait_for_timeout(200)
+        check(f"dragging a sheet down closes it {errs}", not pg.evaluate("document.getElementById('settings').open") and not errs)
         ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------

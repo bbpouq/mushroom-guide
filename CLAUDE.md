@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 230 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 247 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -191,7 +191,7 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   fails. Part colours are the `--model-*` tokens. Both pause when off screen.
 - Home view (`#home`, the default, round 9): hero 「走进森林，发现自然。」 with a search box (edible and toxic species, toxic first,
   plus glossary terms and recent searches kept on this device; an empty result says not being listed does not mean safe), two
-  main actions (`.home-act`: 识别一朵菌, 探索森林), the safety note, 「这个季节，森林里有什么？」 (region chips shared with 拾菌,
+  main actions (`.home-act`: 识别一朵菌, 探索森林), the safety note (no 继续探索 links: they repeated the tab bar), 「这个季节，森林里有什么？」 (region chips shared with 拾菌,
   `obsSummary` data line), a 我的菌记 preview (`.jcard`, or an empty state), then four entry cards (识别 / 图鉴 / 毒菌与近似种 / 记录), the "认出来，不等于
   可以吃" note, the "今日一菌" card (`#today`): one in-season, common (>= 300 PNW records) edible per day, never a
   "高风险" one, picked by date; photo with the name over it, then 认识它, 怎么吃 (kitchen note plus recipes that use it), its
@@ -232,7 +232,13 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   (`#guide-calendar`), field guide (`#guide-field`, lost panel) and offline (`#guide-offline`). **菌记** (journal) = view log.
   The emergency page belongs to no tab and stays one tap away (header SOS). `TAB` in the script maps views to tabs.
   Never add a fourth tab; 食谱 and 厨房 stay inside 识菌.
-- Each view keeps its own scroll position when tabs are switched (`viewScroll` in `show()`). Section chips (`.jump-row`) are
+- Each view keeps its own scroll position when tabs are switched (`viewScroll` in `show()`), and each tab remembers its last
+  view (`tabLast`, `tabTap()`): coming back to a tab reopens that view; tapping the current tab again opens its first view at
+  the top. Browser back is unchanged. Settings live in one header bottom sheet (`#settings`, gear): it reuses `themeSet()` /
+  `data-theme-pick` and `fieldSet()`, keeps no state of its own, and links to 离线使用, `#data-center` and 中毒急救. The finder
+  puts the questions and results before the 3D model; its 查看候选 pill floats above the tab bar and hides while the results
+  are in view. The species sheet shows the section jumps right after the quick facts and a one-row safety summary (grade,
+  review status, "非真菌学专家审核", notes and the warning line stay visible; only the review explanation folds). Section chips (`.jump-row`) are
   the second-level navigation of 拾菌 and 菌记 and scroll as one row on phones. 拾菌's "去哪里找" is rendered by the build as
   `.habitat` folding cards (`habitat_cards()`), recommended species only. A new journal record is three steps (`jstep(n)`;
   照片与物种 / 地点与环境 / 备注与保存); "记下来" saves from any step and every field may stay empty except a name or species.
