@@ -44,14 +44,17 @@ JS helpers: `infoBtn(id, label)` and `infoPop(id, html)` for rendered content.
 
 The export warning about exact coordinates is unchanged: it still appears at export time, before anything leaves the device.
 
-## Phase 3 (partly done)
+## Phase 3
 
-| Module | Change |
-|---|---|
-| 生境探索 | The cards start right away. One visible line says that habitat cannot identify a mushroom. **菌和树的关系** holds the saprobic and mycorrhizal intro and the "recommended species only" note. The repeated per-card note was removed. |
-| 关于与反馈 | Report actions come first. 隐私 and 资料来源 are folds; `#about-privacy` opens its fold. |
-| Not changed on purpose | 中毒急救 (every action stays visible); recipe safety tips and the exact kitchen sentence; the finder results callout; the 清空本地数据 confirmation; export warnings. |
-| Still to do | The home safety note, the field-guide panels (规则 / 准备 / 采集), the 离线下载 explanation and the 菌记 鉴定状态 text. Each needs the same audit (what is a decision-time fact, what is background). They are left for a follow-up so that each can be reviewed on its own. |
+| Module | Visible | Behind the info button | Text (375px, before → after) |
+|---|---|---|---|
+| 首页 认出来，不等于可以吃 | 「不能确认任何一朵菌可以食用；烹饪也不能让有毒的菌变安全。有任何疑问，就不要吃。」 Both buttons (食用前风险检查, 我可能吃了不确定的菌). | **为什么不能凭结果食用？** Candidates only, no toxic result ≠ safe, cooking / freezing / drying, in-person confirmation 「减少认错，但不能保证安全」. | 146 → 62 (−58%) |
+| 采集守则 | Rule 1: 拿不准就不要吃, no app is a basis for eating, in-person confirmation with its caveat. Rule 2: check the land manager's latest rules, 本站不判断任何地点能不能采. | **怎么看一朵菌** (whole mushroom, base, spore print). **谁来管** (types of land, protected areas). | 308 → 226 (−27%) |
+| 采集与观察 | Four short steps; 柄基 / 菌托 in the photo step; 只看、只拍、只记; **保留完整柄基**. | **采集细节**: how to lift it out, leave old ones, growth stages and smell. | 264 → 180 (−32%) |
+| 离线下载 | The status rows and the buttons (unchanged); 「手机空间紧张时浏览器可能清掉已存的照片：出门前再看一眼这里。」 | **离线是怎么工作的**: text vs photos, when photos are stored, external links. | 81 → 38 (−53%) |
+| 菌记 › 鉴定状态 | The rule once, under the choice: 选了菌名只算候选; only an in-person check by someone who knows counts, with their name. | — (the duplicate step hint was removed; the verifier fields already say the site cannot verify it) | 80 → 42 (−48%) |
+| 生境探索, 关于与反馈 | See above. | | |
+| Not changed on purpose | 中毒急救 (every action stays visible); recipe safety tips and the exact kitchen sentence; the finder results callout; 清空本地数据 confirmation; export warnings; 出发前清单 (already a short action list). | | |
 
 ## Tests
 
@@ -65,4 +68,4 @@ The export warning about exact coordinates is unchanged: it still appears at exp
 
 Existing tests for the 季节情报 bias text and the 生境 wording now open the explanation first.
 
-Screenshots: `docs/pd/{finder,intel,gps}-{before,after}.png`. "Before" is the live site; "after" is this build; both are 375px, light mode.
+Screenshots: `docs/pd/{finder,intel,gps,home,rules,pick}-{before,after}.png`. "Before" is the live site; "after" is this build; both are 375px, light mode.
