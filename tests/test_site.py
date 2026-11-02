@@ -1409,6 +1409,36 @@ def run():
                 check(f"v54 at {w}px{' (outdoor, dark)' if field else ''}: questions and results fit, buttons at least {'52' if field else '44'}px {sw} {small[:3]} {e2}", sw <= w and not small and not e2)
                 c2.close()
 
+        # ---------- 拾菌 tabs land in the same place; card strips scroll without dragging the page ----------
+        for w, h in [(1180, 1300), (390, 844)]:
+            ctx = b.new_context(viewport={"width": w, "height": h}, is_mobile=w < 768, has_touch=w < 768)
+            pg = ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)))
+            pg.goto(url + "#explore-now"); pg.wait_for_timeout(700)
+            POS = "() => [Math.round(scrollY), Math.round(document.getElementById('explore-nav').getBoundingClientRect().top)]"
+            top = set()
+            for sub in ["rules", "prep", "pick", "safety", "offline", "field", "intel", "cal", "hab", "now"]:
+                pg.evaluate(f"navigate('explore-{sub}')"); pg.wait_for_timeout(500); top.add(tuple(pg.evaluate(POS)))
+            deep = set()
+            for sub in ["field", "intel", "rules", "now"]:
+                pg.evaluate("scrollTo(0, 900)"); pg.wait_for_timeout(150)
+                pg.evaluate(f"navigate('explore-{sub}')"); pg.wait_for_timeout(1100); deep.add(tuple(pg.evaluate(POS)))
+            pad = pg.evaluate("Math.round(parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop))")
+            check(f"拾菌 at {w}x{h}: switching sub-pages from the top never scrolls ({top}); from deep inside, the nav returns right under the header ({deep}, padding {pad}) {errs}",
+                  len(top) == 1 and list(top)[0][0] == 0 and len(deep) == 1 and abs(list(deep)[0][1] - pad) <= 2 and not errs)
+            ctx.close()
+        ctx = b.new_context(viewport={"width": 1280, "height": 900})
+        pg = ctx.new_page()
+        pg.goto(url + "#explore-now"); pg.wait_for_timeout(800)
+        st = pg.evaluate("(() => { const t = getComputedStyle(document.getElementById('now-track')), i = getComputedStyle(document.querySelector('#now-track .now__item img')); return [t.overscrollBehaviorX, t.scrollSnapType, i.webkitUserDrag || i.getPropertyValue('-webkit-user-drag')]; })()")
+        box = pg.locator("#now-track").bounding_box(); y = box["y"] + 80; x0 = box["x"] + 500
+        pg.mouse.move(x0, y); pg.mouse.down(); pg.mouse.move(x0 - 300, y, steps=12); pg.mouse.up(); pg.wait_for_timeout(400)
+        moved = pg.evaluate("document.getElementById('now-track').scrollLeft"); opened = pg.evaluate("document.getElementById('sheet').open")
+        pg.locator("#now-track .now__item").nth(3).click(); pg.wait_for_timeout(400)
+        check(f"card strips: swipes stay in the strip (no page bounce), no forced snapping, photos are not dragged out; a mouse drag scrolls without opening a card, a click still opens it {st} {moved}",
+              st[0] == "contain" and "mandatory" not in st[1] and st[2] == "none" and moved > 100 and not opened and pg.evaluate("document.getElementById('sheet').open"))
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')

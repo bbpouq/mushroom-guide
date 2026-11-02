@@ -716,13 +716,19 @@ html.is-ready .view.is-active > .view__head { animation: head-in 520ms var(--spr
 .now__title { font-size: var(--fs-h2); font-weight: var(--fw-700); letter-spacing: -.01em; }
 .now__all { border: 0; background: none; color: var(--color-primary); font-weight: var(--fw-600); font-size: var(--fs-body-sm); min-height: var(--target); padding: 0 var(--space-1); cursor: pointer; }
 .now__sub { margin: 0 0 var(--space-3); font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
-.now__track { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+.now__track { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
   margin: 0 calc(-1 * var(--space-4)); padding: 2px var(--space-4) var(--space-3); scroll-padding-left: var(--space-4); }
 .now__track::-webkit-scrollbar { display: none; }
 .now__item { flex: 0 0 148px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 2px; padding: 0 0 var(--space-3); border: .5px solid var(--glass-edge);
   border-radius: var(--radius-lg); overflow: hidden; background: var(--color-card); box-shadow: var(--shadow-card); text-align: left; color: var(--color-foreground); cursor: pointer;
   transition: transform 260ms var(--spring); }
 .now__item:active { transform: scale(.95); }
+/* card strips: a swipe scrolls the strip only (no page bounce or back gesture at the ends), a long press does not lift the
+   photo or open the link preview, and a card does not shrink while the strip is being dragged */
+.now__track { overscroll-behavior-x: contain; }
+.now__item, .now__item img { -webkit-user-drag: none; -webkit-touch-callout: none; user-select: none; }
+.now__track.is-dragging { scroll-snap-type: none; cursor: grabbing; }
+.now__track.is-dragging .now__item { transform: none; pointer-events: none; }
 .now__img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--color-muted); margin-bottom: var(--space-2); }
 .now__name { padding: 0 var(--space-3); font-weight: var(--fw-700); font-size: var(--fs-body-sm); line-height: 1.3; }
 .now__meta { padding: 0 var(--space-3); font-size: var(--fs-caption); color: var(--color-muted-foreground); }
@@ -1338,6 +1344,7 @@ html[data-tab="id"] .subnav { display: flex; }
 
 .intel { display: grid; gap: var(--space-3); }
 .intel__months { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.cmp__tabs, .sheet__nav, .subnav, .intel__months, .jump-row, .intel__wrap, .today__recipes { overscroll-behavior-x: contain; }
 .intel__months .chip-list { flex-wrap: nowrap; }
 
 .res-cmp { margin: var(--space-1) 0 0; padding: 0 var(--space-3) var(--space-2); font-size: var(--fs-footnote); color: var(--color-muted-foreground); display: flex; gap: var(--space-1); align-items: baseline; flex-wrap: wrap; }
@@ -1528,6 +1535,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 .xnav__sub[aria-current="page"]::after { opacity: 1; transform: none; }
 .xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: -3px; border-radius: var(--radius-sm); }
 .explore-region[hidden], .xp__pane[hidden] { display: none; }
+.xp__pane { min-height: calc(100vh - var(--header-h)); }  /* a short sub-page never shortens the page, so switching never makes it jump */
 .xp__pane:not([hidden]):not(#xp-safety) { animation: xp-in var(--xnav-dur) var(--ease) both; }  /* opacity only; never on the safety pane */
 @keyframes xp-in { from { opacity: 0; } }
 [data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
