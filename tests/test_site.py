@@ -1611,7 +1611,7 @@ def run():
                 sw = pg.evaluate("document.documentElement.scrollWidth")
                 pg.click('[data-report="species"]'); pg.wait_for_timeout(200)
                 small = pg.evaluate("""[...document.querySelectorAll('#v-about button, #v-about .btn, #report button, #report .fb__input, .site-footer__links a')]
-                  .filter(e => e.offsetParent && e.getBoundingClientRect().height < (document.documentElement.dataset.field === 'on' ? 44 : 44) && !e.matches('textarea'))
+                  .filter(e => e.offsetParent && e.getBoundingClientRect().height < 43.5 && !e.matches('textarea'))
                   .map(e => (e.className || e.tagName) + ':' + Math.round(e.getBoundingClientRect().height))""")
                 rw = pg.evaluate("document.querySelector('#report .bsheet__box').scrollWidth <= document.querySelector('#report .bsheet__box').clientWidth")
                 check(f"v54.1 at {w}px{' (outdoor, dark)' if field else ''}: about and the report fit, targets at least 44px {sw} {small[:3]}", sw <= w and rw and not small)

@@ -1500,8 +1500,8 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 
 /* ---------- v54.1: 关于与反馈 ---------- */
 #v-about { max-width: 72ch; }
-.about__safe { margin-bottom: var(--space-5); }
-.about__safe a { color: inherit; font-weight: var(--fw-700); }
+#v-about > .callout { margin-bottom: var(--space-5); }
+#v-about > .callout a { color: inherit; font-weight: var(--fw-700); }
 .about__sec { margin-top: var(--space-6); }
 .about__h { margin: 0 0 var(--space-2); font-size: var(--fs-h3); font-weight: var(--fw-700); text-wrap: balance; }
 .about__list { display: grid; border-radius: var(--radius); background: var(--surface-1); overflow: hidden; }
@@ -1527,7 +1527,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 .fb__label { font-size: var(--fs-secondary); font-weight: var(--fw-600); }
 .fb__input { width: 100%; min-width: 0; max-width: 100%; min-height: var(--target); padding: var(--space-2) var(--space-3); font: inherit; font-size: var(--fs-body); color: var(--color-foreground); background: var(--surface-1); border: 0; border-radius: var(--radius-md); }
 textarea.fb__input { resize: vertical; }
-.fb__preview { font-size: var(--fs-footnote); color: var(--color-muted-foreground); white-space: pre-wrap; }
+#fb-preview { font-size: var(--fs-footnote); color: var(--color-muted-foreground); white-space: pre-wrap; }
 .fb__safe { display: flex; gap: var(--space-2); align-items: flex-start; margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--color-danger-surface); color: var(--color-danger-text); font-size: var(--fs-footnote); }
 .fb__safe .icon { flex: none; margin-top: 2px; }
 .fb__safe a { color: inherit; font-weight: var(--fw-700); }

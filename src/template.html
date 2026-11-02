@@ -1543,8 +1543,8 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 
 /* ---------- v54.1: 关于与反馈 ---------- */
 #v-about { max-width: 72ch; }
-.about__safe { margin-bottom: var(--space-5); }
-.about__safe a { color: inherit; font-weight: var(--fw-700); }
+#v-about > .callout { margin-bottom: var(--space-5); }
+#v-about > .callout a { color: inherit; font-weight: var(--fw-700); }
 .about__sec { margin-top: var(--space-6); }
 .about__h { margin: 0 0 var(--space-2); font-size: var(--fs-h3); font-weight: var(--fw-700); text-wrap: balance; }
 .about__list { display: grid; border-radius: var(--radius); background: var(--surface-1); overflow: hidden; }
@@ -1570,7 +1570,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 .fb__label { font-size: var(--fs-secondary); font-weight: var(--fw-600); }
 .fb__input { width: 100%; min-width: 0; max-width: 100%; min-height: var(--target); padding: var(--space-2) var(--space-3); font: inherit; font-size: var(--fs-body); color: var(--color-foreground); background: var(--surface-1); border: 0; border-radius: var(--radius-md); }
 textarea.fb__input { resize: vertical; }
-.fb__preview { font-size: var(--fs-footnote); color: var(--color-muted-foreground); white-space: pre-wrap; }
+#fb-preview { font-size: var(--fs-footnote); color: var(--color-muted-foreground); white-space: pre-wrap; }
 .fb__safe { display: flex; gap: var(--space-2); align-items: flex-start; margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--color-danger-surface); color: var(--color-danger-text); font-size: var(--fs-footnote); }
 .fb__safe .icon { flex: none; margin-top: 2px; }
 .fb__safe a { color: inherit; font-weight: var(--fw-700); }
@@ -2522,7 +2522,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <h1 class="view__title" id="h-about">关于与反馈</h1>
           <p class="view__lead">拾菌记是给一起采菌的朋友做的 Pacific Northwest 野菌学习和野外记录网站：免费、非商业、源代码公开。资料由编辑根据列出的来源整理，<b>没有经过真菌学专家审核</b>。发现哪里不对，请告诉我们。</p>
         </header>
-        <div class="callout callout--danger about__safe" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>这里不提供野生菌鉴定、能不能吃的确认，也不提供中毒急救咨询。</b>怀疑误食，不要等回复：<a href="#emergency">打开中毒急救</a>，马上联系毒物控制中心或拨打 911。</div></div>
+        <div class="callout callout--danger" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>这里不提供野生菌鉴定、能不能吃的确认，也不提供中毒急救咨询。</b>怀疑误食，不要等回复：<a href="#emergency">打开中毒急救</a>，马上联系毒物控制中心或拨打 911。</div></div>
         <section class="about__sec" aria-labelledby="about-fb-t">
           <h2 class="about__h" id="about-fb-t">反馈</h2>
           <div class="about__list">
@@ -2636,7 +2636,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <form class="fb" id="report-form" novalidate>
     <div class="fb__fields" id="fb-fields"></div>
     <label class="fb__label" for="fb-preview">将要发送的内容（可以先复制）</label>
-    <textarea class="fb__input fb__preview" id="fb-preview" rows="7" readonly></textarea>
+    <textarea class="fb__input" id="fb-preview" rows="7" readonly></textarea>
     <p class="fb__warn" id="fb-warn" role="alert" hidden></p>
     <div class="fb__actions">
       <button type="button" class="btn btn--primary" data-fb-gh><svg class="icon icon--sm" aria-hidden="true"><use href="#i-out"/></svg>在 GitHub 打开（需要登录）</button>
