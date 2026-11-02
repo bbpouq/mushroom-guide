@@ -60,6 +60,7 @@
   --fs-field-body: 18px; --fs-field-title: 20px; --fs-field-display: 34px;  /* outdoor mode: larger on purpose (sunlight, gloves) */
   --radius-xs: 4px; --radius-sm: 8px; --radius-md: 12px; --radius: 14px; --radius-lg: 22px; --radius-pill: 999px;
   --z-sticky: 10; --z-header: 20; --z-nav: 30; --z-toast: 40;
+  --xnav-on: #3F6149; --xnav-on-text: #FFFFFF; --xnav-dur: 180ms;  /* 拾菌 category selected state */
   --dur-fast: 150ms; --dur: 220ms; --ease: cubic-bezier(.2, .7, .2, 1);
   --target: 44px;
   --header-h: 0px;
@@ -68,7 +69,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
+    --xnav-on: #4A7556; --xnav-on-text: #FFFFFF; --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
     --color-accent: #D9A24A; --color-on-accent: #17150F;
     --surface-0: #0F1210; --surface-1: #141815; --surface-2: #191D1A; --surface-3: #1E231F;
     --color-background: var(--surface-0); --color-foreground: #ECEAE2; --color-card: var(--surface-1);
@@ -84,7 +85,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
+  --xnav-on: #4A7556; --xnav-on-text: #FFFFFF; --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
   --color-accent: #D9A24A; --color-on-accent: #17150F;
   --surface-0: #0F1210; --surface-1: #141815; --surface-2: #191D1A; --surface-3: #1E231F;
     --color-background: var(--surface-0); --color-foreground: #ECEAE2; --color-card: var(--surface-1);
@@ -1472,19 +1473,41 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .cmp__key { display: inline-block; margin-left: var(--space-1); padding: 0 var(--space-1); border-radius: var(--radius-xs); font-size: var(--fs-caption-sm); font-weight: var(--fw-700); background: var(--color-warning-surface); color: var(--color-warning-text); vertical-align: 1px; }
 
 /* ---------- v50.2: 拾菌 navigation ---------- */
-.xnav { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); }
-@media (min-width: 768px) { .xnav { max-width: 720px; } }
-.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
-.xnav__cats .seg__btn { min-height: var(--target); }  /* primary navigation: a real 44px target, not only the hit area */
-.xnav__subs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: var(--space-1); }
+/* 拾菌 navigation (v53.2): a filled segmented control for the category, a tab strip with a 3px indicator for the sub-page */
+.xnav { display: grid; gap: var(--space-3); margin: 0 0 var(--space-5); }
+.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; padding: 3px; background: var(--color-muted);
+  box-shadow: inset 0 1px 2px rgba(10, 14, 11, .07); }
+@media (min-width: 768px) { .xnav__cats .seg { max-width: 560px; } }
+.xnav__cats .seg__btn { min-height: var(--target); font-size: var(--fs-body-sm); color: var(--color-muted-foreground);
+  transition: background-color var(--xnav-dur) var(--ease), color var(--xnav-dur) var(--ease), box-shadow var(--xnav-dur) var(--ease), transform var(--xnav-dur) var(--ease); }
+.xnav__cats .seg__btn:hover { color: var(--color-foreground); }
+.xnav__cats .seg__btn:active { transform: scale(.97); }
+#explore-nav .seg__btn[aria-pressed="true"] { background: var(--xnav-on); color: var(--xnav-on-text); font-weight: var(--fw-700); box-shadow: 0 1px 2px rgba(10, 14, 11, .18); }
+.xnav__cats .seg__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.xnav__subs { display: flex; gap: var(--space-4); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding-inline: var(--space-4);
+  border-bottom: .5px solid var(--color-border); padding: 0 var(--space-1); }
+.xnav__subs::-webkit-scrollbar { display: none; }
+/* only while the strip can scroll: fade the edge that has more tabs behind it (a mask: only the alpha of the opaque token counts) */
+.xnav__subs.has-more-r { -webkit-mask-image: linear-gradient(90deg, var(--color-foreground) calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, var(--color-foreground) calc(100% - 40px), transparent); }
+.xnav__subs.has-more-l { -webkit-mask-image: linear-gradient(270deg, var(--color-foreground) calc(100% - 40px), transparent); mask-image: linear-gradient(270deg, var(--color-foreground) calc(100% - 40px), transparent); }
+.xnav__subs.has-more-l.has-more-r { -webkit-mask-image: linear-gradient(90deg, transparent, var(--color-foreground) 40px, var(--color-foreground) calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, transparent, var(--color-foreground) 40px, var(--color-foreground) calc(100% - 40px), transparent); }
 .xnav__subs[hidden] { display: none; }
-.xnav__sub { min-height: var(--target); padding: 0 var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-muted-foreground);
-  font: inherit; font-size: var(--fs-footnote); font-weight: var(--fw-600); cursor: pointer; line-height: 1.25; box-shadow: inset 0 -2px 0 transparent; }
-.xnav__sub:hover { color: var(--color-foreground); background: var(--color-muted); }
-.xnav__sub[aria-current="page"] { color: var(--color-foreground); box-shadow: inset 0 -2px 0 var(--color-primary); font-weight: var(--fw-700); }
-.xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.xnav__sub { position: relative; flex: none; min-height: var(--target); padding: 0; border: 0; background: none; color: var(--color-muted-foreground);
+  font: inherit; font-size: var(--fs-body-sm); font-weight: var(--fw-500); white-space: nowrap; cursor: pointer; transition: color var(--xnav-dur) var(--ease); }
+.xnav__sub::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: var(--radius-pill) var(--radius-pill) 0 0;  /* ds-ok: 3px indicator, rounded top */
+  background: var(--color-primary); opacity: 0; transform: scaleX(.4); transition: opacity var(--xnav-dur) var(--ease), transform var(--xnav-dur) var(--ease); }
+.xnav__sub:hover { color: var(--color-foreground); }
+.xnav__sub[aria-current="page"] { color: var(--color-foreground); font-weight: var(--fw-700); }
+.xnav__sub[aria-current="page"]::after { opacity: 1; transform: none; }
+.xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: -3px; border-radius: var(--radius-sm); }
 .explore-region[hidden], .xp__pane[hidden] { display: none; }
+.xp__pane:not([hidden]):not(#xp-safety) { animation: xp-in var(--xnav-dur) var(--ease) both; }  /* opacity only; never on the safety pane */
+@keyframes xp-in { from { opacity: 0; } }
 [data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
+[data-field="on"] .xnav__cats .seg__btn { font-size: var(--fs-body); }
+[data-field="on"] .xnav__subs { border-bottom-width: 1px; }
+[data-field="on"] .xp__pane, [data-field="on"] .xnav__sub, [data-field="on"] .xnav__sub::after, [data-field="on"] .xnav__cats .seg__btn { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .xp__pane, .xnav__sub, .xnav__sub::after, .xnav__cats .seg__btn { animation: none !important; transition: none !important; } }
 /* v53: 拾菌 sub-pages as task pages (compact head, no chapter numbers, one rules source, state first) */
 .view__head--compact { margin-bottom: var(--space-3); }
 .view__head--compact .view__lead { font-size: var(--fs-secondary); }
