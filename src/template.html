@@ -2723,7 +2723,7 @@ function copied(btn) {
 /* ---------- species sheet ---------- */
 let sheetPushed = false, closingFromRoute = false;
 const FEAT = {
-  hym: { gills: "菌褶（刀片状）", pores: "菌孔（海绵状）", spines: "菌刺（下垂的软刺）", ridges: "钝圆的棱脊或近光滑", other: "其他形态（蜂窝状、球状、胶质、花椰菜状等）" },
+  hym: { gills: "菌褶（刀片状）", pores: "菌孔（小孔，可能细到近乎光滑）", spines: "菌刺（下垂的软刺）", ridges: "钝圆的棱脊或近光滑", other: "其他形态：蜂窝状、球状或块状、胶质、珊瑚或花椰菜状（没有菌盖下面也选这个）" },
   sub: { ground: "林地地面", grass: "草地、草坪", wood: "木头上", under: "埋在土里" },
 };
 const sheetNav = secs => `<nav class="sheet__nav" aria-label="跳到">${secs.map(([id, label]) => `<button type="button" class="chip" data-sheet-jump="${id}">${label}</button>`).join("")}</nav>`;
@@ -2851,14 +2851,17 @@ function limitsHtml(x, toxic) {
   li.push("颜色、大小和形状会随年龄、天气和产地变化；幼菌和老菌可能长得很不一样，被雨淋或被虫吃过也会变样。");
   if (x.hym === "gills") li.push("菌托常埋在土里：不把整朵连根挖出来，就看不到它有没有菌托。");
   if (x.ring) li.push("菌环会随年龄脱落或残缺：看不到菌环，不等于它没有。");
-  if ((x.sporeTags || []).includes("unknown")) li.push("孢子印不适用，或资料没写清楚。");
+  if ((x.sporeTags || []).includes("na")) li.push("孢子印不适用：这类菌（比如长在地下的块菌）做不出孢子印。");
+  if ((x.sporeTags || []).includes("unknown")) li.push("孢子印颜色资料没有写清楚：不能靠孢子印排除它。");
+  if (x.hymAlt && x.hymAlt.length) li.push(`容易看错的地方：${x.hymWhy}。`);
+  if (x.ringVar) li.push("菌环常常脱落或很不明显：看不到菌环，不能排除它。");
   if (!toxic && (x.pnw || 0) < 30) li.push("西北太平洋的记录很少：本地可能有外形相近、资料不多的其他种。");
   if (f.review === "In Review" || f.edibility === "Not Evaluated") li.push("可食性只有一份书籍资料，外部参考还没核对上，本站没有评估。");
   if (f.review === "Disputed") li.push("参考资料对它的可食性说法不一，本站按更谨慎的一方处理。");
   if (toxic) li.push("和它相像的可食种不能靠单一特征区分；任何一条都不足以排除它。");
   return `<section class="sheet__sec" id="sh-limit"><h3 class="sheet__h">鉴别限制</h3><ul class="limits">${li.map(s => `<li>${s}</li>`).join("")}</ul></section>`;
 }
-const sporeLabel = x => (x.sporeTags || []).filter(k => k !== "unknown").map(k => (STEPS.find(st => st.key === "spore").opts.find(o => o[0] === k) || [k, k])[1]).join("、") || "不明";
+const sporeLabel = x => (x.sporeTags || []).includes("na") ? "不适用" : (x.sporeTags || []).filter(k => k !== "unknown").map(k => (STEPS.find(st => st.key === "spore").opts.find(o => o[0] === k) || [k, k])[1]).join("、") || "不明";
 // where each kind of content on a species page comes from
 function dataNotes(x) {
   return `<ul class="data-notes">
@@ -3091,8 +3094,8 @@ $("#v-toxic").addEventListener("click", e => {
 // Only the five features every species is tagged with (data/tags.py) are asked: other features (cap shape, gill
 // attachment, odour...) have no checked data for every species, so asking them would only look precise.
 const STEPS = [
-  { key: "hym", part: "gills", short: "菌盖下面", unk: [["unseen", "看不到", "菌盖下面被泥土、虫蛀或腐烂遮住"]], q: "菌盖下面是什么样？", hint: "把菌翻过来看。", why: "这是分大类的第一步：有褶菌、牛肝菌、鸡油菌、齿菌各有不同的危险近似种。",
-    opts: [["gills", "菌褶（刀片状）", "o-gills"], ["pores", "菌孔（海绵状）", "o-pores"], ["spines", "菌刺（下垂的软刺）", "o-spines"], ["ridges", "钝圆的棱脊或近光滑", "o-ridges"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳", "o-other"]] },
+  { key: "hym", part: "gills", short: "菌盖下面", unk: [["unseen", "看不到", "菌盖下面被泥土、虫蛀或腐烂遮住"]], q: "菌盖下面（产孢的一面）是什么样？", hint: "把菌翻过来，看产孢子的那一面，不要看菌盖顶面的颜色和质地。马勃、羊肚菌、块菌这类没有菌盖下面的，选“其他形态”。", why: "这是分大类的第一步：有褶菌、牛肝菌、鸡油菌、齿菌各有不同的危险近似种。容易看混的结构（比如真菌褶和钝脊、极细的菌孔和近光滑）不会让候选消失，只会标成“冲突”。",
+    opts: [["gills", "", "o-gills"], ["pores", "", "o-pores"], ["spines", "", "o-spines"], ["ridges", "", "o-ridges"], ["other", "", "o-other"]].map(o => (o[1] = FEAT.hym[o[0]], o)) },
   { key: "sub", part: "volva", short: "长在哪", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", why: "长在木头上还是地上能排除很多种。但埋在土里的树根和木屑也算木头，看不清就跳过。",
     opts: [["ground", "林地地面", "o-ground"], ["grass", "草地、草坪", "o-grass"], ["wood", "木头上（树干、树桩、倒木、木屑）", "o-wood"], ["under", "埋在土里（块菌）", "o-under"]] },
   { key: "spore", part: "gills", short: "孢子印", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", why: "孢子印颜色要做出来才看得准，不能凭菌褶颜色猜。致命的鹅膏是白色孢子印。",
@@ -3146,42 +3149,66 @@ function fBestNext() {
   return { i: best.i, why: `这一题最能缩小剩下的 ${all.length} 个候选。` };
 }
 const fLabel = (k, v) => { const o = STEPS.find(s => s.key === k).opts.find(x => x[0] === v); return o ? o[1] : v; };
-function fmatch(s, lenient) {
-  const why = [];
-  if (fstate.hym && s.hym !== fstate.hym) return null;
-  if (fstate.sub) {
-    const near = lenient && (fstate.sub === "ground" || fstate.sub === "grass") && (s.sub.includes("ground") || s.sub.includes("grass"));
-    if (!s.sub.includes(fstate.sub) && !near) return null;
+// Matching (2026-11 species audit, docs/SPECIES_AUDIT.md). One function decides both whether a species stays listed and
+// what its card says: 吻合 (the answer agrees), 冲突 (it disagrees, but a careful observer could still give that answer, so the
+// species stays, with the reason) and 未知 (not observed, or not applicable). Unknown answers never narrow anything.
+// Toxic species are matched leniently: a 菌环 / 菌托 answer, the ground / grass / wood split and an easily misread spore colour
+// never remove them; only a clearly different fertile surface or "underground" does.
+// species tag -> answers that are easy to mix up with it, for every species; species-specific mix-ups (very fine pores,
+// an amanita egg, a jack-o'-lantern's thick gills) are in the data (hymAlt / hymWhy, src/data/tags.py)
+const HYM_NEAR = { ridges: { gills: "它是钝圆的棱脊，不是真菌褶；两者常被看混" } };
+// a toxic species whose data say "no ring" / "no volva" stays listed against a "yes" only where that answer has a known cause
+const RING_LOOKALIKE = /^(Cortinarius|Inocybe)\b/, VOLVA_LOOKALIKE = /^Amanita\b/;
+const SPORE_NEAR = { white: ["yellow"], yellow: ["white"], brown: ["choc", "olive"], choc: ["brown", "black"], black: ["choc"], olive: ["brown"] };
+function fEval(s, toxic) {
+  const ok = [], warn = [], open = [];
+  for (const { key, short } of STEPS) {
+    const v = fstate[key];
+    if (v === null) { open.push(short); continue; }
+    if (key === "hym") {
+      if (s.hym === v) ok.push(fLabel(key, v).split("（")[0].split("：")[0]);
+      else if ((s.hymAlt || []).includes(v)) warn.push(`你答“${fLabel(key, v).split("（")[0].split("：")[0]}”：${s.hymWhy}`);
+      else if (HYM_NEAR[s.hym] && HYM_NEAR[s.hym][v]) warn.push(HYM_NEAR[s.hym][v]);
+      else return null;
+    }
+    if (key === "sub") {
+      if (s.sub.includes(v)) ok.push(fLabel(key, v).split("（")[0]);
+      else if (toxic && v !== "under" && !s.sub.every(x => x === "under")) warn.push(`你答${fLabel(key, v).split("（")[0]}，它多见于${s.sub.map(k => FEAT.sub[k]).join("、")}：木屑、埋着的树根和草地边缘常让人看不清`);
+      else return null;
+    }
+    if (key === "spore") {
+      if (s.sporeTags.includes("na")) open.push("孢子印（本种做不出，不适用）");
+      else if (s.sporeTags.includes("unknown")) open.push("孢子印（资料没有记录）");
+      else if (s.sporeTags.includes(v)) ok.push(fLabel(key, v).split(" ")[0] + "色孢子印");
+      else if (toxic && s.sporeTags.some(c => (SPORE_NEAR[c] || []).includes(v))) warn.push(`你答${fLabel(key, v).split(" ")[0]}色孢子印，它是${s.sporeTags.map(c => fLabel(key, c).split(" ")[0]).join("或")}色：孢子印的颜色容易看偏`);
+      else return null;
+    }
+    if (key === "ring") {
+      if ((v === "yes") === !!s.ring) ok.push(v === "yes" ? "有菌环" : "无菌环");
+      else if (v === "no" && (toxic || s.ringVar)) warn.push("你答没有菌环，它有：菌环可能已脱落或很不明显");
+      else if (v === "yes" && toxic && RING_LOOKALIKE.test(s.latin)) warn.push("你答有菌环，资料里它没有：它幼时有丝膜状的菌幕，残留在菌柄上像一圈环痕");
+      else return null;
+    }
+    if (key === "volva") {
+      if ((v === "yes") === !!s.volva) ok.push(v === "yes" ? "有菌托" : "无菌托");
+      else if (v === "no" && toxic) warn.push("你答没有菌托，它有：菌托常埋在土里");
+      else if (v === "yes" && toxic && VOLVA_LOOKALIKE.test(s.latin)) warn.push("你答有菌托，资料里它没有：它膨大的柄基上带着外菌幕残片，看起来像菌托");
+      else return null;
+    }
   }
-  if (fstate.spore && !s.sporeTags.includes(fstate.spore) && !s.sporeTags.includes("unknown")) return null;
-  if (fstate.ring === "yes" && !s.ring) return null;
-  if (fstate.ring === "no" && s.ring) { if (!lenient) return null; why.push("菌环可能已脱落"); }
-  if (fstate.volva === "yes" && !s.volva) return null;
-  if (fstate.volva === "no" && s.volva) { if (!lenient) return null; why.push("菌托常埋在土里"); }
-  return why;
+  return { ok, warn, open };
 }
+const fmatch = (s, lenient) => { const r = fEval(s, lenient); return r && r.warn; };
 // one observation, as the person gave it: an answer, or why it is unknown (never silently "no")
 function fObs(k) {
   if (fstate[k] !== null) return fLabel(k, fstate[k]).split("（")[0];
   const r = funk[k], st = STEPS.find(s => s.key === k), u = r === "unseen" && (st.unk || []).find(x => x[0] === "unseen");
   return r ? `未观察（${UNK[r]}${u ? "：" + u[2] : ""}）` : "未观察（还没回答）";
 }
-// evidence per candidate: 吻合 (no contradiction), 冲突 (kept despite a contradicting answer), 未知 (not observed)
-function fDetail(s) {
-  const ok = [], warn = [], open = [];
-  STEPS.forEach(({ key, short }) => {
-    const v = fstate[key];
-    if (v === null) { open.push(short); return; }
-    if (key === "hym") ok.push(fLabel(key, v).split("（")[0]);
-    if (key === "sub") { if (s.sub.includes(v)) ok.push(fLabel(key, v).split("（")[0]); else warn.push(`你答${fLabel(key, v)}，它多见于${s.sub.map(k => FEAT.sub[k]).join("、")}（林地和草地边缘常难分）`); }
-    if (key === "spore") { if (s.sporeTags.includes("unknown")) open.push("孢子印（本种不适用或不明）"); else ok.push(fLabel(key, v).split(" ")[0] + "色孢子印"); }
-    if (key === "ring") { if ((v === "yes") === !!s.ring) ok.push(v === "yes" ? "有菌环" : "无菌环"); else warn.push("你答没有菌环，它有：菌环可能已脱落"); }
-    if (key === "volva") { if ((v === "yes") === !!s.volva) ok.push(v === "yes" ? "有菌托" : "无菌托"); else warn.push("你答没有菌托，它有：菌托常埋在土里"); }
-  });
-  return { ok, warn, open };
-}
+// evidence per candidate: the same evaluation that decided it stays listed
+const fDetail = (s, toxic) => fEval(s, toxic) || { ok: [], warn: [], open: [] };
 function fItem(s, toxic) {
-  const { ok, warn, open } = fDetail(s), deadly = s.level === "致命", unrated = !toxic && s.safety && s.safety.edibility !== "Edible";
+  const { ok, warn, open } = fDetail(s, toxic), deadly = s.level === "致命", unrated = !toxic && s.safety && s.safety.edibility !== "Edible";
   const risk = toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : `<span class="res-pill">${unrated ? "未评估" : "外形候选"}</span>`;
   return `<li><a class="res-item${toxic ? " res-item--toxic" : ""}" href="#${toxic ? "tx" : "sp"}-${s.slug}">
       ${s.photo ? `<img class="res-item__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
@@ -3245,7 +3272,7 @@ function renderFinder() {
       : `<div class="res-empty">回答上面的问题，这里会列出外形相符的候选种。看不到、拿不准就照实选。</div>`;
     return;
   }
-  const rank = (a, b) => (b.level === "致命") - (a.level === "致命") || fDetail(a).warn.length - fDetail(b).warn.length;  // risk first, then fewer conflicts; stable otherwise
+  const rank = (a, b) => (b.level === "致命") - (a.level === "致命") || fDetail(a, true).warn.length - fDetail(b, true).warn.length;  // risk first, then fewer conflicts; stable otherwise
   const tox = toxicAll.filter(p => fmatch(p, true)).sort(rank);
   const ed = DATA.species.filter(s => fmatch(s, false));
   const deadly = tox.filter(p => p.level === "致命");

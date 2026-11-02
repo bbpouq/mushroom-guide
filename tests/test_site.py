@@ -1463,6 +1463,73 @@ def run():
         check(f"no horizontal strip can also scroll vertically {sorted(two)}", not two)
         ctx.close()
 
+        # ---------- 2026-11 species feature audit: no dangerous candidate disappears on an easily misread answer ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#finder"); pg.wait_for_timeout(700)
+        def listed(ans):
+            pg.evaluate("a => { Object.keys(fstate).forEach(k => fstate[k] = a[k] || null); fstarted = true; renderFinder(); }", ans); pg.wait_for_timeout(120)
+            return pg.eval_on_selector_all("#finder-results .res-item__name", "e => e.map(x => x.textContent)")
+        P0 = [  # (answers, must be listed, why)
+            ({"hym": "other", "sub": "wood"}, ["硫磺菌（林中鸡）"], "林中鸡 read as 'other form' (shelving, very fine pores)"),
+            ({"hym": "ridges", "sub": "wood"}, ["硫磺菌（林中鸡）"], "林中鸡's fine pores read as near smooth"),
+            ({"hym": "pores", "sub": "wood"}, ["硫磺菌（林中鸡）"], "林中鸡 observed correctly"),
+            ({"hym": "ridges", "sub": "ground"}, ["发光类脐菇", "鸡油菌"], "jack-o'-lantern's thick gills read as chanterelle ridges"),
+            ({"hym": "other", "sub": "grass"}, ["毒鹅膏（死帽蕈）", "北美毁灭天使", "鳞柄白鹅膏（致命白毒伞）"], "an amanita egg read as a puffball"),
+            ({"hym": "gills", "sub": "ground", "volva": "yes"}, ["史密斯鹅膏", "毒鹅膏（死帽蕈）"], "A. smithiana's bulb with veil remnants read as a volva"),
+            ({"hym": "gills", "sub": "wood", "spore": "white"}, ["致命小环柄菇"], "Lepiota subincarnata on wood-chip mulch"),
+            ({"hym": "gills", "sub": "ground", "ring": "no", "spore": "brown"}, ["纹缘盔孢伞"], "Galerina whose ring has gone, looking terrestrial"),
+            ({"hym": "other", "sub": "ground"}, ["鹿花菌（假羊肚菌）", "羊肚菌"], "morel and false morel stay together"),
+            ({"hym": "other", "sub": "wood"}, ["羊肚菌"], "morel on bark mulch"),
+        ]
+        miss = []
+        for ans, must, why in P0:
+            got = listed(ans)
+            lost = [m for m in must if m not in got]
+            if lost: miss.append((why, lost))
+        check(f"species audit P0: no listed-by-mistake removal on the documented misreadings {miss}", not miss)
+        laet = pg.evaluate("(() => { Object.keys(fstate).forEach(k => fstate[k] = null); fstate.hym = 'other'; fstate.sub = 'wood'; const s = DATA.species.find(x => x.slug === 'laetiporus-sulphureus'); return fEval(s, false); })()")
+        check(f"林中鸡 under 'other form' is a 冲突 with the reason, not a 吻合 ({laet})", laet and not any("其他" in o for o in laet["ok"]) and any("菌孔极细" in w for w in laet["warn"]))
+        MATRIX = r"""(() => {
+          const bad = [], keys = ["hym", "sub", "spore", "ring", "volva"], all = DATA.species.map(s => [s, false]).concat(toxicAll.map(s => [s, true]));
+          const set = a => keys.forEach(k => fstate[k] = a[k] === undefined ? null : a[k]);
+          for (const [s, tox] of all) {
+            // 1. the species' own tags, all at once: listed, nothing in conflict
+            set({ hym: s.hym, sub: s.sub[0], spore: ["unknown", "na"].includes(s.sporeTags[0]) ? "white" : s.sporeTags[0], ring: s.ring ? "yes" : "no", volva: s.volva ? "yes" : "no" });
+            const r = fEval(s, tox); if (!r || r.warn.length) bad.push(["own tags", s.slug, r && r.warn]);
+            // 2. nothing answered: listed; every single unknown answer: listed
+            set({}); if (!fEval(s, tox)) bad.push(["no answers", s.slug]);
+            // 3. 吻合 only counts answered, agreeing fields
+            set({ hym: s.hym }); const r3 = fEval(s, tox); if (!r3 || r3.ok.length !== 1 || r3.open.length !== 4) bad.push(["evidence count", s.slug, r3]);
+            if (tox) {
+              // 4. toxic: no ring / volva answer removes it; ground/grass/wood never does; a near spore colour never does
+              for (const ring of ["yes", "no"]) { set({ ring }); if (!fEval(s, true) && !(ring === "yes" && !s.ring && !/^(Cortinarius|Inocybe)/.test(s.latin))) bad.push(["toxic ring", s.slug, ring]); }
+              set({ volva: "no" }); if (!fEval(s, true)) bad.push(["toxic volva no", s.slug]);
+              set({ volva: "yes" }); if (!fEval(s, true) && (s.volva || /^Amanita/.test(s.latin))) bad.push(["toxic volva yes", s.slug]);
+              for (const sub of ["ground", "grass", "wood"]) { set({ sub }); if (!s.sub.every(x => x === "under") && !fEval(s, true)) bad.push(["toxic substrate", s.slug, sub]); }
+              for (const c of s.sporeTags) for (const near of (SPORE_NEAR[c] || [])) { set({ spore: near }); if (!fEval(s, true)) bad.push(["toxic near spore", s.slug, near]); }
+              // 5. deadly volvate amanitas survive the puffball reading
+              if (s.level === "致命" && s.volva) { set({ hym: "other" }); if (!fEval(s, true)) bad.push(["amanita egg", s.slug]); }
+            }
+            // 6. a clearly different fertile surface still narrows (the finder stays useful)
+            const far = { gills: "spines", pores: "spines", spines: "gills", ridges: "spines", other: "spines" }[s.hym];
+            set({ hym: far }); if (fEval(s, tox) && !(s.hymAlt || []).includes(far)) bad.push(["no narrowing", s.slug, far]);
+          }
+          set({}); return [all.length, bad.slice(0, 12), bad.length];
+        })()"""
+        n, bad, nbad = pg.evaluate(MATRIX)
+        check(f"species audit matrix over all {n} species: own tags agree, unknown never narrows, 吻合 counts only answered fields, toxic species survive ring / volva / substrate / near-spore answers, amanita eggs survive, a clearly different structure still narrows ({nbad}) {bad}", nbad == 0 and n == 86)
+        q = pg.evaluate("STEPS[0].opts.map(o => o[1]).join('｜')")
+        check(f"the fertile-surface options no longer mix in the cap's colour ('橙色硬壳') and say fine pores can look smooth ({q[:60]}…)",
+              "橙色硬壳" not in q and "细到近乎光滑" in q and "没有菌盖下面" in q and "海绵状" not in q and q == pg.evaluate("Object.values(FEAT.hym).join('｜')"))
+        pg.goto(url + "#sp-tuber-aestivum"); pg.wait_for_timeout(600)
+        tr = pg.inner_text("#sheet")
+        pg.goto(url + "#sp-laetiporus-sulphureus"); pg.wait_for_timeout(600)
+        lt = pg.inner_text("#sheet")
+        check(f"species sheets say why: truffle spore print 不适用, 林中鸡's fine pores {errs}", "孢子印不适用" in tr and "菌孔极细" in lt and not errs)
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')
