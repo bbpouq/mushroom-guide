@@ -61,6 +61,11 @@ not touched, not even the `CACHE` version: the service worker loads pages networ
 - AT-6: back and refresh.
 - AT-7/8: outdoor mode keeps 52px targets, and reduced motion turns the animation off.
 
+Results: `tests/test_site.py` **335 / 335 passed** (324 from v53 plus 11 new). The QA sweep covered 288 combinations:
+the 10 拾菌 sub-pages, home and the emergency page × 320 / 375 / 390 / 768 / 1024 / 1440px × light / dark × outdoor mode
+off / on. It found 0 axe WCAG 2.2 AA violations, no horizontal overflow and no uneven card rows. The only wrapping label
+is 「我可能吃了不确定的菌」 on the home view at 320px, which was already the case before this change and is outside 拾菌.
+
 Screenshots: `docs/v53_2/` has before/after pairs at 320, 375, 390 and 1440px, light and dark, including outdoor mode.
 
 All checks ran in Playwright Chromium. No real iOS or Android device, Safari or Firefox was used. Mask images and
