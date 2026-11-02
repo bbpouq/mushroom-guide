@@ -1,0 +1,40 @@
+# 每次发布之后、以及每天一次：检查线上网站。失败时开一个 issue。
+# After every Pages deploy, and once a day: smoke-test the live site. Opens an issue when it fails.
+name: Smoke test (live site)
+
+on:
+  workflow_run:
+    workflows: ["Deploy to GitHub Pages"]
+    types: [completed]
+  schedule:
+    - cron: "43 15 * * *"   # daily, 15:43 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  smoke:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install "playwright==1.64.1"
+      - run: python3 -m playwright install --with-deps chromium
+      # after a deploy: wait until the live files are this commit's; on the daily run the live site may be newer than main's
+      # checkout only if a deploy is in flight, so allow the usual wait there too
+      - run: python3 tests/smoke_live.py https://bbpouq.github.io/mushroom-guide/ --wait 600
+      - name: Record the failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --title "线上冒烟测试失败 $(date -u +%F)" \
+            --body "Smoke test of the live site failed. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
