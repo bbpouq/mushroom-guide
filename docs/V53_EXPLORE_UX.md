@@ -106,6 +106,16 @@ New v53 checks:
 - AC-09: the journal survives navigation, downloads and a reload.
 - Outdoor mode on in light and dark at 375 px.
 
+Results (this release, Playwright Chromium): `tests/test_site.py` **324 / 324 passed** (the 285 v52 checks, 3 of them rewritten for the new markup,
+plus 39 new v53 checks). A separate QA sweep covered 288 combinations:
+- 12 views: the 10 拾菌 sub-pages, home and the emergency page;
+- 6 widths: 320, 375, 390, 768, 1024 and 1440 px;
+- light and dark;
+- outdoor mode off and on.
+
+It found 0 axe WCAG 2.2 AA violations, no horizontal overflow and no uneven card rows. One label still wraps on the home view at 320 px
+(「我可能吃了不确定的菌」); that is outside 拾菌 and also happens in v52.
+
 All of these ran in Playwright Chromium only. They have not been run on real iOS or Android devices, in Safari or in Firefox.
 
 ## Known limits

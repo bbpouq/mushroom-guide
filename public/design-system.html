@@ -971,6 +971,7 @@ img.is-missing { visibility: hidden; }
 .offline__note { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
 .offline__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .offline__size { font-weight: var(--fw-400); opacity: .8; }
+@media (max-width: 360px) { .offline__actions .btn { flex-wrap: wrap; justify-content: center; } .offline__size { flex-basis: 100%; text-align: center; font-size: var(--fs-caption); } }
 .offline__bar { width: 100%; height: 8px; margin-top: var(--space-3); accent-color: var(--color-primary); }
 .offline__ok { color: var(--color-primary); font-weight: var(--fw-600); }
 .offline__no { color: var(--color-warning-text); font-weight: var(--fw-600); }
