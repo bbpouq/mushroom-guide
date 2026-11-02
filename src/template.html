@@ -519,7 +519,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .step { border: 1px solid var(--color-border); background: var(--color-card); border-radius: var(--radius); padding: var(--space-4); margin: 0 0 var(--space-3); }
 .step legend { padding: 0 var(--space-1); font-family: var(--font-heading); font-weight: var(--fw-700); font-size: var(--fs-h3); }
 .step__hint { font-size: var(--fs-footnote); color: var(--color-muted-foreground); margin: 0 0 var(--space-3); }
-.step__num { color: var(--color-warning-text); margin-right: var(--space-1); font-variant-numeric: tabular-nums; }
+.step__num { color: var(--color-warning-text); margin-right: var(--space-1); font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
 .swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent); flex: none; }
 .finder__note { display: flex; gap: var(--space-2); font-size: var(--fs-secondary); background: var(--color-warning-surface); color: var(--color-warning-text); border-radius: var(--radius); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
 .finder__note .icon { margin-top: 2px; }
@@ -1102,7 +1102,7 @@ img.is-missing { visibility: hidden; }
 .model__canvas:active { cursor: grabbing; }
 .model__parts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .model__desc { margin: var(--space-3) 0 0; min-height: 3.3em; font-size: var(--fs-body-sm); line-height: 1.6; max-width: 72ch; }
-.step__model { margin-left: auto; font-size: var(--fs-footnote); font-weight: var(--fw-500); color: var(--color-primary); background: none; border: 0; padding: 0 var(--space-1); min-height: 32px; cursor: pointer; }
+.step__model { margin-left: auto; font-size: var(--fs-footnote); font-weight: var(--fw-500); color: var(--color-primary); background: none; border: 0; padding: 0 var(--space-1); min-height: var(--target); flex: none; cursor: pointer; }
 @media (min-width: 768px) { .model__canvas { height: 320px; } }
 
 /* accessibility: no translucency when the system asks for it, or where blur is unsupported */
@@ -3192,7 +3192,7 @@ function renderFinder() {
       <ul class="wiz__intro-list">
         <li>一次只看一个部位，最多 5 个问题；顺序会按你的回答调整。</li>
         <li>看不到、拿不准就照实选，<b>不会被当成“没有”</b>，也不会用来排除毒菌。</li>
-        <li>结果只是本站收录的外形候选，<b>不能确认是哪一种，也不判断能不能吃</b>。</li>
+        <li>结果只是本站收录的外形候选，<b>不能确认它是哪一种，也不判断能不能吃</b>。</li>
       </ul>
       <button type="button" class="btn btn--primary" id="finder-start">开始观察${icon("arrow", "icon--sm")}</button>
     </section>`;
@@ -3238,7 +3238,7 @@ function renderFinder() {
   jump.innerHTML = `查看候选：毒菌 ${tox.length} · 其他 ${ed.length}${icon("chevron", "icon--sm")}`;
   $("#finder-live").textContent = `按目前的观察：相符的毒菌 ${tox.length} 种，其他候选 ${ed.length} 种。`;
   $("#finder-results").innerHTML = `
-    <div class="callout callout--danger res-safe" role="note">${icon("alert")}<div><b>这只是本站 ${n} 种里的外形候选，不能确认是哪一种，也不判断能不能吃。</b>没有列出的毒菌不代表安全：本站没收录的菌不会出现在这里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
+    <div class="callout callout--danger res-safe" role="note">${icon("alert")}<div><b>这只是本站 ${n} 种里的外形候选，不能确认它是哪一种，也不判断能不能吃。</b>没有列出的毒菌不代表安全：本站没收录的菌不会出现在这里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
     ${fstate.volva === "yes" ? `<div class="callout callout--danger" role="alert">${icon("skull")}<div><b>你看到了菌托。</b>这是鹅膏的重要标志，西北太平洋最致命的毒菌多是鹅膏。<b>不要吃。</b></div></div>` : ""}
     ${deadly.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>按目前的回答，仍可能是这些致命毒菌：</b>${deadly.map(p => `<a href="#tx-${p.slug}">${esc(p.zh)}</a>`).join("、")}。没有把它们一一排除之前，不要考虑食用。</div></div>` : ""}
     ${keyGap.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>信息不足。</b>${keyGap.map(k => `“${STEPS.find(x => x.key === k).short}”${fObs(k)}`).join("，")}：不看这些，就排除不了致命的鹅膏类。少回答一题，候选只会更多，不会更确定。补充之前，不要把任何候选当成答案。</div></div>` : ""}

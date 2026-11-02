@@ -29,7 +29,7 @@ Scope: the PRD "MycoTrail v54 · 特征识别体验升级". It reworks the exist
 ## Safety copy
 
 - The first block of every result is a danger callout:
-  「这只是本站 86 种里的外形候选，不能确认是哪一种，也不判断能不能吃。没有列出的毒菌不代表安全…」, with the emergency link.
+  「这只是本站 86 种里的外形候选，不能确认它是哪一种，也不判断能不能吃。没有列出的毒菌不代表安全…」, with the emergency link.
 - 吻合 is a neutral pill, not a green check. Green stays for interaction (selected answers) only.
 - The build now also fails on 「识别成功」「鉴定成功」「已鉴定」「可信度」「准确率」「放心采摘」「食用推荐」.
 - Also removed: the extra `scroll-margin-top` on `#finder-results`. It added up with `scroll-padding-top`, so 查看候选 landed
