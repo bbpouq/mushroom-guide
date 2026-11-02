@@ -267,7 +267,7 @@ def habitat_cards(items):
         out.append(f'<details class="habitat"><summary class="habitat__head"><span class="habitat__thumbs" aria-hidden="true">{thumbs}</span>'
                    f'<span class="habitat__name"><b>{hab}</b><small>{("常见树种：" + trees) if trees else "&nbsp;"}</small></span></summary>'
                    f'<div class="habitat__body"><p class="habitat__lead">本站推荐的种类里，这类生境常见：</p><ul class="habitat__list">{"".join(chips)}</ul>'
-                   f'<p class="habitat__note">点开每种菌看它的易混毒菌和全年记录。生境只帮你决定去哪里找，不保证一定有，也不能证明手上的菌是哪一种。</p></div></details>')
+                   '</div></details>')  # the 'habitat does not identify' line is stated once above the cards, not in every card
     return '<div class="habitat__grid">' + "".join(out) + "</div>"
 
 
@@ -319,7 +319,8 @@ for x in species + poison + poison_extra:
         assert re.match(r"^https://[^\s\"'<>]+$", u), f"{x['slug']}: bad source URL {u}"
 for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "第一次吃少量", "先少量", "少量试", "试吃", "或再核对一次", "鹅膏类（", "留给沙拉", "做沙拉", "凉拌", "生拌野", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生",
             "好兆头", "一定能找到", "必定出现", "肯定有菌", "只在相应树",  # v53: no certainty about where or when mushrooms appear
-            "识别成功", "鉴定成功", "已鉴定", "可信度", "准确率", "放心采摘", "食用推荐"]:  # v54: a candidate is never an identification
+            "识别成功", "鉴定成功", "已鉴定", "可信度", "准确率", "放心采摘", "食用推荐",  # v54: a candidate is never an identification
+            "酒醋", "倒入装菌的罐", "煮熟后腌渍", "存 3 个月；沥干", "海绵状菌孔，不是菌褶（", "菌孔（海绵状）"]:  # 2026-11 progressive-disclosure PRD: no home pickling or canning recipes (NCHFP: do not can wild mushrooms); pores are not always spongy
     assert bad not in html, f"unsafe advice is back on the page: {bad}"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "

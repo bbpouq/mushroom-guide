@@ -1109,13 +1109,15 @@ def run():
               [t[0] for t in tops] == ["tel:911", "#emergency"] and all(t[1] < 812 for t in tops) and pg.locator("#xp-safety details").count() == 0)
         # 找菌: habitats, season intelligence, calendar state
         pg.evaluate("navigate('explore-hab')"); pg.wait_for_timeout(300)
+        pg.click('[aria-controls="info-hab"]'); pg.wait_for_timeout(100)
         hb = pg.inner_text("#xp-hab")
         sums = pg.evaluate("[...document.querySelectorAll('#xp-hab details.habitat')].map(d => [d.open, d.querySelector('.habitat__name b').textContent.trim().length > 0])")
         check(f"v53: 生境探索 shows compact folded cards with a text name (photos optional) and no 'good sign' inference ({len(sums)})",
               sums and all(not o and n for o, n in sums) and "好兆头" not in hb and "不代表某一种菌就在附近" in hb)
         pg.evaluate("navigate('explore-intel')"); pg.wait_for_timeout(300)
         pg.click('[data-intel-m="9"]'); pg.wait_for_timeout(200)
-        cav = pg.inner_text(".intel__caveat")
+        pg.click('[aria-controls="info-intel"]'); pg.wait_for_timeout(100)
+        cav = pg.inner_text("#info-intel")
         check("v53: 季节情报 states sampling bias and timeliness limits", all(k in cav for k in ["拍照上传", "不是菌有多少", "反映不了今年的天气", "不代表这个月就能找到"]))
         pg.evaluate("navigate('explore-cal')"); pg.wait_for_timeout(300)
         pg.click('[data-cal-mode="month"]'); pg.select_option("#cal-month", "3"); pg.fill("#cal-q", "鸡油"); pg.wait_for_timeout(200)
@@ -1324,7 +1326,7 @@ def run():
         intro = pg.inner_text("#finder-steps")
         check("v54: the finder opens with a short intro and 开始观察, not a question or a list",
               pg.locator("#finder-start").count() == 1 and pg.locator("#finder-steps .wiz__q").count() == 0 and pg.inner_text("#finder-results").strip() == ""
-              and "不会被当成“没有”" in intro and "不判断能不能吃" in intro and len(intro) < 200)
+              and "不会被当成“没有”" in intro and "不判断能不能吃" in pg.inner_text(".finder__note") and len(intro) < 200)
         pg.focus("#finder-start"); pg.keyboard.press("Enter"); pg.wait_for_timeout(200)
         check("v54: 开始观察 shows the first question and puts keyboard focus on its first answer",
               pg.locator("#finder-steps .wiz__q").count() == 1 and pg.evaluate("document.activeElement.classList.contains('wiz__opt')"))
@@ -1618,6 +1620,72 @@ def run():
                 check(f"v54.1 at {w}px{' (outdoor, dark)' if field else ''}: about and the report fit, targets at least 44px {sw} {small[:3]}", sw <= w and rw and not small)
                 ctx.close()
         check(f"v54.1: no JavaScript errors {errs}", not errs)
+
+        # ---------- progressive disclosure (2026-11 PRD): short visible lines, details behind an info button ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, service_workers="block")
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        check("PD phase 0: no home pickling or canning recipe; the kitchen says why and links NCHFP ('do not can wild mushrooms')",
+              "酒醋" not in html and "倒入装菌的罐" not in html and "煮熟后腌渍" not in html and "nchfp.uga.edu/how/can/canning-vegetables/mushrooms" in html and "不提供醋渍、油浸和罐藏做法" in html)
+        check("PD phase 0: 菌孔 is no longer defined as spongy in general (fine polypore pores can look smooth)",
+              "菌孔（海绵状）" not in html and "细到肉眼像光滑面" in html and "每毫米 2–4 个" in html)
+        # safety lines stay visible with every explanation closed
+        pg.goto(url + "#finder"); pg.wait_for_timeout(600)
+        fnote = pg.inner_text(".finder__note")
+        check("PD: the finder's candidates-only line is visible before any explanation is opened",
+              "只列外形候选" in fnote and "不判断能不能吃" in fnote and "没有毒菌，不代表这朵没毒" in fnote and pg.is_hidden("#info-finder"))
+        b0 = pg.locator('[aria-controls="info-finder"]')
+        b0.focus(); pg.keyboard.press("Enter"); pg.wait_for_timeout(100)
+        opened = pg.is_visible("#info-finder") and b0.get_attribute("aria-expanded") == "true" and "<!--N_" not in pg.inner_text("#info-finder")
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(100)
+        closed = pg.is_hidden("#info-finder") and b0.get_attribute("aria-expanded") == "false" and pg.evaluate("document.activeElement.getAttribute('aria-controls')") == "info-finder"
+        pg.keyboard.press("Space"); pg.wait_for_timeout(100)
+        sp = pg.is_visible("#info-finder")
+        pg.mouse.click(5, 700); pg.wait_for_timeout(100)
+        check(f"PD: the info button opens with Enter / Space, closes with Escape (focus back on the button) and with a click elsewhere ({opened}, {closed}, {sp})",
+              opened and closed and sp and pg.is_hidden("#info-finder"))
+        fstart(pg); pg.click('.wiz__opt >> nth=0'); pg.wait_for_timeout(200)
+        st0 = pg.evaluate("JSON.stringify(fstate)")
+        pg.click('[aria-controls="info-finder"]'); pg.click('[aria-controls="info-finder"]'); pg.wait_for_timeout(100)
+        check("PD: opening and closing an explanation keeps the finder answers", pg.evaluate("JSON.stringify(fstate)") == st0 and st0 != "{}")
+        pg.goto(url + "#explore-intel"); pg.wait_for_timeout(600)
+        pg.locator('[data-cal-region="wa"]:visible').first.click(); pg.wait_for_timeout(150)
+        reg0 = pg.evaluate("calState.region")
+        line = pg.inner_text("#intel > p.season__sub")
+        check("PD: 季节情报 keeps the 历史观察 sentence visible; the method sits behind 数据如何统计",
+              "历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。" in line and pg.is_hidden("#info-intel"))
+        pg.click('[aria-controls="info-intel"]'); pg.wait_for_timeout(100)
+        pg.click('#intel-region-sub .info__btn'); pg.wait_for_timeout(100)
+        one = pg.evaluate("document.querySelectorAll('.info__btn[aria-expanded=\"true\"]').length")
+        check(f"PD: only one explanation is open at a time, and the region choice survives ({one}, {reg0})", reg0 == "wa" and one == 1 and pg.is_hidden("#info-intel") and pg.evaluate("calState.region") == reg0)
+        pg.goto(url + "#explore-hab"); pg.wait_for_timeout(500)
+        check("PD: 生境探索 says once, visibly, that habitat does not identify a mushroom (not in every card)",
+              "不能证明手上的菌是哪一种" in pg.inner_text("#xp-hab .habitat__warn") and pg.locator("#xp-hab .habitat__note").count() == 0)
+        pg.goto(url + "#log"); pg.wait_for_timeout(500); pg.click('[data-jgo="2"]'); pg.wait_for_timeout(200)
+        check("PD: 菌记's location privacy line stays visible next to the button; precision details open in place",
+              "只存在这台设备上" in pg.inner_text('[data-jstep="2"] .finds__hint') and pg.is_hidden("#info-gps")
+              and (pg.click('[aria-controls="info-gps"]') or pg.wait_for_timeout(100) or "0.01°" in pg.inner_text("#info-gps")))
+        pg.goto(url + "#about-privacy"); pg.wait_for_timeout(700)
+        check("PD: 关于 folds 隐私 and 资料来源; the #about-privacy link opens its fold", pg.evaluate("document.getElementById('about-privacy').open")
+              and not pg.evaluate("document.getElementById('about-sources').open") and "只存在这台设备的浏览器里" in pg.inner_text("#about-privacy"))
+        ctx.close()
+        for w in (320, 390, 768):
+            for field in (False, True):
+                ctx = b.new_context(viewport={"width": w, "height": 800}, service_workers="block", color_scheme="dark" if field else "light")
+                pg = ctx.new_page()
+                if field: pg.add_init_script("localStorage.setItem('mushroom-guide:field', 'on')")
+                bad = []
+                for h, btn in [("finder", "info-finder"), ("explore-intel", "info-intel"), ("explore-hab", "info-hab")]:
+                    pg.goto(url + "#" + h); pg.wait_for_timeout(450)
+                    sel = f'[aria-controls="{btn}"]'
+                    if not pg.locator(sel).is_visible(): continue  # outdoor mode hides 季节情报
+                    pg.click(sel); pg.wait_for_timeout(100)
+                    box = pg.evaluate(f"(() => {{ const r = document.getElementById('{btn}').getBoundingClientRect(); return [r.left, r.right]; }})()")
+                    hit = pg.evaluate(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); const a = getComputedStyle(document.querySelector('{sel}'), '::after'); return r.height + parseFloat(a.top === 'auto' ? 0 : -parseFloat(a.top)) * 2; }})()")
+                    if pg.evaluate("document.documentElement.scrollWidth") > w or box[0] < 0 or box[1] > w or hit < 43.5: bad.append((h, round(box[0]), round(box[1]), round(hit)))
+                check(f"PD at {w}px{' (outdoor, dark)' if field else ''}: open explanations stay on screen, no overflow, 44px hit areas {bad}", not bad)
+                ctx.close()
+        check(f"PD: no JavaScript errors {errs}", not errs)
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
