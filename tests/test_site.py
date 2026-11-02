@@ -1084,6 +1084,7 @@ def run():
         import re as _re
         nums = pg.evaluate("[...document.querySelectorAll('#v-explore .panel__title, #v-explore h2, #v-explore h3')].map(h => h.textContent.trim()).filter(t => /^0\\d/.test(t))")
         check(f"v53 AC-05: no chapter numbers left in 拾菌 ({nums})", pg.locator("#v-explore .panel__num").count() == 0 and not nums)
+        check("no leftover chapter number on 看哪些特征 (it moved from the guide, where it was panel 07)", re.search(r"panel__num\">\d+</span>看哪些特征", html) is None and "看哪些特征</h2>" in html)
         check(f"v53 AC-05: 四条守则 has one source ({txt.count('四条守则')}) and 采集与观察 links to it",
               txt.count("四条守则") == 1 and pg.locator("#v-explore ol.rules").count() == 1 and pg.locator('#xp-pick a[href="#explore-rules"]').count() == 1)
         pg.evaluate("navigate('explore-pick')"); pg.wait_for_timeout(300)
