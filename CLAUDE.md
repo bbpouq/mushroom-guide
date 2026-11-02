@@ -302,6 +302,13 @@ updated with `pushState` inside try/catch, so it works where allowed and fails s
   The species sheet shows records per region and per year, saying that more records mostly mean more uploaders.
 - Slugs come from the Latin name (`Boletus edulis` becomes `boletus-edulis`). Hash names stay plain ASCII.
 - In-page jumps use `<button data-jump="id">`, not anchors.
+- Focus follows navigation (2026-11 review): a link to a section focuses that section's heading (`focusTarget()`), a link
+  inside one 拾菌 sub-page hands focus to the next sub-page's heading (nav buttons keep it), and back/forward never leave
+  focus on a hidden element (`viewHeading()`). The skip link is handled in JS (focus `#main`, no hash change: a real `#main`
+  routed to home). `route()` runs once per back/forward step although popstate and hashchange both fire (`poppedTo`).
+  `show()` measures the header right after `data-tab` changes (the 识菌 sub-nav row changes its height), and
+  `scrollToTarget()` opens a `<details>` before scrolling and re-aligns the target after late layout shifts (`settle()`,
+  stops as soon as the reader scrolls, taps or types). The first route at load scrolls instantly.
 - Scroll offsets come from `html { scroll-padding-top }` (header height is measured into `--header-h`).
   Do not also add `scroll-margin` to targets; the two add up.
 

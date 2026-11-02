@@ -1481,7 +1481,8 @@ html[data-tab="id"] .subnav { display: flex; }
 @media (prefers-reduced-motion: no-preference) { .btn[aria-busy="true"]::after { animation: spin .8s linear infinite; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 .chip:focus-visible, .btn:focus-visible, .icon-btn:focus-visible, .seg__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
-h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings focused by navigation for screen readers: no box */
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[tabindex="-1"]:focus { outline: none; }  /* headings focused by navigation for screen readers: no box */
+[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 .intel__months .chip { flex: none; white-space: nowrap; }
 
 /* the map library's attribution: our tokens so it stays readable in dark mode */
@@ -2821,7 +2822,7 @@ function dataNotes(x) {
 $("#sheet").addEventListener("click", e => {
   const j = e.target.closest("[data-sheet-jump]"); if (!j) return;
   const el = document.getElementById(j.dataset.sheetJump);
-  if (el) el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  if (el) { el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); focusTarget(el); }
 });
 function photoFig(x, compact) {
   const p = x.photo; if (!p) return "";
@@ -4830,6 +4831,7 @@ function show(v, opts = {}) {
   if (!opts.focus && $("#v-" + v).classList.contains("is-active")) opts = Object.assign({}, opts, { keepScroll: true });
   VIEWS.forEach(k => $("#v-" + k).classList.toggle("is-active", k === v));
   document.documentElement.dataset.tab = TAB[v] || "";
+  setHeaderH();  // now, not in the next ResizeObserver round: a scroll to a target in this frame needs the new height
   if (v === "learn" && typeof learnRender === "function") learnRender();
   document.querySelectorAll("nav a").forEach(a => {
     const on = a.dataset.tab ? a.dataset.tab === TAB[v] : a.getAttribute("href") === "#" + v;
@@ -4838,11 +4840,49 @@ function show(v, opts = {}) {
   if (!opts.keepScroll) { try { window.scrollTo(0, opts.restore ? viewScroll[v] || 0 : 0); } catch (_) {} }
   if (opts.focus) { const h = $("#h-" + v); h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
 }
-function scrollToTarget(id) {
+// keyboard and screen-reader users land where the page scrolled to: a heading inside the target, its summary, or the target itself
+function focusTarget(el) {
+  if (!el) return;
+  let f = el;
+  if (el.tagName === "DETAILS") f = el.querySelector(":scope > summary") || el;
+  else if (!/^H[1-4]$/.test(el.tagName)) f = el.querySelector("h2, h3") || el;
+  if (!f.matches("a[href], button, input, select, textarea, summary, [tabindex]")) f.setAttribute("tabindex", "-1");
+  f.focus({ preventScroll: true });
+}
+const focusLost = () => { const a = document.activeElement; return !a || a === document.body || a === document.documentElement || !a.isConnected || !a.getClientRects().length; };
+// the heading of what is on screen now: the 拾菌 sub-page, or the view title
+function viewHeading() {
+  const v = document.querySelector(".view.is-active"); if (!v) return null;
+  if (v.id === "v-explore") { const pn = document.querySelector(".xp__pane:not([hidden])"); if (pn) return pn.querySelector("h2, h3"); }
+  return v.querySelector(".view__title");
+}
+// content above a target can still grow after the scroll (photos, lazy sections, the journal reading IndexedDB):
+// line the target up again a few times, unless the reader has started scrolling or typing
+let settleStop = null;
+function settle(el) {
+  if (settleStop) settleStop();
+  let n = 0, timer = 0;
+  const evs = ["wheel", "touchstart", "keydown", "pointerdown"];
+  const stop = () => { clearTimeout(timer); evs.forEach(t => removeEventListener(t, stop, true)); removeEventListener("scrollend", first); settleStop = null; };
+  const check = () => {
+    const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const off = el.getBoundingClientRect().top - pad, room = document.documentElement.scrollHeight - innerHeight - scrollY;
+    if (Math.abs(off) > 2 && (off < 0 || room > 2)) el.scrollIntoView({ block: "start", behavior: "auto" });
+    if (++n < 3) timer = setTimeout(check, 450); else stop();
+  };
+  const first = () => { removeEventListener("scrollend", first); clearTimeout(timer); timer = setTimeout(check, 30); };
+  evs.forEach(t => addEventListener(t, stop, { capture: true, passive: true }));
+  if ("onscrollend" in window) addEventListener("scrollend", first);
+  timer = setTimeout(check, 900);  // browsers without scrollend, or no scroll at all
+  settleStop = stop;
+}
+function scrollToTarget(id, o = {}) {
   const el = document.getElementById(id); if (!el) return;
-  el.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-  if (el.tagName === "DETAILS") el.open = true;
+  if (el.tagName === "DETAILS") el.open = true;  // open first: a fold near the end of the page needs its height to reach the top
+  el.scrollIntoView({ block: "start", behavior: o.instant || matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   el.classList.remove("is-target"); void el.offsetWidth; el.classList.add("is-target");
+  if (o.focus) focusTarget(el);
+  settle(el);
 }
 function apply(h, opts = {}) {
   const r = parse(h);
@@ -4867,7 +4907,12 @@ function apply(h, opts = {}) {
     const more = $(`#${r.target} details`); if (more) more.open = true;
   }
   show(r.view, { focus: opts.focus && !r.target, keepScroll: !!r.target, restore: !r.target });
-  if (r.target) requestAnimationFrame(() => scrollToTarget(r.target));
+  const nav = r.target === "explore-nav";  // a 拾菌 sub-page: the nav buttons keep focus; a link inside the old pane hands it to the new pane's heading
+  if (r.target) requestAnimationFrame(() => {
+    scrollToTarget(r.target, { focus: opts.focus && !nav, instant: opts.instant });
+    if ((opts.focus && nav || opts.pop) && focusLost() && !document.querySelector("dialog[open]")) focusTarget(viewHeading());
+  });
+  else if (opts.pop) requestAnimationFrame(() => { if (focusLost() && !document.querySelector("dialog[open]")) focusTarget(viewHeading()); });
 }
 function navigate(h) {
   let pushed = false;
@@ -4879,16 +4924,23 @@ document.addEventListener("click", e => {
   const a = e.target.closest('a[href^="#"]');
   if (a) {
     const h = a.getAttribute("href").slice(1);
-    if (h === "main") return;
-    e.preventDefault();
+    e.preventDefault();  // every in-page link, the skip link too: a real hash change would route to #main, i.e. the home view
+    if (h === "main") { $("#main").focus({ preventScroll: true }); return; }
     if (a.dataset.tab && (a.closest(".botnav") || a.closest(".topnav"))) { tabTap(a.dataset.tab, h); return; }
     if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-") || h.startsWith("explore-") || h === "data-center") navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
-  if (j) scrollToTarget(j.dataset.jump);
+  if (j) scrollToTarget(j.dataset.jump, { focus: true });
 });
-function route() { sheetPushed = false; apply(currentHash()); }
+let poppedTo = null;
+function route(e) {
+  const h = currentHash();
+  if (e && e.type === "hashchange" && poppedTo === h) { poppedTo = null; return; }  // the popstate for this step already routed
+  poppedTo = e && e.type === "popstate" ? h : null;
+  sheetPushed = false;
+  apply(h, e ? { pop: true } : { instant: true });  // the first route at load jumps straight to a deep-link target
+}
 window.addEventListener("popstate", route);
 window.addEventListener("hashchange", route);
 

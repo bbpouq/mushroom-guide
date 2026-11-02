@@ -1438,7 +1438,8 @@ html[data-tab="id"] .subnav { display: flex; }
 @media (prefers-reduced-motion: no-preference) { .btn[aria-busy="true"]::after { animation: spin .8s linear infinite; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 .chip:focus-visible, .btn:focus-visible, .icon-btn:focus-visible, .seg__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
-h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings focused by navigation for screen readers: no box */
+h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[tabindex="-1"]:focus { outline: none; }  /* headings focused by navigation for screen readers: no box */
+[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 .intel__months .chip { flex: none; white-space: nowrap; }
 
 /* the map library's attribution: our tokens so it stays readable in dark mode */
