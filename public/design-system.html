@@ -1399,7 +1399,7 @@ html[data-tab="id"] .subnav { display: flex; }
 .habitat__name b { font-size: var(--fs-h3); font-weight: var(--fw-700); }
 .habitat__name small { font-size: var(--fs-secondary); color: var(--color-muted-foreground); }
 .habitat__body { padding: 0 var(--space-3) var(--space-3); display: grid; gap: var(--space-2); }
-.habitat__lead, .habitat__note { margin: 0; font-size: var(--fs-secondary); color: var(--color-muted-foreground); text-wrap: pretty; }
+.habitat__lead { margin: 0; font-size: var(--fs-secondary); color: var(--color-muted-foreground); text-wrap: pretty; }
 .habitat__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .habitat__sp { display: flex; align-items: center; gap: var(--space-3); min-height: 52px; padding: var(--space-1); border-radius: var(--radius-md); color: inherit; text-decoration: none; }
 .habitat__sp:hover { background: var(--surface-3); }
@@ -1498,11 +1498,30 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 .set__link > span > span { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
 .set__link > .icon:first-child { color: var(--color-primary); }
 
+/* ---------- info: progressive disclosure (L1). A short line stays visible; the button opens the full explanation below it.
+   Click / tap / Enter / Space toggle, Escape closes and returns focus, a click elsewhere closes. Never hover-only, never for warnings. */
+.info__line { margin: 0; }
+.info__btn { display: inline-flex; align-items: center; gap: var(--space-1); position: relative; min-height: 28px; padding: 0 var(--space-2); margin-left: calc(var(--space-1) * -1); border: 0; border-radius: var(--radius-pill); background: none; color: var(--color-primary); font: inherit; font-size: var(--fs-footnote); font-weight: var(--fw-600); cursor: pointer; vertical-align: baseline; }
+.info__btn::after { content: ""; position: absolute; inset: -8px -2px; }  /* a 44px hit area around a small label */
+.info__btn:hover { background: var(--surface-3); }
+.info__btn:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 1px; }
+.info__btn[aria-expanded="true"] { background: var(--color-primary-surface); }
+.info__btn .icon { flex: none; }
+.info__pop { margin: var(--space-2) 0 0; padding: var(--space-3) var(--space-4); max-width: 72ch; border-radius: var(--radius-md); background: var(--surface-2); font-size: var(--fs-footnote); line-height: 1.6; color: var(--color-foreground); text-wrap: pretty; }
+.info__pop[hidden] { display: none; }
+.info__pop p { margin: 0 0 var(--space-2); }
+.info__pop p:last-child, .info__pop ul:last-child { margin-bottom: 0; }
+.info__pop ul { margin: 0 0 var(--space-2); padding-left: 1.2em; display: grid; gap: var(--space-1); }
+[data-field="on"] .info__btn, [data-field="on"] .info__pop { font-size: var(--fs-body); }
+[data-field="on"] .info__btn { min-height: var(--target); }
+
 /* ---------- v54.1: 关于与反馈 ---------- */
 #v-about { max-width: 72ch; }
 #v-about > .callout { margin-bottom: var(--space-5); }
 #v-about > .callout a { color: inherit; font-weight: var(--fw-700); }
 .about__sec { margin-top: var(--space-6); }
+.about__fold { margin-top: var(--space-3); }
+.about__fold .about__h { margin: 0; }
 .about__h { margin: 0 0 var(--space-2); font-size: var(--fs-h3); font-weight: var(--fw-700); text-wrap: balance; }
 .about__list { display: grid; border-radius: var(--radius); background: var(--surface-1); overflow: hidden; }
 .about__item { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 64px; padding: var(--space-3) var(--space-4); border: 0; border-bottom: .5px solid var(--color-border); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
@@ -1620,7 +1639,8 @@ textarea.fb__input { resize: vertical; }
 .cal-ctl__mlabel { font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); }
 .cal-ctl__mlabel[hidden] { display: none; }
 .cal-ctl__state { margin: 0; font-size: var(--fs-footnote); color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
-.xp-lead { margin: 0 0 var(--space-4); max-width: 72ch; color: var(--color-muted-foreground); font-size: var(--fs-body-sm); }
+.habitat__warn { margin: 0 0 var(--space-2); max-width: 72ch; font-size: var(--fs-body-sm); }
+#info-hab { margin-bottom: var(--space-4); }
 .xp-check { list-style: none; padding: 0 !important; display: grid; gap: var(--space-2); }
 .xp-check li { position: relative; padding-left: var(--space-6); margin: 0; }
 .xp-check li::before { content: ""; position: absolute; left: var(--space-1); top: .35em; width: 14px; height: 8px; border: solid var(--color-primary); border-width: 0 0 2px 2px; transform: rotate(-45deg); }
@@ -1709,6 +1729,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15Z"/><path d="M5 19 13 11"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
   <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></symbol>
   <symbol id="i-bug" viewBox="0 0 24 24"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6Z"/><path d="M12 20v-9M6.5 9C4.6 8.8 3 7.1 3 5M6 13H2M3 21c0-2.1 1.7-3.9 3.8-4M20.9 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M17.2 17c2.1.1 3.8 1.9 3.8 4"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>

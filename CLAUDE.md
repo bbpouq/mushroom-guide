@@ -152,6 +152,12 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   never carries journal, location, photos, settings or the user-agent string; coordinate / phone / e-mail-like text is warned about.
   The page says it is not an identification or emergency channel and links 中毒急救.
 
+- **Progressive disclosure (2026-11, docs/PROGRESSIVE_DISCLOSURE.md)**: keep the decision-time fact visible as one short line; put the
+  explanation behind an info button (`.info__line` + `.info__btn` → `.info__pop`, `infoBtn()` / `infoPop()`; click/Enter/Space toggle,
+  Escape returns focus, one open at a time, opens in place) or a fold. Never hide behind one: candidates-only / not-edible conclusions,
+  deadly look-alikes, emergency actions, must-do cooking steps, irreversible deletes, exact-coordinate export risk, the 历史观察
+  sentence. No hover-only tooltips. No home pickling, oil or canning recipes (NCHFP: do not can wild mushrooms; build check).
+
 ## House UI rules (2026-11, apply to every change)
 
 1. No pure black and no dark frames: depth comes from four surface layers 1-3% apart in lightness
