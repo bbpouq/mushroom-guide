@@ -1367,7 +1367,8 @@ html[data-tab="id"] .subnav { display: flex; }
 .btn.is-confirm { background: var(--color-danger-surface); color: var(--color-danger-text); }
 .panel--dc { display: grid; gap: var(--space-3); }
 .finds__q { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
-.finds__q .finds__input { width: auto; flex: 1 1 14em; }
+.finds__q { min-width: 0; max-width: 100%; }
+.finds__q .finds__input { width: auto; flex: 1 1 14em; min-width: 0; max-width: 100%; }  /* a long option must not widen the page at 320px */
 .finds__thumb .finds__left { left: 4px; right: auto; }
 .finds__left .icon { transform: rotate(180deg); }
 
