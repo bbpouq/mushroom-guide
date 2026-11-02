@@ -1165,7 +1165,7 @@ img.brand__mark { width: 36px; height: 36px; border-radius: var(--radius-sm); ba
 .subnav::-webkit-scrollbar { display: none; }
 html[data-tab="id"] .subnav { display: flex; }
 .subnav__link { flex: none; display: inline-flex; align-items: center; min-height: 36px; padding: 0 var(--space-3); border-radius: var(--radius-pill); font-size: var(--fs-secondary); font-weight: var(--fw-500);
-  color: var(--color-muted-foreground); text-decoration: none; position: relative; }
+  color: var(--color-foreground);  /* over content scrolled behind the glass bar the muted grey fell below 4.5:1 */ text-decoration: none; position: relative; }
 .subnav__link::after { content: ""; position: absolute; inset: -4px 0; }
 .subnav__link:hover { color: var(--color-foreground); background: var(--color-muted); }
 .subnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); font-weight: var(--fw-600); }
