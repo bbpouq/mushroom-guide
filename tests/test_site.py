@@ -1268,6 +1268,45 @@ def run():
               rm[0] == "none" and rm[1] in ("0s", "0ms") and rm[2] in ("0s", "0ms") and rm[3] >= 52)
         ctx.close()
 
+        # ---------- hash routing and focus (review after v53.2) ----------
+        AE = "(() => { const a = document.activeElement; return !a || a === document.body ? 'BODY' : a.getClientRects().length ? a.tagName + '#' + a.id : 'HIDDEN'; })()"
+        PAD = "(id => Math.round(document.getElementById(id).getBoundingClientRect().top - parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)))"
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#species"); pg.wait_for_timeout(700)
+        pg.focus(".skip-link"); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
+        check("the skip link focuses the main content and stays on this view (it used to route #main to home)",
+              pg.evaluate("document.querySelector('.view.is-active').id") == "v-species" and pg.evaluate("location.hash") == "#species" and pg.evaluate(AE) == "MAIN#main")
+        pg.evaluate("navigate('log')"); pg.wait_for_timeout(500)  # 菌记 has the short header; 识菌 views add the sub-nav row
+        pg.evaluate("navigate('guide-check')"); pg.wait_for_timeout(1500)
+        off = pg.evaluate(PAD, "guide-check")
+        check(f"a link from a short-header tab to a 识菌 section lands below the taller header ({off}px off)", abs(off) <= 3)
+        pg.goto(url + "#home"); pg.wait_for_timeout(600)
+        pg.focus('.home-safety a[href="#guide-check"]'); pg.keyboard.press("Enter"); pg.wait_for_timeout(800)
+        check(f"following a link into another view moves focus to the section it opened ({pg.evaluate(AE)})", pg.evaluate(AE).startswith("H2"))
+        pg.goto(url + "#explore-now"); pg.wait_for_timeout(600)
+        pg.focus('#xp-now a[href="#explore-intel"]'); pg.keyboard.press("Enter"); pg.wait_for_timeout(500)
+        check(f"a link inside one 拾菌 sub-page hands focus to the next sub-page's heading ({pg.evaluate(AE)})", pg.evaluate(AE) == "H2#intel-title")
+        pg.evaluate("window.__n = 0; const _a = window.apply; window.apply = (...x) => { window.__n++; return _a(...x); }; 0")
+        pg.go_back(); pg.wait_for_timeout(500)
+        check(f"one back step routes once (popstate and hashchange both fire) and never leaves focus on a hidden element ({pg.evaluate('window.__n')}, {pg.evaluate(AE)})",
+              pg.evaluate("window.__n") == 1 and pg.evaluate(AE) not in ("BODY", "HIDDEN"))
+        pg.goto(url + "#log"); pg.wait_for_timeout(800)
+        jid = pg.get_attribute("#v-log .jump-row [data-jump] >> nth=1", "data-jump")
+        pg.focus("#v-log .jump-row [data-jump] >> nth=1"); pg.keyboard.press("Enter"); pg.wait_for_timeout(1200)
+        check(f"in-page jump buttons move focus to the section ({jid}: {pg.evaluate(AE)})", pg.evaluate(f"document.getElementById('{jid}').contains(document.activeElement)"))
+        cmp_id = pg.evaluate("'cmp-' + DATA.compare[DATA.compare.length - 1].id")
+        bad = []
+        for h in [cmp_id, "guide-gloss", "data-center", "guide-calendar"]:
+            c2 = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+            p2 = c2.new_page(); p2.goto(url + "#" + h); p2.wait_for_timeout(2600)
+            o = p2.evaluate(PAD, h)
+            if abs(o) > 3: bad.append((h, o))
+            c2.close()
+        check(f"deep links land right under the sticky header even when content above them renders late {bad} {errs}", not bad and not errs)
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')
@@ -1281,6 +1320,8 @@ def run():
         fr.click(".sp-card >> nth=0"); host.wait_for_timeout(200)
         opened = fr.evaluate("document.getElementById('sheet').open")
         check(f"sandbox: tabs {ok}, sheet opens, frame survives", all(ok) and opened and len(host.frames) == 2)
+        fr.evaluate("document.getElementById('sheet').close()"); fr.focus(".skip-link"); fr.press(".skip-link", "Enter"); host.wait_for_timeout(200)
+        check("sandbox: the skip link keeps the page (no frame navigation)", len(host.frames) == 2 and fr.evaluate("document.activeElement.id") == "main")
         b.close()
     httpd.shutdown()
     print(f"\n{'ALL PASSED' if not failures else str(len(failures)) + ' FAILED'}")
