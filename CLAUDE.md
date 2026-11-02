@@ -16,7 +16,11 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 343 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 367 end-to-end checks; must end with "ALL PASSED"
+python3 tests/a11y_sweep.py --quick  # axe + overflow sweep (needs: npm install --no-save axe-core@4.14.0)
+python3 tests/shadow_diff.py         # this build vs the live site; python3 tests/smoke_live.py checks the live site
+# CI (docs/CI.md): .github/workflows/ci.yml runs build, e2e, a11y and shadow on every push; smoke.yml after each deploy
+# and daily. Prefer pushing the branch and reading the CI result over running the full suite locally.
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
