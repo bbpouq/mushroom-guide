@@ -145,6 +145,13 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   seen, terms known, answers, days) lives in `localStorage` `mushroom-guide:learn:v1`, this device only; no ranking, no
   streaks, and the page says that a score is not identification skill or permission to eat.
 
+- **关于与反馈 (`#about`, v54.1, docs/V54_1_ABOUT_FEEDBACK.md)**: no tab; reached from the footer and the settings sheet. Every species and
+  toxic sheet has 「这条资料有误？告诉我们」 (`reportRow()`), opening the `#report` sheet prefilled with names, the deep link and `DATA.built`.
+  Reports leave only when the person clicks: a prefilled GitHub new-issue URL (needs a GitHub login), copy, or mailto when
+  `FEEDBACK_CONFIG.contactEmail` is set (null = 「暂未提供」, never invent an address). Never claim a report was submitted. A report
+  never carries journal, location, photos, settings or the user-agent string; coordinate / phone / e-mail-like text is warned about.
+  The page says it is not an identification or emergency channel and links 中毒急救.
+
 ## House UI rules (2026-11, apply to every change)
 
 1. No pure black and no dark frames: depth comes from four surface layers 1-3% apart in lightness
@@ -289,7 +296,7 @@ The page is often opened inside sandboxed previews (chat apps, file viewers) whe
 navigates the frame away and blanks the page. All in-page links are intercepted in JS. History is
 updated with `pushState` inside try/catch, so it works where allowed and fails silently elsewhere.
 
-- Views: `#home` (default, 识菌 overview), `#explore` (拾菌), `#log` (菌记), `#learn` (识菌 › 学习), `#species`, `#finder`, `#toxic`, `#guide` (厨房指南), `#recipes`, `#emergency`.
+- Views: `#home` (default, 识菌 overview), `#explore` (拾菌), `#log` (菌记), `#learn` (识菌 › 学习), `#species`, `#finder`, `#toxic`, `#guide` (厨房指南), `#recipes`, `#emergency`, `#about` (关于与反馈; `#contact` alias, `#about-privacy`).
   `#guide-*` and `#learn-*` links open whichever view now holds that id (sections moved between views keep their ids).
 - Deep links: `#sp-<slug>` opens a species sheet, `#tx-<slug>` opens a toxic species sheet (same sheet, closing goes
   back to `#toxic`), `#cmp-<id>` scrolls to a comparison,

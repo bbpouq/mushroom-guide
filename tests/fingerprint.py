@@ -40,6 +40,8 @@ EXPECTED_ROUTES = {
     "log": ("v-log", None, False),
     "data-center": ("v-log", None, False),
     "emergency": ("v-emergency", None, False),
+    "about": ("v-about", None, False),
+    "contact": ("v-about", None, False),
     "sp-boletus-edulis": ("v-species", None, True),
 }
 

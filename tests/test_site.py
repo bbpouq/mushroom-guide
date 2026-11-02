@@ -8,6 +8,8 @@ share, offline, sandboxed previews, layering and overflow at 375/768/1024/1440 p
 Exit code 1 on any failure.
 """
 import functools
+import re
+import urllib.parse
 import http.server
 import socketserver
 import sys
@@ -1529,6 +1531,92 @@ def run():
         lt = pg.inner_text("#sheet")
         check(f"species sheets say why: truffle spore print 不适用, 林中鸡's fine pores {errs}", "孢子印不适用" in tr and "菌孔极细" in lt and not errs)
         ctx.close()
+
+        # ---------- v54.1: 关于与反馈 ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, service_workers="block")
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#home"); pg.wait_for_timeout(500)
+        pg.click('.site-footer__links a[href="#about"]'); pg.wait_for_timeout(300)
+        foot = pg.evaluate("document.querySelector('.view.is-active').id")
+        pg.goto(url + "#contact"); pg.wait_for_timeout(400)
+        alias = pg.evaluate("document.querySelector('.view.is-active').id")
+        tabs = pg.evaluate("document.documentElement.dataset.tab")
+        about = pg.inner_text("#v-about")
+        check(f"v54.1: the footer and #contact open 关于与反馈, which belongs to no tab ({foot}, {alias}, tab={tabs!r})",
+              foot == alias == "v-about" and not tabs)
+        check("v54.1: the page says it is not identification or an emergency channel, links 中毒急救, and shows only the configured email",
+              "不提供野生菌鉴定" in about and pg.locator('#v-about a[href="#emergency"]').count() >= 1
+              and pg.evaluate("FEEDBACK_CONFIG.contactEmail ? document.querySelector('#about-email a').getAttribute('href') === 'mailto:' + FEEDBACK_CONFIG.contactEmail : /暂未提供/.test(document.getElementById('about-email').textContent)"))
+        pg.goto(url + "#home"); pg.wait_for_timeout(300)
+        pg.click(".hdr__set"); pg.wait_for_timeout(200)
+        pg.click('#settings a[href="#about"]'); pg.wait_for_timeout(400)
+        check("v54.1: the settings sheet links to 关于与反馈", pg.evaluate("document.querySelector('.view.is-active').id") == "v-about" and not pg.evaluate("document.getElementById('settings').open"))
+        # a species report from the sheet is prefilled with the names, the deep link and the data version
+        pg.evaluate("localStorage.setItem('mushroom-guide:finds:v1', JSON.stringify([{id:'t1', sp:'x', note:'secret-note', lat:49.28271, lng:-123.12071}]))")
+        pg.goto(url + "#sp-laetiporus-sulphureus"); pg.wait_for_timeout(700)
+        pg.click("#sheet .sheet-report button"); pg.wait_for_timeout(300)
+        pv = pg.input_value("#fb-preview")
+        check(f"v54.1: 这条资料有误 opens a report prefilled with the species, its link and the data version ({pv[:60]}…)",
+              pg.evaluate("document.getElementById('report').open") and pg.input_value("#fb-sp") == "laetiporus-sulphureus"
+              and "Laetiporus sulphureus" in pv and "#sp-laetiporus-sulphureus" in pv and "资料版本" in pv and pg.evaluate("document.activeElement.id") == "fb-what")
+        types = pg.eval_on_selector_all("#fb-type option", "o => o.map(x => x.textContent)")
+        check(f"v54.1: error types {types}", types == ["形态描述", "识别特征", "有毒近似种", "照片或授权", "地区与季节", "其他"])
+        pg.fill("#fb-what", "菌孔描述不对 49.28271, -123.12071 call 604-555-0199"); pg.wait_for_timeout(100)
+        warn = pg.inner_text("#fb-warn") if pg.is_visible("#fb-warn") else ""
+        check(f"v54.1: coordinates and phone numbers in the text raise a warning before sending ({warn[:30]})", "坐标" in warn and "电话" in warn)
+        pg.fill("#fb-what", "菌孔描述不对"); pg.wait_for_timeout(100)
+        issue = pg.evaluate("fbIssueUrl()")
+        dec = urllib.parse.unquote(issue)
+        check("v54.1: the GitHub link is a prefilled new issue that carries no journal, location or user-agent data",
+              issue.startswith("https://github.com/bbpouq/mushroom-guide/issues/new?title=") and "菌孔描述不对" in dec
+              and "secret-note" not in dec and "49.28" not in dec and "Mozilla" not in dec and not pg.is_visible("#fb-warn"))
+        pops = []
+        ctx.on("page", lambda np: pops.append(np))
+        pg.route("https://github.com/**", lambda r: r.fulfill(status=200, body="ok"))
+        ctx.route("https://github.com/**", lambda r: r.fulfill(status=200, body="ok"))
+        pg.click("[data-fb-gh]"); pg.wait_for_timeout(600)
+        note = pg.inner_text("#fb-note")
+        check(f"v54.1: opening GitHub never claims the report was sent ({note[:40]})",
+              len(pops) == 1 and "点提交才算发出" in note and not re.search(r"已提交|已发送|提交成功|发送成功|感谢你的提交", pg.inner_text("#report")))
+        for x in pops: x.close()
+        pg.evaluate("window.open = () => null"); pg.click("[data-fb-gh]"); pg.wait_for_timeout(200)
+        check("v54.1: a blocked pop-up says so and points to copying the text", "没有打开新窗口" in pg.inner_text("#fb-note"))
+        mail = pg.locator("[data-fb-mail]")
+        cfg = pg.evaluate("FEEDBACK_CONFIG.contactEmail")
+        check(f"v54.1: the mail button follows the configured email ({cfg}): enabled 发邮件, or disabled 暂未提供 when none",
+              (not mail.is_disabled() and "发邮件" in mail.inner_text()) if cfg else (mail.is_disabled() and "暂未提供" in mail.inner_text()))
+        ctx.set_offline(True); pg.evaluate("window.dispatchEvent(new Event('offline'))")
+        pg.click("[data-fb-gh]"); pg.wait_for_timeout(200)
+        check("v54.1: offline, the GitHub button explains a network is needed and offers copying", "离线" in pg.inner_text("#fb-note") and len(pops) == 1)
+        ctx.set_offline(False)
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+        check("v54.1: Escape closes the report and returns to the species sheet", not pg.evaluate("document.getElementById('report').open") and pg.evaluate("document.getElementById('sheet').open"))
+        pg.goto(url + "#tx-amanita-phalloides"); pg.wait_for_timeout(700)
+        check("v54.1: toxic sheets have the same report button, linking #tx-", pg.locator("#sheet .sheet-report button").count() == 1 and
+              (pg.click("#sheet .sheet-report button") or pg.wait_for_timeout(200) or "#tx-amanita-phalloides" in pg.input_value("#fb-preview")))
+        pg.keyboard.press("Escape")
+        # keyboard: the about page's report buttons are reachable and open the right form
+        pg.goto(url + "#about"); pg.wait_for_timeout(400)
+        pg.focus('[data-report="bug"]'); pg.keyboard.press("Enter"); pg.wait_for_timeout(200)
+        check("v54.1: Enter on 报告网站问题 opens the bug form with a short device guess (never the full user agent)",
+              pg.evaluate("document.getElementById('report').open") and pg.locator("#fb-steps").count() == 1 and "Mozilla" not in pg.input_value("#fb-dev"))
+        pg.keyboard.press("Escape"); ctx.close()
+        for w in (320, 375, 390, 768, 1024):
+            for field in (False, True):
+                ctx = b.new_context(viewport={"width": w, "height": 800}, service_workers="block", color_scheme="dark" if field else "light")
+                pg = ctx.new_page()
+                if field: pg.add_init_script("localStorage.setItem('mushroom-guide:field', 'on')")
+                pg.goto(url + "#about"); pg.wait_for_timeout(400)
+                sw = pg.evaluate("document.documentElement.scrollWidth")
+                pg.click('[data-report="species"]'); pg.wait_for_timeout(200)
+                small = pg.evaluate("""[...document.querySelectorAll('#v-about button, #v-about .btn, #report button, #report .fb__input, .site-footer__links a')]
+                  .filter(e => e.offsetParent && e.getBoundingClientRect().height < 43.5 && !e.matches('textarea'))
+                  .map(e => (e.className || e.tagName) + ':' + Math.round(e.getBoundingClientRect().height))""")
+                rw = pg.evaluate("document.querySelector('#report .bsheet__box').scrollWidth <= document.querySelector('#report .bsheet__box').clientWidth")
+                check(f"v54.1 at {w}px{' (outdoor, dark)' if field else ''}: about and the report fit, targets at least 44px {sw} {small[:3]}", sw <= w and rw and not small)
+                ctx.close()
+        check(f"v54.1: no JavaScript errors {errs}", not errs)
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
