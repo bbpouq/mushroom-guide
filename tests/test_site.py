@@ -1547,7 +1547,7 @@ def run():
               foot == alias == "v-about" and not tabs)
         check("v54.1: the page says it is not identification or an emergency channel, links 中毒急救, and shows only the configured email",
               "不提供野生菌鉴定" in about and pg.locator('#v-about a[href="#emergency"]').count() >= 1
-              and pg.evaluate("FEEDBACK_CONFIG.contactEmail ? document.querySelector('#about-email a').getAttribute('href') === 'mailto:' + FEEDBACK_CONFIG.contactEmail : /暂未提供/.test(document.getElementById('about-email').textContent)")))
+              and pg.evaluate("FEEDBACK_CONFIG.contactEmail ? document.querySelector('#about-email a').getAttribute('href') === 'mailto:' + FEEDBACK_CONFIG.contactEmail : /暂未提供/.test(document.getElementById('about-email').textContent)"))
         pg.goto(url + "#home"); pg.wait_for_timeout(300)
         pg.click(".hdr__set"); pg.wait_for_timeout(200)
         pg.click('#settings a[href="#about"]'); pg.wait_for_timeout(400)
