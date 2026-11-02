@@ -318,7 +318,8 @@ for x in species + poison + poison_extra:
     for _t, u in x.get("sources") or []:
         assert re.match(r"^https://[^\s\"'<>]+$", u), f"{x['slug']}: bad source URL {u}"
 for bad in ["只吃一两勺", "只吃一小份", "只吃一勺", "只吃一两块", "第一次吃少量", "先少量", "少量试", "试吃", "或再核对一次", "鹅膏类（", "留给沙拉", "做沙拉", "凉拌", "生拌野", "任何杂菌", "朝车声", "去除生菌", "可去除", "生拌", "生刨", "可薄切生",
-            "好兆头", "一定能找到", "必定出现", "肯定有菌", "只在相应树"]:  # v53: no certainty about where or when mushrooms appear
+            "好兆头", "一定能找到", "必定出现", "肯定有菌", "只在相应树",  # v53: no certainty about where or when mushrooms appear
+            "识别成功", "鉴定成功", "已鉴定", "可信度", "准确率", "放心采摘", "食用推荐"]:  # v54: a candidate is never an identification
     assert bad not in html, f"unsafe advice is back on the page: {bad}"
 OUT.write_text(html, encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}: {len(species)} edible, {len(poison) + len(poison_extra)} toxic, "

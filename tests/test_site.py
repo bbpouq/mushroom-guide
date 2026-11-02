@@ -22,6 +22,11 @@ NAV = {375: ".botnav", 768: ".topnav", 1024: ".topnav", 1440: ".topnav"}
 failures = []
 
 
+def fstart(pg):  # v54: the finder opens with a short intro and an 开始观察 button
+    if pg.locator("#finder-start").count():
+        pg.click("#finder-start"); pg.wait_for_timeout(80)
+
+
 def check(label, ok):
     print(("PASS " if ok else "FAIL ") + label)
     if not ok:
@@ -294,7 +299,7 @@ def run():
             let n = 0; for (let i = 3; i < d.length; i += 4 * 97) if (d[i] > 0) n++; return n; })()""")
         pg.click('#model-parts [data-model-part="volva"]'); pg.wait_for_timeout(200)
         check(f"3D model draws ({painted} samples) and explains a picked part", painted > 50 and "菌托" in pg.inner_text("#model-desc"))
-        pg.click('#finder-steps .wiz__dot[data-step="3"]'); pg.wait_for_timeout(100)
+        fstart(pg); pg.click('#finder-steps .wiz__dot[data-step="3"]'); pg.wait_for_timeout(100)
         pg.click('#finder-steps [data-model-part="ring"]'); pg.wait_for_timeout(300)
         check("a finder question's 'see on model' selects that part",
               pg.get_attribute('#model-parts [data-model-part="ring"]', "aria-pressed") == "true")
@@ -312,7 +317,7 @@ def run():
         check("finder results say they are candidates only and link to the emergency page",
               "不判断能不能吃" in res and pg.locator('#finder-results .res-safe a[href="#emergency"]').count() == 1)
         check("finder shows what matched and what is unchecked, with no score",
-              "相符：" in res and "未确认：" in res and "%" not in res and "还没确认 2 项" in res)
+              "吻合：" in res and "关键待确认：" in res and "%" not in res and "还没确认 2 项" in res)
         pg.click('[data-wiz="prev"]'); pg.wait_for_timeout(50)
         check("the finder can step back to change an answer", pg.get_attribute('#finder-steps .wiz__dot[data-step="2"]', "aria-current") == "step"
               and pg.get_attribute('[data-f="spore"][data-v="white"]', "aria-pressed") == "true")
@@ -321,7 +326,7 @@ def run():
             ans(k, v)
         res = pg.inner_text("#finder-results")
         check("finder keeps deadly amanitas when volva=no, warns early and allows skipping",
-              "毒鹅膏" in res and "菌托常埋在土里" in res and "仍可能是这些致命毒菌" in res and "菌环" in pg.inner_text(".res-open"))
+              "毒鹅膏" in res and "菌托常埋在土里" in res and "仍可能是这些致命毒菌" in res and pg.evaluate("[...document.querySelectorAll('.res-obs__row')].find(r => r.querySelector('.res-obs__k').textContent === '菌环').querySelector('.res-obs__v').textContent.startsWith('未观察')"))
         pg.click("#finder-reset"); pg.click("#finder-reset")
         for k, v in [("hym", "gills"), ("sub", "ground"), ("spore", "white"), ("ring", ""), ("volva", "yes")]:
             ans(k, v)
@@ -538,11 +543,11 @@ def run():
         check("a species with fewer than 30 records says 样本不足", few is True)
         pg.evaluate("document.getElementById('sheet').close()")
         # finder: everything skipped, then contradicting answers
-        pg.evaluate("show('finder')"); pg.wait_for_timeout(200)
+        pg.evaluate("show('finder')"); pg.wait_for_timeout(200); fstart(pg)
         for _ in range(5):
             pg.click("#finder-steps [data-v='']"); pg.wait_for_timeout(60)
         check("skipping every finder question says nothing could be narrowed and lists no candidates",
-              "都跳过了" in pg.inner_text("#finder-results") and pg.locator("#finder-results .res-item").count() == 0)
+              "都没有答案" in pg.inner_text("#finder-results") and pg.locator("#finder-results .res-item").count() == 0)
         pg.click("#finder-reset"); pg.wait_for_timeout(60)
         pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(60)
         pg.click('#finder-steps .wiz__dot[data-step="4"]'); pg.wait_for_timeout(60)
@@ -723,12 +728,12 @@ def run():
         ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
         pg = ctx.new_page(); errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
-        pg.goto(url + "#finder"); pg.wait_for_timeout(600)
+        pg.goto(url + "#finder"); pg.wait_for_timeout(600); fstart(pg)
         pg.click('[data-f="hym"][data-v="ridges"]'); pg.wait_for_timeout(200)
         res = pg.inner_text("#finder-results")
         check("the finder says information is missing while the volva question is unanswered", "信息不足" in res and "“菌托”" in res and "不要把任何候选当成答案" in res)
         check("candidates link to the comparisons they appear in", pg.locator('#finder-results .res-cmp a[href="#cmp-chanterelle"]').count() >= 1)
-        check("candidates still show matched / kept-despite / unconfirmed features, with no score", "相符" in res and "未确认" in res and "%" not in res and "概率" not in res.replace("不计算匹配分数或概率", ""))
+        check("candidates still show matched / conflicting / unknown features, with no score", "吻合" in res and "关键待确认" in res and "%" not in res and "概率" not in res.replace("不计算匹配分数或概率", ""))
         for k, v in [("sub", "ground"), ("spore", "white"), ("ring", "no"), ("volva", "no")]:
             pg.click('#finder-steps .wiz__dot[data-step="%d"]' % ["hym", "sub", "spore", "ring", "volva"].index(k)); pg.click(f'[data-f="{k}"][data-v="{v}"]'); pg.wait_for_timeout(100)
         check(f"answering the key questions removes the missing-information alarm {errs}", "信息不足" not in pg.inner_text("#finder-results") and not errs)
@@ -855,7 +860,7 @@ def run():
         check("browser back still works after tab taps", pg.evaluate("document.querySelector('.view.is-active').id") == "v-species")
         check("the home page has no duplicate 继续探索 links", pg.locator("#v-home .home-learn").count() == 0 and "继续探索" not in pg.inner_text("#v-home"))
         # finder and sheet
-        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(600)
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(600); fstart(pg)
         check("the first finder question starts within the first screen", pg.evaluate("document.querySelector('#finder-steps legend').getBoundingClientRect().top") < 812
               and pg.evaluate("document.getElementById('model').compareDocumentPosition(document.getElementById('finder-results')) & Node.DOCUMENT_POSITION_PRECEDING") > 0)
         pg.click('[data-f="hym"][data-v="gills"]'); pg.wait_for_timeout(400)
@@ -893,7 +898,7 @@ def run():
         pg.reload(); pg.wait_for_timeout(700); pg.click('.botnav a[href="#home"]'); pg.wait_for_timeout(400)
         check("after a refresh, 识菌 still reopens its last page", pg.evaluate("document.querySelector('.view.is-active').id") == "v-toxic")
         # finder: dynamic order, persistence, safe reset, empty result
-        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(400)
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(400); fstart(pg)
         pg.click('[data-f="hym"][data-v="gills"]'); pg.wait_for_timeout(200)
         check("with deadly amanitas still possible, the next question is the stem base (volva); the header counts what is left",
               "还剩 4 题" in pg.inner_text("#finder-steps legend") and "菌托" in pg.inner_text("#finder-steps legend") and "致命鹅膏" in pg.inner_text("#finder-steps .wiz__next"))
@@ -911,7 +916,7 @@ def run():
         check("the second tap clears them", pg.evaluate("fstate.hym") is None)
         pg.evaluate("fstate.hym = 'pores'; fstate.sub = 'wood'; fstate.spore = 'pink'; renderFinder()"); pg.wait_for_timeout(200)
         r0 = pg.inner_text("#finder-results")
-        check("no candidates at all: says the database is limited and toxic species are not ruled out", "一个候选都没有" in r0 and "不说明它无毒" in r0)
+        check("no candidates at all: says the database is limited and toxic species are not ruled out", "一个候选都没有" in r0 and "不代表它不是毒菌" in r0)
         check("the finder never claims success or safety", not any(w in r0 for w in ["识别成功", "可以食用", "确认是"]))
         pg.click("#finder-reset"); pg.click("#finder-reset")
         # species and toxic sheets share one hierarchy
@@ -957,7 +962,7 @@ def run():
         import re as _re
         shown = int(_re.search(r"(\d+) / \d+ 张", off).group(1)) if _re.search(r"(\d+) / \d+ 张", off) else -1
         check(f"offline after one online visit: the page starts and reports exactly the photos really cached ({shown} = {cached})", ready and shown == cached and shown < pg.evaluate("photoSets.small.length"))
-        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(300)
+        pg.evaluate("navigate('finder')"); pg.wait_for_timeout(300); fstart(pg)
         pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(300)
         check("the finder works offline", pg.locator("#finder-results .res-item").count() > 0)
         pg.evaluate("navigate('log')"); pg.wait_for_timeout(700)
@@ -1306,6 +1311,102 @@ def run():
             c2.close()
         check(f"deep links land right under the sticky header even when content above them renders late {bad} {errs}", not bad and not errs)
         ctx.close()
+
+        # ---------- v54: feature identification UX ----------
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#finder"); pg.wait_for_timeout(700)
+        intro = pg.inner_text("#finder-steps")
+        check("v54: the finder opens with a short intro and 开始观察, not a question or a list",
+              pg.locator("#finder-start").count() == 1 and pg.locator("#finder-steps .wiz__q").count() == 0 and pg.inner_text("#finder-results").strip() == ""
+              and "不会被当成“没有”" in intro and "不判断能不能吃" in intro and len(intro) < 200)
+        pg.focus("#finder-start"); pg.keyboard.press("Enter"); pg.wait_for_timeout(200)
+        check("v54: 开始观察 shows the first question and puts keyboard focus on its first answer",
+              pg.locator("#finder-steps .wiz__q").count() == 1 and pg.evaluate("document.activeElement.classList.contains('wiz__opt')"))
+        kinds = {}
+        for i, k in enumerate(["hym", "sub", "spore", "ring", "volva"]):
+            pg.click(f'#finder-steps .wiz__dot[data-step="{i}"]'); pg.wait_for_timeout(40)
+            kinds[k] = pg.eval_on_selector_all(f'[data-f="{k}"][data-unk]', "els => els.map(e => e.dataset.unk)")
+        check(f"v54: every question offers 不知道（还没看） and 拿不准; ring, volva and gills also 看不到 {kinds}",
+              all("unchecked" in v and "unsure" in v for v in kinds.values()) and all("unseen" in kinds[k] for k in ["hym", "ring", "volva"]))
+        pg.click('#finder-steps .wiz__dot[data-step="0"]'); pg.click('[data-f="hym"][data-v="gills"]'); pg.wait_for_timeout(100)
+        pg.click('#finder-steps .wiz__dot[data-step="4"]'); pg.click('[data-f="volva"][data-unk="unseen"]'); pg.wait_for_timeout(150)
+        res = pg.inner_text("#finder-results")
+        state = pg.evaluate("[fstate.volva, funk.volva]")
+        tox = pg.eval_on_selector_all("#finder-results .res-block--toxic .res-item__name", "els => els.map(e => e.textContent)")
+        check(f"v54 P0: 看不到 is stored as unknown, never as 没有, and every deadly amanita stays listed {state}",
+              state == [None, "unseen"] and any("毒鹅膏" in n for n in tox) and "看不到：柄基没挖出来" in res and "信息不足" in res)
+        pg.click('#finder-steps .wiz__dot[data-step="4"]'); pg.click('[data-f="volva"][data-v="no"]'); pg.wait_for_timeout(150)
+        pc = pg.evaluate("[...document.querySelectorAll('#finder-results .res-block--toxic .res-item')].find(a => a.textContent.includes('毒鹅膏')).querySelector('.res-item__pills').textContent")
+        check(f"v54: a contradicting answer shows as 冲突 on the card, which stays listed ({pc})", "冲突 1" in pc and "吻合" in pc and "未知" in pc)
+        levels = pg.eval_on_selector_all("#finder-results .res-block--toxic .res-item", "els => els.map(e => [e.querySelector('.level--deadly') ? 1 : 0, (e.querySelector('.res-pill--warn') || {textContent: '冲突 0'}).textContent.match(/\\d+/)[0] | 0])")
+        ordered = all((levels[i][0], -levels[i][1]) >= (levels[i + 1][0], -levels[i + 1][1]) for i in range(len(levels) - 1))
+        check(f"v54: toxic candidates are ordered by risk, then fewer conflicts ({len(levels)})", levels and ordered)
+        res = pg.inner_text("#finder-results")
+        bad = [w for w in ["识别成功", "鉴定成功", "已鉴定", "可信度", "准确率", "放心", "%"] if w in res]
+        check(f"v54 P0: results show evidence, never a score or a success/safety claim {bad}", not bad and "不计算匹配分数或概率" in res
+              and pg.locator("#finder-results .res-unlisted").count() == 1 and "无法排除" in pg.inner_text("#finder-results .res-unlisted"))
+        live = pg.inner_text("#finder-live")
+        check(f"v54: a short live line announces the counts; the long result list is not a live region ({live})",
+              "毒菌" in live and pg.get_attribute("#finder-results", "aria-live") is None)
+        pg.click('#finder-results .res-obs__edit[data-step="0"]'); pg.wait_for_timeout(250)
+        cur = pg.get_attribute('#finder-steps .wiz__dot[data-step="0"]', "aria-current")
+        pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(150)
+        kept = pg.evaluate("[fstate.hym, fstate.volva]")
+        check(f"v54: 修改 in the observation summary reopens that question; changing it keeps the other answers ({cur}, {kept})", cur == "step" and kept == ["pores", "no"])
+        pg.click("#finder-reset"); pg.click("#finder-reset"); pg.wait_for_timeout(100)
+        pg.click('[data-f="hym"][data-v="gills"]'); pg.wait_for_timeout(150)
+        gap = pg.locator("#finder-results .res-actions [data-step]")
+        lbl = gap.inner_text() if gap.count() else ""
+        gap.click(); pg.wait_for_timeout(1000)
+        check(f"v54: 补充关键观察 goes back to the missing key question (stem base) and focuses its answers ({lbl})",
+              "菌托" in lbl and pg.get_attribute('#finder-steps .wiz__dot[data-step="4"]', "aria-current") == "step" and pg.evaluate("document.activeElement.dataset.f") == "volva")
+        # back from a candidate's page keeps answers, results and place
+        pg.click('#finder-steps [data-f="volva"][data-unk="unsure"]'); pg.wait_for_timeout(150)
+        n0 = pg.locator("#finder-results .res-item").count()
+        pg.locator("#finder-results .res-item").nth(2).scroll_into_view_if_needed(); y0 = pg.evaluate("scrollY")
+        pg.locator("#finder-results .res-item").nth(2).click(); pg.wait_for_timeout(500)
+        opened = pg.evaluate("document.getElementById('sheet').open")
+        pg.go_back(); pg.wait_for_timeout(600)
+        check(f"v54: back from a candidate's page returns to the same answers, results and place ({n0}, {y0} -> {pg.evaluate('scrollY')})",
+              opened and not pg.evaluate("document.getElementById('sheet').open") and pg.locator("#finder-results .res-item").count() == n0
+              and pg.evaluate("[fstate.hym, funk.volva]") == ["gills", "unsure"] and abs(pg.evaluate("scrollY") - y0) < 60)
+        # session: refresh, an old v1 session, and a broken one
+        pg.reload(); pg.wait_for_timeout(800)
+        check("v54: a refresh restores the observation session (answers and unknown reasons, no intro)",
+              pg.evaluate("[fstate.hym, funk.volva, fstarted]") == ["gills", "unsure", True] and pg.locator("#finder-start").count() == 0)
+        pg.evaluate("findsSave([{id: 541, date: '2026-10-02', other: '测试', status: 'none'}])"); pg.wait_for_timeout(200)
+        pg.evaluate("localStorage.setItem('mushroom-guide:finder', JSON.stringify({ at: Date.now(), fstate: { hym: 'pores', sub: null, spore: null, ring: null, volva: null }, skip: ['ring'], fstep: 1, fhist: [0] }))")
+        pg.reload(); pg.wait_for_timeout(800)
+        v1 = pg.evaluate("[fstate.hym, funk.ring, fstarted]")
+        pg.evaluate("localStorage.setItem('mushroom-guide:finder', '{not json')"); pg.reload(); pg.wait_for_timeout(800)
+        broken = [pg.locator("#finder-start").count(), pg.evaluate("findsLoad().length")]
+        pg.evaluate("localStorage.setItem('mushroom-guide:finder', JSON.stringify({ v: 2, at: Date.now(), fstate: { hym: 'nonsense' }, unk: { volva: 'nonsense' } }))"); pg.reload(); pg.wait_for_timeout(800)
+        odd = pg.evaluate("[fstate.hym, funk.volva || null]")
+        check(f"v54: an old (v1) session migrates, a broken one starts afresh, invalid values are dropped, the journal is untouched {v1} {broken} {odd} {errs}",
+              v1 == ["pores", "unchecked", True] and broken == [1, 1] and odd == [None, None] and not errs)
+        # 记到菌记 makes an unidentified record, never a candidate or a confirmed one
+        fstart(pg); pg.click('[data-f="hym"][data-v="spines"]'); pg.wait_for_timeout(150)
+        pg.click("#finder-results [data-finder-log]"); pg.wait_for_timeout(600)
+        form = pg.evaluate("[document.querySelector('.view.is-active').id, document.getElementById('finds-other').value, document.getElementById('finds-notes').value, (document.querySelector('[name=finds-status]:checked') || {}).value]")
+        pg.click("#finds-save"); pg.wait_for_timeout(500)
+        rec = pg.evaluate("findsLoad().find(f => f.other === '未鉴定的菌')")
+        check(f"v54: 记到菌记 opens a new record marked 未鉴定 with the observations in the notes ({form[0]}, {form[3]})",
+              form[0] == "v-log" and form[1] == "未鉴定的菌" and form[2].startswith("特征识别记录（不是鉴定）") and "菌刺" in form[2] and form[3] == "none"
+              and rec and (rec.get("status") or "none") == "none" and not rec.get("sp"))
+        ctx.close()
+        for w in [320, 375, 390, 768, 1024]:
+            for field in [False, True]:
+                c2 = b.new_context(viewport={"width": w, "height": 800}, is_mobile=w < 768, has_touch=w < 1024, color_scheme="dark" if field else "light")
+                if field: c2.add_init_script("try{localStorage.setItem('mushroom-guide:field','on')}catch(e){}")
+                p2 = c2.new_page(); e2 = []; p2.on("pageerror", lambda e: e2.append(str(e)))
+                p2.goto(url + "#finder"); p2.wait_for_timeout(500); fstart(p2)
+                p2.click('[data-f="hym"][data-v="gills"]'); p2.click('#finder-steps [data-f="volva"][data-unk="unseen"]'); p2.wait_for_timeout(200)
+                sw = p2.evaluate("document.documentElement.scrollWidth")
+                small = p2.evaluate("[...document.querySelectorAll('#finder-steps button, #finder-results button')].filter(b => b.offsetParent && b.getBoundingClientRect().height < (document.documentElement.dataset.field === 'on' ? 52 : 44)).map(b => b.className)")
+                check(f"v54 at {w}px{' (outdoor, dark)' if field else ''}: questions and results fit, buttons at least {'52' if field else '44'}px {sw} {small[:3]} {e2}", sw <= w and not small and not e2)
+                c2.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})

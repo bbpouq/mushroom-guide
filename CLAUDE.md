@@ -187,8 +187,14 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   `localStorage` `mushroom-guide:finder`, 重新开始 needs two taps, and an empty result says the database is limited.
   "不知道，跳过" on every question, 上一题, and a short "why this matters". It asks only the five features every species is tagged
   with in `data/tags.py`; do not add questions without checked tags for every species. Results never score or rank by
-  probability: each candidate shows 相符 / 仍列出 (kept despite a contradicting answer) / 未确认, deadly matches are named in an
-  alert as soon as one answer is given, a volva answer raises the amanita alarm, and toxic species come first.
+  probability, deadly matches are named in an alert as soon as one answer is given, a volva answer raises the amanita alarm,
+  and toxic species come first. v54 (docs/V54_FINDER_UX.md): a short intro with 开始观察 (`fstarted`); unknown is never "no":
+  every question offers 不知道，跳过 (还没看) and 拿不准, and 菌盖下面 / 菌环 / 菌托 also 看不到, all stored in `funk` and never used to
+  narrow the list; the session is versioned (`v: 2` in `mushroom-guide:finder`, v1 migrates, invalid values reset, the journal
+  is never touched); results open with the candidates-only danger callout, then 你的观察 (`.res-obs`, each row editable), then
+  cards with a risk label and 吻合 / 冲突 / 未知 counts and lines (toxic: 关键待确认), deadly first then fewer conflicts, a final
+  「其他菌 / 本站没收录的种类：无法排除」 card, 补充关键观察 and 记到菌记（未鉴定） (status 未鉴定, never 候选). A short live line
+  (`#finder-live`) announces counts; the result list is not live.
 - The finder has an interactive 3D mushroom (`#model`): drag to rotate, tap a part for its explanation; each
   finder question has a "在模型上看" button. three.js (vendored, imported only when the model scrolls into view)
   renders it with soft light and shadows; a small 2D-canvas lathe renderer is the fallback when WebGL or the import
