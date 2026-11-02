@@ -25,7 +25,8 @@ PUBLIC = Path(__file__).resolve().parent.parent / "public"
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    argv = sys.argv[1:]
+    args = [a for i, a in enumerate(argv) if not a.startswith("--") and not (i and argv[i - 1] == "--wait")]  # the value after --wait is not a URL
     url = (args[0] if args else "https://bbpouq.github.io/mushroom-guide/").rstrip("/") + "/"
     wait = int(sys.argv[sys.argv.index("--wait") + 1]) if "--wait" in sys.argv else 600
     problems, notes = [], []

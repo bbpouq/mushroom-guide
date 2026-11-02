@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 372 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 376 end-to-end checks; must end with "ALL PASSED"
 python3 tests/a11y_sweep.py --quick  # axe + overflow sweep (needs: npm install --no-save axe-core@4.14.0)
 python3 tests/shadow_diff.py         # this build vs the live site; python3 tests/smoke_live.py checks the live site
 # CI (docs/CI.md): .github/workflows/ci.yml runs build, e2e, a11y and shadow on every push; smoke.yml after each deploy
@@ -198,7 +198,12 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   is never touched); results open with the candidates-only danger callout, then 你的观察 (`.res-obs`, each row editable), then
   cards with a risk label and 吻合 / 冲突 / 未知 counts and lines (toxic: 关键待确认), deadly first then fewer conflicts, a final
   「其他菌 / 本站没收录的种类：无法排除」 card, 补充关键观察 and 记到菌记（未鉴定） (status 未鉴定, never 候选). A short live line
-  (`#finder-live`) announces counts; the result list is not live.
+  (`#finder-live`) announces counts; the result list is not live. Species audit (docs/SPECIES_AUDIT.md): one `fEval()` decides
+  listing and the card; documented mix-ups keep a species as 冲突 instead of dropping it (`HYM_NEAR`, per-species `hymAlt` / `hymWhy`
+  in tags.py); toxic species are never removed by ring / volva / ground-grass-wood / near spore colours (narrow exceptions in
+  the doc); spore `na` (no print) vs `unknown`; `ringVar`. Option wording comes from `FEAT.hym`. `src/audit_species.py` writes
+  reports/species_feature_audit.csv (CI build job); `src/xref_species.py` (network) cross-checks one outside page per species;
+  `src/data/audit_log.py` holds the hand-checked evidence. Never call a species verified without a cited source.
 - The finder has an interactive 3D mushroom (`#model`): drag to rotate, tap a part for its explanation; each
   finder question has a "在模型上看" button. three.js (vendored, imported only when the model scrolls into view)
   renders it with soft light and shadows; a small 2D-canvas lathe renderer is the fallback when WebGL or the import
