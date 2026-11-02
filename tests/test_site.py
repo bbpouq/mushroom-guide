@@ -1452,6 +1452,17 @@ def run():
             ctx.close()
         check(f"sheet section chips stick flush under the bar, no content showing through a gap {gaps}", all(-2 <= g <= 0 for _, _, g in gaps))
 
+        # ---------- horizontal strips scroll sideways only (a two-way scroller let the whole card row drag around on iOS) ----------
+        ctx = b.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); two = set()
+        TWO = """() => [...document.querySelectorAll('*')].filter(e => { const s = getComputedStyle(e); return (s.overflowX === 'auto' || s.overflowX === 'scroll') && e.getClientRects().length && e.scrollWidth > e.clientWidth && s.overflowY !== 'hidden' && e.scrollHeight > e.clientHeight; }).map(e => e.id || e.className)"""
+        for h in ["home", "species", "toxic", "recipes", "log", "explore-now", "explore-intel", "explore-pick", "sp-boletus-edulis"]:
+            pg.goto(url + "#" + h); pg.wait_for_timeout(600)
+            pg.evaluate("window.scrollTo(0, document.body.scrollHeight)"); pg.wait_for_timeout(400)
+            two.update(f"{h}: {x}" for x in pg.evaluate(TWO))
+        check(f"no horizontal strip can also scroll vertically {sorted(two)}", not two)
+        ctx.close()
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')
