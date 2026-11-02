@@ -760,7 +760,7 @@ html.is-ready .view.is-active > .view__head { animation: head-in 520ms var(--spr
 .now__all { border: 0; background: none; color: var(--color-primary); font-weight: var(--fw-600); font-size: var(--fs-body-sm); min-height: var(--target); padding: 0 var(--space-1); cursor: pointer; }
 .now__sub { margin: 0 0 var(--space-3); font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
 .now__track { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
-  margin: 0 calc(-1 * var(--space-4)); padding: 2px var(--space-4) var(--space-3); scroll-padding-left: var(--space-4); }
+  margin: 0 calc(-1 * var(--space-4)) calc(-1 * var(--space-1)); padding: 2px var(--space-4) var(--space-4); scroll-padding-left: var(--space-4); }  /* room for the card shadow: the strip clips vertically */
 .now__track::-webkit-scrollbar { display: none; }
 .now__item { flex: 0 0 148px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 2px; padding: 0 0 var(--space-3); border: .5px solid var(--glass-edge);
   border-radius: var(--radius-lg); overflow: hidden; background: var(--color-card); box-shadow: var(--shadow-card); text-align: left; color: var(--color-foreground); cursor: pointer;
@@ -1389,6 +1389,10 @@ html[data-tab="id"] .subnav { display: flex; }
 .intel { display: grid; gap: var(--space-3); }
 .intel__months { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
 .cmp__tabs, .sheet__nav, .subnav, .intel__months, .jump-row, .intel__wrap, .today__recipes { overscroll-behavior-x: contain; }
+/* horizontal strips scroll sideways only. overflow-x: auto alone makes overflow-y auto too; card shadows and the scroll-in
+   animation make the content a few px taller, so on iOS the strip became a two-way scroller and the whole row of cards
+   dragged around (and rubber-banded) under the finger. Vertical swipes belong to the page. */
+.now__track, .cmp__tabs, .sheet__nav, .subnav, .intel__months, .jump-row, .today__recipes, .xnav__subs { overflow-y: hidden; overscroll-behavior-y: auto; touch-action: pan-x pan-y; }
 .intel__months .chip-list { flex-wrap: nowrap; }
 
 .res-cmp { margin: var(--space-1) 0 0; padding: 0 var(--space-3) var(--space-2); font-size: var(--fs-footnote); color: var(--color-muted-foreground); display: flex; gap: var(--space-1); align-items: baseline; flex-wrap: wrap; }
