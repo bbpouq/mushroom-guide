@@ -1541,6 +1541,47 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 .set__link > span > span { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
 .set__link > .icon:first-child { color: var(--color-primary); }
 
+/* ---------- v54.1: 关于与反馈 ---------- */
+#v-about { max-width: 72ch; }
+.about__safe { margin-bottom: var(--space-5); }
+.about__safe a { color: inherit; font-weight: var(--fw-700); }
+.about__sec { margin-top: var(--space-6); }
+.about__h { margin: 0 0 var(--space-2); font-size: var(--fs-h3); font-weight: var(--fw-700); text-wrap: balance; }
+.about__list { display: grid; border-radius: var(--radius); background: var(--surface-1); overflow: hidden; }
+.about__item { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 64px; padding: var(--space-3) var(--space-4); border: 0; border-bottom: .5px solid var(--color-border); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.about__item:last-child { border-bottom: 0; }
+.about__item:hover { background: var(--surface-3); }
+.about__item:focus-visible { outline: 2px solid var(--color-ring); outline-offset: -2px; }
+.about__item > span { flex: 1; display: grid; gap: var(--space-1); min-width: 0; }
+.about__item > span > span { font-size: var(--fs-footnote); color: var(--color-muted-foreground); text-wrap: pretty; }
+.about__item > .icon:first-child { flex: none; color: var(--color-primary); }
+.about__item > .icon:last-child { flex: none; color: var(--color-muted-foreground); }
+.about__item--warn > .icon:first-child { color: var(--color-warning-text); }
+.about__ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); font-size: var(--fs-body-sm); }
+.about__ul a, .about__p a { overflow-wrap: anywhere; }
+.about__p { margin: 0; font-size: var(--fs-body-sm); }
+.site-footer__links { display: flex; flex-wrap: wrap; gap: 0 var(--space-4); }
+.site-footer__links a { display: inline-flex; align-items: center; min-height: var(--target); }
+.sheet-report { margin: var(--space-4) 0 0; }
+.sheet-report .btn-text { display: inline-flex; align-items: center; gap: var(--space-1); padding: 0; font-size: var(--fs-secondary); }
+.fb { display: grid; gap: var(--space-3); }
+.fb__fields { display: grid; gap: var(--space-3); }
+.fb__field { display: grid; gap: var(--space-1); }
+.fb__label { font-size: var(--fs-secondary); font-weight: var(--fw-600); }
+.fb__input { width: 100%; min-width: 0; max-width: 100%; min-height: var(--target); padding: var(--space-2) var(--space-3); font: inherit; font-size: var(--fs-body); color: var(--color-foreground); background: var(--surface-1); border: 0; border-radius: var(--radius-md); }
+textarea.fb__input { resize: vertical; }
+.fb__preview { font-size: var(--fs-footnote); color: var(--color-muted-foreground); white-space: pre-wrap; }
+.fb__safe { display: flex; gap: var(--space-2); align-items: flex-start; margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--color-danger-surface); color: var(--color-danger-text); font-size: var(--fs-footnote); }
+.fb__safe .icon { flex: none; margin-top: 2px; }
+.fb__safe a { color: inherit; font-weight: var(--fw-700); }
+.fb__warn { margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--color-warning-surface); color: var(--color-warning-text); font-size: var(--fs-footnote); font-weight: var(--fw-600); }
+.fb__warn[hidden] { display: none; }
+.fb__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.fb__actions .btn { min-height: var(--target); }
+.fb__actions .btn:disabled { opacity: .55; cursor: not-allowed; }
+.fb__note { margin: 0; font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
+[data-field="on"] .fb__input, [data-field="on"] .about__ul, [data-field="on"] .about__p { font-size: var(--fs-body); }
+
 /* ---------- Sprint 2: species sheet hierarchy ---------- */
 .sheet__latin, .sheet__en { display: inline; }
 .sheet__latin + .sheet__en::before, .sheet__en + .sheet__en::before { content: " · "; color: var(--color-muted-foreground); }
@@ -1713,6 +1754,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15Z"/><path d="M5 19 13 11"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><path d="M8 2l1.9 1.9M16 2l-1.9 1.9"/><path d="M9 7.1V6a3 3 0 0 1 6 0v1.1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6Z"/><path d="M12 20v-9M6.5 9C4.6 8.8 3 7.1 3 5M6 13H2M3 21c0-2.1 1.7-3.9 3.8-4M20.9 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M17.2 17c2.1.1 3.8 1.9 3.8 4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol><symbol id="i-notebook" viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6z"/><path d="M6 3v18M4 7h4M4 12h4M4 17h4M11 8h5M11 12h5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="M12 8v4M12 16h.01"/></symbol>
 </svg>
 
@@ -2472,6 +2516,46 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       </section>
 
       <!-- ================= EMERGENCY ================= -->
+      <!-- ================= ABOUT & FEEDBACK (v54.1; no tab, like the emergency page) ================= -->
+      <section class="view" id="v-about" aria-labelledby="h-about">
+        <header class="view__head view__head--compact">
+          <h1 class="view__title" id="h-about">关于与反馈</h1>
+          <p class="view__lead">拾菌记是给一起采菌的朋友做的 Pacific Northwest 野菌学习和野外记录网站：免费、非商业、源代码公开。资料由编辑根据列出的来源整理，<b>没有经过真菌学专家审核</b>。发现哪里不对，请告诉我们。</p>
+        </header>
+        <div class="callout callout--danger about__safe" role="note"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>这里不提供野生菌鉴定、能不能吃的确认，也不提供中毒急救咨询。</b>怀疑误食，不要等回复：<a href="#emergency">打开中毒急救</a>，马上联系毒物控制中心或拨打 911。</div></div>
+        <section class="about__sec" aria-labelledby="about-fb-t">
+          <h2 class="about__h" id="about-fb-t">反馈</h2>
+          <div class="about__list">
+            <button type="button" class="about__item about__item--warn" data-report="species"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span><b>报告物种资料错误</b><span>形态、识别特征、有毒近似种、照片或授权、地区与季节。最好在那种菌的页面上点“这条资料有误？”，会自动带上它的名字和链接。</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <button type="button" class="about__item" data-report="bug"><svg class="icon" aria-hidden="true"><use href="#i-bug"/></svg><span><b>报告网站问题</b><span>按钮没反应、显示不对、离线出错</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <button type="button" class="about__item" data-report="idea"><svg class="icon" aria-hidden="true"><use href="#i-bulb"/></svg><span><b>功能建议</b><span>想要什么，在什么情况下用</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          </div>
+        </section>
+        <section class="about__sec" aria-labelledby="about-ch-t">
+          <h2 class="about__h" id="about-ch-t">联系渠道</h2>
+          <ul class="about__ul">
+            <li><b>GitHub Issues</b>：反馈公开可见，提交需要登录 GitHub 账号。<a href="https://github.com/bbpouq/mushroom-guide/issues" target="_blank" rel="noopener">看已有的反馈</a></li>
+            <li><b>联系邮箱</b>：<span id="about-email">暂未提供</span></li>
+            <li><b>源代码</b>：<a href="https://github.com/bbpouq/mushroom-guide" target="_blank" rel="noopener">github.com/bbpouq/mushroom-guide</a></li>
+          </ul>
+          <p class="muted-note">这是个人维护的项目，没有固定的回复时间。</p>
+        </section>
+        <section class="about__sec" id="about-privacy" aria-labelledby="about-pv-t">
+          <h2 class="about__h" id="about-pv-t">隐私</h2>
+          <ul class="about__ul">
+            <li>菌记、照片、位置、学习进度和设置只存在这台设备的浏览器里。本站没有服务器，也不统计访问。</li>
+            <li>反馈只在你点按钮时才打开 GitHub 或邮件，带上的就是你在预览里看到的文字，不会附上菌记、位置或这台设备上的任何数据。</li>
+            <li>GitHub 上的反馈所有人都能看到：不要写精确的采集地点、电话、邮箱或健康信息。</li>
+            <li>外部链接（iNaturalist、资料来源、GitHub）打开后，由那些网站处理你的访问。</li>
+          </ul>
+          <div class="link-row"><a class="btn" href="#data-center"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-notebook-pen"/></svg>数据管理与备份</a></div>
+        </section>
+        <section class="about__sec" aria-labelledby="about-src-t">
+          <h2 class="about__h" id="about-src-t">资料来源</h2>
+          <p class="about__p">每种菌的详情页最后都列出它的资料来源，并按官方机构、学术文献、专业参考、社区观察等分类；季节数据来自 iNaturalist 研究级观察，示例照片都注明作者和授权。改写自的书籍见页面底部。</p>
+        </section>
+      </section>
+
       <section class="view" id="v-emergency" aria-labelledby="h-emergency">
         <header class="view__head">
           <span class="view__eyebrow">紧急求助</span>
@@ -2531,6 +2615,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
       </section>
 
       <footer class="site-footer">
+        <nav class="site-footer__links" aria-label="关于本站"><a href="#about">关于与反馈</a><a href="#about-privacy">隐私</a><a href="#emergency">中毒急救</a></nav>
         <p>部分物种描述、常见毒菌和 6 道食谱改写自 <i>The Edible Mushroom Book: A Guide to Foraging and Cooking</i>（Anna Del Conte、Thomas Læssøe 著，Dorling Kindersley，2008），文字为本站的中文改写，不含该书图片。其他内容的资料来源列在各条目详情里。</p>
         <p>季节和常见程度据 iNaturalist 上 BC、华盛顿、俄勒冈的观察记录，只供参考。不同地区同一种菌可能有不同的近似毒菌，请配合当地图鉴。标有【编者注】的是本站补充的安全提示。</p>
       </footer>
@@ -2544,6 +2629,23 @@ details.is-open > .fold { grid-template-rows: 1fr; }
   <a class="botnav__link" href="#log" data-tab="jr"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-notebook-pen"/></svg>菌记</a>
 </nav>
 
+<dialog class="bsheet" id="report" aria-labelledby="report-title"><div class="bsheet__box">
+  <span class="bsheet__grab" aria-hidden="true"></span>
+  <div class="bsheet__head"><h2 class="bsheet__title" id="report-title">反馈</h2><button class="icon-btn" type="button" data-report-close aria-label="关闭反馈"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  <p class="fb__safe" role="note"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"/></svg><span>这不是鉴定或急救渠道。怀疑误食，请马上打开<a href="#emergency" data-report-close>中毒急救</a>。</span></p>
+  <form class="fb" id="report-form" novalidate>
+    <div class="fb__fields" id="fb-fields"></div>
+    <label class="fb__label" for="fb-preview">将要发送的内容（可以先复制）</label>
+    <textarea class="fb__input fb__preview" id="fb-preview" rows="7" readonly></textarea>
+    <p class="fb__warn" id="fb-warn" role="alert" hidden></p>
+    <div class="fb__actions">
+      <button type="button" class="btn btn--primary" data-fb-gh><svg class="icon icon--sm" aria-hidden="true"><use href="#i-out"/></svg>在 GitHub 打开（需要登录）</button>
+      <button type="button" class="btn" data-fb-copy><svg class="icon icon--sm" aria-hidden="true"><use href="#i-copy"/></svg>复制内容</button>
+      <button type="button" class="btn" data-fb-mail disabled>邮箱暂未提供</button>
+    </div>
+    <p class="fb__note" id="fb-note" role="status">GitHub 会在新窗口打开预填好的反馈，要在 GitHub 页面上点提交才算发出；本站不知道你有没有提交。</p>
+  </form>
+</div></dialog>
 <dialog class="bsheet" id="settings" aria-labelledby="settings-title"><div class="bsheet__box">
   <span class="bsheet__grab" aria-hidden="true"></span>
   <div class="bsheet__head"><h2 class="bsheet__title" id="settings-title">设置</h2><button class="icon-btn" type="button" data-settings-close aria-label="关闭设置"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div>
@@ -2557,6 +2659,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
     <label class="toggle"><input type="checkbox" role="switch" id="set-field"><span class="toggle__track" aria-hidden="true"></span><span>字和按钮更大、对比更强、没有动画；和深浅色互相独立</span></label></section>
   <nav class="set__links" aria-label="更多设置">
     <a class="set__link" href="#guide-offline"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span><b>离线使用</b><span>没信号时也能用：下载全部照片、装到手机桌面</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <a class="set__link" href="#about"><svg class="icon" aria-hidden="true"><use href="#i-message"/></svg><span><b>关于与反馈</b><span>报告资料错误、网站问题和建议；隐私说明</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     <a class="set__link" href="#data-center"><svg class="icon" aria-hidden="true"><use href="#i-notebook-pen"/></svg><span><b>数据管理与备份</b><span>菌记只存在这台设备上：导出、导入、清理</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     <a class="set__link" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span><b>中毒急救</b><span>电话和该做的事</span></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
   </nav>
@@ -2720,6 +2823,116 @@ function copied(btn) {
   setTimeout(() => { btn.innerHTML = html; btn.classList.remove("is-copied"); delete btn.dataset.copied; }, 2500);
 }
 
+/* ---------- 关于与反馈 (v54.1): feedback goes out only when the person clicks, as the text they see in the preview ---------- */
+// Maintainer settings. Email stays null until the maintainer provides one: never guess an address.
+const FEEDBACK_CONFIG = { githubRepo: "bbpouq/mushroom-guide", issuesEnabled: true, contactEmail: "bbpouq@gmail.com", siteUrl: "https://bbpouq.github.io/mushroom-guide/" };
+const FB_TYPES = ["形态描述", "识别特征", "有毒近似种", "照片或授权", "地区与季节", "其他"];
+const FB_PAGES = [["home", "识菌概览"], ["finder", "特征识别"], ["species", "食用菌图鉴"], ["toxic", "毒菌与对比"], ["guide", "厨房指南"], ["recipes", "食谱"], ["learn", "学习"], ["explore", "拾菌"], ["log", "菌记"], ["emergency", "中毒急救"], ["about", "关于与反馈"], ["other", "其他"]];
+const reportRow = x => `<p class="sheet-report"><button type="button" class="btn-text" data-report="species" data-slug="${x.slug}">${icon("message", "icon--sm")}这条资料有误？告诉我们</button></p>`;
+let fbKind = "species";
+const fbAll = () => DATA.species.concat(toxicAll);
+function fbGuessDevice() {  // a short, editable guess; the full user-agent string is never sent
+  const u = navigator.userAgent || "";
+  const os = /iPhone|iPad/.test(u) ? "iOS" : /Android/.test(u) ? "Android" : /Mac OS X/.test(u) ? "macOS" : /Windows/.test(u) ? "Windows" : /Linux/.test(u) ? "Linux" : "";
+  const br = /Edg\//.test(u) ? "Edge" : /Firefox\//.test(u) ? "Firefox" : /Chrome\//.test(u) ? "Chrome" : /Safari\//.test(u) ? "Safari" : "";
+  return [os, br].filter(Boolean).join(" · ");
+}
+const fbField = (id, label, html) => `<div class="fb__field"><label class="fb__label" for="${id}">${label}</label>${html}</div>`;
+const fbText = (id, label, ph, rows = 3) => fbField(id, label, `<textarea class="fb__input" id="${id}" rows="${rows}" maxlength="1200" placeholder="${ph}"></textarea>`);
+function fbOpen(kind, slug) {
+  fbKind = kind;
+  const titles = { species: "报告物种资料错误", bug: "报告网站问题", idea: "功能建议" };
+  $("#report-title").textContent = titles[kind];
+  const cur = (document.querySelector(".view.is-active") || { id: "v-other" }).id.slice(2);
+  let html = "";
+  if (kind === "species") {
+    const opts = fbAll().slice().sort((a, b) => a.zh.localeCompare(b.zh, "zh")).map(s => `<option value="${s.slug}"${s.slug === slug ? " selected" : ""}>${esc(s.zh)} · ${esc(s.latin)}</option>`).join("");
+    html = fbField("fb-sp", "哪一种", `<select class="fb__input" id="fb-sp"><option value="">选一种</option>${opts}</select>`)
+      + fbField("fb-type", "哪一类问题", `<select class="fb__input" id="fb-type">${FB_TYPES.map(x => `<option>${x}</option>`).join("")}</select>`)
+      + fbText("fb-what", "哪里不对", "比如：林中鸡的菌孔很细，页面上写的是……", 4)
+      + fbField("fb-ref", "参考来源（可选）", `<input class="fb__input" id="fb-ref" type="url" inputmode="url" maxlength="300" placeholder="https://…">`);
+  } else if (kind === "bug") {
+    html = fbField("fb-page", "在哪个页面", `<select class="fb__input" id="fb-page">${FB_PAGES.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${l}</option>`).join("")}</select>`)
+      + fbField("fb-dev", "设备和浏览器（可以改）", `<input class="fb__input" id="fb-dev" maxlength="80" value="${esc(fbGuessDevice())}">`)
+      + fbText("fb-steps", "怎么出现的", "1. 打开…  2. 点…")
+      + fbText("fb-expect", "本来应该怎样", "", 2) + fbText("fb-actual", "实际怎样", "", 2);
+  } else {
+    html = fbText("fb-need", "在什么情况下需要", "比如：在林子里没信号时，想……", 3)
+      + fbText("fb-idea", "建议怎么做", "", 3)
+      + fbField("fb-who", "谁会用（可选）", `<input class="fb__input" id="fb-who" maxlength="80" placeholder="比如：第一次采菌的人">`);
+  }
+  $("#fb-fields").innerHTML = html;
+  $("#fb-note").textContent = FEEDBACK_CONFIG.issuesEnabled ? "GitHub 会在新窗口打开预填好的反馈，要在 GitHub 页面上点提交才算发出；本站不知道你有没有提交。" : "GitHub 反馈暂未开放：可以先复制内容。";
+  $("[data-fb-gh]").disabled = !FEEDBACK_CONFIG.issuesEnabled;
+  const mail = $("[data-fb-mail]"); mail.disabled = !FEEDBACK_CONFIG.contactEmail; mail.textContent = FEEDBACK_CONFIG.contactEmail ? "发邮件" : "邮箱暂未提供";
+  fbUpdate();
+  const d = $("#report"); if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
+  const first = $("#fb-fields .fb__input"); if (first && !(kind === "species" && slug)) first.focus(); else if ($("#fb-what")) $("#fb-what").focus();
+}
+const fbVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+// the report: only public species fields, the page link and what the person typed. Never the journal, location or device data.
+function fbBuild() {
+  const lines = [], v = fbVal;
+  let title;
+  if (fbKind === "species") {
+    const s = fbAll().find(x => x.slug === v("fb-sp")), type = v("fb-type");
+    title = s ? `[资料] ${s.zh} ${s.latin}：${type}` : `[资料] ${type}`;
+    lines.push(`类型：物种资料错误 / ${type}`);
+    if (s) { lines.push(`物种：${s.zh} / ${s.latin}`); lines.push(`页面：${FEEDBACK_CONFIG.siteUrl}#${toxicAll.includes(s) ? "tx" : "sp"}-${s.slug}`); }
+    lines.push(`资料版本：${DATA.built}`, "", `哪里不对：${v("fb-what") || "（请填写）"}`);
+    if (v("fb-ref")) lines.push(`参考来源：${v("fb-ref")}`);
+  } else if (fbKind === "bug") {
+    const pg = FB_PAGES.find(([k]) => k === v("fb-page")) || ["other", "其他"];
+    title = `[Bug] ${pg[1]}：${(v("fb-actual") || v("fb-steps") || "（简述）").split("\n")[0].slice(0, 40)}`;
+    lines.push(`类型：网站问题`, `页面：${pg[1]}${pg[0] !== "other" ? `（${FEEDBACK_CONFIG.siteUrl}#${pg[0]}）` : ""}`, `设备和浏览器：${v("fb-dev") || "（未填）"}`, `网站版本：${DATA.built}`, "",
+      `怎么出现的：${v("fb-steps") || "（请填写）"}`, `本来应该：${v("fb-expect") || "（未填）"}`, `实际：${v("fb-actual") || "（未填）"}`);
+  } else {
+    title = `[建议] ${(v("fb-idea") || v("fb-need") || "（简述）").split("\n")[0].slice(0, 40)}`;
+    lines.push(`类型：功能建议`, "", `在什么情况下需要：${v("fb-need") || "（请填写）"}`, `建议：${v("fb-idea") || "（未填）"}`);
+    if (v("fb-who")) lines.push(`谁会用：${v("fb-who")}`);
+  }
+  lines.push("", "提醒：请勿在这里写精确采集位置、电话、邮箱或健康信息。本站不提供鉴定或食用确认；怀疑误食请立即联系毒物控制中心。");
+  return { title, body: lines.join("\n") };
+}
+// a gentle check before anything leaves the device: things that look like coordinates, phone numbers or e-mail addresses
+const FB_PRIVATE = [[/-?\d{1,3}\.\d{3,}\s*[,，、 ]\s*-?\d{1,3}\.\d{3,}/, "像是精确坐标"], [/\b\d{3}[-. ]?\d{3}[-. ]?\d{4}\b/, "像是电话号码"], [/[\w.+-]+@[\w-]+\.[\w.]+/, "像是邮箱地址"]];
+function fbUpdate() {
+  const { body } = fbBuild();
+  $("#fb-preview").value = body;
+  const hits = FB_PRIVATE.filter(([re]) => re.test(body)).map(([, w]) => w);
+  const warn = $("#fb-warn"); warn.hidden = !hits.length;
+  warn.textContent = hits.length ? `内容里有${hits.join("、")}的文字。GitHub 上所有人都能看到，发送前请删掉。` : "";
+}
+const fbIssueUrl = () => { const { title, body } = fbBuild(); return `https://github.com/${FEEDBACK_CONFIG.githubRepo}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body.slice(0, 6000))}`; };
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-report]");
+  if (r) { e.preventDefault(); fbOpen(r.dataset.report, r.dataset.slug || ""); return; }
+  if (e.target.closest("[data-report-close]") || e.target === $("#report")) { $("#report").close(); return; }
+  if (!e.target.closest("#report")) return;
+  if (e.target.closest("[data-fb-copy]")) {
+    const btn = e.target.closest("[data-fb-copy]"), txt = `${fbBuild().title}\n\n${$("#fb-preview").value}`;
+    const done = () => { copied(btn); $("#fb-note").textContent = "已复制。可以粘贴到 GitHub、邮件或聊天里发给维护者。"; };
+    try { navigator.clipboard.writeText(txt).then(done, () => { $("#fb-preview").select(); $("#fb-note").textContent = "浏览器不让自动复制：内容已选中，请手动复制。"; }); }
+    catch (_) { $("#fb-preview").select(); $("#fb-note").textContent = "浏览器不让自动复制：内容已选中，请手动复制。"; }
+    return;
+  }
+  if (e.target.closest("[data-fb-gh]")) {
+    if (navigator.onLine === false) { $("#fb-note").textContent = "现在离线：联网后再打开 GitHub。可以先复制内容。"; return; }
+    // no "noopener" feature: with it, window.open returns null even when the window opened, so cut the link by hand
+    let w = null; try { w = window.open(fbIssueUrl(), "_blank"); if (w) w.opener = null; } catch (_) {}
+    $("#fb-note").textContent = w ? "已在新窗口打开 GitHub。要在那里登录并点提交才算发出；本站不知道你有没有提交。"
+      : "浏览器没有打开新窗口（可能被拦截了）。可以复制内容，到 github.com/" + FEEDBACK_CONFIG.githubRepo + " 的 Issues 里手动新建。";
+    return;
+  }
+  if (e.target.closest("[data-fb-mail]") && FEEDBACK_CONFIG.contactEmail) {
+    const { title, body } = fbBuild();
+    location.href = `mailto:${FEEDBACK_CONFIG.contactEmail}?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+  }
+});
+$("#report").addEventListener("input", fbUpdate);
+$("#report").addEventListener("change", fbUpdate);
+if (FEEDBACK_CONFIG.contactEmail) $("#about-email").innerHTML = `<a href="mailto:${esc(FEEDBACK_CONFIG.contactEmail)}">${esc(FEEDBACK_CONFIG.contactEmail)}</a>`;
+
 /* ---------- species sheet ---------- */
 let sheetPushed = false, closingFromRoute = false;
 const FEAT = {
@@ -2809,6 +3022,7 @@ function openSpecies(i) {
       <div class="link-row">${s.links ? s.links.map(([t, u], k) => `<a class="btn${k ? "" : " btn--primary"}" href="${u}" target="_blank" rel="noopener">${esc(t)}${icon("out", "icon--sm")}</a>`).join("") : photoLinks(s.latin)}</div>
       ${sourcesHtml(s.sources, !s.sources)}
       ${dataNotes(s)}
+      ${reportRow(s)}
     </section>`;
   $("[data-share]", $("#sheet-body")).onclick = e => share(s.zh + " · 拾菌记", "sp-" + s.slug, e.currentTarget);
   const d = $("#sheet");
@@ -3010,6 +3224,7 @@ function openToxic(slug) {
       <div class="link-row"><a class="btn" href="#emergency">${icon("phone", "icon--sm")}中毒急救</a>${photoLinks(p.latin)}</div>
       ${sourcesHtml(p.sources, !p.sources)}
       ${dataNotes(p).replace(/<li><span class="src-type src-type--community">社区观察<\/span>[^]*?<\/li>/, "")}
+      ${reportRow(p)}
     </section>`;
   $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 拾菌记", "tx-" + p.slug, e.currentTarget);
   const d = $("#sheet");
@@ -4953,9 +5168,9 @@ $("#home-q").addEventListener("input", renderHomeSearch);
 })();
 
 /* ---------- routing: views, #sp- species, #tx- toxic card, #cmp- comparison, #guide- section ---------- */
-const VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency", "explore", "learn"];
+const VIEWS = ["home", "species", "finder", "toxic", "guide", "log", "recipes", "emergency", "explore", "learn", "about"];
 // the three tabs: 识菌 (identify), 拾菌 (explore), 菌记 (journal); the emergency page belongs to none
-const TAB = { home: "id", finder: "id", learn: "id", species: "id", toxic: "id", guide: "id", recipes: "id", explore: "ex", log: "jr", emergency: "" };
+const TAB = { home: "id", finder: "id", learn: "id", species: "id", toxic: "id", guide: "id", recipes: "id", explore: "ex", log: "jr", emergency: "", about: "" };
 function currentHash() { try { return decodeURIComponent(location.hash.slice(1)); } catch (_) { return ""; } }
 function parse(h) {
   if (h.startsWith("sp-") && bySlug[h.slice(3)] !== undefined) return { view: "species", sp: bySlug[h.slice(3)] };
@@ -4963,7 +5178,9 @@ function parse(h) {
   if (h.startsWith("cmp-")) return { view: "toxic", target: h };
   if (h.startsWith("rc-") && DATA.recipes.some(r => "rc-" + r.id === h)) return { view: "recipes", target: h };
   if (h === "guide-log") return { view: "log" };
-  if (h === "data-center") return { view: "log", target: h };  // 设置 › 数据管理与备份
+  if (h === "data-center") return { view: "log", target: h };
+  if (h === "contact") return { view: "about" };  // v54.1 alias
+  if (h.startsWith("about-") && document.getElementById(h)) return { view: "about", target: h };  // 设置 › 数据管理与备份
   if (h.startsWith("explore-") && XP && Object.values(XP).some(a => a.includes(h.slice(8)))) return { view: "explore", xp: h.slice(8) };
   if (h === "guide-theme") return { view: "explore", xp: "field", settings: true };  // 外观 moved into 设置  // older links to the log when it lived in the guide view
   // sections keep their old ids wherever they now live (e.g. #guide-calendar moved to 拾菌): open the view that holds them
@@ -5100,7 +5317,7 @@ document.addEventListener("click", e => {
     e.preventDefault();  // every in-page link, the skip link too: a real hash change would route to #main, i.e. the home view
     if (h === "main") { $("#main").focus({ preventScroll: true }); return; }
     if (a.dataset.tab && (a.closest(".botnav") || a.closest(".topnav"))) { tabTap(a.dataset.tab, h); return; }
-    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-") || h.startsWith("explore-") || h === "data-center") navigate(h);
+    if (VIEWS.includes(h) || h.startsWith("sp-") || h.startsWith("tx-") || h.startsWith("cmp-") || h.startsWith("guide-") || h.startsWith("learn-") || h.startsWith("rc-") || h.startsWith("explore-") || h.startsWith("about-") || h === "data-center" || h === "contact") navigate(h);
     return;
   }
   const j = e.target.closest("[data-jump]");
