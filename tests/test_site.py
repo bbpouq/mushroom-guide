@@ -548,7 +548,7 @@ def run():
             pg.click("#finder-steps [data-v='']"); pg.wait_for_timeout(60)
         check("skipping every finder question says nothing could be narrowed and lists no candidates",
               "都没有答案" in pg.inner_text("#finder-results") and pg.locator("#finder-results .res-item").count() == 0)
-        pg.click("#finder-reset"); pg.wait_for_timeout(60)
+        pg.click("#finder-reset"); pg.click("#finder-reset"); pg.wait_for_timeout(60)  # unknown answers are progress too: two taps
         pg.click('[data-f="hym"][data-v="pores"]'); pg.wait_for_timeout(60)
         pg.click('#finder-steps .wiz__dot[data-step="4"]'); pg.wait_for_timeout(60)
         vol = pg.locator('#finder-steps [data-f="volva"]:not([data-v=""])').first
