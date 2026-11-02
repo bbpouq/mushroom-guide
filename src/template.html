@@ -103,7 +103,7 @@ try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /
   --fs-field-body: 18px; --fs-field-title: 20px; --fs-field-display: 34px;  /* outdoor mode: larger on purpose (sunlight, gloves) */
   --radius-xs: 4px; --radius-sm: 8px; --radius-md: 12px; --radius: 14px; --radius-lg: 22px; --radius-pill: 999px;
   --z-sticky: 10; --z-header: 20; --z-nav: 30; --z-toast: 40;
-  --xnav-on: #3F6149; --xnav-on-text: #FFFFFF; --xnav-dur: 180ms;  /* 拾菌 category selected state */
+  --xnav-dur: 180ms;  /* 拾菌 navigation transitions */
   --dur-fast: 150ms; --dur: 220ms; --ease: cubic-bezier(.2, .7, .2, 1);
   --target: 44px;
   --header-h: 0px;
@@ -112,7 +112,7 @@ try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --xnav-on: #4A7556; --xnav-on-text: #FFFFFF; --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
+    --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
     --color-accent: #D9A24A; --color-on-accent: #17150F;
     --surface-0: #0F1210; --surface-1: #141815; --surface-2: #191D1A; --surface-3: #1E231F;
     --color-background: var(--surface-0); --color-foreground: #ECEAE2; --color-card: var(--surface-1);
@@ -128,7 +128,7 @@ try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /
   }
 }
 :root[data-theme="dark"] {
-  --xnav-on: #4A7556; --xnav-on-text: #FFFFFF; --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
+  --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
   --color-accent: #D9A24A; --color-on-accent: #17150F;
   --surface-0: #0F1210; --surface-1: #141815; --surface-2: #191D1A; --surface-3: #1E231F;
     --color-background: var(--surface-0); --color-foreground: #ECEAE2; --color-card: var(--surface-1);
@@ -519,7 +519,7 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 .step { border: 1px solid var(--color-border); background: var(--color-card); border-radius: var(--radius); padding: var(--space-4); margin: 0 0 var(--space-3); }
 .step legend { padding: 0 var(--space-1); font-family: var(--font-heading); font-weight: var(--fw-700); font-size: var(--fs-h3); }
 .step__hint { font-size: var(--fs-footnote); color: var(--color-muted-foreground); margin: 0 0 var(--space-3); }
-.step__num { color: var(--color-warning-text); margin-right: var(--space-1); font-variant-numeric: tabular-nums; }
+.step__num { color: var(--color-warning-text); margin-right: var(--space-1); font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
 .swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-foreground) 30%, transparent); flex: none; }
 .finder__note { display: flex; gap: var(--space-2); font-size: var(--fs-secondary); background: var(--color-warning-surface); color: var(--color-warning-text); border-radius: var(--radius); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
 .finder__note .icon { margin-top: 2px; }
@@ -543,7 +543,6 @@ textarea.finds__input { min-height: 88px; resize: vertical; line-height: 1.5; }
 @media (max-width: 767px) { .finder__jump { bottom: calc(76px + env(safe-area-inset-bottom)); } }
 .finder__jump.is-away { opacity: 0; pointer-events: none; transform: translate(-50%, 12px); }
 @media (min-width: 1024px) { .finder__jump { display: none !important; } }
-.finder__results { scroll-margin-top: calc(var(--header-h) + 16px); }
 .res-empty { color: var(--color-muted-foreground); background: var(--color-card); border: 1px dashed var(--color-border); border-radius: var(--radius); padding: var(--space-5); text-align: center; }
 
 /* ---------- compare ---------- */
@@ -760,13 +759,19 @@ html.is-ready .view.is-active > .view__head { animation: head-in 520ms var(--spr
 .now__title { font-size: var(--fs-h2); font-weight: var(--fw-700); letter-spacing: -.01em; }
 .now__all { border: 0; background: none; color: var(--color-primary); font-weight: var(--fw-600); font-size: var(--fs-body-sm); min-height: var(--target); padding: 0 var(--space-1); cursor: pointer; }
 .now__sub { margin: 0 0 var(--space-3); font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
-.now__track { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+.now__track { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
   margin: 0 calc(-1 * var(--space-4)); padding: 2px var(--space-4) var(--space-3); scroll-padding-left: var(--space-4); }
 .now__track::-webkit-scrollbar { display: none; }
 .now__item { flex: 0 0 148px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 2px; padding: 0 0 var(--space-3); border: .5px solid var(--glass-edge);
   border-radius: var(--radius-lg); overflow: hidden; background: var(--color-card); box-shadow: var(--shadow-card); text-align: left; color: var(--color-foreground); cursor: pointer;
   transition: transform 260ms var(--spring); }
 .now__item:active { transform: scale(.95); }
+/* card strips: a swipe scrolls the strip only (no page bounce or back gesture at the ends), a long press does not lift the
+   photo or open the link preview, and a card does not shrink while the strip is being dragged */
+.now__track { overscroll-behavior-x: contain; }
+.now__item, .now__item img { -webkit-user-drag: none; -webkit-touch-callout: none; user-select: none; }
+.now__track.is-dragging { scroll-snap-type: none; cursor: grabbing; }
+.now__track.is-dragging .now__item { transform: none; pointer-events: none; }
 .now__img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--color-muted); margin-bottom: var(--space-2); }
 .now__name { padding: 0 var(--space-3); font-weight: var(--fw-700); font-size: var(--fs-body-sm); line-height: 1.3; }
 .now__meta { padding: 0 var(--space-3); font-size: var(--fs-caption); color: var(--color-muted-foreground); }
@@ -967,9 +972,39 @@ html.is-ready .view.is-active > .view__head { animation: head-in 520ms var(--spr
 .res-sum { font-size: var(--fs-secondary); line-height: 1.6; margin-bottom: var(--space-3); color: var(--color-muted-foreground); }
 .res-sum b { color: var(--color-foreground); }
 #finder-results > .callout { margin-bottom: var(--space-3); }
-.res-open { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-bottom: var(--space-4); font-size: var(--fs-secondary); }
-.res-open__item { display: grid; text-align: left; gap: 0; min-height: var(--target); padding: var(--space-1) var(--space-3); border: 1px dashed var(--color-border); border-radius: var(--radius-md); background: transparent; cursor: pointer; font-weight: var(--fw-600); font-size: var(--fs-footnote); line-height: 1.35; }
-.res-open__item span { font-weight: var(--fw-400); font-size: var(--fs-caption); color: var(--color-muted-foreground); }
+/* v54: intro, unknown answers (never "no"), observation summary, evidence pills */
+.wiz__intro { display: grid; gap: var(--space-3); padding: var(--space-5); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); box-shadow: var(--shadow-card); }
+.wiz__intro-title { font-size: var(--fs-h3); font-weight: var(--fw-700); }
+.wiz__intro-list { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); font-size: var(--fs-body-sm); line-height: 1.6; }
+.wiz__intro .btn { justify-self: start; }
+.wiz__unk { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.wiz__unk-btn { display: grid; justify-items: start; gap: 0; min-height: var(--target); padding: var(--space-1) var(--space-3); border: 1px dashed var(--color-border); border-radius: var(--radius-md);
+  background: transparent; color: var(--color-foreground); font: inherit; font-size: var(--fs-footnote); line-height: 1.35; text-align: left; cursor: pointer; }
+.wiz__unk-btn b { font-weight: var(--fw-600); }
+.wiz__unk-btn span { font-size: var(--fs-caption); color: var(--color-muted-foreground); }
+.wiz__unk-btn[aria-pressed="true"] { border-style: solid; border-color: var(--color-foreground); background: var(--color-muted); box-shadow: inset 0 0 0 1px var(--color-foreground); }  /* solid, thicker frame: not colour alone */
+.wiz__unk-btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.wiz__dot.is-unk:not([aria-current]) { background: var(--color-muted); color: var(--color-foreground); }
+.res-obs { margin: 0 0 var(--space-4); padding: var(--space-4); border-radius: var(--radius-lg); background: var(--color-card); border: .5px solid var(--glass-edge); }
+.res-obs__title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); font-size: var(--fs-h3); font-weight: var(--fw-700); margin-bottom: var(--space-2); }
+.res-obs__title span { font-size: var(--fs-footnote); font-weight: var(--fw-400); color: var(--color-muted-foreground); }
+.res-obs__list { list-style: none; margin: 0; padding: 0; }
+.res-obs__row { display: grid; grid-template-columns: 5.5em minmax(0, 1fr) auto; gap: var(--space-2); align-items: center; padding: var(--space-1) 0; border-top: .5px solid var(--color-border); font-size: var(--fs-secondary); }
+.res-obs__k { font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.res-obs__v { display: grid; }
+.res-obs__v small { font-size: var(--fs-caption); color: var(--color-muted-foreground); }
+.res-obs__row.is-open .res-obs__v { color: var(--color-warning-text); font-weight: var(--fw-600); }
+.res-obs__row.is-open .res-obs__v small { font-weight: var(--fw-400); }
+.res-obs__edit { min-height: var(--target); min-width: var(--target); padding: 0 var(--space-2); border: 0; background: none; color: var(--color-primary); font: inherit; font-size: var(--fs-footnote); font-weight: var(--fw-600); cursor: pointer; }
+.res-obs__edit:focus-visible { outline: 3px solid var(--color-ring); outline-offset: -3px; border-radius: var(--radius-sm); }
+.res-item__pills { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: var(--space-1) 0 2px; }
+.res-item__pills .level { margin: 0; }
+.res-pill { display: inline-flex; align-items: center; padding: 0 var(--space-2); min-height: 22px; border-radius: var(--radius-pill); background: var(--color-muted); color: var(--color-foreground); font-size: var(--fs-caption); font-weight: var(--fw-600); font-variant-numeric: tabular-nums; }
+.res-pill--warn { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.res-unlisted { margin: 0 0 var(--space-4); padding: var(--space-3) var(--space-4); border: 1px dashed var(--color-border); border-radius: var(--radius); font-size: var(--fs-secondary); }
+.res-unlisted p { margin: var(--space-1) 0 0; color: var(--color-muted-foreground); }
+.res-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-5); }
+[data-field="on"] .wiz__unk-btn, [data-field="on"] .res-obs__edit { min-height: 52px; }
 .res-item { align-items: flex-start; padding: var(--space-3); }
 .res-item > .icon { margin-top: var(--space-1); }
 .res-item__img { width: 56px; height: 56px; flex: none; object-fit: cover; border-radius: var(--radius-md); background: var(--color-muted); }
@@ -1073,7 +1108,7 @@ img.is-missing { visibility: hidden; }
 .model__canvas:active { cursor: grabbing; }
 .model__parts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .model__desc { margin: var(--space-3) 0 0; min-height: 3.3em; font-size: var(--fs-body-sm); line-height: 1.6; max-width: 72ch; }
-.step__model { margin-left: auto; font-size: var(--fs-footnote); font-weight: var(--fw-500); color: var(--color-primary); background: none; border: 0; padding: 0 var(--space-1); min-height: 32px; cursor: pointer; }
+.step__model { margin-left: auto; font-size: var(--fs-footnote); font-weight: var(--fw-500); color: var(--color-primary); background: none; border: 0; padding: 0 var(--space-1); min-height: var(--target); flex: none; cursor: pointer; }
 @media (min-width: 768px) { .model__canvas { height: 320px; } }
 
 /* accessibility: no translucency when the system asks for it, or where blur is unsupported */
@@ -1179,7 +1214,7 @@ img.brand__mark { width: 36px; height: 36px; border-radius: var(--radius-sm); ba
 .subnav::-webkit-scrollbar { display: none; }
 html[data-tab="id"] .subnav { display: flex; }
 .subnav__link { flex: none; display: inline-flex; align-items: center; min-height: 36px; padding: 0 var(--space-3); border-radius: var(--radius-pill); font-size: var(--fs-secondary); font-weight: var(--fw-500);
-  color: var(--color-muted-foreground); text-decoration: none; position: relative; }
+  color: var(--color-foreground);  /* over content scrolled behind the glass bar the muted grey fell below 4.5:1 */ text-decoration: none; position: relative; }
 .subnav__link::after { content: ""; position: absolute; inset: -4px 0; }
 .subnav__link:hover { color: var(--color-foreground); background: var(--color-muted); }
 .subnav__link[aria-current="page"] { background: var(--color-foreground); color: var(--color-background); font-weight: var(--fw-600); }
@@ -1332,7 +1367,8 @@ html[data-tab="id"] .subnav { display: flex; }
 .btn.is-confirm { background: var(--color-danger-surface); color: var(--color-danger-text); }
 .panel--dc { display: grid; gap: var(--space-3); }
 .finds__q { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
-.finds__q .finds__input { width: auto; flex: 1 1 14em; }
+.finds__q { min-width: 0; max-width: 100%; }
+.finds__q .finds__input { width: auto; flex: 1 1 14em; min-width: 0; max-width: 100%; }  /* a long option must not widen the page at 320px */
 .finds__thumb .finds__left { left: 4px; right: auto; }
 .finds__left .icon { transform: rotate(180deg); }
 
@@ -1352,6 +1388,7 @@ html[data-tab="id"] .subnav { display: flex; }
 
 .intel { display: grid; gap: var(--space-3); }
 .intel__months { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.cmp__tabs, .sheet__nav, .subnav, .intel__months, .jump-row, .intel__wrap, .today__recipes { overscroll-behavior-x: contain; }
 .intel__months .chip-list { flex-wrap: nowrap; }
 
 .res-cmp { margin: var(--space-1) 0 0; padding: 0 var(--space-3) var(--space-2); font-size: var(--fs-footnote); color: var(--color-muted-foreground); display: flex; gap: var(--space-1); align-items: baseline; flex-wrap: wrap; }
@@ -1519,15 +1556,12 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 /* ---------- v50.2: 拾菌 navigation ---------- */
 /* 拾菌 navigation (v53.2): a filled segmented control for the category, a tab strip with a 3px indicator for the sub-page */
 .xnav { display: grid; gap: var(--space-3); margin: 0 0 var(--space-5); }
-.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; padding: 3px; background: var(--color-muted);
-  box-shadow: inset 0 1px 2px rgba(10, 14, 11, .07); }
+/* the category control is the shared .seg (same look as 并排 / 逐个看): raised segment on a neutral track; only width and height differ */
+.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
 @media (min-width: 768px) { .xnav__cats .seg { max-width: 560px; } }
-.xnav__cats .seg__btn { min-height: var(--target); font-size: var(--fs-body-sm); color: var(--color-muted-foreground);
+.xnav__cats .seg__btn { min-height: var(--target); font-size: var(--fs-body-sm);
   transition: background-color var(--xnav-dur) var(--ease), color var(--xnav-dur) var(--ease), box-shadow var(--xnav-dur) var(--ease), transform var(--xnav-dur) var(--ease); }
-.xnav__cats .seg__btn:hover { color: var(--color-foreground); }
 .xnav__cats .seg__btn:active { transform: scale(.97); }
-#explore-nav .seg__btn[aria-pressed="true"] { background: var(--xnav-on); color: var(--xnav-on-text); font-weight: var(--fw-700); box-shadow: 0 1px 2px rgba(10, 14, 11, .18); }
-.xnav__cats .seg__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
 .xnav__subs { display: flex; gap: var(--space-4); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding-inline: var(--space-4);
   border-bottom: .5px solid var(--color-border); padding: 0 var(--space-1); }
 .xnav__subs::-webkit-scrollbar { display: none; }
@@ -1545,6 +1579,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 .xnav__sub[aria-current="page"]::after { opacity: 1; transform: none; }
 .xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: -3px; border-radius: var(--radius-sm); }
 .explore-region[hidden], .xp__pane[hidden] { display: none; }
+.xp__pane { min-height: calc(100vh - var(--header-h)); }  /* a short sub-page never shortens the page, so switching never makes it jump */
 .xp__pane:not([hidden]):not(#xp-safety) { animation: xp-in var(--xnav-dur) var(--ease) both; }  /* opacity only; never on the safety pane */
 @keyframes xp-in { from { opacity: 0; } }
 [data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
@@ -2098,7 +2133,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         <button class="btn btn--primary finder__jump" id="finder-jump" type="button" data-jump="finder-results" hidden></button>
         <div class="finder">
           <div class="finder__steps" id="finder-steps"></div>
-          <div class="finder__results" id="finder-results" aria-live="polite"></div>
+          <div class="finder__results" id="finder-results"></div>
+          <p class="sr-only" id="finder-live" aria-live="polite"></p>
         </div>
         <section class="model" id="model" aria-labelledby="model-title">
           <div class="model__head"><h2 class="model__title" id="model-title">认识一朵菌</h2><p class="model__hint">拖动可以旋转；点部位名称或模型看说明。</p></div>
@@ -2696,6 +2732,16 @@ function lookPairs(slug) {
       }).join("")}</span>
       <span class="look-pair__title">${icon("columns", "icon--sm")}${esc(c.title)}${icon("arrow", "icon--sm")}</span></a>`).join("");
 }
+// the section jumps stick right under the sheet's top bar: measure it for every sheet (species and toxic), and again when it
+// changes size (a long name wrapping, outdoor mode, rotation).
+let sheetBarRO = null;
+function sheetBarH() {
+  const bar = $("#sheet-body .sheet__bar"); if (!bar) return;
+  // visible bottom of the stuck bar = its height + its sticky top (negative; differs between phone and desktop sheets), 1px overlap
+  const set = () => $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight + (parseFloat(getComputedStyle(bar).top) || 0) - 1) + "px");
+  set();
+  if (window.ResizeObserver) { if (sheetBarRO) sheetBarRO.disconnect(); sheetBarRO = new ResizeObserver(set); sheetBarRO.observe(bar); }
+}
 function openSpecies(i) {
   const s = DATA.species[i], g = groupBy[s.group];
   recentAdd("sp:" + s.slug);
@@ -2764,8 +2810,7 @@ function openSpecies(i) {
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0;
-  const bar = $("#sheet-body .sheet__bar");  // the section jumps stick right under the bar
-  $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
+  sheetBarH();
   $("[data-close]", d).focus({ focusVisible: false });
 }
 const EDIBILITY_ZH = { "Edible": "可食", "Inedible": "不宜食用", "Toxic": "有毒", "Deadly Toxic": "剧毒，可致死", "Unknown": "未知", "Not Evaluated": "未评估（本地资料不足）" };
@@ -2962,7 +3007,7 @@ function openToxic(slug) {
   $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 拾菌记", "tx-" + p.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
-  foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0;
+  foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0; sheetBarH();
   $("[data-close]", d).focus({ focusVisible: false });
 }
 const KIND = { edible: "可食种", caution: "谨慎", toxic: "有毒" };
@@ -3042,34 +3087,45 @@ $("#v-toxic").addEventListener("click", e => {
 // Only the five features every species is tagged with (data/tags.py) are asked: other features (cap shape, gill
 // attachment, odour...) have no checked data for every species, so asking them would only look precise.
 const STEPS = [
-  { key: "hym", part: "gills", short: "菌盖下面", q: "菌盖下面是什么样？", hint: "把菌翻过来看。", why: "这是分大类的第一步：有褶菌、牛肝菌、鸡油菌、齿菌各有不同的危险近似种。",
+  { key: "hym", part: "gills", short: "菌盖下面", unk: [["unseen", "看不到", "菌盖下面被泥土、虫蛀或腐烂遮住"]], q: "菌盖下面是什么样？", hint: "把菌翻过来看。", why: "这是分大类的第一步：有褶菌、牛肝菌、鸡油菌、齿菌各有不同的危险近似种。",
     opts: [["gills", "菌褶（刀片状）", "o-gills"], ["pores", "菌孔（海绵状）", "o-pores"], ["spines", "菌刺（下垂的软刺）", "o-spines"], ["ridges", "钝圆的棱脊或近光滑", "o-ridges"], ["other", "其他：蜂窝状、球状、胶质、花椰菜状、橙色硬壳", "o-other"]] },
   { key: "sub", part: "volva", short: "长在哪", q: "长在哪里？", hint: "看它从什么上面长出来；树根附近的地上算“林地地面”。", why: "长在木头上还是地上能排除很多种。但埋在土里的树根和木屑也算木头，看不清就跳过。",
     opts: [["ground", "林地地面", "o-ground"], ["grass", "草地、草坪", "o-grass"], ["wood", "木头上（树干、树桩、倒木、木屑）", "o-wood"], ["under", "埋在土里（块菌）", "o-under"]] },
   { key: "spore", part: "gills", short: "孢子印", q: "孢子印是什么颜色？", hint: "还没做就跳过。做法见“采集与厨房”。", why: "孢子印颜色要做出来才看得准，不能凭菌褶颜色猜。致命的鹅膏是白色孢子印。",
     opts: [["white", "白 / 奶油", null, "#F8F6EE"], ["yellow", "黄 / 浅黄", null, "#E9D27A"], ["pink", "粉", null, "#E7B8B0"], ["brown", "褐 / 锈褐 / 赭", null, "#A8642E"], ["choc", "巧克力 / 紫褐", null, "#4E2E26"], ["olive", "橄榄褐", null, "#77703A"], ["black", "黑", null, "#151515"], ["green", "绿", null, "#7D9C6B"]] },
-  { key: "ring", part: "ring", short: "菌环", q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", why: "菌环会脱落，所以答“没有”时，有菌环的致命种仍会列出。",
+  { key: "ring", part: "ring", short: "菌环", unk: [["unseen", "看不到", "菌柄不完整，或菌太老"]], q: "菌柄上有菌环吗？", hint: "老的菌子菌环可能已经脱落。", why: "菌环会脱落，所以答“没有”时，有菌环的致命种仍会列出。",
     opts: [["yes", "有"], ["no", "没有"]] },
-  { key: "volva", part: "volva", short: "菌托", q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", why: "菌托是鹅膏的重要标志。只看地面以上的部分，很容易漏掉它。",
+  { key: "volva", part: "volva", short: "菌托", unk: [["unseen", "看不到", "柄基没挖出来，或已经断了"]], q: "柄基有袋状菌托吗？", hint: "菌托常埋在土里，必须把整个柄基挖出来看。", why: "菌托是鹅膏的重要标志。只看地面以上的部分，很容易漏掉它。",
     opts: [["yes", "有"], ["no", "没有（已挖出确认）"]] },
 ];
 const F_TIP = { hym: "把菌翻过来看菌盖下面", sub: "看清它从什么上面长出来", spore: "做一张孢子印", ring: "看菌柄上部有没有一圈膜", volva: "把整个柄基连土挖出来，看有没有袋状菌托" };
 const fstate = { hym: null, sub: null, spore: null, ring: null, volva: null };
-let fstep = 0, fskipAll = false;  // fskipAll: the last question was skipped with nothing answered
-const fskip = new Set(); let fhist = [], fNextWhy = "";  // skipped questions; the order actually asked (for 上一题); why this one is next
-// answers stay on this device for 6 hours, so leaving the finder (or the phone killing the page) does not lose them
+// "unknown" is never "no": a question can be unanswered because it was not checked yet, could not be seen, or the answer is unsure.
+// Unknown answers never narrow the list, so they can never rule out a deadly species.
+const UNK = { unchecked: "还没看", unseen: "看不到", unsure: "拿不准" };
+const funk = {};  // question key -> unknown reason (UNK); a key is either in fstate (answered) or here, or neither
+let fstep = 0, fskipAll = false, fstarted = false;  // fskipAll: every question unknown; fstarted: past the short intro
+let fhist = [], fNextWhy = "";  // the order actually asked (for 上一题); why this one is next
+// the observation session stays on this device for 6 hours (leaving the finder, or the phone killing the page, keeps it).
+// Versioned: v2 adds unknown reasons; a v1 session's skipped questions become "还没看". Anything unreadable starts afresh.
+// It never touches the journal (IndexedDB) or any other key.
 const FINDER_KEY = "mushroom-guide:finder";
-function fSave() { try { localStorage.setItem(FINDER_KEY, JSON.stringify({ at: Date.now(), fstate, skip: [...fskip], fstep, fhist })); } catch (_) {} }
+function fSave() { try { localStorage.setItem(FINDER_KEY, JSON.stringify({ v: 2, at: Date.now(), started: fstarted, fstate, unk: funk, fstep, fhist })); } catch (_) {} }
 (() => { try {
   const v = JSON.parse(localStorage.getItem(FINDER_KEY) || "null");
-  if (!v || Date.now() - v.at > 6 * 3600e3) return;
-  Object.keys(fstate).forEach(k => { fstate[k] = typeof v.fstate[k] === "string" ? v.fstate[k] : null; });
-  (v.skip || []).forEach(k => k in fstate && fskip.add(k)); fstep = Math.min(4, Math.max(0, +v.fstep || 0)); fhist = Array.isArray(v.fhist) ? v.fhist.filter(n => n >= 0 && n < 5) : [];
+  if (!v || typeof v !== "object" || Date.now() - (+v.at || 0) > 6 * 3600e3 || !v.fstate) return;
+  const opt = k => new Set(STEPS.find(s => s.key === k).opts.map(o => o[0]));
+  Object.keys(fstate).forEach(k => { fstate[k] = typeof v.fstate[k] === "string" && opt(k).has(v.fstate[k]) ? v.fstate[k] : null; });
+  const unk = v.v === 2 && v.unk && typeof v.unk === "object" ? v.unk : Object.fromEntries((Array.isArray(v.skip) ? v.skip : []).map(k => [k, "unchecked"]));
+  Object.keys(fstate).forEach(k => { if (fstate[k] === null && UNK[unk[k]]) funk[k] = unk[k]; });
+  fstep = Math.min(4, Math.max(0, +v.fstep || 0)); fhist = Array.isArray(v.fhist) ? v.fhist.filter(n => n >= 0 && n < 5) : [];
+  fstarted = !!v.started || STEPS.some(x => fstate[x.key] !== null || funk[x.key]);
 } catch (_) {} })();
+const fOpen = k => fstate[k] === null && !funk[k];  // not answered and not marked unknown: still to ask
 // Next question: if a deadly species with a volva is still possible, look at the stem base first (the amanita check);
 // otherwise the question that, on average, leaves the fewest candidates. Never a probability, only an order of questions.
 function fBestNext() {
-  const left = STEPS.map((x, i) => i).filter(i => fstate[STEPS[i].key] === null && !fskip.has(STEPS[i].key));
+  const left = STEPS.map((x, i) => i).filter(i => fOpen(STEPS[i].key));
   if (!left.length) return null;
   if (!STEPS.some(x => fstate[x.key] !== null)) return { i: left[0], why: "" };
   const tox = toxicAll.filter(p => fmatch(p, true)), ed = DATA.species.filter(s => fmatch(s, false)), all = tox.concat(ed);
@@ -3100,7 +3156,13 @@ function fmatch(s, lenient) {
   if (fstate.volva === "no" && s.volva) { if (!lenient) return null; why.push("菌托常埋在土里"); }
   return why;
 }
-// what matched, what was kept despite a contradicting answer, and what is still unchecked
+// one observation, as the person gave it: an answer, or why it is unknown (never silently "no")
+function fObs(k) {
+  if (fstate[k] !== null) return fLabel(k, fstate[k]).split("（")[0];
+  const r = funk[k], st = STEPS.find(s => s.key === k), u = r === "unseen" && (st.unk || []).find(x => x[0] === "unseen");
+  return r ? `未观察（${UNK[r]}${u ? "：" + u[2] : ""}）` : "未观察（还没回答）";
+}
+// evidence per candidate: 吻合 (no contradiction), 冲突 (kept despite a contradicting answer), 未知 (not observed)
 function fDetail(s) {
   const ok = [], warn = [], open = [];
   STEPS.forEach(({ key, short }) => {
@@ -3115,88 +3177,140 @@ function fDetail(s) {
   return { ok, warn, open };
 }
 function fItem(s, toxic) {
-  const { ok, warn, open } = fDetail(s), deadly = s.level === "致命";
+  const { ok, warn, open } = fDetail(s), deadly = s.level === "致命", unrated = !toxic && s.safety && s.safety.edibility !== "Edible";
+  const risk = toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : `<span class="res-pill">${unrated ? "未评估" : "外形候选"}</span>`;
   return `<li><a class="res-item${toxic ? " res-item--toxic" : ""}" href="#${toxic ? "tx" : "sp"}-${s.slug}">
       ${s.photo ? `<img class="res-item__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
       <span class="res-item__main"><span class="res-item__name">${esc(s.zh)}</span>
-        <span class="res-item__sub">${toxic ? esc(s.level) : esc(groupBy[s.group].short) + " · " + esc(s.season)} · <i>${esc(s.latin)}</i></span>
-        ${ok.length ? `<span class="res-item__ok">${icon("check", "icon--sm")}相符：${ok.map(esc).join("、")}</span>` : ""}
-        ${warn.map(w => `<span class="res-item__why">${icon("alert", "icon--sm")}仍列出：${esc(w)}</span>`).join("")}
-        ${open.length ? `<span class="res-item__open">未确认：${open.map(esc).join("、")}</span>` : ""}
-        ${!toxic && s.safety && s.safety.edibility !== "Edible" ? `<span class="res-item__why">${icon("alert", "icon--sm")}本站未评估它的可食性</span>` : ""}
+        <span class="res-item__sub"><i>${esc(s.latin)}</i>${toxic ? "" : " · " + esc(groupBy[s.group].short) + " · " + esc(s.season)}</span>
+        <span class="res-item__pills">${risk}<span class="res-pill">吻合 ${ok.length}</span>${warn.length ? `<span class="res-pill res-pill--warn">冲突 ${warn.length}</span>` : ""}<span class="res-pill">未知 ${open.length}</span></span>
+        ${ok.length ? `<span class="res-item__ok">吻合：${ok.map(esc).join("、")}</span>` : ""}
+        ${warn.map(w => `<span class="res-item__why">${icon("alert", "icon--sm")}<span>冲突，仍列出：${esc(w)}</span></span>`).join("")}
+        ${open.length ? `<span class="res-item__open">${toxic ? "<b>关键待确认：</b>" : "未知："}${open.map(esc).join("、")}</span>` : ""}
+        ${unrated ? `<span class="res-item__why">${icon("alert", "icon--sm")}<span>本站未评估它的可食性</span></span>` : ""}
         ${!toxic && s.warn ? `<span class="res-item__look">${icon("alert", "icon--sm")}<span>易混：${strip(s.warn)}</span></span>` : ""}
-      </span>
-      ${toxic ? `<span class="level ${deadly ? "level--deadly" : "level--poison"}">${esc(s.level)}</span>` : ""}${icon("arrow")}</a>${fCmp(s.slug)}</li>`;
+      </span>${icon("arrow")}</a>${fCmp(s.slug)}</li>`;
 }
 // side-by-side comparisons this candidate appears in (links sit beside the item: a link may not hold another link)
 function fCmp(slug) {
   const cs = DATA.compare.filter(c => c.cols.some(col => col[2] === slug));
   return cs.length ? `<p class="res-cmp">${icon("search", "icon--sm")}和近似种对比：${cs.map(c => `<a href="#cmp-${c.id}">${esc(c.title)}</a>`).join("、")}</p>` : "";
 }
+// the observations as plain text, for a journal record (状态：未鉴定)
+const fObsText = () => "特征识别记录（不是鉴定）：" + STEPS.map(x => `${x.short}：${fObs(x.key)}`).join("；") + "。候选只供排查，不能确认身份或能不能吃。";
 function renderFinder() {
-  const st = STEPS[fstep], answered = STEPS.filter(x => fstate[x.key] !== null).length;
+  const jump = $("#finder-jump");
+  if (!fstarted && STEPS.every(x => fOpen(x.key))) {  // a short intro, then the questions; never a long text first
+    jump.hidden = true; $("#finder-results").innerHTML = ""; $("#finder-live").textContent = "";
+    $("#finder-steps").innerHTML = `<section class="wiz__intro" aria-labelledby="wiz-intro-t">
+      <h2 class="wiz__intro-title" id="wiz-intro-t">开始观察</h2>
+      <ul class="wiz__intro-list">
+        <li>一次只看一个部位，最多 5 个问题；顺序会按你的回答调整。</li>
+        <li>看不到、拿不准就照实选，<b>不会被当成“没有”</b>，也不会用来排除毒菌。</li>
+        <li>结果只是本站收录的外形候选，<b>不能确认它是哪一种，也不判断能不能吃</b>。</li>
+      </ul>
+      <button type="button" class="btn btn--primary" id="finder-start">开始观察${icon("arrow", "icon--sm")}</button>
+    </section>`;
+    return;
+  }
+  const st = STEPS[fstep], answered = STEPS.filter(x => fstate[x.key] !== null).length, left = STEPS.filter(x => fOpen(x.key)).length;
+  const unkOpts = [["unchecked", "不知道，跳过", "还没看"], ...(st.unk || []), ["unsure", "拿不准", "看了，但不确定"]];
   $("#finder-steps").innerHTML = `
-    <ol class="wiz__progress" aria-label="问题进度">${STEPS.map((x, i) => `<li><button type="button" class="wiz__dot${fstate[x.key] !== null ? " is-done" : ""}" data-step="${i}"${i === fstep ? ' aria-current="step"' : ""}>
-      <span class="wiz__dot-n">${i + 1}</span><span class="wiz__dot-label">${x.short}</span><span class="wiz__dot-val">${fstate[x.key] !== null ? esc(fLabel(x.key, fstate[x.key]).split("（")[0]) : "未答"}</span></button></li>`).join("")}</ol>
-    <fieldset class="step wiz__q"><legend><span class="step__num">${(n => n ? `还剩 ${n} 题` : "最后检查")(STEPS.filter(x => fstate[x.key] === null && !fskip.has(x.key)).length)}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
+    <ol class="wiz__progress" aria-label="观察进度：点一项可以修改">${STEPS.map((x, i) => `<li><button type="button" class="wiz__dot${fstate[x.key] !== null ? " is-done" : funk[x.key] ? " is-unk" : ""}" data-step="${i}"${i === fstep ? ' aria-current="step"' : ""}>
+      <span class="wiz__dot-n">${i + 1}</span><span class="wiz__dot-label">${x.short}</span><span class="wiz__dot-val">${fstate[x.key] !== null ? esc(fLabel(x.key, fstate[x.key]).split("（")[0]) : funk[x.key] ? UNK[funk[x.key]] : "未答"}</span></button></li>`).join("")}</ol>
+    <fieldset class="step wiz__q"><legend><span class="step__num">${left ? `还剩 ${left} 题` : "最后检查"}</span>${esc(st.q)}${st.part ? `<button type="button" class="step__model" data-model-part="${st.part}">在模型上看</button>` : ""}</legend>
       ${fNextWhy ? `<p class="wiz__next">${icon("arrow", "icon--sm")}${esc(fNextWhy)}</p>` : ""}
       <p class="step__hint">${esc(st.hint)}</p>
       <p class="wiz__why"><b>为什么看这个：</b>${esc(st.why)}</p>
       <div class="wiz__opts${st.opts[0][2] ? " wiz__opts--pics" : ""}">${st.opts.map(([v, label, ico, sw]) => `<button type="button" class="wiz__opt" data-f="${st.key}" data-v="${v}" aria-pressed="${fstate[st.key] === v}">
         ${ico ? `<svg class="wiz__ico" aria-hidden="true"><use href="#i-${ico}"/></svg>` : sw ? `<span class="swatch" style="background:${sw}"></span>` : ""}<span>${esc(label)}</span></button>`).join("")}</div>
+      <div class="wiz__unk" role="group" aria-label="没看或看不清">${unkOpts.map(([r, label, sub]) => `<button type="button" class="wiz__unk-btn" data-f="${st.key}" data-v="" data-unk="${r}" aria-pressed="${funk[st.key] === r}"><b>${esc(label)}</b><span>${esc(sub)}</span></button>`).join("")}</div>
       <div class="wiz__nav">
-        <button type="button" class="btn" data-wiz="prev"${fstep === 0 ? " disabled" : ""}>上一题</button>
-        <button type="button" class="btn" data-f="${st.key}" data-v="">不知道，跳过</button>
+        <button type="button" class="btn" data-wiz="prev"${fstep === 0 && !fhist.length ? " disabled" : ""}>上一题</button>
+        ${answered ? `<button type="button" class="btn" data-jump="finder-results">先看候选${left ? "（未完成）" : ""}</button>` : ""}
         <button type="button" class="btn-text" id="finder-reset">重新开始</button>
       </div>
     </fieldset>`;
-  const jump = $("#finder-jump");
   if (!jump.dataset.watch && "IntersectionObserver" in window) {  // hide the pill while the candidates are already in view
     jump.dataset.watch = "1";
     new IntersectionObserver(es => jump.classList.toggle("is-away", es[0].isIntersecting), { rootMargin: "0px 0px -30% 0px" }).observe($("#finder-results"));
   }
-  if (!answered && fskipAll) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">五个问题都跳过了，没有特征可以用来缩小范围。至少看清一项（比如菌盖下面是褶还是孔），再回来回答。<b>认不出来的菌，不要吃。</b></div>`; return; }
-  if (!answered) { jump.hidden = true; $("#finder-results").innerHTML = `<div class="res-empty">回答上面任意一个问题，这里会列出外形相符的候选种。不知道的问题直接跳过。</div>`; return; }
-  const tox = toxicAll.filter(p => fmatch(p, true));
+  if (!answered) {
+    jump.hidden = true; $("#finder-live").textContent = "";
+    $("#finder-results").innerHTML = fskipAll ? `<div class="res-empty">五个问题都没有答案，没有特征可以用来缩小范围。至少看清一项（比如菌盖下面是褶还是孔），再回来回答。<b>认不出来的菌，不要吃。</b></div>`
+      : `<div class="res-empty">回答上面的问题，这里会列出外形相符的候选种。看不到、拿不准就照实选。</div>`;
+    return;
+  }
+  const rank = (a, b) => (b.level === "致命") - (a.level === "致命") || fDetail(a).warn.length - fDetail(b).warn.length;  // risk first, then fewer conflicts; stable otherwise
+  const tox = toxicAll.filter(p => fmatch(p, true)).sort(rank);
   const ed = DATA.species.filter(s => fmatch(s, false));
   const deadly = tox.filter(p => p.level === "致命");
+  const keyGap = ["hym", "volva"].filter(k => fstate[k] === null);
+  const firstGap = STEPS.findIndex(x => x.key === (keyGap.includes("volva") ? "volva" : keyGap[0]));
   const open = STEPS.filter(x => fstate[x.key] === null);
+  const n = toxicAll.length + DATA.species.length;
   jump.hidden = false;
   jump.innerHTML = `查看候选：毒菌 ${tox.length} · 其他 ${ed.length}${icon("chevron", "icon--sm")}`;
+  $("#finder-live").textContent = `按目前的观察：相符的毒菌 ${tox.length} 种，其他候选 ${ed.length} 种。`;
   $("#finder-results").innerHTML = `
-    <div class="res-sum"><b>已回答 ${answered} / ${STEPS.length} 题</b> · 相符的毒菌 ${tox.length} 种、其他种 ${ed.length} 种（本站共收录 ${toxicAll.length + DATA.species.length} 种）。
-      ${answered < 3 ? "回答的特征还少，候选会很多。" : ""}本站不计算匹配分数或概率：“相符”只说明没有矛盾，不说明就是它。</div>
-    <div class="callout callout--info res-safe" role="note">${icon("shield")}<div>这里只列外形相符的候选，<b>不判断能不能吃</b>。本站没收录的菌不会出现在结果里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
-    ${!tox.length && !ed.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>一个候选都没有。</b>这不说明它无毒：本站只收录了 ${DATA.species.length + toxicAll.length} 种，真实世界的菌多得多，很多毒菌不在这里。也可能是某个答案看错了，试着把拿不准的改成“不知道，跳过”。<b>认不出来的菌，不要吃。</b></div></div>` : ""}
+    <div class="callout callout--danger res-safe" role="note">${icon("alert")}<div><b>这只是本站 ${n} 种里的外形候选，不能确认它是哪一种，也不判断能不能吃。</b>没有列出的毒菌不代表安全：本站没收录的菌不会出现在这里，也就排除不了。<a href="#emergency">我可能吃了不确定的菌</a></div></div>
     ${fstate.volva === "yes" ? `<div class="callout callout--danger" role="alert">${icon("skull")}<div><b>你看到了菌托。</b>这是鹅膏的重要标志，西北太平洋最致命的毒菌多是鹅膏。<b>不要吃。</b></div></div>` : ""}
     ${deadly.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>按目前的回答，仍可能是这些致命毒菌：</b>${deadly.map(p => `<a href="#tx-${p.slug}">${esc(p.zh)}</a>`).join("、")}。没有把它们一一排除之前，不要考虑食用。</div></div>` : ""}
-    ${fstate.hym === null || fstate.volva === null ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>信息不足。</b>还没回答${[fstate.hym === null ? "“菌盖下面”" : "", fstate.volva === null ? "“菌托”" : ""].filter(Boolean).join("和")}：不看这些，就排除不了致命的鹅膏类。少回答一题，候选只会更多，不会更确定。补充之前，不要把任何候选当成答案，更不要吃。</div></div>` : ""}
-    ${open.length ? `<div class="res-open"><b>还没确认 ${open.length} 项：</b>${open.map(x => `<button type="button" class="res-open__item" data-step="${STEPS.indexOf(x)}">${esc(x.short)}<span>${esc(F_TIP[x.key])}</span></button>`).join("")}</div>` : ""}
+    ${keyGap.length ? `<div class="callout callout--danger" role="note">${icon("alert")}<div><b>信息不足。</b>${keyGap.map(k => `“${STEPS.find(x => x.key === k).short}”${fObs(k)}`).join("，")}：不看这些，就排除不了致命的鹅膏类。少回答一题，候选只会更多，不会更确定。补充之前，不要把任何候选当成答案。</div></div>` : ""}
+    <section class="res-obs" aria-labelledby="res-obs-t">
+      <h2 class="res-obs__title" id="res-obs-t">你的观察<span>已回答 ${answered} / ${STEPS.length} 项${open.length ? `，还没确认 ${open.length} 项` : ""}</span></h2>
+      <ul class="res-obs__list">${STEPS.map((x, i) => `<li class="res-obs__row${fstate[x.key] === null ? " is-open" : ""}"><span class="res-obs__k">${esc(x.short)}</span><span class="res-obs__v">${esc(fObs(x.key))}${fstate[x.key] === null ? `<small>${esc(F_TIP[x.key])}</small>` : ""}</span><button type="button" class="res-obs__edit" data-step="${i}" aria-label="修改：${esc(x.short)}">修改</button></li>`).join("")}</ul>
+    </section>
+    <p class="res-sum">相符的毒菌 <b>${tox.length}</b> 种、其他候选 <b>${ed.length}</b> 种。排序只看危险程度和冲突多少，<b>不计算匹配分数或概率</b>：“吻合”只说明没有矛盾，不说明就是它。</p>
     <div class="res-block res-block--toxic"><h2 class="res-block__title">${icon("alert")}先排除这些毒菌（${tox.length}）</h2>
       ${tox.length ? `<ul class="res-list">${tox.map(p => fItem(p, true)).join("")}</ul>` : `<p class="muted-note" style="margin-top:0">本站收录的 ${toxicAll.length} 种毒菌里没有相符的。<b>这不代表它没毒</b>：本站只收录了少数毒菌。</p>`}</div>
     <div class="res-block"><h2 class="res-block__title">${icon("mushroom")}外形相符的其他候选（${ed.length}）</h2>
       <p class="muted-note" style="margin-top:0">这些种在本站的食用菌图鉴里（其中有的未评估）。外形相符不等于就是它，更不等于可以吃。</p>
-      ${ed.length ? `<ul class="res-list">${ed.map(s => fItem(s, false)).join("")}</ul>` : `<div class="res-empty">没有相符的。试着把拿不准的问题改成“不知道，跳过”。</div>`}</div>`;
+      ${ed.length ? `<ul class="res-list">${ed.map(s => fItem(s, false)).join("")}</ul>` : `<div class="res-empty">没有相符的。可以把拿不准的回答改成“拿不准”，或检查有没有看错。</div>`}</div>
+    <div class="res-unlisted" role="note"><b>其他菌 / 本站没收录的种类</b><p>无法排除。本站只收录 ${n} 种，真实世界的菌多得多：${!tox.length && !ed.length ? "一个候选都没有，" : ""}没有出现在上面，不代表它不是毒菌，更不代表安全。</p></div>
+    <div class="res-actions">
+      ${firstGap >= 0 ? `<button type="button" class="btn btn--primary" data-step="${firstGap}">补充关键观察：${esc(STEPS[firstGap].short)}</button>` : ""}
+      <a class="btn" href="#log" data-finder-log>${icon("plus", "icon--sm")}记到菌记（未鉴定）</a>
+    </div>`;
 }
 document.addEventListener("click", e => {
   if (!e.target.closest("#v-finder")) return;
+  if (e.target.closest("#finder-start")) {
+    fstarted = true; fSave(); renderFinder();
+    const q = $("#finder-steps .wiz__opt"); if (q) q.focus({ preventScroll: true });
+    return;
+  }
   const rs = e.target.closest("#finder-reset");
   if (rs) {  // two taps when there are answers, so a stray tap never wipes the progress
-    if (STEPS.some(x => fstate[x.key] !== null) && !rs.classList.contains("is-confirm")) { rs.classList.add("is-confirm"); rs.textContent = "再点一次：清空全部答案"; setTimeout(() => { rs.classList.remove("is-confirm"); rs.textContent = "重新开始"; }, 4000); return; }
-    Object.keys(fstate).forEach(k => fstate[k] = null); fskip.clear(); fhist = []; fstep = 0; fskipAll = false; fNextWhy = ""; fSave(); return renderFinder();
+    if (STEPS.some(x => !fOpen(x.key)) && !rs.classList.contains("is-confirm")) { rs.classList.add("is-confirm"); rs.textContent = "再点一次：清空全部答案"; setTimeout(() => { rs.classList.remove("is-confirm"); rs.textContent = "重新开始"; }, 4000); return; }
+    Object.keys(fstate).forEach(k => fstate[k] = null); Object.keys(funk).forEach(k => delete funk[k]); fhist = []; fstep = 0; fskipAll = false; fNextWhy = ""; fSave(); return renderFinder();
   }
   const go = e.target.closest("[data-step]");
-  if (go) { if (+go.dataset.step !== fstep) fhist.push(fstep); fstep = +go.dataset.step; fNextWhy = ""; fSave(); renderFinder(); $(".wiz__q legend").scrollIntoView({ block: "nearest" }); return; }
+  if (go) {
+    const fromResults = !!go.closest("#finder-results");
+    if (+go.dataset.step !== fstep) fhist.push(fstep);
+    fstep = +go.dataset.step; fNextWhy = ""; fSave(); renderFinder();
+    if (fromResults) { scrollToTarget("finder-steps"); const q = $("#finder-steps .wiz__opt"); if (q) q.focus({ preventScroll: true }); }  // back up to the question, ready to answer
+    else $(".wiz__q legend").scrollIntoView({ block: "nearest" });
+    return;
+  }
   if (e.target.closest('[data-wiz="prev"]')) { fstep = fhist.length ? fhist.pop() : Math.max(0, fstep - 1); fNextWhy = ""; fSave(); return renderFinder(); }
   const b = e.target.closest("[data-f]"); if (!b) return;
-  fstate[b.dataset.f] = b.dataset.v || null;
-  if (b.dataset.v) fskip.delete(b.dataset.f); else fskip.add(b.dataset.f);
-  fskipAll = STEPS.every(x => fstate[x.key] === null) && fskip.size === STEPS.length;
+  const k = b.dataset.f;
+  if (b.dataset.v) { fstate[k] = b.dataset.v; delete funk[k]; } else { fstate[k] = null; funk[k] = UNK[b.dataset.unk] ? b.dataset.unk : "unchecked"; }
+  fskipAll = STEPS.every(x => fstate[x.key] === null && funk[x.key]);
   const nx = fBestNext();
   if (nx) { fhist.push(fstep); fstep = nx.i; fNextWhy = nx.why; } else fNextWhy = "";
   fSave();
   renderFinder();
   const first = $("#finder-steps .wiz__opt"); if (first && e.detail === 0) first.focus();  // keyboard users land on the next question
+});
+// 记到菌记: a new record with the observations in the notes, status 未鉴定 (never 候选 or 专家确认)
+document.addEventListener("click", e => {
+  if (!e.target.closest("[data-finder-log]")) return;
+  ensure("log");
+  formReset(); setStatus("none");
+  $("#finds-other").value = "未鉴定的菌"; $("#finds-notes").value = fObsText().slice(0, 600);
 });
 
 /* ---------- recipes ---------- */
@@ -4426,6 +4540,28 @@ $("#intel").addEventListener("click", e => {
   intelMonth = +mb.dataset.intelM; xsSave(); renderIntel();
   const nb = $(`[data-intel-m="${intelMonth}"]`); if (nb) nb.focus();
 });
+/* ---------- card strips: mouse drag scrolls (touch and trackpads scroll natively); a drag is not a click ---------- */
+(() => {
+  let s = null;
+  document.addEventListener("pointerdown", e => {
+    const tr = e.pointerType === "mouse" && e.button === 0 && e.target.closest(".now__track"); if (!tr) return;
+    s = { tr, x: e.clientX, left: tr.scrollLeft, moved: false };
+  });
+  addEventListener("pointermove", e => {
+    if (!s) return;
+    const dx = e.clientX - s.x;
+    if (!s.moved && Math.abs(dx) < 6) return;
+    if (!s.moved) { s.moved = true; s.tr.classList.add("is-dragging"); }
+    s.tr.scrollLeft = s.left - dx;
+  });
+  const end = () => { if (!s) return; const { tr, moved } = s; s = null; if (!moved) return;
+    tr.classList.remove("is-dragging");
+    const block = ev => { ev.preventDefault(); ev.stopPropagation(); };  // only the click that ends this drag, never a later one
+    addEventListener("click", block, { capture: true, once: true });
+    setTimeout(() => removeEventListener("click", block, true), 0); };
+  addEventListener("pointerup", end); addEventListener("pointercancel", end);
+  document.addEventListener("dragstart", e => { if (e.target.closest && e.target.closest(".now__track")) e.preventDefault(); });
+})();
 /* ---------- species view: what to look for this month ---------- */
 function renderNow() {
   const r = calState.region, min = r === "all" ? 300 : 100;
@@ -4899,20 +5035,26 @@ function apply(h, opts = {}) {
   if (r.view === "explore") {  // which 拾菌 pane: the one asked for, the one holding the target, or the last one used
     const pane = r.target && document.getElementById(r.target) && document.getElementById(r.target).closest(".xp__pane");
     xpShow(r.xp || (pane && pane.dataset.xp) || xpCurrent());
-    if (r.xp && !r.target) r.target = "explore-nav";  // a new sub-page starts at the top of the content, not at the old scroll
+    // switching sub-pages never moves the navigation while it is on screen; scrolled down into a sub-page, the next one starts
+    // right under the header; arriving from elsewhere starts at the top of the view (title visible). Same place every time.
+    if (r.xp && !r.target) {
+      const here = $("#v-explore").classList.contains("is-active"), nav = $("#explore-nav").getBoundingClientRect().top;
+      const hdrH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 0;
+      if (!here) r.top = true; else if (nav < hdrH - 1) r.target = "explore-nav"; else r.stay = true;
+    }
   }
   if (r.settings) requestAnimationFrame(() => { const d = $("#settings"); if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); } });
   if (r.target && r.target.startsWith("rc-")) {
     if (!document.getElementById(r.target)) { rcStyle = "全部"; renderRecipes(); }
     const more = $(`#${r.target} details`); if (more) more.open = true;
   }
-  show(r.view, { focus: opts.focus && !r.target, keepScroll: !!r.target, restore: !r.target });
+  show(r.view, { focus: opts.focus && !r.target && !r.stay, keepScroll: !!r.target || r.stay, restore: !r.target && !r.top });
   const nav = r.target === "explore-nav";  // a 拾菌 sub-page: the nav buttons keep focus; a link inside the old pane hands it to the new pane's heading
   if (r.target) requestAnimationFrame(() => {
     scrollToTarget(r.target, { focus: opts.focus && !nav, instant: opts.instant });
     if ((opts.focus && nav || opts.pop) && focusLost() && !document.querySelector("dialog[open]")) focusTarget(viewHeading());
   });
-  else if (opts.pop) requestAnimationFrame(() => { if (focusLost() && !document.querySelector("dialog[open]")) focusTarget(viewHeading()); });
+  else if (opts.pop || (opts.focus && r.stay)) requestAnimationFrame(() => { if (focusLost() && !document.querySelector("dialog[open]")) focusTarget(viewHeading()); });
 }
 function navigate(h) {
   let pushed = false;

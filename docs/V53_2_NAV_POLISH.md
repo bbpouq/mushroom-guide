@@ -1,5 +1,9 @@
 # v53.2 — 拾菌 navigation visual polish
 
+> Update (2026-11, owner's request): the category control now uses the shared `.seg` look of the comparison toggle
+> (并排 / 逐个看): a raised light segment on a neutral track, bold text. The solid forest-green fill and the
+> `--xnav-on` / `--xnav-on-text` tokens described below were removed. The sub-page tab strip is unchanged.
+
 CSS changes plus a few small script changes to the 拾菌 navigation (`#explore-nav`). Routing, content, the information
 architecture, the data model, local storage, the service worker and the safety content are unchanged. `public/sw.js` is
 not touched, not even the `CACHE` version: the service worker loads pages network-first, and all the CSS and script are inline in
