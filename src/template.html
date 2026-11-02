@@ -318,7 +318,7 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .btn--primary { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
 .btn--primary:hover { border-color: var(--color-primary); filter: brightness(1.08); }
 .sources { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }
-.sources h3 { font-family: var(--font-body); font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
+.sources :is(h3, h4) { font-family: var(--font-body); font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
 .sources ol { margin: 0; padding-left: 1.3em; font-size: var(--fs-secondary); }
 .sources li { margin-bottom: var(--space-1); }
 .sources a { color: var(--color-muted-foreground); }
@@ -632,7 +632,7 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
 .hdr, .botnav, .search-bar, .toast, .cal__readout, .cal__table thead th, .sheet__bar { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
 .hdr { background: var(--glass); border-bottom: .5px solid var(--color-border); }
 .botnav { background: var(--glass); border-top: .5px solid var(--color-border); }
-.botnav__link { font-size: var(--fs-caption-sm); font-weight: var(--fw-500); }
+.botnav__link { font-size: var(--fs-caption-sm); font-weight: var(--fw-500); color: var(--color-foreground); }  /* over photos behind the glass bar the muted grey fell below 4.5:1 (320px) */
 .botnav__link:active { background: transparent; opacity: .6; }
 .botnav__link[aria-current="page"] { font-weight: var(--fw-600); }
 .search-bar { background: var(--glass); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); padding-left: var(--space-4); padding-right: var(--space-4); border-bottom: .5px solid var(--color-border); }
@@ -1014,6 +1014,7 @@ img.is-missing { visibility: hidden; }
 .offline__note { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
 .offline__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .offline__size { font-weight: var(--fw-400); opacity: .8; }
+@media (max-width: 360px) { .offline__actions .btn { flex-wrap: wrap; justify-content: center; } .offline__size { flex-basis: 100%; text-align: center; font-size: var(--fs-caption); } }
 .offline__bar { width: 100%; height: 8px; margin-top: var(--space-3); accent-color: var(--color-primary); }
 .offline__ok { color: var(--color-primary); font-weight: var(--fw-600); }
 .offline__no { color: var(--color-warning-text); font-weight: var(--fw-600); }
@@ -1348,14 +1349,9 @@ html[data-tab="id"] .subnav { display: flex; }
 .mine__place .mine__main { flex: 1 1 16em; }
 .mine__years { list-style: none; margin: var(--space-1) 0 0; padding: 0; font-size: var(--fs-footnote); display: grid; gap: 2px; text-wrap: pretty; }
 
-.intel { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+.intel { display: grid; gap: var(--space-3); }
 .intel__months { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
 .intel__months .chip-list { flex-wrap: nowrap; }
-.intel__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
-.intel__item { padding: var(--space-3); border-radius: var(--radius-lg); background: var(--surface-1); display: grid; gap: var(--space-1); content-visibility: auto; contain-intrinsic-size: auto 180px; }
-.intel__line { margin: 0; font-size: var(--fs-footnote); line-height: 1.55; text-wrap: pretty; font-variant-numeric: tabular-nums; }
-.intel__line--warn { display: flex; gap: var(--space-1); align-items: flex-start; color: var(--color-danger-text); }
-.intel__line--warn .icon { flex: none; margin-top: 3px; }
 
 .res-cmp { margin: var(--space-1) 0 0; padding: 0 var(--space-3) var(--space-2); font-size: var(--fs-footnote); color: var(--color-muted-foreground); display: flex; gap: var(--space-1); align-items: baseline; flex-wrap: wrap; }
 
@@ -1522,6 +1518,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .xnav { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); }
 @media (min-width: 768px) { .xnav { max-width: 720px; } }
 .xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.xnav__cats .seg__btn { min-height: var(--target); }  /* primary navigation: a real 44px target, not only the hit area */
 .xnav__subs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: var(--space-1); }
 .xnav__subs[hidden] { display: none; }
 .xnav__sub { min-height: var(--target); padding: 0 var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-muted-foreground);
@@ -1531,6 +1528,58 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
 .explore-region[hidden], .xp__pane[hidden] { display: none; }
 [data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
+/* v53: 拾菌 sub-pages as task pages (compact head, no chapter numbers, one rules source, state first) */
+.view__head--compact { margin-bottom: var(--space-3); }
+.view__head--compact .view__lead { font-size: var(--fs-secondary); }
+.xp-next { display: grid; gap: var(--space-2); margin-top: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.xp-next__btn { display: flex; align-items: center; gap: var(--space-3); min-height: 60px; padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius); background: var(--surface-1);
+  box-shadow: var(--shadow-card); color: var(--color-foreground); text-decoration: none; text-align: left; font: inherit; cursor: pointer; }
+.xp-next__btn > span { flex: 1; display: grid; line-height: 1.35; }
+.xp-next__btn b { font-size: var(--fs-body-sm); font-weight: var(--fw-600); }
+.xp-next__btn small { font-size: var(--fs-caption); color: var(--color-muted-foreground); }
+.xp-next__btn .icon { flex: none; color: var(--color-primary); }
+.xp-next__btn:hover { background: var(--surface-3); }
+.xp-next__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.intel__h { font-size: var(--fs-h3); font-weight: var(--fw-700); margin: var(--space-3) 0 0; }
+.intel .season { margin: 0; }
+.intel__wrap { overflow-x: auto; }
+.intel__table { width: 100%; border-collapse: collapse; font-size: var(--fs-footnote); font-variant-numeric: tabular-nums; }
+.intel__table th, .intel__table td { padding: var(--space-2) var(--space-1); border-bottom: .5px solid var(--color-border); text-align: left; vertical-align: top; }
+.intel__table thead th { font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.intel__table thead th.is-sel { color: var(--color-foreground); box-shadow: inset 0 -2px 0 var(--color-primary); }
+.intel__table tbody th { font-weight: var(--fw-600); width: 34%; }
+.intel__table tbody th a { color: var(--color-foreground); }
+.intel__cell small { display: block; color: var(--color-muted-foreground); font-size: var(--fs-caption); }
+.intel__cell--3 { font-weight: var(--fw-700); }
+.intel__cell--2 { font-weight: var(--fw-600); }
+.intel__cell--0, .intel__cell.is-thin { color: var(--color-muted-foreground); }
+.intel__cell.is-sel { background: var(--color-primary-surface); }
+.intel__caveat { margin-top: var(--space-2); }
+.cal-ctl__mode { justify-self: start; }
+.cal-ctl__mlabel { font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.cal-ctl__mlabel[hidden] { display: none; }
+.cal-ctl__state { margin: 0; font-size: var(--fs-footnote); color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
+.xp-lead { margin: 0 0 var(--space-4); max-width: 72ch; color: var(--color-muted-foreground); font-size: var(--fs-body-sm); }
+.xp-check { list-style: none; padding: 0 !important; display: grid; gap: var(--space-2); }
+.xp-check li { position: relative; padding-left: var(--space-6); margin: 0; }
+.xp-check li::before { content: ""; position: absolute; left: var(--space-1); top: .35em; width: 14px; height: 8px; border: solid var(--color-primary); border-width: 0 0 2px 2px; transform: rotate(-45deg); }
+.xp-flow li b:first-child { color: var(--color-foreground); }
+.xp-fold { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); }
+.xp-fold__sum { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); min-height: var(--target); padding: var(--space-4) var(--space-5); cursor: pointer; list-style: none; }
+.xp-fold__sum::-webkit-details-marker { display: none; }
+.xp-fold__sum .panel__title { margin: 0; }
+.xp-fold__hint { margin-left: auto; font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
+.xp-fold__sum:focus-visible { outline: 3px solid var(--color-ring); outline-offset: -3px; border-radius: var(--radius); }
+.xp-fold__body { padding: 0 var(--space-5) var(--space-5); }
+.xp-sos { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.ost { display: inline-flex; align-items: center; min-height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-pill); font-size: var(--fs-caption); font-weight: var(--fw-600); background: var(--color-muted); color: var(--color-foreground); }
+.ost--ok { background: var(--color-primary-surface); color: var(--color-primary); }
+.ost--part, .ost--fail { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.ost--busy { background: var(--color-primary-surface); color: var(--color-foreground); }
+.offline__dl { margin: var(--space-2) 0 0; font-size: var(--fs-footnote); font-variant-numeric: tabular-nums; }
+.offline__dl:empty { display: none; }
+.xp-switch { margin: var(--space-3) 0; font-size: var(--fs-body-sm); }
+.xp-switch__state { color: var(--color-muted-foreground); }
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
@@ -1679,7 +1728,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
         <section class="home-season" aria-labelledby="home-season-title">
           <div class="now__head"><h2 class="now__title" id="home-season-title"></h2><a class="now__all" href="#explore-intel">季节情报</a></div>
           <div class="chip-list" role="group" aria-label="地区">
-            <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
+            <button type="button" class="chip" data-cal-region="all" aria-pressed="true" title="BC、华盛顿、俄勒冈三地的记录合在一起">整个 PNW</button>
             <button type="button" class="chip" data-cal-region="bc" aria-pressed="false">BC</button>
             <button type="button" class="chip" data-cal-region="wa" aria-pressed="false">华盛顿</button>
             <button type="button" class="chip" data-cal-region="or" aria-pressed="false">俄勒冈</button>
@@ -1712,11 +1761,9 @@ details.is-open > .fold { grid-template-rows: 1fr; }
 
       <!-- ================= EXPLORE (拾菌) ================= -->
       <section class="view" id="v-explore" aria-labelledby="h-explore">
-        <header class="view__head">
-          <!--HERO:explore-->
-          <span class="view__eyebrow">拾菌 · 探索森林</span>
+        <header class="view__head view__head--compact">
           <h1 class="view__title" id="h-explore">拾菌</h1>
-          <p class="view__lead">探索 Pacific Northwest 的森林：这个月常见什么、各地的产季、出门前和林子里该知道的事。季节信息来自历年观察记录，<b>不是实时出菇预测</b>。</p>
+          <p class="view__lead">按历年记录找菌，出发前做好准备。季节信息来自过去的观察，<b>不是实时出菇预测</b>。</p>
         </header>
         <nav class="xnav" id="explore-nav" aria-label="拾菌分类">
           <div class="xnav__cats"><div class="seg" role="group" aria-label="分类">
@@ -1743,91 +1790,109 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           </div>
         </nav>
         <section class="explore-region" id="explore-region" aria-labelledby="explore-region-title">
-          <h2 class="explore-region__title" id="explore-region-title"><span id="explore-month"></span> · 选择地区</h2>
+          <h2 class="explore-region__title" id="explore-region-title">地区</h2>
           <div class="chip-list" role="group" aria-label="地区" id="region-chips">
-            <button type="button" class="chip" data-cal-region="all" aria-pressed="true">三地合计</button>
+            <button type="button" class="chip" data-cal-region="all" aria-pressed="true" title="BC、华盛顿、俄勒冈三地的记录合在一起">整个 PNW</button>
             <button type="button" class="chip" data-cal-region="bc" aria-pressed="false">BC</button>
             <button type="button" class="chip" data-cal-region="wa" aria-pressed="false">华盛顿</button>
             <button type="button" class="chip" data-cal-region="or" aria-pressed="false">俄勒冈</button>
           </div>
         </section>
-        <section class="xp__pane" id="xp-now" data-xp="now" aria-label="本月探索">
+        <section class="xp__pane" id="xp-now" data-xp="now" aria-labelledby="now-title">
           <section class="now" aria-labelledby="now-title">
-            <div class="now__head"><h2 class="now__title" id="now-title"></h2><button type="button" class="now__all" data-now-all>看全部</button></div>
-            <p class="now__sub">这个月记录多的食用菌（与它自己全年最多的月份相比，据历年 iNaturalist 观察）。点开看易混毒菌。</p>
+            <div class="now__head"><h2 class="now__title" id="now-title"></h2></div>
+            <p class="now__sub">这个月记录多的推荐食用菌（与它自己全年最多的月份相比，据历年 iNaturalist 观察）。点开看易混毒菌。</p>
             <div class="now__track" id="now-track"></div>
+            <p class="now__empty finds__empty" id="now-empty" hidden></p>
             <p class="now__data" id="now-data"></p>
           </section>
-          <section class="season" aria-labelledby="season-title">
-            <h2 class="season__title" id="season-title">季节变化</h2>
-            <p class="season__sub" id="season-sub"></p>
-            <div class="season__cols" id="season-cols"></div>
-            <p class="now__data" id="season-data"></p>
-          </section>
+          <div class="xp-next" role="group" aria-label="接着看">
+            <button type="button" class="xp-next__btn" data-now-all><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span><b data-now-all-label>在图鉴里看本月全部种类</b><small>带筛选的完整图鉴</small></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <a class="xp-next__btn" href="#explore-intel"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span><b>下个月会多什么、少什么</b><small>季节情报：月份变化和三地对比</small></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="xp-next__btn" href="#explore-hab"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg><span><b>去哪类林子找</b><small>生境探索：森林类型和常见树种</small></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
         </section>
-        <section class="xp__pane" id="xp-intel" data-xp="intel" aria-label="季节情报" hidden>
+        <section class="xp__pane" id="xp-intel" data-xp="intel" aria-labelledby="intel-title" hidden>
           <section class="intel" id="intel" aria-labelledby="intel-title">
             <h2 class="season__title" id="intel-title">季节情报</h2>
-            <p class="season__sub">选一个月份，看那时候历史记录较多的推荐食用菌：长在哪里、常和什么树在一起、要防哪些毒菌。<b>这是历史观察记录，不是实时出菇预测，也不保证某个地点一定有。</b></p>
+            <p class="season__sub">选一个月份，看历年记录怎么随月份变化，BC、华盛顿、俄勒冈又有什么不同。</p>
             <div class="intel__months"><div class="chip-list" role="group" aria-label="月份" id="intel-months"></div></div>
-            <div class="chip-list" role="group" aria-label="长在哪里" id="intel-sub"></div>
-            <ul class="intel__list" id="intel-body"></ul>
-            <p class="now__data" id="intel-data"></p>
-            <p class="finds__hint">森林类型、伴生树和海拔没有可靠的结构化数据，这里只照抄每种菌页面上写的生境，不按它们筛选。生境只能帮你决定去哪里找，不能证明手上的菌是哪一种。</p>
+            <section class="season" aria-labelledby="season-title">
+              <h3 class="intel__h" id="season-title">月份变化</h3>
+              <p class="season__sub" id="season-sub"></p>
+              <div class="season__cols" id="season-cols"></div>
+              <p class="now__data" id="season-data"></p>
+            </section>
+            <section class="intel__region" aria-labelledby="intel-region-title">
+              <h3 class="intel__h" id="intel-region-title">三地对比</h3>
+              <p class="season__sub" id="intel-region-sub"></p>
+              <div id="intel-body"></div>
+              <p class="now__data" id="intel-data"></p>
+            </section>
+            <div class="intel__caveat"><div class="callout callout--info" role="note"><svg class="icon" aria-hidden="true"><use href="#i-bulb"/></svg><div><b>这些数字说明的是“人们什么时候、在哪里拍照上传”，不是菌有多少。</b>城市和步道附近、周末和热门种类的记录多，偏远地区少；近几年上传的人越来越多；数据按月更新，反映不了今年的天气。记录多不代表这个月就能找到，记录少也不代表没有。</div></div></div>
           </section>
         </section>
-        <section class="xp__pane" id="xp-cal" data-xp="cal" aria-label="产季日历" hidden>
-          <div class="subhead" id="guide-calendar"><h2>产季日历</h2><p>每种菌在 BC、华盛顿、俄勒冈每个月被记录的多少，按高峰月份排列。点菌名看详情。</p></div>
-          <div class="cal-ctl" id="cal-ctl">
+        <section class="xp__pane" id="xp-cal" data-xp="cal" aria-labelledby="cal-title" hidden>
+          <div class="subhead" id="guide-calendar"><h2 id="cal-title">产季日历</h2><p>按种类或月份查历年记录：BC、华盛顿、俄勒冈每个月被记录的多少。点菌名看详情。</p></div>
+          <div class="cal-ctl" id="cal-ctl" role="search" aria-label="日历筛选">
+            <div class="cal-ctl__mode"><div class="seg" role="group" aria-label="显示方式">
+              <button type="button" class="seg__btn" data-cal-mode="cal" aria-pressed="true">全年日历</button>
+              <button type="button" class="seg__btn" data-cal-mode="month" aria-pressed="false">按月份看</button>
+            </div></div>
             <div class="cal-ctl__row">
-              <div class="seg" role="group" aria-label="显示方式">
-                <button type="button" class="seg__btn" data-cal-mode="cal" aria-pressed="true">全年日历</button>
-                <button type="button" class="seg__btn" data-cal-mode="month" aria-pressed="false">按月份看</button>
-              </div>
-              <label class="sr-only" for="cal-month">月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
-              <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌"></div></div>
+              <div class="cal-ctl__q"><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="cal-q">在日历里找一种菌</label><input id="cal-q" type="search" autocomplete="off" placeholder="找一种菌：中文、英文或拉丁名"></div></div>
+              <label class="cal-ctl__mlabel" for="cal-month" id="cal-month-label" hidden>月份</label><select class="cal-ctl__month" id="cal-month" hidden></select>
             </div>
+            <p class="cal-ctl__state" id="cal-state" aria-live="polite"></p>
           </div>
           <div class="cal" id="cal"></div>
         </section>
-        <section class="xp__pane" id="xp-hab" data-xp="hab" aria-label="生境探索" hidden>
-          <div class="panel-grid">
-            <section class="panel panel--wide">
-              <h2 class="panel__title" id="guide-habitats"><span class="panel__num">04</span>生境探索：去哪里找</h2>
-              <p>我们采的只是真菌的“果实”。有的菌靠腐烂有机物生活，有的寄生在活树上，还有的与特定树种的根共生（菌根菌），所以可能长在离树一段距离的地方。附近出现其他（哪怕不能吃的）菌，往往是好兆头。</p>
-              <!--HABITATS-->
-              <p class="muted-note">这里只列本站核对过资料、可以推荐的种类；未评估和高风险的种类不列出。生境和伴生树只能帮你决定去哪里找、缩小范围，<b>不能证明手上的菌是哪一种</b>：毒菌常和食用菌长在同一片林子、同一种树下。</p>
-            </section>
-          </div>
+        <section class="xp__pane" id="xp-hab" data-xp="hab" aria-labelledby="guide-habitats" hidden>
+          <div class="subhead"><h2 id="guide-habitats">生境探索：去哪类林子找</h2><p>点开一类生境，看常见树种和本站推荐的种类。</p></div>
+          <p class="xp-lead">我们采的只是真菌的“果实”。有的菌靠腐烂的木头和落叶生活，有的长在活树上，还有的与树根共生（菌根菌），常长在相应树木附近，但不一定紧挨树干。看到其他菌，只说明最近的湿度和温度可能适合出菇，不代表某一种菌就在附近。</p>
+          <!--HABITATS-->
+          <p class="muted-note">这里只列本站核对过资料、可以推荐的种类；未评估和高风险的种类不列出。生境和伴生树只能帮你决定去哪里找、缩小范围，<b>不能证明手上的菌是哪一种</b>：毒菌常和食用菌长在同一片林子、同一种树下。</p>
         </section>
-        <section class="xp__pane" id="xp-rules" data-xp="rules" aria-label="采集守则" hidden>
+        <section class="xp__pane" id="xp-rules" data-xp="rules" aria-labelledby="rules-title" hidden>
           <div class="panel-grid" id="guide-field">
-            <section class="panel panel--wide">
-              <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
+            <section class="panel panel--wide" aria-labelledby="rules-title">
+              <h2 class="panel__title" id="rules-title">四条守则</h2>
               <ol class="rules">
                 <li><div><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请有经验的人当面看实物；图鉴和本应用都不能单独作为食用依据，当面确认能减少认错，但不能保证安全。</div></li>
-                <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
+                <li><div><b>先查当地规定，不确定就只看不采。</b>能不能采、采多少、要不要许可证，由具体地点的管理方决定（国家公园、省立或州立公园、国家森林、原住民土地、私人土地各不相同），而且可能每年调整。出发前查他们最新的规定；保护区和禁止采集的地方只看、只拍、不采。本站不判断任何地点能不能采。</div></li>
                 <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
                 <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
               </ol>
             </section>
           </div>
         </section>
-        <section class="xp__pane" id="xp-prep" data-xp="prep" aria-label="装备与准备" hidden>
+        <section class="xp__pane" id="xp-prep" data-xp="prep" aria-labelledby="prep-title" hidden>
           <div class="panel-grid">
-            <section class="panel">
-              <h2 class="panel__title"><span class="panel__num">02</span>带什么</h2>
+            <section class="panel panel--wide" aria-labelledby="prep-title">
+              <h2 class="panel__title" id="prep-title">出发前清单</h2>
+              <ul class="xp-check">
+                <li><b>离线地图</b>：林子里手机常没信号。提前下载路线所在区域的离线地图，带纸质地图和指南针更稳妥；本站的照片可以在<a href="#explore-offline">离线下载</a>里存好。</li>
+                <li><b>电量</b>：手机充满电，带一个充电宝；拍照和定位很费电。</li>
+                <li><b>照明</b>：带头灯，天黑得比想象中快，林下更暗。</li>
+                <li><b>天气</b>：出门前看当天和当晚的天气预报，带雨具和保暖衣物。</li>
+                <li><b>行程告知</b>：把去哪、走哪条路、几点回来告诉家人或朋友，约好过时没回就报警。</li>
+                <li><b>求救</b>：带哨子；有卫星求救功能的手机或卫星信使更好。</li>
+              </ul>
+              <p class="muted-note">资料来源：<a href="https://www.adventuresmart.ca/" target="_blank" rel="noopener">AdventureSmart</a>（加拿大户外安全项目：行程计划、必备物品）。迷路或受伤怎么办，见<a href="#explore-safety">户外安全</a>。</p>
+            </section>
+            <section class="panel" aria-labelledby="gear-title">
+              <h2 class="panel__title" id="gear-title">采菌用具</h2>
               <ul>
                 <li><b>宽底轻篮子</b>最好。塑料袋会挤坏菌子、让它们“出汗”。</li>
                 <li><b>采菌刀</b>：折叠刀，一侧带锯齿可刮泥，尾端带小刷子。普通小刀也行。</li>
                 <li><b>长手杖</b>：拨开落叶、标记位置、上下坡。</li>
-                <li>防水靴、雨衣、零食和水，还有<b>地图和指南针</b>，林中手机常没信号。迷路了怎么办，见下面的“迷路或受伤”。</li>
+                <li><b>防水靴</b>、零食和水。</li>
               </ul>
             </section>
-            <section class="panel">
-              <h2 class="panel__title"><span class="panel__num">03</span>什么时候找</h2>
+            <section class="panel" aria-labelledby="when-title">
+              <h2 class="panel__title" id="when-title">什么时候找</h2>
               <ul>
-                <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>，可以用本站的<a href="#log">采集记录</a>。</li>
+                <li>季节只是参考，气候变化正在改变出菇时间。建议<b>记一本采菌日志</b>，可以用本站的<a href="#log">菌记</a>。</li>
                 <li>春夏：连续几天透雨后转暖的温和天气最好；秋冬：温和潮湿的日子。久旱和暴雨都不利。</li>
                 <li>霜雪会让多数菌停止出菇，但管形鸡油菌、野生金针菇等耐寒。</li>
                 <li><b>早起</b>：菌子没被动物和行人破坏，你也是第一个到场的人。</li>
@@ -1835,67 +1900,77 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             </section>
           </div>
         </section>
-        <section class="xp__pane" id="xp-pick" data-xp="pick" aria-label="采集与观察" hidden>
+        <section class="xp__pane" id="xp-pick" data-xp="pick" aria-labelledby="pick-title" hidden>
           <div class="panel-grid">
-            <section class="panel">
-              <h2 class="panel__title"><span class="panel__num">05</span>采摘</h2>
-              <ul>
-                <li><b>先鉴定。</b>检查整朵菌，记下生境、颜色、气味、大小、形状。同一种菌在不同生长阶段外观会变。</li>
-                <li><b>完整取下。</b>轻轻拔、或用刀尖撬出，保留柄基便于鉴定。不要硬扯，以免伤到菌丝。</li>
-                <li><b>只要状态最好的。</b>过熟、软烂、虫蛀多的留在原地散播孢子。</li>
-                <li><b>边采边清理。</b>刷掉杂物、切掉脏柄基，不同种类分开放。</li>
-              </ul>
-            </section>
-            <section class="panel panel--wide">
-              <h2 class="panel__title"><span class="panel__num">01</span>四条守则</h2>
-              <ol class="rules">
-                <li><div><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请有经验的人当面看实物；图鉴和本应用都不能单独作为食用依据，当面确认能减少认错，但不能保证安全。</div></li>
-                <li><div><b>不在保护区采集，并先查许可。</b>国家公园等地可能禁止采菌；美国国家森林常对松茸等单独管理，规则因林区而异。</div></li>
-                <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
-                <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
+            <section class="panel panel--wide" aria-labelledby="pick-title">
+              <h2 class="panel__title" id="pick-title">观察 → 拍照 → 记录 → 依法采集</h2>
+              <ol class="steps xp-flow">
+                <li><b>观察</b>：先别动手。看整朵菌：菌盖、菌褶（或菌孔、菌刺）、菌柄、柄基，还有长在哪里、附近有什么树、有没有特别的气味。同一种菌在不同生长阶段外观会变。</li>
+                <li><b>拍照</b>：在原地拍，每个部位一张：菌盖顶面、菌褶、菌柄和柄基（有没有菌托）、生境全景；放个参照物看大小。</li>
+                <li><b>记录</b>：在<a href="#log">菌记</a>里记下日期、生境和照片，可以只记大概位置。记录只存在这台设备上。</li>
+                <li><b>依法采集（若允许）</b>：先确认这个地点允许采集（见<a href="#explore-rules">采集守则</a>）；不允许或不确定，就只看、只拍、只记。允许时：轻轻拔或用刀尖撬出，<b>保留完整柄基</b>便于鉴定；过熟、软烂、虫蛀多的留在原地散播孢子；不同种类分开放，只取所需。</li>
               </ol>
             </section>
+            <details class="xp-fold" id="spore-print">
+              <summary class="xp-fold__sum"><h2 class="panel__title" id="spore-title">做孢子印</h2><span class="xp-fold__hint">需要几小时，回家再做</span></summary>
+              <div class="xp-fold__body">
+                <ol class="steps">
+                  <li>用<b>新鲜</b>菌子。切下菌盖，菌褶朝下放在纸上；拿不准颜色深浅就一半白纸、一半黑纸。</li>
+                  <li>在菌盖顶滴一滴水，用玻璃碗扣住。</li>
+                  <li>放几小时或过夜，轻轻拿开碗和菌盖即可看到。</li>
+                  <li>在自然光下看：白至奶油、粉至红、赭至黏土色、锈褐、紫褐、黑；大青褶伞是<b>绿色</b>。</li>
+                </ol>
+                <p class="muted-note">同属内孢子颜色差别很小：鹅膏属白色，蘑菇属巧克力色，丝盖伞属、丝膜菌属和盔孢伞属褐色，粉褶菌属粉色。孢子印颜色对得上，只能排除一部分毒菌，不能证明安全。</p>
+              </div>
+            </details>
           </div>
         </section>
-        <section class="xp__pane" id="xp-safety" data-xp="safety" aria-label="户外安全" hidden>
+        <section class="xp__pane" id="xp-safety" data-xp="safety" aria-labelledby="xsafe-title" hidden>
+          <h2 class="sr-only" id="xsafe-title">户外安全</h2>
+          <div class="xp-sos" role="group" aria-label="求救">
+            <a class="call-btn" href="tel:911"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg><span><span class="call-btn__label">迷路、受伤、遇险：打急救</span><span class="call-btn__num">911</span></span></a>
+            <a class="call-btn call-btn--secondary" href="#emergency"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-alert"/></svg><span><span class="call-btn__label">可能吃了不确定的菌</span><span class="call-btn__num">中毒急救</span></span></a>
+          </div>
           <div class="panel-grid">
             <section class="panel panel--danger" aria-labelledby="lost-title">
-              <h2 class="panel__title" id="lost-title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>迷路或受伤：停下来（S.T.O.P.）</h2>
+              <h3 class="panel__title" id="lost-title"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>迷路或受伤：停下来（S.T.O.P.）</h3>
               <ul>
-                <li><b>出门前</b>把去哪、走哪条路、几点回来告诉家人或朋友，过时没回就报警。带上头灯、保暖衣物、哨子；手机充满电，离线地图提前下好。</li>
                 <li><b>停（Stop）</b>：一发现找不到路就停下，<b>不要继续乱走</b>，更不要为了找路钻进陌生地形。离原路越远，搜救范围越大。</li>
                 <li><b>想（Think）与看（Observe）</b>：冷静回想来路，看看周围有什么危险；用手机或 GPS 看自己的位置。</li>
                 <li><b>计划（Plan）</b>：有信号就打 <a href="tel:911">911</a>（有卫星求救功能的手机或卫星信使也能用）；<b>原地等待</b>，保暖、喝水、找避风处；用哨子或闪光求救，<b>每组三声</b>。</li>
+                <li><b>出门前</b>把去哪、走哪条路、几点回来告诉家人或朋友，过时没回就报警。带上头灯、保暖衣物、哨子；手机充满电，离线地图提前下好（见<a href="#explore-prep">出发前清单</a>）。</li>
               </ul>
-              <div class="sources"><h3>资料来源</h3><ol>
+              <div class="sources"><h4>资料来源</h4><ol>
                 <li><a href="https://www.bcsara.com/public-safety/" target="_blank" rel="noopener">BC Search and Rescue Association：Public Safety（S.T.O.P.、原地等待）</a></li>
                 <li><a href="https://www.adventuresmart.ca/" target="_blank" rel="noopener">AdventureSmart（加拿大户外安全项目：行程计划、必备物品）</a></li>
               </ol></div>
             </section>
           </div>
         </section>
-        <section class="xp__pane" id="xp-offline" data-xp="offline" aria-label="离线下载" hidden>
-          <div class="subhead" id="guide-offline"><h2>离线使用</h2><p>林子里常常没信号。装到手机桌面之后，没网也能打开整本手册；出门前把照片也下载好。</p></div>
+        <section class="xp__pane" id="xp-offline" data-xp="offline" aria-labelledby="offline-title" hidden>
+          <div class="subhead" id="guide-offline"><h2 id="offline-title">离线下载：这台设备上存了什么</h2><p id="off-summary" aria-live="polite">检查中…</p></div>
           <div class="panel-grid">
-            <section class="panel panel--wide offline" aria-labelledby="offline-title">
-              <h2 class="panel__title" id="offline-title">这台设备上存了什么</h2>
+            <section class="panel panel--wide offline" aria-label="离线状态">
               <ul class="offline__list">
                 <li><span class="offline__k">网络</span><span class="offline__v" id="off-net">检查中…</span></li>
-                <li><span class="offline__k">文字资料</span><span class="offline__v"><span class="offline-status" id="offline-status">检查中…</span><span class="offline__note">全部物种、对比、急救、指南、食谱和你的记录</span></span></li>
-                <li><span class="offline__k">示例照片</span><span class="offline__v" id="off-photos">检查中…</span></li>
+                <li><span class="offline__k">文字资料</span><span class="offline__v"><span class="offline-status" id="offline-status">检查中…</span><span class="offline__note">全部物种、对比、急救、指南和食谱</span></span></li>
+                <li><span class="offline__k">缩略图</span><span class="offline__v" id="off-photos">检查中…</span></li>
+                <li><span class="offline__k">高清图</span><span class="offline__v" id="off-hd">检查中…</span></li>
                 <li><span class="offline__k">3D 模型</span><span class="offline__v" id="off-model">检查中…</span></li>
+                <li><span class="offline__k">个人菌记</span><span class="offline__v" id="off-journal">检查中…</span></li>
                 <li><span class="offline__k">外部链接</span><span class="offline__v"><span>iNaturalist 和资料来源网页<b>需要联网</b>；离线时这些链接后面会标“需联网”。</span></span></li>
               </ul>
               <div class="offline__actions" id="off-actions">
-                <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>出门前下载全部照片<span class="offline__size" data-size="small"></span></button>
-                <button class="btn" type="button" data-dl="all">连高清版一起下载<span class="offline__size" data-size="all"></span></button>
-                <button class="btn-text" type="button" data-dl-stop hidden>停止</button>
+                <button class="btn btn--primary" type="button" data-dl="small"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>下载缩略图<span class="offline__size" data-size="small"></span></button>
+                <button class="btn" type="button" data-dl="all">连高清图下载<span class="offline__size" data-size="all"></span></button>
+                <button class="btn-text" type="button" data-dl-stop hidden>停止下载</button>
               </div>
-              <progress class="offline__bar" id="off-bar" max="1" value="0" hidden></progress>
+              <progress class="offline__bar" id="off-bar" max="1" value="0" hidden aria-label="下载进度"></progress>
+              <p class="offline__dl" id="off-dl" role="status"></p>
               <p class="muted-note" id="off-msg">照片平时只在看到时才存下来。进山前在有网的地方点一下上面的按钮，没信号时所有照片也能看。照片只存在这台设备上；手机空间紧张时浏览器可能会清掉，出门前再看一眼这里。</p>
             </section>
-            <section class="panel">
-              <h2 class="panel__title">装到手机桌面</h2>
+            <section class="panel" aria-labelledby="install-title">
+              <h2 class="panel__title" id="install-title">装到手机桌面</h2>
               <ul>
                 <li><b>iPhone（Safari）</b>：点底部的分享按钮，选“添加到主屏幕”。</li>
                 <li><b>Android（Chrome）</b>：点右上角菜单，选“安装应用”或“添加到主屏幕”。</li>
@@ -1904,13 +1979,14 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             </section>
           </div>
         </section>
-        <section class="xp__pane" id="xp-field" data-xp="field" aria-label="户外模式" hidden>
+        <section class="xp__pane" id="xp-field" data-xp="field" aria-labelledby="xfield-title" hidden>
           <div class="panel-grid">
-            <section class="panel">
-              <h2 class="panel__title">户外模式</h2>
-              <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。更省电。</p>
-              <button class="btn btn--primary" type="button" data-field-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span data-field-label>打开户外模式</span></button>
-              <p class="muted-note" style="margin-top: var(--space-3)">也可以随时点页面顶部的太阳图标切换。只在这台设备上记住。</p>
+            <section class="panel" aria-labelledby="xfield-title">
+              <h2 class="panel__title" id="xfield-title">户外模式</h2>
+              <p>在林子里单手拿手机时用：字和按钮更大，颜色对比更强，关闭动画、3D 模型和装饰性的头图，首页只留搜索、识别和安全入口。</p>
+              <div class="xp-switch"><label class="toggle"><input type="checkbox" role="switch" id="xp-field-switch" data-field-switch><span class="toggle__track" aria-hidden="true"></span><span><b>户外模式</b> <span class="xp-switch__state" data-field-state>已关闭</span></span></label></div>
+              <p class="muted-note">和深浅色主题互相独立：深色加户外模式也可以；外观（跟随系统、浅色、深色）在设置里改。只在这台设备上记住；页面顶部的太阳按钮也能切换。</p>
+              <div class="link-row"><button type="button" class="btn" data-open-settings><svg class="icon icon--sm" aria-hidden="true"><use href="#i-settings"/></svg>外观设置</button></div>
             </section>
           </div>
         </section>
@@ -4267,41 +4343,58 @@ document.addEventListener("click", e => {
   else if (g) navigate("explore-" + g.dataset.xpGo);
 });
 xpShow(xpCurrent());
-/* ---------- 季节情报: by region and month, recommended species with many past records, their habitat and look-alikes ---------- */
-let intelMonth = MONTH, intelSub = "";
+/* ---------- 季节情报: how past records change from month to month, and how BC / WA / OR differ (not a species card list) ---------- */
+const XS_KEY = "mushroom-guide:xpstate";  // 拾菌 view state for this tab: intel month, calendar mode / month / search
+const xs = (() => { const d = { intelMonth: MONTH, mode: "cal", month: MONTH, q: "" };
+  try { const v = JSON.parse(sessionStorage.getItem(XS_KEY) || "{}");
+    if (v.intelMonth >= 1 && v.intelMonth <= 12) d.intelMonth = v.intelMonth; if (v.month >= 1 && v.month <= 12) d.month = v.month;
+    if (v.mode === "cal" || v.mode === "month") d.mode = v.mode; if (typeof v.q === "string") d.q = v.q.slice(0, 60); } catch (_) {}
+  return d; })();
+function xsSave() { try { sessionStorage.setItem(XS_KEY, JSON.stringify({ intelMonth: intelMonth, mode: calState.mode, month: calState.month, q: calState.q })); } catch (_) {} }
+let intelMonth = xs.intelMonth;
+const REG3 = ["bc", "wa", "or"];
 function renderIntel() {
   if (!$("#intel-body")) return;
-  const r = calState.region, min = r === "all" ? 300 : 100, m = intelMonth;
-  $("#intel-months").innerHTML = Array.from({ length: 12 }, (_, i) => `<button type="button" class="chip" data-intel-m="${i + 1}" aria-pressed="${i + 1 === m}">${i + 1} 月</button>`).join("");
-  $("#intel-sub").innerHTML = [["", "全部"], ["ground", "林地地面"], ["wood", "木头上"], ["grass", "草地"]].map(([k, v]) => `<button type="button" class="chip" data-intel-sub="${k}" aria-pressed="${k === intelSub}">${v}</button>`).join("");
-  const pool = DATA.species.filter(s => recommendable(s) && (!intelSub || s.sub.includes(intelSub))).map(s => [s, obsCounts(s, r)]).filter(([, c]) => c && c.reduce((a, b) => a + b, 0) >= min);
-  const hits = pool.map(([s, c]) => [s, c, Math.max(...c)]).filter(([, c, mx]) => calLevel(c[m - 1], mx) >= 2).sort((a, b) => b[1][m - 1] / b[2] - a[1][m - 1] / a[2]).slice(0, 8);
-  $("#intel-body").innerHTML = hits.length ? hits.map(([s, c, mx]) => `<li class="intel__item">
-      <a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)}</span></span></a>
-      <p class="intel__line"><b>${calLevel(c[m - 1], mx) === 3 ? "历史高峰月" : "记录较多"}</b> · ${REGION[r]}这个月 ${c[m - 1].toLocaleString("en")} 条，全年 ${c.reduce((a, b) => a + b, 0).toLocaleString("en")} 条</p>
-      <p class="intel__line"><b>生境</b> ${s.hab}</p>
-      ${s.warn ? `<p class="intel__line intel__line--warn">${icon("alert", "icon--sm")}<span><b>易混毒菌</b> ${s.warn}</span></p>` : ""}
-    </li>`).join("")
-    : `<li class="finds__empty">${m} 月在${REGION[r]}没有记录较多的推荐种类。这不代表林子里没有菌：可能只是历史记录少、样本不足，或者那时候不是它们的季节。</li>`;
-  $("#intel-data").textContent = obsSummary(r, pool.map(([s]) => s), min);
+  const r = calState.region, m = intelMonth;
+  $("#intel-months").innerHTML = Array.from({ length: 12 }, (_, i) => `<button type="button" class="chip" data-intel-m="${i + 1}" aria-pressed="${i + 1 === m}">${i + 1} 月${i + 1 === MONTH ? "<span class=\"sr-only\">（本月）</span>" : ""}</button>`).join("");
+  renderSeason();
+  requestAnimationFrame(() => {  // keep the chosen month in view in the chip strip (horizontal only: the page must not jump)
+    const box = $("#intel-months").parentElement, chip = $(`[data-intel-m="${m}"]`);
+    if (box && chip && box.clientWidth) box.scrollLeft = Math.max(0, chip.offsetLeft - box.offsetLeft - (box.clientWidth - chip.offsetWidth) / 2);
+  });
+  // 三地对比: recommended species with many records (all three regions together) that are common in month m in at least one region
+  const pool = DATA.species.filter(s => recommendable(s) && s.obs && s.obs.counts.reduce((a, b) => a + b, 0) >= 300);
+  const lvOf = (s, g) => { const c = obsCounts(s, g); if (!c) return null; const tot = c.reduce((a, b) => a + b, 0); return tot < 30 ? { thin: true, n: c[m - 1], tot } : { lv: calLevel(c[m - 1], Math.max(...c)), n: c[m - 1], tot }; };
+  const hits = pool.map(s => [s, REG3.map(g => lvOf(s, g)), obsCounts(s, "all")]).filter(([, cells]) => cells.some(x => x && !x.thin && x.lv >= 2))
+    .sort((a, b) => b[2][m - 1] / Math.max(...b[2]) - a[2][m - 1] / Math.max(...a[2])).slice(0, 10);
+  $("#intel-region-sub").textContent = `${m} 月，每种菌在三地各自和它在当地全年最多的月份相比。只列本站推荐、三地加起来记录不少于 300 条的种类；某地少于 30 条记为样本不足。${r !== "all" ? `高亮的是你选的${REGION[r]}。` : ""}`;
+  const cell = x => !x ? `<td class="intel__cell is-thin">无记录</td>` : x.thin ? `<td class="intel__cell is-thin">样本不足<small>${x.tot} 条</small></td>`
+    : `<td class="intel__cell intel__cell--${x.lv}">${CAL_LEVELS[x.lv]}<small>${x.n.toLocaleString("en")} 条</small></td>`;
+  $("#intel-body").innerHTML = hits.length ? `<div class="intel__wrap"><table class="intel__table"><caption class="sr-only">${m} 月三地对比</caption>
+    <thead><tr><th scope="col">种类</th>${REG3.map(g => `<th scope="col"${g === r ? ' class="is-sel"' : ""}>${REGION[g]}</th>`).join("")}</tr></thead>
+    <tbody>${hits.map(([s, cells]) => `<tr><th scope="row"><a href="#sp-${s.slug}">${esc(s.zh)}</a></th>${cells.map((x, i) => cell(x).replace("<td class=\"", `<td class="${REG3[i] === r ? "is-sel " : ""}`)).join("")}</tr>`).join("")}</tbody></table></div>`
+    : `<p class="finds__empty">${m} 月三地都没有记录较多的推荐种类。这不代表林子里没有菌：可能只是历史记录少、样本不足，或者那时候不是它们的季节。</p>`;
+  $("#intel-data").textContent = obsSummary("all", pool, 300);
 }
 $("#intel").addEventListener("click", e => {
-  const mb = e.target.closest("[data-intel-m]"), sb = e.target.closest("[data-intel-sub]");
-  if (mb) intelMonth = +mb.dataset.intelM; else if (sb) intelSub = sb.dataset.intelSub; else return;
-  renderIntel();
+  const mb = e.target.closest("[data-intel-m]"); if (!mb) return;
+  intelMonth = +mb.dataset.intelM; xsSave(); renderIntel();
+  const nb = $(`[data-intel-m="${intelMonth}"]`); if (nb) nb.focus();
 });
 /* ---------- species view: what to look for this month ---------- */
 function renderNow() {
   const r = calState.region, min = r === "all" ? 300 : 100;
   const list = DATA.species.map((s, i) => [s, i, obsCounts(s, r)]).filter(([s, , c]) => recommendable(s) && c && c.reduce((a, b) => a + b, 0) >= min && calLevel(c[MONTH - 1], Math.max(...c)) >= 2)
     .sort((a, b) => b[2][MONTH - 1] - a[2][MONTH - 1]).slice(0, 12);
-  $("#now-title").textContent = `${MONTH} 月在${REGION[r] === REGION.all ? "西北太平洋" : REGION[r]}常见`;
-  $("#explore-month").textContent = `${MONTH} 月`;
+  const where = r === "all" ? "整个 PNW" : REGION[r], sp = /[A-Za-z]/.test(where) ? " " : "";  // a space around Latin words
+  $("#now-title").textContent = `${MONTH} 月在${sp}${where}${sp}常见`;
+  $("[data-now-all-label]").textContent = `在图鉴里看 ${MONTH} 月的全部种类`;
   $("#now-track").innerHTML = list.map(([s, i]) => `<button type="button" class="now__item" data-i="${i}">
     ${s.photo ? `<img class="now__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}
     <span class="now__name">${esc(s.zh)}</span><span class="now__meta">${esc(s.season)}</span></button>`).join("");
   $("#now-data").textContent = obsSummary(r, list.map(([s]) => s), min);
-  $(".now").hidden = !list.length;
+  $("#now-track").hidden = !list.length; $("#now-empty").hidden = !!list.length;
+  $("#now-empty").textContent = `${MONTH} 月在${REGION[r]}没有记录较多的推荐种类。这不代表林子里没有菌：可能只是历史记录少、样本不足。可以换一个地区，或去季节情报看下个月。`;
 }
 $("#now-track").addEventListener("click", e => { const b = e.target.closest(".now__item"); if (b) navigate("sp-" + DATA.species[+b.dataset.i].slug); });
 $("[data-now-all]").addEventListener("click", () => {
@@ -4480,20 +4573,21 @@ document.addEventListener("click", e => {
 
 /* ---------- home: season changes (historical records, not a live forecast) ---------- */
 function renderSeason() {
-  const next = MONTH % 12 + 1, rising = [], falling = [], used = [];
+  const M = intelMonth, next = M % 12 + 1, rising = [], falling = [], used = [];
   const r = calState.region, min = r === "all" ? 300 : 100;
   DATA.species.forEach(s => {
     if (!recommendable(s)) return;
     const c = obsCounts(s, r); if (!c || c.reduce((a, b) => a + b, 0) < min) return;
     used.push(s);
-    const max = Math.max(...c), cur = c[MONTH - 1], nx = c[next - 1];
+    const max = Math.max(...c), cur = c[M - 1], nx = c[next - 1];
     if (nx >= max * 0.5 && nx > cur * 1.3) rising.push([s, nx / max]);
     else if (cur >= max * 0.5 && nx < cur * 0.6) falling.push([s, cur / max]);
   });
   const list = (arr, empty) => arr.length ? `<ul class="season__list">${arr.sort((a, b) => b[1] - a[1]).slice(0, 6).map(([s]) =>
     `<li><a class="season__item" href="#sp-${s.slug}">${s.photo ? `<img class="season__img" src="photos/${s.photo.file}" alt="" loading="lazy" decoding="async">` : ""}<span><b>${esc(s.zh)}</b><span class="latin">${esc(s.latin)}</span></span></a></li>`).join("")}</ul>`
     : `<p class="season__empty">${empty}</p>`;
-  $("#season-sub").textContent = `比较 ${MONTH} 月和 ${next} 月在 iNaturalist 上的历年研究级观察记录（${REGION[calState.region]}，取自 ${DATA.obsFetched}）。${"历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。"}具体时间因地区、海拔和当年天气而异。`;
+  $("#season-title").textContent = `${M} 月 → ${next} 月：记录怎么变`;
+  $("#season-sub").textContent = `比较 ${M} 月和 ${next} 月在 iNaturalist 上的历年研究级观察记录（${REGION[calState.region]}，取自 ${DATA.obsFetched}）。${"历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。"}具体时间因地区、海拔和当年天气而异。`;
   if ($("#season-data")) $("#season-data").textContent = obsSummary(r, used, min);
   $("#season-cols").innerHTML = `
     <div class="season__col"><h3 class="season__h">${icon("arrow", "icon--sm")}${next} 月记录明显增多</h3>${list(rising, "没有明显增多的常见种。")}</div>
@@ -4772,7 +4866,8 @@ function fieldSync() {
   const on = document.documentElement.dataset.field === "on";
   document.querySelectorAll("[data-field-toggle]").forEach(b => b.setAttribute("aria-pressed", on));
   document.querySelectorAll("[data-field-label]").forEach(s => s.textContent = on ? "关闭户外模式" : "打开户外模式");
-  const sw = $("#set-field"); if (sw) sw.checked = on;
+  document.querySelectorAll("#set-field, [data-field-switch]").forEach(sw => { sw.checked = on; });
+  document.querySelectorAll("[data-field-state]").forEach(s => s.textContent = on ? "已打开" : "已关闭");
 }
 /* ---------- 设置: one bottom sheet; it reuses themeSet / fieldSet, it does not keep state of its own ---------- */
 document.addEventListener("click", e => {  // every 设置 button (header gear, 拾菌 › 工具) opens the same sheet
@@ -4782,7 +4877,7 @@ document.addEventListener("click", e => {  // every 设置 button (header gear, 
 $("#settings").addEventListener("click", e => {
   if (e.target === e.currentTarget || e.target.closest("[data-settings-close]") || e.target.closest("a[href^='#']")) e.currentTarget.close();
 });
-$("#set-field").addEventListener("change", e => fieldSet(e.target.checked));
+document.addEventListener("change", e => { if (e.target.matches("#set-field, [data-field-switch]")) fieldSet(e.target.checked); });
 document.addEventListener("click", e => {
   if (!e.target.closest("[data-field-toggle]")) return;
   fieldSet(document.documentElement.dataset.field !== "on");
@@ -4824,36 +4919,66 @@ async function cachedPaths() {
   const c = await caches.open(MEDIA_CACHE);
   return new Set((await c.keys()).map(r => new URL(r.url).pathname.split("/photos/")[1]).filter(Boolean).map(f => "photos/" + f));
 }
+// one honest state per row: 未下载 / 下载中 / 下载失败 / 部分完成 / 已完成 (text, not colour alone)
+const dl = { busy: "", failed: 0, stopped: false };
+function ostate(have, total, busy, failed) {
+  const [k, t] = busy ? ["busy", "下载中"] : have >= total ? ["ok", "已完成"] : failed ? ["fail", "下载失败"] : have === 0 ? ["none", "未下载"] : ["part", "部分完成"];
+  return { k, t, html: `<span class="ost ost--${k}">${t}</span>` };
+}
 async function offlineReport() {
-  const ph = $("#off-photos"), md = $("#off-model"); if (!ph) return;
-  if (!hasCaches()) { ph.textContent = "这个窗口不能存照片（需要用网址打开网站）"; md.textContent = "同上"; $("#off-actions").hidden = true; return; }
+  const ph = $("#off-photos"), hd = $("#off-hd"), md = $("#off-model"); if (!ph) return;
+  const sum = [], textReady = $("#offline-status") && $("#offline-status").classList.contains("is-ready");
+  sum.push(textReady ? "文字资料已可离线" : "文字资料还不能离线");
+  journalReport();
+  if (!hasCaches()) {
+    ph.textContent = hd.textContent = "这个窗口不能存照片（需要用网址打开网站）"; md.textContent = "同上"; $("#off-actions").hidden = true;
+    $("#off-summary").textContent = sum.concat("照片不能存到这台设备上").join("；") + "。"; return;
+  }
   try {
     const have = await cachedPaths(), c = await caches.open(MEDIA_CACHE);
     const s = photoSets.small.filter(f => have.has(f)).length, h = photoSets.hd.filter(f => have.has(f)).length;
-    ph.innerHTML = `<span class="${s === photoSets.small.length ? "offline__ok" : "offline__no"}">小图 ${s} / ${photoSets.small.length}</span><span class="offline__note">高清版 ${h} / ${photoSets.hd.length}。没存的照片离线时显示为灰色方块。</span>`;
+    const S = ostate(s, photoSets.small.length, !!dl.busy, dl.failed), H = ostate(h, photoSets.hd.length, dl.busy === "all", dl.busy ? 0 : dl.failed && dl.last === "all" ? dl.failed : 0);
+    ph.innerHTML = `${S.html}<span>${s} / ${photoSets.small.length} 张</span><span class="offline__note">物种示例照片的小图和各页头图。没存的照片离线时显示为灰色方块。</span>`;
+    hd.innerHTML = `${H.html}<span>${h} / ${photoSets.hd.length} 张</span><span class="offline__note">点开照片放大时用的 1024px 版本，可以不下载。</span>`;
     const three = await c.match("vendor/three-0.160.0.module.min.js");
-    md.innerHTML = three ? `<span class="offline__ok">已存</span>` : `<span class="offline__no">未存</span><span class="offline__note">离线时显示简化的二维模型；联网时打开一次“特征识别”就会存下。</span>`;
+    md.innerHTML = three ? `<span class="ost ost--ok">已完成</span>` : `<span class="ost ost--none">未下载</span><span class="offline__note">离线时显示简化的二维模型；联网时打开一次“特征识别”就会存下。</span>`;
+    sum.push(`缩略图${S.t}（${s} / ${photoSets.small.length}）`, `高清图${H.t}（${h} / ${photoSets.hd.length}）`);
+    $("#off-summary").textContent = (navigator.onLine === false ? "现在离线。" : "") + sum.join("；") + "。个人菌记单独存在这台设备上，不需要下载。";
     if (navigator.storage && navigator.storage.estimate) {
       const est = await navigator.storage.estimate();
       if (est.usage) $("#off-msg").dataset.usage = `本网站目前在这台设备上占用约 ${mb(est.usage)}。`;
     }
-  } catch (_) { ph.textContent = "无法读取（浏览器不允许）"; }
+  } catch (_) { ph.textContent = hd.textContent = "无法读取（浏览器不允许）"; $("#off-summary").textContent = sum.concat("照片状态无法读取").join("；") + "。"; }
+}
+// 个人菌记 is not part of the downloads: it lives in this browser's IndexedDB and works offline by itself
+async function journalReport() {
+  const el = $("#off-journal"); if (!el) return;
+  await findsReady;
+  const list = findsLoad();
+  if (!list) { el.innerHTML = `<span class="ost ost--fail">不能保存</span><span class="offline__note">这个浏览器不允许保存数据，菌记存不下来。</span>`; return; }
+  const n = list.length, p = list.reduce((a, f) => a + ((f.photos || []).length), 0);
+  el.innerHTML = `<span>${n ? `${n} 条记录、${p} 张照片` : "还没有记录"}</span><span class="offline__note">只存在这台设备的浏览器里，没网也能看和新增，不需要下载；清除网站数据会一起删掉，记得<a href="#data-center">导出备份</a>。</span>`;
 }
 let dlStop = false;
 document.addEventListener("click", async e => {
   if (e.target.closest("[data-dl-stop]")) { dlStop = true; return; }
   const b = e.target.closest("[data-dl]"); if (!b || !hasCaches()) return;
-  if (navigator.onLine === false) { toast("现在离线，联网后再下载"); return; }
+  if (navigator.onLine === false) { $("#off-dl").textContent = "现在离线，联网后再下载。已经存好的内容照常可用。"; toast("现在离线，联网后再下载"); return; }
   const want = b.dataset.dl === "all" ? photoSets.small.concat(photoSets.hd) : photoSets.small;
   const have = await cachedPaths(), todo = want.filter(f => !have.has(f));
-  if (!todo.length) { toast("照片都已经存好了"); return offlineReport(); }
+  if (!todo.length) { $("#off-dl").textContent = "这些照片都已经存好了。"; toast("照片都已经存好了"); return offlineReport(); }
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (_) {}
-  const c = await caches.open(MEDIA_CACHE), bar = $("#off-bar"), btns = document.querySelectorAll("[data-dl]"), stop = $("[data-dl-stop]");
+  const c = await caches.open(MEDIA_CACHE), bar = $("#off-bar"), btns = document.querySelectorAll("[data-dl]"), stop = $("[data-dl-stop]"), msg = $("#off-dl");
   dlStop = false; bar.hidden = false; bar.max = todo.length; bar.value = 0; stop.hidden = false; btns.forEach(x => x.disabled = true);
+  dl.busy = b.dataset.dl; dl.last = b.dataset.dl; dl.failed = 0; offlineReport();
   let done = 0, failed = 0, i = 0;
-  const worker = async () => { while (i < todo.length && !dlStop) { const f = todo[i++]; try { await c.add(f); } catch (_) { failed++; } bar.value = ++done; } };
+  const worker = async () => { while (i < todo.length && !dlStop) { const f = todo[i++]; try { await c.add(f); } catch (_) { failed++; } bar.value = ++done; if (done % 10 === 0 || done === todo.length) msg.textContent = `下载中：${done} / ${todo.length}${failed ? `，${failed} 张失败` : ""}`; } };
+  msg.textContent = `下载中：0 / ${todo.length}`;
   await Promise.all([worker(), worker(), worker(), worker()]);
   bar.hidden = true; stop.hidden = true; btns.forEach(x => x.disabled = false);
+  dl.busy = ""; dl.failed = failed; dl.stopped = dlStop;
+  msg.textContent = dlStop ? `已停止：存好 ${done - failed} / ${todo.length} 张，下面的状态是现在实际存了多少。再点一次会接着下载。`
+    : failed ? `${failed} 张没下载成功（可能是网络不稳），其余已存好。联网后再点一次补上。` : `这次的 ${todo.length} 张照片都已存好。`;
   toast(dlStop ? "已停止下载" : failed ? `下载完成，${failed} 张失败，可以再点一次补上` : "全部照片已存好，没信号也能看");
   offlineReport();
 });
@@ -4875,7 +5000,7 @@ function setOffline(text, ready) { const el = $("#offline-status"); if (el) { el
 const CAL_LEVELS = ["几乎没有", "偶见", "较多", "高峰"];
 function calLevel(n, max) { const r = n / max; return r < 0.05 ? 0 : r < 0.25 ? 1 : r < 0.6 ? 2 : 3; }
 const REGION = { all: "BC、华盛顿、俄勒冈", bc: "BC", wa: "华盛顿", or: "俄勒冈" };
-const calState = { region: "all", mode: "cal", month: MONTH, q: "" };
+const calState = { region: "all", mode: xs.mode, month: xs.month, q: xs.q };  // mode / month / search kept for this tab (xsSave)
 const obsCounts = (s, r) => !s.obs ? null : r === "all" ? s.obs.counts : (s.obs.regions || {})[r] || null;
 function renderCalendar() {
   const { region, mode, month } = calState, q = calState.q.trim().toLowerCase();
@@ -4893,7 +5018,10 @@ function renderCalendar() {
   const meta = `<dl class="obs-meta obs-meta--cal"><div><dt>来源</dt><dd>iNaturalist 研究级</dd></div><div><dt>地区</dt><dd>${REGION[region]}</dd></div><div><dt>覆盖年份</dt><dd>${yrs.length ? `${yrs[0]}–${yrs[yrs.length - 1]} 年` : "—"}</dd></div><div><dt>样本</dt><dd>${sum.toLocaleString("en")} 条 · ${rows.length} 种</dd></div><div><dt>数据更新</dt><dd>${DATA.obsFetched}</dd></div></dl>`;
   const where = REGION[region], note = `数据来自 iNaturalist 研究级观察（${where}），取自 ${DATA.obsFetched}；它反映的是人们什么时候出门拍照上传，不等于产量。历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。具体时间因地区、海拔和当年天气而异。`;
   const restHtml = `<p class="cal__rest">${where}样本不足（少于 30 条）、没有列入的：${rest.map(s => `<a href="#sp-${s.slug}">${esc(s.zh)}</a>`).join("、") || "无"}。</p>`;
-  $("#cal-month").hidden = mode !== "month";
+  $("#cal-month").hidden = $("#cal-month-label").hidden = mode !== "month";
+  document.querySelectorAll("[data-cal-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calMode === mode));
+  $("#cal-state").textContent = `${mode === "month" ? `${month} 月` : "全年日历"} · ${region === "all" ? "整个 PNW" : REGION[region]}${q ? ` · 搜索“${calState.q.trim()}”：${rows.length + rest.length} 种` : ` · ${rows.length} 种`}`;
+  if (q && !rows.length && !rest.length) { $("#cal").innerHTML = `<p class="season__empty">没有找到“${esc(calState.q.trim())}”。试试中文名、英文名或拉丁名的一部分；没有列出不代表它安全。</p>`; return; }
   if (mode === "month") {
     const lv = r => calLevel(r.c[month - 1], r.max);
     const groups = [3, 2, 1].map(l => [l, rows.filter(r => lv(r) === l).sort((a, b) => b.c[month - 1] / b.max - a.c[month - 1] / a.max)]);
@@ -4914,22 +5042,23 @@ function renderCalendar() {
     <p class="cal__lead">颜色越深，这个月的记录越多（与这种菌自己全年最多的月份相比）。${note}</p>${meta}
     <ul class="cal__key" aria-hidden="true">${CAL_LEVELS.map((x, i) => `<li><span class="cal__swatch cal__swatch--${i}"></span>${x}</li>`).join("")}</ul>
     <p class="cal__readout" id="cal-readout" aria-hidden="true">${now + 1} 月是本月。把手指或鼠标放在格子上看记录数。</p>
-    ${rows.length ? `<table class="cal__table"><caption class="sr-only">${where}每月记录多少，按高峰月份排列</caption><colgroup><col class="cal__namecol">${"<col>".repeat(12)}</colgroup><thead>${head}</thead><tbody>${body}</tbody></table>` : `<p class="season__empty">没有找到。</p>`}
+    ${rows.length ? `<table class="cal__table"><caption class="sr-only">${where}每月记录多少，按高峰月份排列</caption><colgroup><col class="cal__namecol">${"<col>".repeat(12)}</colgroup><thead>${head}</thead><tbody>${body}</tbody></table>` : `<p class="season__empty">${q ? `没有找到“${esc(calState.q.trim())}”。试试中文名、英文名或拉丁名的一部分；没有列出不代表它安全。` : `${where}没有足够的记录。`}</p>`}
     ${restHtml}`;
 }
-$("#cal-month").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}"${i + 1 === MONTH ? " selected" : ""}>${i + 1} 月</option>`).join("");
+$("#cal-month").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}"${i + 1 === calState.month ? " selected" : ""}>${i + 1} 月${i + 1 === MONTH ? "（本月）" : ""}</option>`).join("");
+$("#cal-q").value = calState.q;
 document.addEventListener("click", e => {
   const r = e.target.closest("[data-cal-region]"), m = e.target.closest("[data-cal-mode]");
   if (r) calState.region = r.dataset.calRegion;
-  if (m) calState.mode = m.dataset.calMode;
+  if (m) { calState.mode = m.dataset.calMode; xsSave(); }
   if (!r && !m) return;
   document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
   document.querySelectorAll("[data-cal-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calMode === calState.mode));
   renderCalendar();
-  if (r) { renderNow(); renderSeason(); renderIntel(); renderHomeSeason(); try { localStorage.setItem("mushroom-guide:region", calState.region); } catch (_) {} }
+  if (r) { renderNow(); renderIntel(); renderHomeSeason(); try { localStorage.setItem("mushroom-guide:region", calState.region); } catch (_) {} }
 });
-$("#cal-month").addEventListener("change", e => { calState.month = +e.target.value; renderCalendar(); });
-$("#cal-q").addEventListener("input", e => { calState.q = e.target.value; renderCalendar(); });
+$("#cal-month").addEventListener("change", e => { calState.month = +e.target.value; xsSave(); renderCalendar(); });
+$("#cal-q").addEventListener("input", e => { calState.q = e.target.value; xsSave(); renderCalendar(); });
 let calActive = null;
 document.addEventListener("pointerover", e => {
   const c = e.target.closest(".cal__cell[data-n]"); if (!c) return;
@@ -4940,7 +5069,7 @@ document.addEventListener("pointerover", e => {
 
 try { const r = localStorage.getItem("mushroom-guide:region"); if (r && REGION[r]) calState.region = r; } catch (_) {}
 document.querySelectorAll("[data-cal-region]").forEach(b => b.setAttribute("aria-pressed", b.dataset.calRegion === calState.region));
-renderToday(); renderNow(); renderSeason(); renderIntel(); renderHomeSeason(); renderHomeJournal(); renderDeadly(); renderRecent(); typeIn($("#h-home")); foldify(); route();
+renderToday(); renderNow(); renderIntel(); renderHomeSeason(); renderHomeJournal(); renderDeadly(); renderRecent(); typeIn($("#h-home")); foldify(); route();
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add("is-ready")));
 </script>
 </body>

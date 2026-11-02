@@ -275,7 +275,7 @@ main { width: 100%; max-width: 1200px; margin: 0 auto; padding: var(--space-5) v
 .btn--primary { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
 .btn--primary:hover { border-color: var(--color-primary); filter: brightness(1.08); }
 .sources { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--color-border); }
-.sources h3 { font-family: var(--font-body); font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
+.sources :is(h3, h4) { font-family: var(--font-body); font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); margin-bottom: var(--space-2); }
 .sources ol { margin: 0; padding-left: 1.3em; font-size: var(--fs-secondary); }
 .sources li { margin-bottom: var(--space-1); }
 .sources a { color: var(--color-muted-foreground); }
@@ -589,7 +589,7 @@ h1, h2, h3, h4 { letter-spacing: -.01em; }
 .hdr, .botnav, .search-bar, .toast, .cal__readout, .cal__table thead th, .sheet__bar { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
 .hdr { background: var(--glass); border-bottom: .5px solid var(--color-border); }
 .botnav { background: var(--glass); border-top: .5px solid var(--color-border); }
-.botnav__link { font-size: var(--fs-caption-sm); font-weight: var(--fw-500); }
+.botnav__link { font-size: var(--fs-caption-sm); font-weight: var(--fw-500); color: var(--color-foreground); }  /* over photos behind the glass bar the muted grey fell below 4.5:1 (320px) */
 .botnav__link:active { background: transparent; opacity: .6; }
 .botnav__link[aria-current="page"] { font-weight: var(--fw-600); }
 .search-bar { background: var(--glass); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); padding-left: var(--space-4); padding-right: var(--space-4); border-bottom: .5px solid var(--color-border); }
@@ -971,6 +971,7 @@ img.is-missing { visibility: hidden; }
 .offline__note { font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
 .offline__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .offline__size { font-weight: var(--fw-400); opacity: .8; }
+@media (max-width: 360px) { .offline__actions .btn { flex-wrap: wrap; justify-content: center; } .offline__size { flex-basis: 100%; text-align: center; font-size: var(--fs-caption); } }
 .offline__bar { width: 100%; height: 8px; margin-top: var(--space-3); accent-color: var(--color-primary); }
 .offline__ok { color: var(--color-primary); font-weight: var(--fw-600); }
 .offline__no { color: var(--color-warning-text); font-weight: var(--fw-600); }
@@ -1305,14 +1306,9 @@ html[data-tab="id"] .subnav { display: flex; }
 .mine__place .mine__main { flex: 1 1 16em; }
 .mine__years { list-style: none; margin: var(--space-1) 0 0; padding: 0; font-size: var(--fs-footnote); display: grid; gap: 2px; text-wrap: pretty; }
 
-.intel { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+.intel { display: grid; gap: var(--space-3); }
 .intel__months { overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
 .intel__months .chip-list { flex-wrap: nowrap; }
-.intel__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
-.intel__item { padding: var(--space-3); border-radius: var(--radius-lg); background: var(--surface-1); display: grid; gap: var(--space-1); content-visibility: auto; contain-intrinsic-size: auto 180px; }
-.intel__line { margin: 0; font-size: var(--fs-footnote); line-height: 1.55; text-wrap: pretty; font-variant-numeric: tabular-nums; }
-.intel__line--warn { display: flex; gap: var(--space-1); align-items: flex-start; color: var(--color-danger-text); }
-.intel__line--warn .icon { flex: none; margin-top: 3px; }
 
 .res-cmp { margin: var(--space-1) 0 0; padding: 0 var(--space-3) var(--space-2); font-size: var(--fs-footnote); color: var(--color-muted-foreground); display: flex; gap: var(--space-1); align-items: baseline; flex-wrap: wrap; }
 
@@ -1479,6 +1475,7 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .xnav { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); }
 @media (min-width: 768px) { .xnav { max-width: 720px; } }
 .xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+.xnav__cats .seg__btn { min-height: var(--target); }  /* primary navigation: a real 44px target, not only the hit area */
 .xnav__subs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: var(--space-1); }
 .xnav__subs[hidden] { display: none; }
 .xnav__sub { min-height: var(--target); padding: 0 var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-muted-foreground);
@@ -1488,6 +1485,58 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }  /* headings
 .xnav__sub:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
 .explore-region[hidden], .xp__pane[hidden] { display: none; }
 [data-field="on"] .xnav__sub { min-height: 52px; font-size: var(--fs-body); }
+/* v53: 拾菌 sub-pages as task pages (compact head, no chapter numbers, one rules source, state first) */
+.view__head--compact { margin-bottom: var(--space-3); }
+.view__head--compact .view__lead { font-size: var(--fs-secondary); }
+.xp-next { display: grid; gap: var(--space-2); margin-top: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.xp-next__btn { display: flex; align-items: center; gap: var(--space-3); min-height: 60px; padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius); background: var(--surface-1);
+  box-shadow: var(--shadow-card); color: var(--color-foreground); text-decoration: none; text-align: left; font: inherit; cursor: pointer; }
+.xp-next__btn > span { flex: 1; display: grid; line-height: 1.35; }
+.xp-next__btn b { font-size: var(--fs-body-sm); font-weight: var(--fw-600); }
+.xp-next__btn small { font-size: var(--fs-caption); color: var(--color-muted-foreground); }
+.xp-next__btn .icon { flex: none; color: var(--color-primary); }
+.xp-next__btn:hover { background: var(--surface-3); }
+.xp-next__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
+.intel__h { font-size: var(--fs-h3); font-weight: var(--fw-700); margin: var(--space-3) 0 0; }
+.intel .season { margin: 0; }
+.intel__wrap { overflow-x: auto; }
+.intel__table { width: 100%; border-collapse: collapse; font-size: var(--fs-footnote); font-variant-numeric: tabular-nums; }
+.intel__table th, .intel__table td { padding: var(--space-2) var(--space-1); border-bottom: .5px solid var(--color-border); text-align: left; vertical-align: top; }
+.intel__table thead th { font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.intel__table thead th.is-sel { color: var(--color-foreground); box-shadow: inset 0 -2px 0 var(--color-primary); }
+.intel__table tbody th { font-weight: var(--fw-600); width: 34%; }
+.intel__table tbody th a { color: var(--color-foreground); }
+.intel__cell small { display: block; color: var(--color-muted-foreground); font-size: var(--fs-caption); }
+.intel__cell--3 { font-weight: var(--fw-700); }
+.intel__cell--2 { font-weight: var(--fw-600); }
+.intel__cell--0, .intel__cell.is-thin { color: var(--color-muted-foreground); }
+.intel__cell.is-sel { background: var(--color-primary-surface); }
+.intel__caveat { margin-top: var(--space-2); }
+.cal-ctl__mode { justify-self: start; }
+.cal-ctl__mlabel { font-size: var(--fs-footnote); font-weight: var(--fw-600); color: var(--color-muted-foreground); }
+.cal-ctl__mlabel[hidden] { display: none; }
+.cal-ctl__state { margin: 0; font-size: var(--fs-footnote); color: var(--color-muted-foreground); font-variant-numeric: tabular-nums; }
+.xp-lead { margin: 0 0 var(--space-4); max-width: 72ch; color: var(--color-muted-foreground); font-size: var(--fs-body-sm); }
+.xp-check { list-style: none; padding: 0 !important; display: grid; gap: var(--space-2); }
+.xp-check li { position: relative; padding-left: var(--space-6); margin: 0; }
+.xp-check li::before { content: ""; position: absolute; left: var(--space-1); top: .35em; width: 14px; height: 8px; border: solid var(--color-primary); border-width: 0 0 2px 2px; transform: rotate(-45deg); }
+.xp-flow li b:first-child { color: var(--color-foreground); }
+.xp-fold { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); }
+.xp-fold__sum { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); min-height: var(--target); padding: var(--space-4) var(--space-5); cursor: pointer; list-style: none; }
+.xp-fold__sum::-webkit-details-marker { display: none; }
+.xp-fold__sum .panel__title { margin: 0; }
+.xp-fold__hint { margin-left: auto; font-size: var(--fs-footnote); color: var(--color-muted-foreground); }
+.xp-fold__sum:focus-visible { outline: 3px solid var(--color-ring); outline-offset: -3px; border-radius: var(--radius); }
+.xp-fold__body { padding: 0 var(--space-5) var(--space-5); }
+.xp-sos { display: grid; gap: var(--space-2); margin: 0 0 var(--space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.ost { display: inline-flex; align-items: center; min-height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-pill); font-size: var(--fs-caption); font-weight: var(--fw-600); background: var(--color-muted); color: var(--color-foreground); }
+.ost--ok { background: var(--color-primary-surface); color: var(--color-primary); }
+.ost--part, .ost--fail { background: var(--color-warning-surface); color: var(--color-warning-text); }
+.ost--busy { background: var(--color-primary-surface); color: var(--color-foreground); }
+.offline__dl { margin: var(--space-2) 0 0; font-size: var(--fs-footnote); font-variant-numeric: tabular-nums; }
+.offline__dl:empty { display: none; }
+.xp-switch { margin: var(--space-3) 0; font-size: var(--fs-body-sm); }
+.xp-switch__state { color: var(--color-muted-foreground); }
 
 /* ---------- house rules (2026-11): layered surfaces, no pure black, quiet focus rings, steady numbers ---------- */
 [hidden] { display: none !important; }
@@ -1572,7 +1621,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
 <dialog class="bsheet" id="ds-sheet" aria-labelledby="ds-sheet-t"><div class="bsheet__box"><span class="bsheet__grab" aria-hidden="true"></span><div class="bsheet__head"><h2 class="bsheet__title" id="ds-sheet-t">示例面板</h2><button class="icon-btn" type="button" aria-label="关闭" onclick="this.closest('dialog').close()"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div><p>确认之前，什么都不会改动。</p><div class="bsheet__actions"><button class="btn" type="button" onclick="this.closest('dialog').close()">取消</button><button class="btn btn--primary" type="button" onclick="this.closest('dialog').close()">确认</button></div></div></dialog></section>
 <section><h2>加载占位 Skeleton 与错误状态</h2><div class="skel-list" aria-hidden="true"><div class="skel skel--row"><span class="skel skel--thumb"></span><span class="skel__lines"><span class="skel skel--line"></span><span class="skel skel--line skel--short"></span></span></div></div>
 <div class="err-state" role="status" style="margin-top:16px"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><div><b>这里不能保存记录</b><p>错误状态用琥珀色，不用红色：红色只留给毒性和急救。</p></div></div></section>
-<section><h2>筛选 Chip / 分段</h2><div class="chip-list"><button class="chip" type="button" aria-pressed="true">三地合计</button><button class="chip" type="button" aria-pressed="false">BC</button><button class="chip" type="button" aria-pressed="false">华盛顿</button></div>
+<section><h2>筛选 Chip / 分段</h2><div class="chip-list"><button class="chip" type="button" aria-pressed="true">整个 PNW</button><button class="chip" type="button" aria-pressed="false">BC</button><button class="chip" type="button" aria-pressed="false">华盛顿</button></div>
 <ol class="jsteps" style="margin-top:16px"><li><button type="button" class="jsteps__btn" aria-current="step">照片与物种</button></li><li><button type="button" class="jsteps__btn">地点与环境</button></li><li><button type="button" class="jsteps__btn">备注与保存</button></li></ol></section>
 <section><h2>输入</h2><div class="search-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><label class="sr-only" for="ds-q">搜索</label><input id="ds-q" type="search" placeholder="搜中文名、英文名、学名或术语"></div>
 <p><label class="finds__label" for="ds-s">选择</label><select class="finds__input" id="ds-s"><option>林地地面</option></select></p>
