@@ -264,7 +264,7 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   采集与观察 is 观察 → 拍照 → 记录 → 依法采集（若允许）plus the 做孢子印 fold; 户外安全 opens with 911 and 中毒急救 buttons.
   离线下载 shows a summary and one row each for text, thumbnails, HD, 3D and 个人菌记, each in a state from `ostate()`
   (未下载 / 下载中 / 下载失败 / 部分完成 / 已完成). The 户外模式 pane uses a `.toggle` switch (`data-field-switch`). v53.2 (docs/V53_2_NAV_POLISH.md): the category control is
-  filled forest green when selected (`--xnav-on` / `--xnav-on-text`, scoped to `#explore-nav`, never the shared `.seg__btn`);
+  the shared `.seg` segmented control (same look as 并排 / 逐个看: a raised segment on a neutral track), full width, 44px;
   sub-pages are a tab strip with a 3px `::after` indicator, one scrollable row when it does not fit (current tab scrolled into
   view, edge fade via `xnavEdges()`); panes fade in by opacity (`xp-in`, 180ms, never on 户外安全; off under reduced motion and
   in outdoor mode); `#xp-live` announces 「分类 › 子页」. 拾菌's "去哪里找" is rendered by the build as

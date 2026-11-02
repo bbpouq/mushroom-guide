@@ -1207,8 +1207,8 @@ def run():
           const cats = [...document.querySelectorAll('[data-xp-cat]')].map(b => [b.getAttribute('aria-pressed'), cs(b).backgroundColor, cs(b).color, +cs(b).fontWeight]);
           const subs = [...document.querySelectorAll('[data-xp-subs]:not([hidden]) [data-xp-go]')].map(b => [b.getAttribute('aria-current'), cs(b, '::after').opacity, cs(b, '::after').height, cs(b).backgroundColor, +cs(b).fontWeight, cs(b).color]);
           return { cats, subs }; })()"""
-        LUM = "c => { const v = c.match(/[\\d.]+/g).slice(0, 3).map(x => x / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }"
-        for scheme, bg_want in [("light", "rgb(63, 97, 73)"), ("dark", "rgb(74, 117, 86)")]:
+        LUM = "c => { const v = c.match(/[\\d.]+/g).slice(0, 3).map(x => c.startsWith('color(') ? +x : x / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }"
+        for scheme in ["light", "dark"]:
             ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, color_scheme=scheme)
             pg = ctx.new_page(); errs = []
             pg.on("pageerror", lambda e: errs.append(str(e)))
@@ -1220,9 +1220,10 @@ def run():
                 on = [c for c in st["cats"] if c[0] == "true"]
                 off = [c for c in st["cats"] if c[0] != "true"]
                 ratio = pg.evaluate(f"(([a, b]) => {{ const L = {LUM}; const x = L(a), y = L(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); }})", [on[0][1], on[0][2]]) if on else 0
-                if len(on) != 1 or on[0][1] != bg_want or ratio < 4.5 or any(c[1] == bg_want for c in off):
-                    bad.append((cat, on, round(ratio, 2)))
-            check(f"v53.2 AT-1/4 ({scheme}): each category, when selected, is the one solid forest-green segment with text at >= 4.5:1 {bad}", not bad)
+                ref = pg.evaluate("(() => { const b = document.querySelector('[data-theme-pick][aria-pressed=true]'); return getComputedStyle(b).backgroundColor; })()")  # the shared .seg, as in 并排 / 逐个看
+                if len(on) != 1 or on[0][1] != ref or ratio < 4.5 or on[0][3] < 600 or any(c[1] != "rgba(0, 0, 0, 0)" for c in off):
+                    bad.append((cat, on, ref, round(ratio, 2)))
+            check(f"v53.2 AT-1/4 ({scheme}): each category, when selected, is the one raised segment of the shared .seg control, bold, text at >= 4.5:1 {bad}", not bad)
             bad = []
             for sub in ["now", "intel", "cal", "hab", "rules", "prep", "pick", "safety", "offline", "field"]:
                 pg.evaluate(f"navigate('explore-{sub}')"); pg.wait_for_timeout(250)

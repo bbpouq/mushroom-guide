@@ -103,7 +103,7 @@ try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /
   --fs-field-body: 18px; --fs-field-title: 20px; --fs-field-display: 34px;  /* outdoor mode: larger on purpose (sunlight, gloves) */
   --radius-xs: 4px; --radius-sm: 8px; --radius-md: 12px; --radius: 14px; --radius-lg: 22px; --radius-pill: 999px;
   --z-sticky: 10; --z-header: 20; --z-nav: 30; --z-toast: 40;
-  --xnav-on: #3F6149; --xnav-on-text: #FFFFFF; --xnav-dur: 180ms;  /* 拾菌 category selected state */
+  --xnav-dur: 180ms;  /* 拾菌 navigation transitions */
   --dur-fast: 150ms; --dur: 220ms; --ease: cubic-bezier(.2, .7, .2, 1);
   --target: 44px;
   --header-h: 0px;
@@ -112,7 +112,7 @@ try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --xnav-on: #4A7556; --xnav-on-text: #FFFFFF; --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
+    --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
     --color-accent: #D9A24A; --color-on-accent: #17150F;
     --surface-0: #0F1210; --surface-1: #141815; --surface-2: #191D1A; --surface-3: #1E231F;
     --color-background: var(--surface-0); --color-foreground: #ECEAE2; --color-card: var(--surface-1);
@@ -128,7 +128,7 @@ try { const h = location.hash.slice(1); document.documentElement.dataset.tab = /
   }
 }
 :root[data-theme="dark"] {
-  --xnav-on: #4A7556; --xnav-on-text: #FFFFFF; --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
+  --color-primary: #9CCB9F; --color-chart: #6FA676; --color-seq-1: #2C4A33; --color-seq-2: #5E8A63; --color-seq-3: #9CCB9F; --color-on-primary: #0F2215; --color-secondary: #B5C98A;
   --color-accent: #D9A24A; --color-on-accent: #17150F;
   --surface-0: #0F1210; --surface-1: #141815; --surface-2: #191D1A; --surface-3: #1E231F;
     --color-background: var(--surface-0); --color-foreground: #ECEAE2; --color-card: var(--surface-1);
@@ -1548,15 +1548,12 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus, h3[tabindex="-1"]:focus, h4[ta
 /* ---------- v50.2: 拾菌 navigation ---------- */
 /* 拾菌 navigation (v53.2): a filled segmented control for the category, a tab strip with a 3px indicator for the sub-page */
 .xnav { display: grid; gap: var(--space-3); margin: 0 0 var(--space-5); }
-.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; padding: 3px; background: var(--color-muted);
-  box-shadow: inset 0 1px 2px rgba(10, 14, 11, .07); }
+/* the category control is the shared .seg (same look as 并排 / 逐个看): raised segment on a neutral track; only width and height differ */
+.xnav__cats .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
 @media (min-width: 768px) { .xnav__cats .seg { max-width: 560px; } }
-.xnav__cats .seg__btn { min-height: var(--target); font-size: var(--fs-body-sm); color: var(--color-muted-foreground);
+.xnav__cats .seg__btn { min-height: var(--target); font-size: var(--fs-body-sm);
   transition: background-color var(--xnav-dur) var(--ease), color var(--xnav-dur) var(--ease), box-shadow var(--xnav-dur) var(--ease), transform var(--xnav-dur) var(--ease); }
-.xnav__cats .seg__btn:hover { color: var(--color-foreground); }
 .xnav__cats .seg__btn:active { transform: scale(.97); }
-#explore-nav .seg__btn[aria-pressed="true"] { background: var(--xnav-on); color: var(--xnav-on-text); font-weight: var(--fw-700); box-shadow: 0 1px 2px rgba(10, 14, 11, .18); }
-.xnav__cats .seg__btn:focus-visible { outline: 3px solid var(--color-ring); outline-offset: 2px; }
 .xnav__subs { display: flex; gap: var(--space-4); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding-inline: var(--space-4);
   border-bottom: .5px solid var(--color-border); padding: 0 var(--space-1); }
 .xnav__subs::-webkit-scrollbar { display: none; }
