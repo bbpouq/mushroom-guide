@@ -1668,6 +1668,26 @@ def run():
         pg.goto(url + "#about-privacy"); pg.wait_for_timeout(700)
         check("PD: 关于 folds 隐私 and 资料来源; the #about-privacy link opens its fold", pg.evaluate("document.getElementById('about-privacy').open")
               and not pg.evaluate("document.getElementById('about-sources').open") and "只存在这台设备的浏览器里" in pg.inner_text("#about-privacy"))
+        # phase 3: home, field guide, offline, journal
+        pg.goto(url + "#home"); pg.wait_for_timeout(500)
+        hs = pg.inner_text(".home-safety")
+        check("PD 3: the home safety note keeps 不能确认任何一朵菌可以食用, cooking does not make it safe, 有任何疑问，就不要吃 and both buttons visible",
+              all(k in hs for k in ["不能确认任何一朵菌可以食用", "烹饪也不能让有毒的菌变安全", "有任何疑问，就不要吃", "食用前风险检查", "我可能吃了不确定的菌"]) and pg.is_hidden("#info-home"))
+        pg.click('[aria-controls="info-home"]'); pg.wait_for_timeout(100)
+        check("PD 3: 为什么不能凭结果食用？ explains candidates, cooking and in-person confirmation (减少认错，但不能保证安全)",
+              all(k in pg.inner_text("#info-home") for k in ["没有毒菌，不代表", "不能去掉蘑菇毒素", "减少认错，但不能保证安全"]))
+        pg.goto(url + "#explore-rules"); pg.wait_for_timeout(400)
+        rl = pg.inner_text("#xp-rules")
+        check("PD 3: 采集守则 keeps 拿不准就不要吃, in-person caveat and the check-local-rules line visible",
+              all(k in rl for k in ["拿不准，就不要吃", "减少认错，但不能保证安全", "先查当地规定，不确定就只看不采", "本站不判断任何地点能不能采"]) and pg.is_hidden("#info-rule2"))
+        pg.goto(url + "#explore-pick"); pg.wait_for_timeout(400)
+        pk = pg.inner_text("#xp-pick .xp-flow")
+        check("PD 3: 采集与观察 keeps 保留完整柄基, 菌托 in the photo step and 只看、只拍、只记 visible", "保留完整柄基" in pk and "菌托" in pk and "只看、只拍、只记" in pk and pg.is_hidden("#info-pick"))
+        pg.goto(url + "#explore-offline"); pg.wait_for_timeout(500)
+        check("PD 3: 离线下载 keeps the 'the browser may clear photos' consequence visible", "浏览器可能清掉" in pg.inner_text("#off-msg") and pg.is_hidden("#info-offline"))
+        pg.goto(url + "#log"); pg.wait_for_timeout(500); pg.click('[data-jgo="3"]'); pg.wait_for_timeout(200)
+        st3 = pg.inner_text('[data-jstep="3"]')
+        check("PD 3: 菌记 step 3 states the 专家当面确认 rule once", st3.count("才选“专家当面确认”") == 1 and "只算“候选”" in st3)
         ctx.close()
         for w in (320, 390, 768):
             for field in (False, True):
@@ -1675,7 +1695,7 @@ def run():
                 pg = ctx.new_page()
                 if field: pg.add_init_script("localStorage.setItem('mushroom-guide:field', 'on')")
                 bad = []
-                for h, btn in [("finder", "info-finder"), ("explore-intel", "info-intel"), ("explore-hab", "info-hab")]:
+                for h, btn in [("finder", "info-finder"), ("explore-intel", "info-intel"), ("explore-hab", "info-hab"), ("home", "info-home"), ("explore-rules", "info-rule2"), ("explore-pick", "info-pick"), ("explore-offline", "info-offline")]:
                     pg.goto(url + "#" + h); pg.wait_for_timeout(450)
                     sel = f'[aria-controls="{btn}"]'
                     if not pg.locator(sel).is_visible(): continue  # outdoor mode hides 季节情报

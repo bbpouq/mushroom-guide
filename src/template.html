@@ -1848,7 +1848,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
           <svg class="icon icon--lg" aria-hidden="true"><use href="#i-shield"/></svg>
           <div>
             <h2 class="home-safety__title" id="home-safety-title">认出来，不等于可以吃</h2>
-            <p>本站帮你学习和缩小范围，<b>不能确认任何一朵菌可以食用</b>。烹饪、冷冻、干燥都不能让有毒的菌变安全。特征查找只列候选种；结果里没有毒菌，不代表手上的菌没毒。想吃一种野生菌，先请有经验的人或当地菌会当面看实物。当面确认能减少认错，但不能保证安全：人会看错，同一种菌也有人吃了不适。<b>有任何疑问，就不要吃。</b></p>
+            <p class="info__line">本站帮你学习和缩小范围，<b>不能确认任何一朵菌可以食用</b>；烹饪也不能让有毒的菌变安全。<b>有任何疑问，就不要吃。</b> <button type="button" class="info__btn" aria-expanded="false" aria-controls="info-home"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-info"/></svg>为什么不能凭结果食用？</button></p>
+            <div class="info__pop" id="info-home" role="region" aria-label="为什么不能凭结果食用？" hidden><ul><li>特征识别只列本站收录的外形候选；结果里没有毒菌，不代表手上的菌没毒。</li><li>烹饪、焯水、冷冻、干燥都不能去掉蘑菇毒素。</li><li>想吃一种野生菌，先请有经验的人或当地菌会当面看实物。当面确认能减少认错，但不能保证安全：人会看错，同一种菌也有人吃了不适。</li></ul></div>
             <div class="link-row"><a class="btn" href="#guide-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>食用前风险检查</a><a class="btn home-safety__sos" href="#emergency"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>我可能吃了不确定的菌</a></div>
           </div>
         </section>
@@ -1986,8 +1987,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <section class="panel panel--wide" aria-labelledby="rules-title">
               <h2 class="panel__title" id="rules-title">四条守则</h2>
               <ol class="rules">
-                <li><div><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全。查看整朵菌，从盖顶到柄基，记下生境；成熟的菌盖还可以做孢子印。请有经验的人当面看实物；图鉴和本应用都不能单独作为食用依据，当面确认能减少认错，但不能保证安全。</div></li>
-                <li><div><b>先查当地规定，不确定就只看不采。</b>能不能采、采多少、要不要许可证，由具体地点的管理方决定（国家公园、省立或州立公园、国家森林、原住民土地、私人土地各不相同），而且可能每年调整。出发前查他们最新的规定；保护区和禁止采集的地方只看、只拍、不采。本站不判断任何地点能不能采。</div></li>
+                <li><div><p class="info__line"><b>拿不准，就不要吃。</b>没有任何一种方法能保证一朵野菌安全；图鉴和本应用都不能单独作为食用依据。请有经验的人当面看实物：能减少认错，但不能保证安全。 <button type="button" class="info__btn" aria-expanded="false" aria-controls="info-rule1"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-info"/></svg>怎么看一朵菌</button></p><div class="info__pop" id="info-rule1" role="region" aria-label="怎么看一朵菌" hidden><p>查看整朵菌，从盖顶到柄基（挖出完整柄基看有没有菌托），记下生境和附近的树；成熟的菌盖还可以做孢子印（见<a href="#explore-pick">采集与观察</a>）。</p></div></div></li>
+                <li><div><p class="info__line"><b>先查当地规定，不确定就只看不采。</b>能不能采、采多少、要不要许可证，由具体地点的管理方决定，可能每年调整；出发前查他们最新的规定。本站不判断任何地点能不能采。 <button type="button" class="info__btn" aria-expanded="false" aria-controls="info-rule2"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-info"/></svg>谁来管</button></p><div class="info__pop" id="info-rule2" role="region" aria-label="谁来管" hidden><p>国家公园、省立或州立公园、国家森林、原住民土地和私人土地的规定各不相同。保护区和禁止采集的地方只看、只拍、不采。</p></div></div></li>
                 <li><div><b>尊重私人土地。</b>进田野、林地、高尔夫球场前先征得主人同意。</div></li>
                 <li><div><b>举止得体。</b>不践踏植物、不耙地面、不折枝；看好狗、放低声音。只取所需，给别人留一些。</div></li>
               </ol>
@@ -2033,10 +2034,10 @@ details.is-open > .fold { grid-template-rows: 1fr; }
             <section class="panel panel--wide" aria-labelledby="pick-title">
               <h2 class="panel__title" id="pick-title">观察 → 拍照 → 记录 → 依法采集</h2>
               <ol class="steps xp-flow">
-                <li><b>观察</b>：先别动手。看整朵菌：菌盖、菌褶（或菌孔、菌刺）、菌柄、柄基，还有长在哪里、附近有什么树、有没有特别的气味。同一种菌在不同生长阶段外观会变。</li>
-                <li><b>拍照</b>：在原地拍，每个部位一张：菌盖顶面、菌褶、菌柄和柄基（有没有菌托）、生境全景；放个参照物看大小。</li>
-                <li><b>记录</b>：在<a href="#log">菌记</a>里记下日期、生境和照片，可以只记大概位置。记录只存在这台设备上。</li>
-                <li><b>依法采集（若允许）</b>：先确认这个地点允许采集（见<a href="#explore-rules">采集守则</a>）；不允许或不确定，就只看、只拍、只记。允许时：轻轻拔或用刀尖撬出，<b>保留完整柄基</b>便于鉴定；过熟、软烂、虫蛀多的留在原地散播孢子；不同种类分开放，只取所需。</li>
+                <li><b>观察</b>：先别动手。看整朵菌：菌盖、菌盖下面、菌柄、柄基，还有长在哪里、附近有什么树。</li>
+                <li><b>拍照</b>：原地拍，每个部位一张，柄基要拍到有没有菌托；再拍生境全景，放个参照物。</li>
+                <li><b>记录</b>：在<a href="#log">菌记</a>里记下日期、生境和照片，可以只记大概位置。</li>
+                <li><p class="info__line"><b>依法采集（若允许）</b>：先确认这个地点允许采集（见<a href="#explore-rules">采集守则</a>）；不允许或不确定，就只看、只拍、只记。允许时<b>保留完整柄基</b>，不同种类分开放，只取所需。 <button type="button" class="info__btn" aria-expanded="false" aria-controls="info-pick"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-info"/></svg>采集细节</button></p><div class="info__pop" id="info-pick" role="region" aria-label="采集细节" hidden><ul><li>轻轻拔，或用刀尖从柄基下面撬出，别从中间切断：柄基是鉴定的关键。</li><li>过熟、软烂、虫蛀多的留在原地散播孢子。</li><li>同一种菌在不同生长阶段外观会变，留意气味。</li></ul></div></li>
               </ol>
             </section>
             <details class="xp-fold" id="spore-print">
@@ -2095,7 +2096,8 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               </div>
               <progress class="offline__bar" id="off-bar" max="1" value="0" hidden aria-label="下载进度"></progress>
               <p class="offline__dl" id="off-dl" role="status"></p>
-              <p class="muted-note" id="off-msg">照片平时只在看到时才存下来。进山前在有网的地方点一下上面的按钮，没信号时所有照片也能看。照片只存在这台设备上；手机空间紧张时浏览器可能会清掉，出门前再看一眼这里。</p>
+              <p class="muted-note" id="off-msg">手机空间紧张时浏览器可能清掉已存的照片：出门前再看一眼这里。 <button type="button" class="info__btn" aria-expanded="false" aria-controls="info-offline"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-info"/></svg>离线是怎么工作的</button></p>
+              <div class="info__pop" id="info-offline" role="region" aria-label="离线是怎么工作的" hidden><ul><li>文字资料（物种、对比、急救、指南和食谱）在第一次打开后就存在这台设备上。</li><li>照片平时只在看到时才存下来；进山前在有网的地方点“下载缩略图”，没信号时所有照片也能看。</li><li>照片只存在这台设备上，不会上传。iNaturalist 和资料来源网页需要联网。</li></ul></div>
             </section>
             <section class="panel" aria-labelledby="install-title">
               <h2 class="panel__title" id="install-title">装到手机桌面</h2>
@@ -2419,8 +2421,7 @@ details.is-open > .fold { grid-template-rows: 1fr; }
               </fieldset>
               <fieldset class="jstep" data-jstep="3" aria-labelledby="jstep-3-t" hidden>
                 <legend class="jstep__title" id="jstep-3-t"><span class="jstep__n">3 / 3</span>备注与保存</legend>
-                <p class="jstep__hint">鉴定状态默认是你自己的判断。只有懂行的人当面看过实物，才选“专家当面确认”。</p>
-                <div class="finds__grid jstep__grid">
+                                <div class="finds__grid jstep__grid">
               <div class="finds__field finds__field--wide"><label class="finds__label" for="finds-notes">备注</label><textarea class="finds__input" id="finds-notes" maxlength="600" placeholder="数量、孢子印颜色、气味、切开变色、吃了没有……"></textarea></div>
               <fieldset class="finds__field finds__field--wide" id="finds-status">
                 <legend class="finds__label">鉴定状态</legend>
