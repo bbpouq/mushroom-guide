@@ -2732,6 +2732,16 @@ function lookPairs(slug) {
       }).join("")}</span>
       <span class="look-pair__title">${icon("columns", "icon--sm")}${esc(c.title)}${icon("arrow", "icon--sm")}</span></a>`).join("");
 }
+// the section jumps stick right under the sheet's top bar: measure it for every sheet (species and toxic), and again when it
+// changes size (a long name wrapping, outdoor mode, rotation).
+let sheetBarRO = null;
+function sheetBarH() {
+  const bar = $("#sheet-body .sheet__bar"); if (!bar) return;
+  // visible bottom of the stuck bar = its height + its sticky top (negative; differs between phone and desktop sheets), 1px overlap
+  const set = () => $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight + (parseFloat(getComputedStyle(bar).top) || 0) - 1) + "px");
+  set();
+  if (window.ResizeObserver) { if (sheetBarRO) sheetBarRO.disconnect(); sheetBarRO = new ResizeObserver(set); sheetBarRO.observe(bar); }
+}
 function openSpecies(i) {
   const s = DATA.species[i], g = groupBy[s.group];
   recentAdd("sp:" + s.slug);
@@ -2800,8 +2810,7 @@ function openSpecies(i) {
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
   foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0;
-  const bar = $("#sheet-body .sheet__bar");  // the section jumps stick right under the bar
-  $("#sheet-body").style.setProperty("--sheet-bar-h", (bar.offsetHeight - 17) + "px");  // the bar sticks at top: -16px
+  sheetBarH();
   $("[data-close]", d).focus({ focusVisible: false });
 }
 const EDIBILITY_ZH = { "Edible": "可食", "Inedible": "不宜食用", "Toxic": "有毒", "Deadly Toxic": "剧毒，可致死", "Unknown": "未知", "Not Evaluated": "未评估（本地资料不足）" };
@@ -2998,7 +3007,7 @@ function openToxic(slug) {
   $("[data-share]", $("#sheet-body")).onclick = e => share(p.zh + " · 拾菌记", "tx-" + p.slug, e.currentTarget);
   const d = $("#sheet");
   if (!d.open) { if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", ""); }
-  foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0;
+  foldify($("#sheet-body")); $("#sheet-body").scrollTop = 0; sheetBarH();
   $("[data-close]", d).focus({ focusVisible: false });
 }
 const KIND = { edible: "可食种", caution: "谨慎", toxic: "有毒" };

@@ -1439,6 +1439,19 @@ def run():
               st[0] == "contain" and "mandatory" not in st[1] and st[2] == "none" and moved > 100 and not opened and pg.evaluate("document.getElementById('sheet').open"))
         ctx.close()
 
+        # ---------- sheet section chips stick right under the sheet's bar (species and toxic, phone and desktop) ----------
+        GAP = "() => { const b = document.querySelector('#sheet-body .sheet__bar').getBoundingClientRect(), n = document.querySelector('#sheet-body .sheet__nav').getBoundingClientRect(); return Math.round(n.top - b.bottom); }"
+        gaps = []
+        for w, h in [(1352, 900), (390, 844)]:
+            ctx = b.new_context(viewport={"width": w, "height": h}, is_mobile=w < 768, has_touch=w < 768)
+            pg = ctx.new_page()
+            for hsh in ["sp-boletus-edulis", "tx-amanita-phalloides"]:  # a species sheet first, then a toxic one (it used to keep a stale height)
+                pg.goto(url + "#" + hsh); pg.wait_for_timeout(700)
+                pg.evaluate("document.getElementById('sheet-body').scrollTop = 1200"); pg.wait_for_timeout(300)
+                gaps.append((w, hsh[:2], pg.evaluate(GAP)))
+            ctx.close()
+        check(f"sheet section chips stick flush under the bar, no content showing through a gap {gaps}", all(-2 <= g <= 0 for _, _, g in gaps))
+
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})
         host.set_content('<iframe id=f sandbox="allow-scripts" style="width:390px;height:844px;border:0"></iframe>')
