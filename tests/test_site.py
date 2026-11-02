@@ -1064,7 +1064,7 @@ def run():
         for w in [320, 375, 390, 768, 1024]:
             pg.set_viewport_size({"width": w, "height": 800}); bad = []
             for s in SUBS:
-                pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(120)
+                pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(260)  # after the 180ms selection transition (v53.2)
                 sw = pg.evaluate("document.documentElement.scrollWidth")
                 small = pg.evaluate("[...document.querySelectorAll('#explore-nav button:not([hidden])')].filter(b => b.offsetParent && b.getBoundingClientRect().height < 44).length")
                 marks = pg.evaluate("(() => { const c = document.querySelector('[data-xp-cat][aria-pressed=true]'), g = document.querySelector('[data-xp-go][aria-current=page]'); return [c && getComputedStyle(c).backgroundColor !== 'rgba(0, 0, 0, 0)', g && getComputedStyle(g, '::after').opacity === '1' && getComputedStyle(g, '::after').height === '3px', g && +getComputedStyle(g).fontWeight >= 600]; })()")
