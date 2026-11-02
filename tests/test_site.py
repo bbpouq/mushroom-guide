@@ -1117,7 +1117,7 @@ def run():
         pg.evaluate("navigate('explore-intel')"); pg.wait_for_timeout(300)
         pg.click('[data-intel-m="9"]'); pg.wait_for_timeout(200)
         pg.click('[aria-controls="info-intel"]'); pg.wait_for_timeout(100)
-        cav = pg.inner_text(".intel__caveat")
+        cav = pg.inner_text("#info-intel")
         check("v53: 季节情报 states sampling bias and timeliness limits", all(k in cav for k in ["拍照上传", "不是菌有多少", "反映不了今年的天气", "不代表这个月就能找到"]))
         pg.evaluate("navigate('explore-cal')"); pg.wait_for_timeout(300)
         pg.click('[data-cal-mode="month"]'); pg.select_option("#cal-month", "3"); pg.fill("#cal-q", "鸡油"); pg.wait_for_timeout(200)
@@ -1326,7 +1326,7 @@ def run():
         intro = pg.inner_text("#finder-steps")
         check("v54: the finder opens with a short intro and 开始观察, not a question or a list",
               pg.locator("#finder-start").count() == 1 and pg.locator("#finder-steps .wiz__q").count() == 0 and pg.inner_text("#finder-results").strip() == ""
-              and "不会被当成“没有”" in intro and "不判断能不能吃" in intro and len(intro) < 200)
+              and "不会被当成“没有”" in intro and "不判断能不能吃" in pg.inner_text(".finder__note") and len(intro) < 200)
         pg.focus("#finder-start"); pg.keyboard.press("Enter"); pg.wait_for_timeout(200)
         check("v54: 开始观察 shows the first question and puts keyboard focus on its first answer",
               pg.locator("#finder-steps .wiz__q").count() == 1 and pg.evaluate("document.activeElement.classList.contains('wiz__opt')"))
@@ -1651,7 +1651,7 @@ def run():
         pg.goto(url + "#explore-intel"); pg.wait_for_timeout(600)
         pg.locator('[data-cal-region="wa"]:visible').first.click(); pg.wait_for_timeout(150)
         reg0 = pg.evaluate("calState.region")
-        line = pg.inner_text("#xp-intel .info__line")
+        line = pg.inner_text("#intel > p.season__sub")
         check("PD: 季节情报 keeps the 历史观察 sentence visible; the method sits behind 数据如何统计",
               "历史观察数据反映过去记录的分布和季节性，不代表当前地点一定有蘑菇，也不能作为实时出菇预测。" in line and pg.is_hidden("#info-intel"))
         pg.click('[aria-controls="info-intel"]'); pg.wait_for_timeout(100)
