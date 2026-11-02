@@ -1064,10 +1064,10 @@ def run():
         for w in [320, 375, 390, 768, 1024]:
             pg.set_viewport_size({"width": w, "height": 800}); bad = []
             for s in SUBS:
-                pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(120)
+                pg.evaluate(f"navigate('explore-{s}')"); pg.wait_for_timeout(260)  # after the 180ms selection transition (v53.2)
                 sw = pg.evaluate("document.documentElement.scrollWidth")
                 small = pg.evaluate("[...document.querySelectorAll('#explore-nav button:not([hidden])')].filter(b => b.offsetParent && b.getBoundingClientRect().height < 44).length")
-                marks = pg.evaluate("(() => { const c = document.querySelector('[data-xp-cat][aria-pressed=true]'), g = document.querySelector('[data-xp-go][aria-current=page]'); return [c && getComputedStyle(c).boxShadow !== 'none' || getComputedStyle(c).backgroundColor, g && getComputedStyle(g).boxShadow !== 'none', g && +getComputedStyle(g).fontWeight >= 600]; })()")
+                marks = pg.evaluate("(() => { const c = document.querySelector('[data-xp-cat][aria-pressed=true]'), g = document.querySelector('[data-xp-go][aria-current=page]'); return [c && getComputedStyle(c).backgroundColor !== 'rgba(0, 0, 0, 0)', g && getComputedStyle(g, '::after').opacity === '1' && getComputedStyle(g, '::after').height === '3px', g && +getComputedStyle(g).fontWeight >= 600]; })()")
                 if sw > w or small or pg.evaluate(shown_sub) != [s] or not all(marks):
                     bad.append((s, sw, small, marks))
             check(f"v53 AC-03 at {w}px: every sub-page shows alone, no horizontal overflow, 44px nav targets, selected state shown by shape and weight {bad}", not bad)
@@ -1196,6 +1196,77 @@ def run():
             check(f"v53: outdoor mode on, {scheme}: every 拾菌 sub-page fits 375px and the switch reads 已打开 {bad} {errs}",
                   not bad and pg.inner_text("[data-field-state]") == "已打开" and pg.is_checked("#xp-field-switch") and not errs)
             ctx.close()
+
+        # ---------- v53.2: 拾菌 navigation visual polish ----------
+        NAVSTATE = """(() => { const cs = (e, p) => getComputedStyle(e, p);
+          const cats = [...document.querySelectorAll('[data-xp-cat]')].map(b => [b.getAttribute('aria-pressed'), cs(b).backgroundColor, cs(b).color, +cs(b).fontWeight]);
+          const subs = [...document.querySelectorAll('[data-xp-subs]:not([hidden]) [data-xp-go]')].map(b => [b.getAttribute('aria-current'), cs(b, '::after').opacity, cs(b, '::after').height, cs(b).backgroundColor, +cs(b).fontWeight, cs(b).color]);
+          return { cats, subs }; })()"""
+        LUM = "c => { const v = c.match(/[\\d.]+/g).slice(0, 3).map(x => x / 255).map(x => x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }"
+        for scheme, bg_want in [("light", "rgb(63, 97, 73)"), ("dark", "rgb(74, 117, 86)")]:
+            ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, color_scheme=scheme)
+            pg = ctx.new_page(); errs = []
+            pg.on("pageerror", lambda e: errs.append(str(e)))
+            pg.goto(url + "#explore-now"); pg.wait_for_timeout(700)
+            bad = []
+            for cat in ["find", "guide", "tools"]:
+                pg.click(f'[data-xp-cat="{cat}"]'); pg.wait_for_timeout(250)
+                st = pg.evaluate(NAVSTATE)
+                on = [c for c in st["cats"] if c[0] == "true"]
+                off = [c for c in st["cats"] if c[0] != "true"]
+                ratio = pg.evaluate(f"(([a, b]) => {{ const L = {LUM}; const x = L(a), y = L(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); }})", [on[0][1], on[0][2]]) if on else 0
+                if len(on) != 1 or on[0][1] != bg_want or ratio < 4.5 or any(c[1] == bg_want for c in off):
+                    bad.append((cat, on, round(ratio, 2)))
+            check(f"v53.2 AT-1/4 ({scheme}): each category, when selected, is the one solid forest-green segment with text at >= 4.5:1 {bad}", not bad)
+            bad = []
+            for sub in ["now", "intel", "cal", "hab", "rules", "prep", "pick", "safety", "offline", "field"]:
+                pg.evaluate(f"navigate('explore-{sub}')"); pg.wait_for_timeout(250)
+                st = pg.evaluate(NAVSTATE)
+                cur = [s for s in st["subs"] if s[0] == "page"]
+                rest = [s for s in st["subs"] if s[0] != "page"]
+                if len(cur) != 1 or cur[0][1] != "1" or cur[0][2] != "3px" or cur[0][4] < 600 or cur[0][3] != "rgba(0, 0, 0, 0)" or any(s[1] != "0" for s in rest):
+                    bad.append((sub, cur))
+            check(f"v53.2 AT-2 ({scheme}): every sub-page tab shows a 3px indicator and bold text when current, unfilled unlike the categories {bad} {errs}", not bad and not errs)
+            ctx.close()
+        ctx = b.new_context(viewport={"width": 320, "height": 640}, is_mobile=True, has_touch=True)
+        pg = ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        pg.goto(url + "#explore-pick"); pg.wait_for_timeout(800)
+        strip = pg.evaluate("""(() => { const s = document.querySelector('[data-xp-subs=guide]'), r = s.getBoundingClientRect(), t = s.querySelector('[aria-current=page]').getBoundingClientRect();
+          const tabs = [...s.children]; return { one: new Set(tabs.map(x => x.offsetTop)).size === 1, lines: tabs.every(x => x.getClientRects().length === 1 && x.getBoundingClientRect().height < 60),
+          scrolls: s.scrollWidth > s.clientWidth, inview: t.left >= r.left - 1 && t.right <= r.right + 1, fade: s.classList.contains('has-more-l') || s.classList.contains('has-more-r'), sw: document.documentElement.scrollWidth }; })()""")
+        check(f"v53.2 AT-3: at 320px the sub-page tabs are one scrollable row, labels on one line, the current tab scrolled into view, an edge fade, no page overflow {strip}",
+              strip["one"] and strip["lines"] and strip["scrolls"] and strip["inview"] and strip["fade"] and strip["sw"] <= 320)
+        for w in [375, 390]:
+            pg.set_viewport_size({"width": w, "height": 800}); pg.wait_for_timeout(200)
+            fit = pg.evaluate("[...document.querySelectorAll('[data-xp-subs]')].map(s => { s.hidden = false; const f = s.scrollWidth <= s.clientWidth + 1; return f; })")
+            pg.evaluate("xpShow('pick')")
+            check(f"v53.2 AT-3: at {w}px all sub-page tabs fit without scrolling {fit}", all(fit) and pg.evaluate("document.documentElement.scrollWidth") <= w)
+        pg.set_viewport_size({"width": 375, "height": 800})
+        pg.click('[data-xp-go="prep"]'); pg.wait_for_timeout(300)
+        live = pg.inner_text("#xp-live")
+        ctl = pg.evaluate("[...document.querySelectorAll('[data-xp-go]')].every(b => { const p = document.getElementById(b.getAttribute('aria-controls')); return p && p.dataset.xp === b.dataset.xpGo; })")
+        check(f"v53.2 AT-5: switching announces 分类 › 子页 for screen readers, tabs point at their panes, one aria-current and one aria-pressed ({live!r})",
+              live == "野外指南 › 装备与准备" and ctl and pg.locator("[data-xp-go][aria-current=page]").count() == 1 and pg.locator("[data-xp-cat][aria-pressed=true]").count() == 1)
+        anim = pg.evaluate("[getComputedStyle(document.getElementById('xp-prep')).animationName, getComputedStyle(document.querySelector('[data-xp-cat]')).transitionDuration]")
+        pg.evaluate("navigate('explore-safety')"); pg.wait_for_timeout(250)
+        safe_anim = pg.evaluate("getComputedStyle(document.getElementById('xp-safety')).animationName")
+        check(f"v53.2: the new pane fades in (opacity, ~180ms) and the safety pane never animates ({anim}, {safe_anim})",
+              anim[0] == "xp-in" and "0.18s" in anim[1] and safe_anim == "none")
+        pg.go_back(); pg.wait_for_timeout(300); a1 = pg.evaluate("document.querySelector('[data-xp-go][aria-current=page]').dataset.xpGo")
+        pg.reload(); pg.wait_for_timeout(800); a2 = pg.evaluate("document.querySelector('[data-xp-go][aria-current=page]').dataset.xpGo")
+        check(f"v53.2 AT-6: back and refresh keep navigation and content in step ({a1}, {a2}) {errs}",
+              a1 == "prep" and a2 == "prep" and pg.evaluate("[...document.querySelectorAll('.xp__pane')].filter(p => !p.hidden).map(p => p.dataset.xp)") == ["prep"] and not errs)
+        ctx.close()
+        ctx = b.new_context(viewport={"width": 375, "height": 812}, is_mobile=True, has_touch=True, reduced_motion="reduce", color_scheme="dark")
+        ctx.add_init_script("try{localStorage.setItem('mushroom-guide:field','on')}catch(e){}")
+        pg = ctx.new_page(); pg.goto(url + "#explore-rules"); pg.wait_for_timeout(700)
+        rm = pg.evaluate("""[getComputedStyle(document.getElementById('xp-rules')).animationName, getComputedStyle(document.querySelector('[data-xp-cat]')).transitionDuration,
+          getComputedStyle(document.querySelector('[data-xp-go=rules]'), '::after').transitionDuration,
+          Math.min(...[...document.querySelectorAll('#explore-nav button:not([hidden])')].filter(b => b.offsetParent).map(b => b.getBoundingClientRect().height))]""")
+        check(f"v53.2 AT-7/8: outdoor mode keeps 52px navigation targets, and reduced motion turns the fades and transitions off ({rm})",
+              rm[0] == "none" and rm[1] in ("0s", "0ms") and rm[2] in ("0s", "0ms") and rm[3] >= 52)
+        ctx.close()
 
         # ---------- sandboxed preview (how many apps show an attached HTML file) ----------
         host = b.new_page(viewport={"width": 390, "height": 844})

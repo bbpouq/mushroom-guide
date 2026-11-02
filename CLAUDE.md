@@ -16,7 +16,7 @@ Live: https://bbpouq.github.io/mushroom-guide/ (GitHub Pages, deployed by `.gith
 
 ```sh
 python3 src/build_site.py            # regenerate public/index.html from src/ (always do this after editing src/)
-python3 tests/test_site.py           # 324 end-to-end checks; must end with "ALL PASSED"
+python3 tests/test_site.py           # 335 end-to-end checks; must end with "ALL PASSED"
 cd public && python3 -m http.server  # preview at http://localhost:8000 (offline mode needs http, not file://)
 python3 src/make_icons.py            # regenerate icons, favicon, og.png and brand/ logos from src/brand/mark.svg (Playwright)
 python3 src/fetch_seasonality.py     # refresh iNaturalist month counts (needs network; the build itself never fetches)
@@ -257,7 +257,11 @@ pictures (e.g. after `fetch_photos.py --all`). The build copies the name into th
   mode / month / search persist in `sessionStorage` `mushroom-guide:xpstate` (`xsSave()`). 四条守则 live only in 采集守则;
   采集与观察 is 观察 → 拍照 → 记录 → 依法采集（若允许）plus the 做孢子印 fold; 户外安全 opens with 911 and 中毒急救 buttons.
   离线下载 shows a summary and one row each for text, thumbnails, HD, 3D and 个人菌记, each in a state from `ostate()`
-  (未下载 / 下载中 / 下载失败 / 部分完成 / 已完成). The 户外模式 pane uses a `.toggle` switch (`data-field-switch`). 拾菌's "去哪里找" is rendered by the build as
+  (未下载 / 下载中 / 下载失败 / 部分完成 / 已完成). The 户外模式 pane uses a `.toggle` switch (`data-field-switch`). v53.2 (docs/V53_2_NAV_POLISH.md): the category control is
+  filled forest green when selected (`--xnav-on` / `--xnav-on-text`, scoped to `#explore-nav`, never the shared `.seg__btn`);
+  sub-pages are a tab strip with a 3px `::after` indicator, one scrollable row when it does not fit (current tab scrolled into
+  view, edge fade via `xnavEdges()`); panes fade in by opacity (`xp-in`, 180ms, never on 户外安全; off under reduced motion and
+  in outdoor mode); `#xp-live` announces 「分类 › 子页」. 拾菌's "去哪里找" is rendered by the build as
   `.habitat` folding cards (`habitat_cards()`), recommended species only. A new journal record is three steps (`jstep(n)`;
   照片与物种 / 地点与环境 / 备注与保存); "记下来" saves from any step and every field may stay empty except a name or species.
 - Nav: one sticky header for every size (brand left, the three tabs as `.topnav` from 768px, search / field mode / SOS
